@@ -2,8 +2,11 @@
 A Self Hosted discord application
 
 SupportBot is a free & open source discord bot for your server that has the capability to control & manage your servers support.
-Why not download SupportBot today and try it out.
 
-#------------#
-| 3.2        |
-#------------#
+| Version | Supported          | Type               |
+| ------- | ------------------ |--------------------|
+| 1.0.x   | :x:                | None               |
+| 2.0.x   | :warning:          | Community          |
+| 3.0.x   | :white_check_mark: | Priority           |
+| 4.0.x   | :x:                | N/A                |
+| Premium | :x:                | N/A                |
