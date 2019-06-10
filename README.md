@@ -28,9 +28,9 @@ Once you have setup your discord application such as invited the bot and added y
 
 "BotStatus": "Support Bot",.
 
-"staff": "Staff", - Anyone who has this role will be able to use commands that are for staff.
-"support": "Support Team", - Anyone with this role will be able to use commands that are to do with ticket system only / view tickets.
-"everyone": "@everyone", - This role is used for the lock chat command, Recommended to use @everyone```
+"staff": "Staff",
+"support": "Support Team",
+"everyone": "@everyone",
 
 "category": "Tickets",
 "Ticket_Message": "Your support ticket has been opened successfully\nPlease allow us some time to reach out to you.",
@@ -78,7 +78,8 @@ Once you have setup your discord application such as invited the bot and added y
 "Link_Command": "links",
 "Lockchat_Command": "lock",
 "UnLockchat_Command": "unlock",
-"Poll_Command": "poll"```
+"Poll_Command": "poll"
+```
 
 # Contributors List
 
