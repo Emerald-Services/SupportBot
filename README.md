@@ -5,8 +5,8 @@ SupportBot is a free & open source discord bot for your server that has the capa
 
 | Version | Supported          | Type               |
 | ------- | ------------------ |--------------------|
-| 1.0.x   | :x:                | None               |
-| 2.0.x   | :warning:          | Community          |
-| 3.0.x   | :white_check_mark: | Priority           |
-| 4.0.x   | :x:                | N/A                |
-| Premium | :x:                | N/A                |
+| 1.0.x   | ❌                 | None               |
+| 2.0.x   | ⚠                  | Community          |
+| 3.0.x   | ✅                 | Priority           |
+| 4.0.x   | ❌                 | N/A                |
+| Premium | ❌                 | N/A                |
