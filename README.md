@@ -21,20 +21,17 @@ Head back to discord developers portal where your application is and head into t
 Once you have setup your discord application such as invited the bot and added your bot token to the ``settings.json`` we can begin configurating your bot. Firstly open up the ``settings.json`` file and you will see loads of different things to config. You will see the following below:
 
 ```
-"prefix": "!", - The prefix is what is used to make the bot's commands work, for example !help.
-"botname": "SupportBot", - The botname is the name of the what you called your application.
-"colour": "#42f477", - The colour is used is within the embeds of the bot, the colour codes must be hexidecimal.
-"footer": "Support Bot, By Emerald", - Footer is what will be displayed at the very bottom of the embeds. ```
+"prefix": "!",
+"botname": "SupportBot",
+"colour": "#42f477",
+"footer": "Support Bot, By Emerald",
 
-```"BotStatus": "Support Bot", - Bot status is what will be displayed within the bot's discord activity.
-```
+"BotStatus": "Support Bot",.
 
-```
 "staff": "Staff", - Anyone who has this role will be able to use commands that are for staff.
 "support": "Support Team", - Anyone with this role will be able to use commands that are to do with ticket system only / view tickets.
 "everyone": "@everyone", - This role is used for the lock chat command, Recommended to use @everyone```
 
-```
 "category": "Tickets",
 "Ticket_Message": "Your support ticket has been opened successfully\nPlease allow us some time to reach out to you.",
 "Ticket_Logs": "ticket-logs",
@@ -56,9 +53,8 @@ Once you have setup your discord application such as invited the bot and added y
 "Suggestion_Title": "SupportBot Suggestions",
 "Suggestion_Channel": "suggestions",
 "suggestyes": "✅",
-"suggestno": "❎",```
+"suggestno": "❎",
 
-```
 "LINK_1_NAME": "Discord",
 "LINK_2_NAME": "Twitter",
 "LINK_3_NAME": "Website",
