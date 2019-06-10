@@ -79,3 +79,8 @@ Once you have setup your discord application such as invited the bot and added y
 "Lockchat_Command": "lock",
 "UnLockchat_Command": "unlock",
 "Poll_Command": "poll"```
+
+# Contributors List
+
+# Donators List
+
