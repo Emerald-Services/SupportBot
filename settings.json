@@ -2,7 +2,7 @@
 
 "SupportBot": "v3.4 / Download addons @ https://itzemerald.tk/",
 
-"token": "BOT_TOKEN_HERE",
+"token": "NTg0OTMyMTI1MzE3NTI5NjAw.XQA0dQ.fyVD6xk7gSm37SVUXFHuNMW7RZY",
 "prefix": "!",
 "botname": "SupportBot",
 "colour": "#42f477",
@@ -10,8 +10,8 @@
 
 "BotStatus": "Support Bot",
 
-"staff": "Staff",
-"support": "Support Team",
+"staff": "「Owner」",
+"support": "「Owner」",
 "everyone": "@everyone",
 
 "category": "Tickets",
@@ -37,6 +37,9 @@
 "suggestyes": "✅",
 "suggestno": "❎",
 
+"Report_Channel": "reports",
+"Report_Title": "SupportBot Report",
+
 "LINK_1_NAME": "Discord",
 "LINK_2_NAME": "Twitter",
 "LINK_3_NAME": "Website",
@@ -60,6 +63,7 @@
 "Link_Command": "links",
 "Lockchat_Command": "lock",
 "UnLockchat_Command": "unlock",
-"Poll_Command": "poll"
+"Poll_Command": "poll",
+"Report_Command": "report"
 
 }
