@@ -1,5 +1,12 @@
-# SupportBot v3.4
-A Self Hosted discord application
+<h1 align="center">SupportBot v3.4</h1>
+<h4 align="center">A Self Hosted discord application</h4>
+
+<p align="center">
+  <a href="https://discord.gg/hmWgxdF">
+    <img src="https://discordapp.com/api/guilds/516345301985132552/widget.png?style=shield" alt="Discord Server">
+  </a>
+  <img src="https://img.shields.io/badge/Made%20with-NodeJS-blue.svg" alt="Made with NodeJS">
+</p>
 
 SupportBot is a free & open source discord bot for your server that has the capability to control & manage your servers support.
 
