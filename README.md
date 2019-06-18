@@ -38,6 +38,7 @@ Once you have setup your discord application such as invited the bot and added y
 "staff": "Staff",
 "support": "Support Team",
 "everyone": "@everyone",
+"Auto_Role": "Member",
 
 "category": "Tickets",
 "Ticket_Message": "Your support ticket has been opened successfully\nPlease allow us some time to reach out to you.",
