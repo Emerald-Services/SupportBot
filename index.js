@@ -72,17 +72,20 @@ if(!cmd) return;
 cmd.run(bot, message, args);
 });
 
-// [SupportBot] Welcome Message
+// [SupportBot] Welcome Message && Auto Join Role
 
 bot.on("guildMemberAdd", (member) => {
   let channel = member.guild.channels.find(channel => channel.name === `${bot.settings.Welcome_Channel}`)
-
+  let autorole = member.guild.roles.find(autorole => autorole.name === `${bot.settings.Auto_Role}`)
+  
   const WelcomeMsg= new Discord.RichEmbed()
   .setColor(bot.settings.colour)
   .setThumbnail(member.user.avatarURL)
   .setDescription(`:wave: ${member.user.username}\n${bot.settings.Welcome_Message}`)
 
   channel.send(WelcomeMsg);
+  member.addRole(role).catch(console.error);
+    
 });
 
 // [SupportBot] Leave Message
