@@ -41,7 +41,7 @@ fs.readdir("./sb-addons/", (err, files) => {
 
 bot.on("ready", async () => {
   bot.user.setActivity(bot.settings.BotStatus, {type:"PLAYING"});
-    console.log(`\x1b[36m`, `=== [SupportBot] ===\n\nSupportBot - Created by Emerald Services\nInvite ${bot.user.username} to your server\nhttps://discordapp.com/api/oauth2/authorize?client_id=${bot.user.username}&permissions=8&scope=bot\n\n=== [SupportBot] ===`)
+    console.log(`\x1b[36m`, `=== [SupportBot] ===\n\nSupportBot - Created by Emerald Services\nInvite ${bot.user.username} to your server\nhttps://discordapp.com/api/oauth2/authorize?client_id=${bot.user.id}&permissions=8&scope=bot\n\n=== [SupportBot] ===`)
 });
 
 bot.on("message", async message => {
