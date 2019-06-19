@@ -98,6 +98,7 @@ Once you have setup your discord application such as invited the bot and added y
 <p>
   <a href="https://github.com/RedstoneGamez">
     <img src="https://cdn.discordapp.com/avatars/282610987801247744/9567e0674a5a6d371bb5d6efb956d57b.png?size=32" alt="RedstoneGamez Profile">
+    <strong>@RedstoneGamez</strong>
   </a>
 </p>
 
