@@ -10,10 +10,12 @@ exports.run = async(bot, message, args) => {
     message.delete();
 
     const SuggestionEmbed = new Discord.RichEmbed()
-        .setTitle(`${bot.settings.Suggestion_Title}`)
+        .setAuthor(`${bot.settings.Suggestion_Title} ` + message.author.username, message.author.displayAvatarURL)
+        .setThumbnail(message.guild.iconURL)
         .setDescription(args.join(" "))
-        .setFooter(`Suggestion by ${message.author.username}`, message.author.displayAvatarURL)
-        .setColor(bot.settings.colour)
+        .setFooter(`${bot.settings.footer}`, bot.user.avatarURL)
+        .setTimestamp(new Date())
+        .setColor(bot.settings.colour);
 
     let sc = message.guild.channels.find(SuggestionChannel => SuggestionChannel.name === `${bot.settings.Suggestion_Channel}`);
     if(!sc) return message.channel.send(`:x: Error! Could not find the suggestion channel **${bot.settings.Suggestion_Channel}**`);
