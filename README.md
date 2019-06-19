@@ -6,6 +6,8 @@
     <img src="https://discordapp.com/api/guilds/516345301985132552/widget.png?style=shield" alt="Discord Server">
   </a>
   <img src="https://img.shields.io/badge/Made%20with-NodeJS-blue.svg" alt="Made with NodeJS">
+  <img src="https://img.shields.io/github/release/EmeraldRusher/SupportBot.svg" alt="GitHub release">
+  <img src="https://img.shields.io/github/package-json/dependency-version/EmeraldRusher/SupportBot/discord.js.svg" alt="GitHub package.json dependency version (prod)">
 </p>
 
 SupportBot is a free & open source discord bot for your server that has the capability to control & manage your servers support.
