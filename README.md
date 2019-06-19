@@ -26,6 +26,9 @@ Firstly you will need to download the resource, Once you have downloaded the res
 # Invite the bot
 Head back to discord developers portal where your application is and head into the ``OAuth`` tab and select bot and then below select ``Administrator`` then copy the link and paste into your browser and it should as your to invite the bot to a server.
 
+# Help
+If you don't understand something, you are experiencing problems, or you just need a gentle nudge in the right direction, please don't hesitate to join our official [Emerald Services Server](https://discord.gg/u47MQJ).
+
 # Configurating SupportBot
 Once you have setup your discord application such as invited the bot and added your bot token to the ``settings.json`` we can begin configurating your bot. Firstly open up the ``settings.json`` file and you will see loads of different things to config. You will see the following below:
 
@@ -86,6 +89,17 @@ Once you have setup your discord application such as invited the bot and added y
 ```
 
 # Contributors List
+<p>
+  <a href="https://github.com/iJosGCS">
+    <img src="https://cdn.discordapp.com/avatars/199237487648833556/cdd7d976b75698b19e3c6b64e1dcdceb.png?size=32" alt="iJosGCS Profile">
+    <strong>@iJosGCS</strong>
+  </a>
+</p>
+<p>
+  <a href="https://github.com/RedstoneGamez">
+    <img src="https://cdn.discordapp.com/avatars/282610987801247744/9567e0674a5a6d371bb5d6efb956d57b.png?size=32" alt="RedstoneGamez Profile">
+  </a>
+</p>
 
 # Donators List
 
