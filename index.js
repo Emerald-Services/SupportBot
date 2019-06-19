@@ -84,7 +84,7 @@ bot.on("guildMemberAdd", (member) => {
   .setDescription(`:wave: ${member.user.username}\n${bot.settings.Welcome_Message}`)
 
   channel.send(WelcomeMsg);
-  member.addRole(role).catch(console.error);
+  member.addRole(autorole).catch(console.error);
     
 });
 
