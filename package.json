@@ -1,18 +1,34 @@
 {
-  "name": "supportbot",
-  "version": "3.4",
+  "name": "SupportBot",
+  "version": "3.5",
   "description": "SupportBot",
   "main": "index.js",
+  "private": "true",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "engines": {
+    "node": "^12.4.0"
+  },
   "dependencies": {
     "discord.js": "^11.4.2"
   },
-  "devDependencies": {},
-  "scripts": {
-    "test": "!help"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/EmeraldRusher/SupportBot.git"
   },
   "keywords": [
-    "SupportBot"
+    "SupportBot",
+    "Emerald Services"
   ],
   "author": "Emerald Services",
-  "homepage": "https://discord.gg/hmWgxdF"
+  "bugs": {
+    "url": "https://github.com/EmeraldRusher/SupportBot/issues"
+  },
+  "homepage": "https://discord.gg/hmWgxdF",
+  "contributors": [
+    "iJosGCS",
+    "RedstoneGamez"
+  ]
 }
