@@ -12,15 +12,16 @@ exports.run = (bot, message, args) => {
     let userCommands = "";
         userCommands += `**${bot.settings.prefix}${bot.settings.Link_Command}**: Get some important links!\n`;
         userCommands += `**${bot.settings.prefix}${bot.settings.Ping_Command}**: Check the bots ping. Pong!\n`;
-	    userCommands += `**${bot.settings.prefix}${bot.settings.Ticket_Command} <reason>**: Create a support ticket\n`;
+	userCommands += `**${bot.settings.prefix}${bot.settings.Ticket_Command} <reason>**: Create a support ticket\n`;
         userCommands += `**${bot.settings.prefix}${bot.settings.Close_Command}**: Close your support ticket\n`;
+	userCommands += `**${bot.settings.prefix}${bot.settings.Report_Command} <user> <reason>**: Report a user\n`;
         userCommands += `**${bot.settings.prefix}${bot.settings.Suggest_Command} <suggestion>**: Create a server suggestion\n`;
 	
     let supportCommands = "";
-	    supportCommands += `**${bot.settings.prefix}${bot.settings.Add_Command} <user>**: Adds a user to a ticket\n`;
+	supportCommands += `**${bot.settings.prefix}${bot.settings.Add_Command} <user>**: Adds a user to a ticket\n`;
         supportCommands += `**${bot.settings.prefix}${bot.settings.Remove_Command} <user>**: Removes a user from a ticket\n`;
         supportCommands += `**${bot.settings.prefix}${bot.settings.Forceclose_Command}**: Forceclose a support ticket\n`;
-		supportCommands += `**${bot.settings.prefix}${bot.settings.Rename_Command}**: Rename a support ticket\n`;
+	supportCommands += `**${bot.settings.prefix}${bot.settings.Rename_Command}**: Rename a support ticket\n`;
 
         let staffCommands = "";
         staffCommands += `**${bot.settings.prefix}${bot.settings.Say_Command} <message>**: Create a bot announcement\n`;
