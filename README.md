@@ -34,42 +34,54 @@ Once you have setup your discord application such as invited the bot and added y
 
 ```
 {
-    "SupportBot": "v3.4 / Download addons @ https://itzemerald.tk/",
+    "SupportBot": "v3.5.1 / Download addons @ https://itzemerald.tk/",
     "token": "TOKEN",
     "prefix": "!",
     "botname": "SupportBot",
     "colour": "#42f477",
     "footer": "Support Bot, By Emerald",
+    
     "BotStatus": "Support Bot",
+    
     "staff": "Staff",
     "support": "Support",
     "everyone": "@everyone",
     "Auto_Role": "Member",
+    
     "category": "Tickets",
     "Ticket_Message": "Your support ticket has been opened successfully\nPlease allow us some time to reach out to you.",
     "Ticket_Logs": "ticket-logs",
+    
     "Announcement_Title": "SupportBot Announcement",
     "Announcement_Channel": "announcements",
+    
     "Welcome_Message": "Welcome to the server!",
     "Welcome_Channel": "welcome",
+    
     "Leave_Message": "Thank you for visiting us!",
     "Leave_Channel": "welcome",
+    
     "Poll_Channel": "polls",
     "Poll_Title": "📊 Polls",
     "Reaction_Poll_1": "✅",
     "Reaction_Poll_2": "❎",
-    "Suggestion_Title": "SupportBot Suggestions",
+    
+    "Suggestion_Title": "Suggestion from",
     "Suggestion_Channel": "suggestions",
     "suggestyes": "✅",
     "suggestno": "❎",
+    
     "Report_Channel": "reports",
     "Report_Title": "SupportBot Report",
+    
     "LINKS": {
         "Discord": "https://discord.gg/",
         "Twitter": "https://twitter.com/",
         "Website": "https://example.com/"
     },
+    
     "LINKS_TITLE": "SupportBot Links",
+    
     "Ticket_Command": "ticket",
     "Suggest_Command": "suggest",
     "Say_Command": "say",
