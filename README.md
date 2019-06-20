@@ -21,9 +21,9 @@ SupportBot is a free & open source discord bot for your server that has the capa
 | Premium | ⚙️                 | N/A                |
 
 <strong>Symbols Info:</strong>
-🚫 = Discontinued
-❌ = Outdated/Not Released yet
-✔️ = Support & Updates Availables
+🚫 = Discontinued,
+❌ = Outdated/Not Released yet,
+✔️ = Support & Updates Availables,
 ⚙️ = Under development!
 
 # Getting Started
