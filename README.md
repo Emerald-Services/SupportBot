@@ -1,4 +1,4 @@
-<h1 align="center">SupportBot v3.5.1</h1>
+<h1 align="center">SupportBot v4.0.0</h1>
 <h4 align="center">A Self Hosted discord application</h4>
 
 <p align="center">
@@ -34,12 +34,13 @@ Once you have setup your discord application such as invited the bot and added y
 
 ```
 {
-    "SupportBot": "v3.5.1 / Download addons @ https://itzemerald.tk/",
-    "token": "TOKEN",
+    "SupportBot": "v4.0.0",
+    
+    "token": "BOT_TOKEN_HERE",
     "prefix": "!",
     "botname": "SupportBot",
-    "colour": "#42f477",
-    "footer": "Support Bot, By Emerald",
+    "colour": "#13bd2a",
+    "footer": "Support Bot, By Emerald Services",
     
     "BotStatus": "Support Bot",
     
@@ -48,25 +49,40 @@ Once you have setup your discord application such as invited the bot and added y
     "everyone": "@everyone",
     "Auto_Role": "Member",
     
+    "LINKS": {
+        "Discord": "https://discord.gg/",
+        "Twitter": "https://twitter.com/",
+        "Website": "https://example.com/",
+        "AddMore": "AddMoreIfYouWant"
+    },
+    
+    "LINKS_TITLE": "SupportBot Links",
+
     "category": "Tickets",
     "Ticket_Message": "Your support ticket has been opened successfully\nPlease allow us some time to reach out to you.",
     "Ticket_Logs": "ticket-logs",
+    "bot.settings.Default_Ticket_Reason": "No Subject",
+    "Ticket_React_Message": ":mailbox: React to create your support ticket.",
     
+    "Commands_Log_Title": "SupportBot Logs",
+    "Command_Log_Channel": "command-logs",
+
     "Announcement_Title": "SupportBot Announcement",
     "Announcement_Channel": "announcements",
+    "Announcement_Tag_Role": "@everyone",
     
     "Welcome_Message": "Welcome to the server!",
     "Welcome_Channel": "welcome",
     
     "Leave_Message": "Thank you for visiting us!",
     "Leave_Channel": "welcome",
-    
+
     "Poll_Channel": "polls",
     "Poll_Title": "📊 Polls",
     "Reaction_Poll_1": "✅",
     "Reaction_Poll_2": "❎",
     
-    "Suggestion_Title": "Suggestion from",
+    "Suggestion_Title": "SupportBot Suggestions",
     "Suggestion_Channel": "suggestions",
     "suggestyes": "✅",
     "suggestno": "❎",
@@ -74,20 +90,14 @@ Once you have setup your discord application such as invited the bot and added y
     "Report_Channel": "reports",
     "Report_Title": "SupportBot Report",
     
-    "LINKS": {
-        "Discord": "https://discord.gg/",
-        "Twitter": "https://twitter.com/",
-        "Website": "https://example.com/"
-    },
-    
-    "LINKS_TITLE": "SupportBot Links",
-    
-    "Ticket_Command": "ticket",
-    "Suggest_Command": "suggest",
+
+    "Announcement_Command": "announce",
     "Say_Command": "say",
+    "Suggest_Command": "suggest",
+    "Ping_Command": "ping",
+    "Ticket_Command": "ticket",
     "Remove_Command": "remove",
     "Add_Command": "add",
-    "Ping_Command": "ping",
     "Close_Command": "close",
     "Forceclose_Command": "forceclose",
     "Rename_Command": "rename",
@@ -98,6 +108,7 @@ Once you have setup your discord application such as invited the bot and added y
     "Poll_Command": "poll",
     "Report_Command": "report"
 }
+
 ```
 
 # Contributors List
