@@ -26,14 +26,24 @@ exports.run = (bot, message, args) => {
         .setDescription(args.join(" "))
         .setTimestamp()
         .setColor(bot.settings.colour)
-.setFooter(`${message.author.username}#${message.author.discriminator}`, message.author.displayAvatarURL)
-    
-    let ac = message.guild.channels.find(AnnounceChannel => AnnounceChannel.name === `${bot.settings.Announcement_Channel}`)
-    if(!ac) return message.channel.send(`:x: Error! Could not find the logs channel **${bot.settings.Announcement_Channel}**`)
-        
-    ac.send(embed)
+        .setFooter(`${message.author.username}#${message.author.discriminator}`, message.author.displayAvatarURL)
+
+    message.channel.send(embed);
 
     console.log(`\x1b[36m`, `${message.author} has executed ${bot.settings.prefix}${bot.settings.Say_Command}`)
+
+    const CMDLog = new Discord.RichEmbed()
+        .setTitle(bot.settings.Commands_Log_Title)
+        .addField(`User`, `<@${message.author.id}>`)
+        .addField(`Command`, bot.settings.Say_Command, true)
+        .addField(`Executed At`, message.createdAt, true)
+        .setColor(bot.settings.colour)
+        .setFooter(bot.settings.footer)
+
+    let CommandLog = message.guild.channels.find(LogsChannel => LogsChannel.name === `${bot.settings.Command_Log_Channel}`);
+    if(!CommandLog) return message.channel.send(`:x: Error! Could not find the logs channel. **${bot.settings.Command_Log_Channel}**\nThis can be changed via ``settings.json```);
+    
+    CommandLog.send(CMDLog);
 
 }
 

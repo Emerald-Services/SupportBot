@@ -48,6 +48,21 @@ exports.run = (bot, message, args) => {
                     } else {
                         rc.send(embed);
                         console.log(`\x1b[36m`, `${message.author} has executed ${bot.settings.prefix}${bot.settings.Report_Command}`);
+
+                         const CMDLog = new Discord.RichEmbed()
+                            .setTitle(bot.settings.Commands_Log_Title)
+                            .addField(`User`, `<@${message.author.id}>`)
+                            .addField(`Command`, bot.settings.Report_Command, true)
+                            .addField(`Channel`, message.channel, true)
+                            .addField(`Executed At`, message.createdAt, true)
+                            .setColor(bot.settings.colour)
+                            .setFooter(bot.settings.footer)
+
+                        let CommandLog = message.guild.channels.find(LogsChannel => LogsChannel.name === `${bot.settings.Command_Log_Channel}`);
+                        if(!CommandLog) return message.channel.send(`:x: Error! Could not find the logs channel. **${bot.settings.Command_Log_Channel}**\nThis can be changed via ``settings.json```);
+    
+                        CommandLog.send(CMDLog);
+
                     }
                 }
             }
