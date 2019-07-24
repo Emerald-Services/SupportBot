@@ -1,6 +1,13 @@
+//  ____                               _   ____        _   
+// / ___| _   _ _ __  _ __   ___  _ __| |_| __ )  ___ | |_ 
+// \___ \| | | | '_ \| '_ \ / _ \| '__| __|  _ \ / _ \| __|
+//  ___) | |_| | |_) | |_) | (_) | |  | |_| |_) | (_) | |_ 
+// |____/ \__,_| .__/| .__/ \___/|_|   \__|____/ \___/ \__|
+//             |_|   |_|                                   
+
 // Resource: SupportBot
-// Developed by Emerald
-// Version: 3.5
+// Developed by Emerald Services
+// Version: 4.0.0
 
 const Discord = require("discord.js");
 const fs = require("fs");
@@ -42,6 +49,14 @@ fs.readdir("./sb-addons/", (err, files) => {
 bot.on("ready", async () => {
   bot.user.setActivity(bot.settings.BotStatus, {type:"PLAYING"});
     console.log(`\x1b[36m`, `=== [SupportBot] ===\n\nSupportBot - Created by Emerald Services\nInvite ${bot.user.username} to your server\nhttps://discordapp.com/api/oauth2/authorize?client_id=${bot.user.id}&permissions=8&scope=bot\n\n=== [SupportBot] ===`)
+    console.log(`\u001b[31m`, `------------[ SupportBot ]------------`)
+    console.log(`\u001b[32m`, `Thank you for using SupportBot\n If you have any issues\n contact our team and we will\n give you furthur instructions`)
+    console.log(`\u001b[31m`, `------------[ SupportBot ]------------`)
+
+    console.log(`\u001b[31m`, `\n\n------------[ SupportBot Stats ]------------`)
+    console.log(`\u001b[32m`, `Bot Username: ${bot.user.username}\nInvite Link: https://discordapp.com/api/oauth2/authorize?client_id=${bot.user.username}&permissions=8&scope=bot`)
+    console.log(`\u001b[31m`, `------------[ SupportBot Stats ]------------`)
+
 });
 
 bot.on("message", async message => {
