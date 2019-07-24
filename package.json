@@ -1,6 +1,6 @@
 {
   "name": "SupportBot",
-  "version": "3.5",
+  "version": "4.0",
   "description": "SupportBot",
   "main": "index.js",
   "private": "true",
@@ -9,10 +9,13 @@
     "start": "node index.js"
   },
   "engines": {
-    "node": "^12.4.0"
+    "node": "12.6.0",
+    "npm": "6.9.0"
   },
   "dependencies": {
-    "discord.js": "^11.4.2"
+    "discord.js": "^11.5.1",
+    "array-sort": "^1.0.0",
+    "table": "^5.4.4"
   },
   "repository": {
     "type": "git",
