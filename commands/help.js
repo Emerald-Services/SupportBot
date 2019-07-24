@@ -23,7 +23,7 @@ exports.run = (bot, message, args) => {
 	supportCommands += `**${bot.settings.prefix}${bot.settings.Rename_Command}**: Rename a support ticket\n`;
 
         let staffCommands = "";
-	staffCommands += `**${bot.settings.prefix}${bot.settings.Announcement_Command} <message>**: Create a bot announcement with @everyone\n`;
+	staffCommands += `**${bot.settings.prefix}${bot.settings.Announcement_Command} <message>**: Create a bot announcement\n`;
         staffCommands += `**${bot.settings.prefix}${bot.settings.Say_Command} <message>**: Send a message as the bot\n`;
         staffCommands += `**${bot.settings.prefix}${bot.settings.Lockchat_Command}**: Lock the chat channel\n`;
         staffCommands += `**${bot.settings.prefix}${bot.settings.UnLockchat_Command}**: UnLock the chat channel\n`;
