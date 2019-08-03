@@ -6,7 +6,7 @@ const bot = new Discord.Client()
 
 bot.settings = require("../settings.json");
 
-exports.run = (bot, message, args) => {
+exports.run = async(bot, message, args) => {
     message.delete();
 
     let staffGroup = message.guild.roles.find(staffRole => staffRole.name === `${bot.settings.staff}`)
@@ -32,7 +32,7 @@ exports.run = (bot, message, args) => {
     if(!ac) return message.channel.send(`:x: Error! Could not find the logs channel **${bot.settings.Announcement_Channel}**`)
 
     ac.send(embed)
-    ac.send(`${bot.settings.Annuoncement_Tag_Role}`)
+ //   ac.send("@everyone")
 
     const SuggestionSuccessEmbed = new Discord.RichEmbed()
         .setDescription(`:white_check_mark: You have successfully created an announcement. <#${ac.id}>`)
@@ -50,7 +50,7 @@ exports.run = (bot, message, args) => {
         .setColor(bot.settings.colour)
         .setFooter(bot.settings.footer)
 
-    let CommandLog = message.guild.channels.find(LogsChannel => LogsChannel === `${bot.settings.Command_Log_Channel}`);
+    let CommandLog = message.guild.channels.find(LogsChannel => LogsChannel.name === `${bot.settings.Command_Log_Channel}`);
     if(!CommandLog) return message.channel.send(`:x: Error! Could not find the logs channel. **${bot.settings.Command_Log_Channel}**\nThis can be changed via ``settings.json```);
     
     CommandLog.send(CMDLog);

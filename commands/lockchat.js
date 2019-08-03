@@ -10,7 +10,7 @@ exports.run = async(bot, message, args) => {
     message.delete();
 
     let staffGroup = message.guild.roles.find(staffRole => staffRole.name === `${bot.settings.staff}`)
-    let everyoneRole = message.guild.roles.find(everyone => everyone.name === `${bot.settings.everyone}`)
+    let lockedRole = message.guild.roles.find(lc => lc.name === `${bot.settings.locked_role}`)
 
     const rolemissing = new Discord.RichEmbed()
         .setDescription(`:x: Looks like this server doesn't have the role **${bot.settings.staff}**`)
@@ -22,7 +22,8 @@ exports.run = async(bot, message, args) => {
         .setColor(bot.settings.colour)
     if (!message.member.roles.has(staffGroup.id)) return message.reply(donothaverole)
     
-    message.channel.overwritePermissions(everyoneRole, { READ_MESSAGES: false, SEND_MESSAGES: false });
+    message.channel.overwritePermissions(lockedRole, { READ_MESSAGES: false, SEND_MESSAGES: false });
+    message.channel.overwritePermissions(staffGroup, { READ_MESSAGES: true, SEND_MESSAGES: true });
 
     const lockmsg = new Discord.RichEmbed()
         .setDescription(":white_check_mark: **Chat Locked**")

@@ -48,12 +48,12 @@ exports.run = (bot, message, args) => {
     }).then(TicketChannel => {
         
     // Roles
-        let staff = message.guild.roles.find(staffRole => staffRole.name === `${bot.settings.support}`)
+        let support = message.guild.roles.find(supportRole => supportRole.name === `${bot.settings.support}`)
         let everyone = message.guild.roles.find(everyoneRole => everyoneRole.name === `@everyone`)
 
     // Permissions
         TicketChannel.overwritePermissions(everyone, { SEND_MESSAGES: false, READ_MESSAGES: false })
-        TicketChannel.overwritePermissions(staff, { SEND_MESSAGES: true, READ_MESSAGES: true })
+        TicketChannel.overwritePermissions(support, { SEND_MESSAGES: true, READ_MESSAGES: true })
         TicketChannel.overwritePermissions(message.author, { SEND_MESSAGES: true, READ_MESSAGES: true })
         TicketChannel.overwritePermissions(bot.user, { SEND_MESSAGES: true, READ_MESSAGES: true })
 

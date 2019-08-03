@@ -7,7 +7,7 @@
 
 // Resource: SupportBot
 // Developed by Emerald Services
-// Version: 4.0.0
+// Version: 4.0.1
 
 const Discord = require("discord.js");
 const fs = require("fs");
@@ -48,7 +48,6 @@ fs.readdir("./sb-addons/", (err, files) => {
 
 bot.on("ready", async () => {
   bot.user.setActivity(bot.settings.BotStatus, {type:"PLAYING"});
-    console.log(`\x1b[36m`, `=== [SupportBot] ===\n\nSupportBot - Created by Emerald Services\nInvite ${bot.user.username} to your server\nhttps://discordapp.com/api/oauth2/authorize?client_id=${bot.user.id}&permissions=8&scope=bot\n\n=== [SupportBot] ===`)
     console.log(`\u001b[31m`, `------------[ SupportBot ]------------`)
     console.log(`\u001b[32m`, `Thank you for using SupportBot\n If you have any issues\n contact our team and we will\n give you furthur instructions`)
     console.log(`\u001b[31m`, `------------[ SupportBot ]------------`)
