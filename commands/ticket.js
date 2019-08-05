@@ -49,7 +49,7 @@ exports.run = (bot, message, args) => {
         
     // Roles
         let support = message.guild.roles.find(supportRole => supportRole.name === `${bot.settings.support}`)
-        let everyone = message.guild.roles.find(everyoneRole => everyoneRole.name === `@everyone`)
+        let everyone = message.guild.roles.find(everyoneRole => everyoneRole.name === "@everyone")
 
     // Permissions
         TicketChannel.overwritePermissions(everyone, { SEND_MESSAGES: false, READ_MESSAGES: false })

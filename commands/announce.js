@@ -31,8 +31,9 @@ exports.run = async(bot, message, args) => {
     let ac = message.guild.channels.find(AnnounceChannel => AnnounceChannel.name === `${bot.settings.Announcement_Channel}`)
     if(!ac) return message.channel.send(`:x: Error! Could not find the logs channel **${bot.settings.Announcement_Channel}**`)
 
-    ac.send(embed)
- //   ac.send("@everyone")
+    ac.send("@everyone").then((msg) => {
+        ac.send(embed);
+    });
 
     const SuggestionSuccessEmbed = new Discord.RichEmbed()
         .setDescription(`:white_check_mark: You have successfully created an announcement. <#${ac.id}>`)
