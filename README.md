@@ -1,4 +1,4 @@
-<h1 align="center">SupportBot v4.0.0</h1>
+<h1 align="center">SupportBot v4.0.1</h1>
 <h4 align="center">A Self Hosted discord application</h4>
 
 <p align="center">
@@ -61,7 +61,7 @@ Once you have setup your discord application such as invited the bot and added y
     "category": "Tickets",
     "Ticket_Message": "Your support ticket has been opened successfully\nPlease allow us some time to reach out to you.",
     "Ticket_Logs": "ticket-logs",
-    "bot.settings.Default_Ticket_Reason": "No Subject",
+    "Default_Ticket_Reason": "No Subject",
     "Ticket_React_Message": ":mailbox: React to create your support ticket.",
     
     "Commands_Log_Title": "SupportBot Logs",
