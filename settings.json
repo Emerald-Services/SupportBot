@@ -27,7 +27,7 @@
     "category": "Tickets",
     "Ticket_Message": "Your support ticket has been opened successfully\nPlease allow us some time to reach out to you.",
     "Ticket_Logs": "ticket-logs",
-    "bot.settings.Default_Ticket_Reason": "No Subject",
+    "Default_Ticket_Reason": "No Subject",
     "Ticket_React_Message": ":mailbox: React to create your support ticket.",
     
     "Commands_Log_Title": "SupportBot Logs",
