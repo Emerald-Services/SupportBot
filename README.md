@@ -2,11 +2,11 @@
 <h4 align="center">A Self Hosted discord application</h4>
 
 <p align="center">
+    <a href="https://discord.gg/hmWgxdF">
+    <img src="https://discordapp.com/api/guilds/516345301985132552/widget.png?style=shield" alt="Discord Server">
+  </a>
   <img src="https://img.shields.io/badge/Made%20with-NodeJS-blue.svg" alt="Made with NodeJS">
   <img src="https://img.shields.io/github/release/EmeraldRusher/SupportBot.svg" alt="GitHub release">
-    <a href="https://discord.gg/hmWgxdF">
-    <img src="https://discordapp.com/api/guilds/516345301985132552/widget.png?style=banner1" alt="Discord Server">
-  </a>
   <img src="https://img.shields.io/github/package-json/dependency-version/EmeraldRusher/SupportBot/discord.js.svg" alt="GitHub package.json dependency version (prod)">
 </p>
 
@@ -127,3 +127,9 @@ Once you have setup your discord application such as invited the bot and added y
 
 # Donators List
 
+# Community
+<p align="center">
+    <a href="https://discord.gg/hmWgxdF">
+    <img src="https://discordapp.com/api/guilds/516345301985132552/widget.png?style=banner1" alt="Discord Server">
+  </a>
+</p>
