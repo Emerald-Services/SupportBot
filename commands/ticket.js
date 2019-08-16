@@ -48,16 +48,11 @@ exports.run = (bot, message, args) => {
     }).then(TicketChannel => {
         
     // Roles
-<<<<<<< HEAD
         let staff = message.guild.roles.find(supportRole => supportRole.name === `${bot.settings.staff}`)
         let everyone = message.guild.roles.find(everyoneRole => everyoneRole.name === "@everyone")
         let department = message.guild.roles.find(DepartmentRole => DepartmentRole.name === `${bot.settings.Department_Role_1}`)
         let department2 = message.guild.roles.find(DepartmentRole => DepartmentRole.name === `${bot.settings.Department_Role_2}`)
         let department3 = message.guild.roles.find(DepartmentRole => DepartmentRole.name === `${bot.settings.Department_Role_3}`)
-=======
-        let support = message.guild.roles.find(supportRole => supportRole.name === `${bot.settings.support}`)
-        let everyone = message.guild.roles.find(everyoneRole => everyoneRole.name === "@everyone")
->>>>>>> master
 
     // Permissions
         TicketChannel.overwritePermissions(everyone, { SEND_MESSAGES: false, READ_MESSAGES: false })
@@ -118,18 +113,21 @@ exports.run = (bot, message, args) => {
             const reaction = collected.first();
 
         if (reaction.emoji.name === `${Emoji_1}`) {
+			TicketChannel.overwritePermissions(staff, { SEND_MESSAGES: true, READ_MESSAGES: true })
             TicketChannel.overwritePermissions(department, { SEND_MESSAGES: true, READ_MESSAGES: true })
 
             msg.channel.send("You have contacted out " + department + "\nPlease wait patiently for somone to reach out to you.")
         }
 
         if (reaction.emoji.name === `${Emoji_2}`) {
+			TicketChannel.overwritePermissions(staff, { SEND_MESSAGES: true, READ_MESSAGES: true })
             TicketChannel.overwritePermissions(department2, { SEND_MESSAGES: true, READ_MESSAGES: true })
 
             msg.channel.send("You have contacted out " + department2 + "\nPlease wait patiently for somone to reach out to you.")
         }
 
         if (reaction.emoji.name === `${Emoji_3}`) {
+			TicketChannel.overwritePermissions(staff, { SEND_MESSAGES: true, READ_MESSAGES: true })
             TicketChannel.overwritePermissions(department3, { SEND_MESSAGES: true, READ_MESSAGES: true })
 
             msg.channel.send("You have contacted out " + department3 + "\nPlease wait patiently for somone to reach out to you.")
