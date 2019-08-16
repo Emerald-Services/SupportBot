@@ -1,35 +1,51 @@
 {
-    "SupportBot": "v4.0.1",
-    
+    "SupportBot": "v4.2.0",
+
     "token": "BOT_TOKEN_HERE",
-    "prefix": "!d",
+    "prefix": "dev-",
     "botname": "SupportBot",
     "colour": "#13bd2a",
     "footer": "Support Bot, By Emerald Services",
-    
     "BotStatus": "Support Bot",
     
     "staff": "Staff",
-    "support": "Support",
+
     "locked_role": "@everyone",
     "everyone": "@everyone",
     "Auto_Role": "Member",
-    
-    "LINKS": {
-        "Discord": "https://discord.gg/",
-        "Twitter": "https://twitter.com/",
-        "Website": "https://example.com/",
-        "AddMore": "AddMoreIfYouWant"
-    },
-    
-    "LINKS_TITLE": "SupportBot Links",
+
+    "Department_Role_1": "Support",
+    "Department_Role_2": "Security",
+    "Department_Role_3": "Sales",
 
     "category": "Tickets",
     "Ticket_Message": "Your support ticket has been opened successfully\nPlease allow us some time to reach out to you.",
     "Ticket_Logs": "ticket-logs",
-    "bot.settings.Default_Ticket_Reason": "No Subject",
+    "Default_Ticket_Reason": "No Subject",
     "Ticket_React_Message": ":mailbox: React to create your support ticket.",
     
+    "Ticket_Department_1": "Support",
+    "Ticket_Department_2": "Security",
+    "Ticket_Department_3": "Sales",
+
+    "Ticket_Department_Emoji_1": "🎧",
+    "Ticket_Department_Emoji_2": "🔐",
+    "Ticket_Department_Emoji_3": "💵",
+
+    "General_Category": "General",
+    "InformationCategory": "Information",
+    "StaffCategory": "Staff",
+
+    "Access_Channel": "welcome",
+    "GeneralChannel": "general",
+    "BotSpam_Channel": "bot-spam",
+    "Tickets_Channel": "open-a-ticket",
+    "StaffChat": "staff-chat",
+    "StaffCmds": "staff-commands",
+    "StaffVoice": "Staff Room",
+    "TicketsVoice1": "Support Lounge",
+    "TicketsVoice2": "Support Lounge",
+
     "Commands_Log_Title": "SupportBot Logs",
     "Command_Log_Channel": "command-logs",
 
@@ -56,6 +72,14 @@
     "Report_Channel": "reports",
     "Report_Title": "SupportBot Report",
     
+    "LINKS_TITLE": "SupportBot Links",
+
+    "LINKS": {
+        "Discord": "https://discord.gg/",
+        "Twitter": "https://twitter.com/",
+        "Website": "https://example.com/",
+        "AddMore": "AddMoreIfYouWant"
+    },
 
     "Announcement_Command": "announce",
     "Say_Command": "say",
@@ -72,5 +96,6 @@
     "Lockchat_Command": "lock",
     "UnLockchat_Command": "unlock",
     "Poll_Command": "poll",
-    "Report_Command": "report"
+    "Report_Command": "report",
+    "Setup_Command": "setup"
 }

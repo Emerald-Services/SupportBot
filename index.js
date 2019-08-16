@@ -7,7 +7,7 @@
 
 // Resource: SupportBot
 // Developed by Emerald Services
-// Version: 4.0.1
+// Version: 4.2.0
 
 const Discord = require("discord.js");
 const fs = require("fs");
@@ -49,7 +49,7 @@ fs.readdir("./sb-addons/", (err, files) => {
 bot.on("ready", async () => {
   bot.user.setActivity(bot.settings.BotStatus, {type:"PLAYING"});
     console.log(`\u001b[31m`, `------------[ SupportBot ]------------`)
-    console.log(`\u001b[32m`, `Thank you for using SupportBot\n If you have any issues\n contact our team and we will\n give you furthur instructions`)
+    console.log(`\u001b[32m`, `Thank you for using SupportBot\n If you have any issues\n contact our team and we will\n give you furthur instructions\nContact us on discord if you require any support discord.gg/SPKDBX9`)
     console.log(`\u001b[31m`, `------------[ SupportBot ]------------`)
 
     console.log(`\u001b[31m`, `\n\n------------[ SupportBot Stats ]------------`)

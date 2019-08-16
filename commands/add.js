@@ -11,15 +11,15 @@ module.exports.run = async (bot, message, args) => {
 
 console.log(`\x1b[36m`, `${message.author} has executed ${bot.settings.prefix}${bot.settings.Add_Command}`)
 
-let staffGroup = message.guild.roles.find(staffRole => staffRole.name === bot.settings.support)
+let staffGroup = message.guild.roles.find(staffRole => staffRole.name === bot.settings.staff)
 
 const rolemissing = new Discord.RichEmbed()
-    .setDescription(`:x: Looks like this server doesn't have the role **${bot.settings.support}**`)
+    .setDescription(`:x: Looks like this server doesn't have the role **${bot.settings.staff}**`)
     .setColor(bot.settings.colour) 
 if (!staffGroup) return message.reply({embed: rolemissing});
 
 const donothaverole = new Discord.RichEmbed()
-    .setDescription(`:x: Sorry! You cannot use this command with the role **${bot.settings.support}**`)
+    .setDescription(`:x: Sorry! You cannot use this command with the role **${bot.settings.staff}**`)
     .setColor(bot.settings.colour) 
 if (!message.member.roles.has(staffGroup.id)) return message.reply({embed: donothaverole});
 
