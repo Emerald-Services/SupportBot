@@ -114,7 +114,7 @@ Once you have setup your discord application such as invited the bot and added y
 # Contributors List
 <p>
   <a href="https://github.com/iJosGCS">
-    <img src="https://cdn.discordapp.com/avatars/199237487648833556/cdd7d976b75698b19e3c6b64e1dcdceb.png?size=32" alt="iJosGCS Profile">
+    <img src="https://cdn.discordapp.com/avatars/199237487648833556/5fc2013657c6f3f1f543122311e1ed7d.png?size=32" alt="iJosGCS Profile">
     <strong>@iJosGCS</strong>
   </a>
 </p>
