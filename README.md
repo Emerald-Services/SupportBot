@@ -1,4 +1,4 @@
-<h1 align="center">SupportBot v4.0.1</h1>
+<h1 align="center">SupportBot v4.2.0</h1>
 <h4 align="center">A Self Hosted discord application</h4>
 
 <p align="center">
