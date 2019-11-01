@@ -113,15 +113,9 @@ Once you have setup your discord application such as invited the bot and added y
 
 # Contributors List
 <p>
-  <a href="https://github.com/iJosGCS">
-    <img src="https://cdn.discordapp.com/avatars/199237487648833556/5fc2013657c6f3f1f543122311e1ed7d.png?size=32" alt="iJosGCS Profile">
-    <strong>@iJosGCS</strong>
-  </a>
-</p>
-<p>
   <a href="https://github.com/RedstoneGamez">
     <img src="https://cdn.discordapp.com/avatars/282610987801247744/9567e0674a5a6d371bb5d6efb956d57b.png?size=32" alt="RedstoneGamez Profile">
-    <strong>@RedstoneGamez</strong>
+    <strong>RedstoneGamez</strong>
   </a>
 </p>
 
