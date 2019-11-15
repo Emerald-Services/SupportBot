@@ -18,6 +18,7 @@ const close1 = new Discord.RichEmbed()
     .setFooter("Your request will be avoided in 20 seconds")
     .setColor(bot.settings.colour)
 
+
 message.channel.send({embed: close1}).then(m => {
     message.channel.awaitMessages(response => response.content === `confirm`, {
         max: 1,
@@ -25,49 +26,39 @@ message.channel.send({embed: close1}).then(m => {
         errors: ['time'],
 
     }).then((collected) => {
-        const uID = message.author // Grabs
-        const reason = args.join(" ") || "No Reason Provided."; //
-        const name = message.channel.name; // channel name
-        const log = message.guild.channels.find(channel => channel.name === bot.settings.Transcript_Logs);
+        const log = message.guild.channels.find(channel => channel.name === bot.settings.Transcript_Logs)
+        const uID = message.author
+        const reason = args.join(" ") || "No Reason Provided.";
+        const name = message.channel.name;
         const c = message.channel;
-        
-        const closingEmbed = new Discord.RichEmbed()
-            .setColor(bot.settings.colour)
-            .setDescription(`**${uID}** ${Ticket_Closing}`)
-      message.channel.send(closingEmbed).then(() => {
-          
-        const embed = new Discord.RichEmbed()
-            .setColor(bot.settings.colour)
-            .addField("Ticket Author", uID, true)
-            .addField("Closed By", message.author.tag, true)
-            .addField("Reason", reason, true)
-                             
-        const transcriptembed = new Discord.RichEmbed()
+      message.channel.send(`Your ticket is currently closing`)
+      
+      .then(() => {
+            
+        const embed1 = new Discord.RichEmbed()
             .setTitle(bot.settings.Transcript_Title)
             .setColor(bot.settings.colour)
             .setFooter(bot.settings.footer)
-            .addField("Ticket Author", uID, true)
-            .addField("Closed By", message.author.tag, true)
-            .addField("Reason", reason, true)
+            .addField("Ticket Author", uID)
+            .addField("Closed By", message.author.tag)
+            .addField("Reason", reason)
         message.channel.fetchMessages({ limit: 100 })
-                         
+        
         .then(msgs => {
             message.channel.fetchMessages({ limit: 100, before: msgs.last().id })
-            
+        
         .then(msg => {
             const merged = msgs.concat(msg);
             const output = merged.reduce((out, msg) => {
             out += `[${message.createdAt}] ${message.author.tag}: ${message.cleanContent ? message.cleanContent.replace(/\n/g, '\r\n') : ''}\r\n`;
             return out;
-            }, '');
+        }, '');
 
             log.send({ files: [{ attachment: Buffer.from(output, 'utf8'), name: `${name}.txt` }] }).then(c.delete()).catch(console.error); // sends the file to logs
-            log.send(transcriptembed).catch(console.error);
-            
-            })
-        });
-    })
-
+            return log.send(embed1).catch(console.error);
+        })
+    });
+})
 
     }).catch(() => {
         m.edit('Close ticket request, timedout').then(m2 => {
@@ -95,6 +86,7 @@ console.log(`\x1b[36m`, `${message.author} has executed ${bot.settings.prefix}${
 
 
 }
+
 
 exports.help = {
     name: bot.settings.Close_Command,
