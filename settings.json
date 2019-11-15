@@ -24,6 +24,8 @@
     "Default_Ticket_Reason": "No Subject",
     "Ticket_React_Message": ":mailbox: React to create your support ticket.",
     
+    "Transcript_Logs": "ticket-data",
+    
     "Ticket_Department_1": "Support",
     "Ticket_Department_2": "Security",
     "Ticket_Department_3": "Sales",
