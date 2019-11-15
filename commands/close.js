@@ -1,6 +1,7 @@
+
+
 // SupportBot
 // Command: Close Ticket
-
 const Discord = require("discord.js");
 const bot = new Discord.Client()
 
@@ -11,12 +12,13 @@ exports.run = (bot, message, args) => {
 
     const outsideticket = new Discord.RichEmbed()
     .setDescription(`:x: Cannot use this command becase you are outside a ticket channel.`)
-    .setColor(bot.settings.colour) 
+    .setColor(bot.settings.colour)
 if (!message.channel.name.startsWith(`ticket-`)) return message.channel.send({embed: outsideticket});
 const close1 = new Discord.RichEmbed()
     .setDescription(`Looks like you have come to the end of your support ticket\nPlease confirm that you want to close your ticket by saying ||**confirm**||`)
     .setFooter("Your request will be avoided in 20 seconds")
     .setColor(bot.settings.colour)
+
 message.channel.send({embed: close1}).then(m => {
     message.channel.awaitMessages(response => response.content === `confirm`, {
         max: 1,
@@ -24,7 +26,37 @@ message.channel.send({embed: close1}).then(m => {
         errors: ['time'],
 
     }).then((collected) => {
-        message.channel.delete();
+        const uID = message.author // Grabs
+        const reason = args.join(" ") || "No reason has been provided"; //
+        const name = message.channel.name; // channel name
+        const log = message.guild.channels.find(channel => channel.name === bot.settings.Transcript_Logs);
+        const c = message.channel;
+      message.channel.send(`Ticket is being closed!`)
+                    .then(() => {
+                         const embed = new Discord.RichEmbed() // embed
+                             .setColor(bot.settings.colour)
+                             .setDescription(`Closed by: ${message.author.tag}\nFor the reason: ${reason}`);
+                         const embed1 = new Discord.RichEmbed() // embed
+                             .setColor(bot.settings.colour)
+                             .setDescription(`Ticket Owner: ${uID}\nClosed by: ${message.author.tag}\nFor the reason: ${reason}`);
+                         message.channel.fetchMessages({ limit: 100 })
+                             .then(msgs => {
+                                 message.channel.fetchMessages({ limit: 100, before: msgs.last().id })
+                                     .then(msg => {
+                                         const merged = msgs.concat(msg);
+                                         const output = merged.reduce((out, msg) => {
+                                             out += `[${message.createdAt}] ${message.author.tag}: ${message.cleanContent ? message.cleanContent.replace(/\n/g, '\r\n') : ''}\r\n`;
+                                             return out;
+                                         }, '');
+
+                                         uID.send({ files: [{ attachment: Buffer.from(output, 'utf8'), name: `${name}.txt` }] }).catch(console.error); // sends the file to ticket author
+                                         log.send({ files: [{ attachment: Buffer.from(output, 'utf8'), name: `${name}.txt` }] }).then(c.delete()).catch(console.error); // sends the file to logs
+                                         uID.send(embed).catch(console.error);
+                                         return log.send(embed1).catch(console.error);
+                                     })
+                             });
+                     })
+
 
     }).catch(() => {
         m.edit('Close ticket request, timedout').then(m2 => {
@@ -47,7 +79,7 @@ console.log(`\x1b[36m`, `${message.author} has executed ${bot.settings.prefix}${
 
     let CommandLog = message.guild.channels.find(LogsChannel => LogsChannel.name === `${bot.settings.Command_Log_Channel}`);
     if(!CommandLog) return message.channel.send(`:x: Error! Could not find the logs channel. **${bot.settings.Command_Log_Channel}**\nThis can be changed via ``settings.json```);
-    
+
     CommandLog.send(CMDLog);
 
 
@@ -56,3 +88,4 @@ console.log(`\x1b[36m`, `${message.author} has executed ${bot.settings.prefix}${
 exports.help = {
     name: bot.settings.Close_Command,
 }
+
