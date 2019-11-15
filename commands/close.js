@@ -25,47 +25,48 @@ message.channel.send({embed: close1}).then(m => {
         errors: ['time'],
 
     }).then((collected) => {
-        const Ticket_Owner = message.author // Grabs
+        const uID = message.author // Grabs
         const reason = args.join(" ") || "No Reason Provided."; //
         const name = message.channel.name; // channel name
         const log = message.guild.channels.find(channel => channel.name === bot.settings.Transcript_Logs);
         const c = message.channel;
         
-        const ClosingEmbed = new Discord.RichEmbed()
+        const closingEmbed = new Discord.RichEmbed()
             .setColor(bot.settings.colour)
-            .setDescription(`**${Ticket_Owner}** ${Ticket_Closing}`)
-      message.channel.send(ClosingEmbed)
-      
-                    .then(() => {
-                         const embed = new Discord.RichEmbed()
-                             .setColor(bot.settings.colour)
-                             .addField("Ticket Author", Ticket_Owner, true)
-                             .addField("Closed By", message.author.tag, true)
-                             .addField("Reason", reason, true)
+            .setDescription(`**${uID}** ${Ticket_Closing}`)
+      message.channel.send(closingEmbed).then(() => {
+          
+        const embed = new Discord.RichEmbed()
+            .setColor(bot.settings.colour)
+            .addField("Ticket Author", uID, true)
+            .addField("Closed By", message.author.tag, true)
+            .addField("Reason", reason, true)
                              
-                         const TranscriptMESSAGE = new Discord.RichEmbed()
-                             .setTitle(bot.settings.Transcript_Title)
-                             .setColor(bot.settings.colour)
-                             .setFooter(bot.settings.footer)
-                             .addField("Ticket Author", Ticket_Owner, true)
-                             .addField("Closed By", message.author.tag, true)
-                             .addField("Reason", reason, true)
-                         message.channel.fetchMessages({ limit: 100 })
+        const transcriptembed = new Discord.RichEmbed()
+            .setTitle(bot.settings.Transcript_Title)
+            .setColor(bot.settings.colour)
+            .setFooter(bot.settings.footer)
+            .addField("Ticket Author", uID, true)
+            .addField("Closed By", message.author.tag, true)
+            .addField("Reason", reason, true)
+        message.channel.fetchMessages({ limit: 100 })
                          
-                             .then(msgs => {
-                                 message.channel.fetchMessages({ limit: 100, before: msgs.last().id })
-                                     .then(msg => {
-                                         const merged = msgs.concat(msg);
-                                         const output = merged.reduce((out, msg) => {
-                                             out += `[${message.createdAt}] ${message.author.tag}: ${message.cleanContent ? message.cleanContent.replace(/\n/g, '\r\n') : ''}\r\n`;
-                                             return out;
-                                         }, '');
+        .then(msgs => {
+            message.channel.fetchMessages({ limit: 100, before: msgs.last().id })
+            
+        .then(msg => {
+            const merged = msgs.concat(msg);
+            const output = merged.reduce((out, msg) => {
+            out += `[${message.createdAt}] ${message.author.tag}: ${message.cleanContent ? message.cleanContent.replace(/\n/g, '\r\n') : ''}\r\n`;
+            return out;
+            }, '');
 
-                                         log.send({ files: [{ attachment: Buffer.from(output, 'utf8'), name: `${name}.txt` }] }).then(c.delete()).catch(console.error); // sends the file to logs
-                                         log.send(TranscriptMESSAGE).catch(console.error);
-                                     })
-                             });
-                     })
+            log.send({ files: [{ attachment: Buffer.from(output, 'utf8'), name: `${name}.txt` }] }).then(c.delete()).catch(console.error); // sends the file to logs
+            log.send(transcriptembed).catch(console.error);
+            
+            })
+        });
+    })
 
 
     }).catch(() => {
