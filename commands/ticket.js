@@ -12,33 +12,6 @@ exports.run = (bot, message, args) => {
     const ID = Math.floor(Math.random() * 10) + 2000;
     const subject = args.join(" ") || `${bot.settings.Default_Ticket_Reason}`;
 
-    // Ticket Reactions
-    const reactembed = new Discord.RichEmbed()
-        .setColor(bot.settings.colour)
-        .setDescription(`${bot.settings.Ticket_React_Message}`);
-    message.channel.send(reactembed)
-		.then(function(msg) {
-
-		msg.react('✅').then(() => msg.react('❎'));
-
-		const filter = (reaction, user) => {
-			return ['✅', '❎'].includes(reaction.emoji.name) && user.id !== msg.author.id;
-        };
-
-        msg.awaitReactions(filter, { max: 1, time: 60000, errors: ['time'] })
-            .then(collected => {
-                const reaction = collected.first();
-
-		    if (reaction.emoji.name === '❎') {
-
-                const successEmbed = new Discord.RichEmbed()
-                    .setDescription(`:tickets: <@${message.author.id}> You have canceled your support request.`)
-                    .setColor(bot.settings.colour);
-                message.channel.send(successEmbed);
-         }
-
-            if (reaction.emoji.name === '✅') {
-
     const alreadyopen = new Discord.RichEmbed()
         .setDescription(`:x: Cannot create a ticket because **ticket-${message.author.username}** already exists.`)
         .setColor(bot.settings.colour)
@@ -74,10 +47,11 @@ exports.run = (bot, message, args) => {
         }
         
     const ticketopened = new Discord.RichEmbed()
-        .setDescription(`:white_check_mark: <@${message.author.id}> You ticket has been created <#${TicketChannel.id}>`)
-        .setColor(bot.settings.colour)
+        .setTitle(":white_check_mark: Support Ticket Created")
+        .setDescription(`<@${message.author.id}> your support ticket created successfully`)
+        .addField("Your Ticket:", `<#${TicketChannel.id}>`)
+        .setColor(bot.settings.Ticket_Colour)
     message.channel.send({embed: ticketopened});
-
     // Ticket Message - ( Able to edit this message via the settings.json file )
     const ticketMessage = `Hi! <@${message.author.id}>\n${bot.settings.Ticket_Message}`;
 
@@ -92,7 +66,7 @@ exports.run = (bot, message, args) => {
     const TicketMessage = new Discord.RichEmbed()
         .setDescription(ticketMessage, true)
         .addField("Available Departments", `${Emoji_1} ${Department_1}\n${Emoji_2} ${Department_2}\n${Emoji_3} ${Department_3}`)
-        .setColor(bot.settings.colour)
+        .setColor(bot.settings.Ticket_Colour)
         .setFooter(bot.settings.footer)
 
         if (subject != 'No Subject.') {
@@ -172,14 +146,7 @@ exports.run = (bot, message, args) => {
     if(!CommandLog) return message.channel.send(`:x: Error! Could not find the logs channel. **${bot.settings.Command_Log_Channel}**\nThis can be changed via ``settings.json```);
     
     CommandLog.send(CMDLog);
-
-  }
-
-        })
-
-    })
-
-  };
+    }
 
 exports.help = {
     name: bot.settings.Ticket_Command,
