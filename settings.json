@@ -1,5 +1,5 @@
 {
-    "SupportBot": "v4.2.0",
+    "SupportBot": "v5.0",
 
     "token": "BOT_TOKEN_HERE",
     "prefix": "dev-",
@@ -22,8 +22,8 @@
     "Ticket_Message": "Your support ticket has been opened successfully\nPlease allow us some time to reach out to you.",
     "Ticket_Logs": "ticket-logs",
     "Default_Ticket_Reason": "No Subject",
-    "Ticket_React_Message": ":mailbox: React to create your support ticket.",
     
+    "Ticket_Colour": "#000e42",
     "Transcript_Logs": "ticket-data",
     "Transcript_Title": "Support Transcript",
     "Ticket_Closing": "Your ticket is currently closing",
