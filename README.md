@@ -15,7 +15,7 @@ SupportBot is a free & open source discord bot for your server that has the capa
 | 2.x     | 🚫                 | Discontinued       |
 | 3.x     | ✔️                 | Supported          |
 | 4.x     | ✔️                 | Supported          |
-| 5.0     | ✔️                     | Not released yet   |
+| 5.x     | ✔️                 | Supported          |
 
 # Getting Started
 Firstly you will need to download the resource, Once you have downloaded the resource open a new tab in your browser and go to https://discordapp.com/developers/applications/. Create a new application and then open your app and select bot and then create your bot. Copy the bot token and paste it where it says ``"token": "BOT TOKEN HERE",`` in the ``settings.json`` file.
