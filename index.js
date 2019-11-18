@@ -7,7 +7,7 @@
 
 // Resource: SupportBot
 // Developed by Emerald Services
-// Version: 4.2.0
+// Version: 5.0.0
 
 const Discord = require("discord.js");
 const fs = require("fs");
