@@ -48,13 +48,12 @@ fs.readdir("./sb-addons/", (err, files) => {
 
 bot.on("ready", async () => {
   bot.user.setActivity(bot.settings.BotStatus, {type:"PLAYING"});
-    console.log(`\u001b[31m`, `------------[ SupportBot ]------------`)
-    console.log(`\u001b[32m`, `Thank you for using SupportBot\n If you have any issues\n contact our team and we will\n give you furthur instructions\nContact us on discord if you require any support discord.gg/SPKDBX9`)
-    console.log(`\u001b[31m`, `------------[ SupportBot ]------------`)
-
-    console.log(`\u001b[31m`, `\n\n------------[ SupportBot Stats ]------------`)
-    console.log(`\u001b[32m`, `Bot Username: ${bot.user.username}\nInvite Link: https://discordapp.com/api/oauth2/authorize?client_id=${bot.user.username}&permissions=8&scope=bot`)
-    console.log(`\u001b[31m`, `------------[ SupportBot Stats ]------------`)
+    console.log(`\u001b[32m`, `―――――――――――――――――― SupportBot ――――――――――――――――――`)
+    console.log(`\u001b[37m`, `Emerald Services has successfully connected to discord`)
+    console.log(`\u001b[37m`, `Invite your bot with https://discordapp.com/api/oauth2/authorize?client_id=516372960110444574&permissions=8&scope=bot`)
+    console.log(`\u001b[37m`, `© ️SupportBot created by Emerald Services`)
+    console.log(`\u001b[32m`, `―――――――――――――――――― SupportBot ――――――――――――――――――`)
+    console.log(`\u001b[43;1m \u001b[37m \u001b[1m`, `If you require any assistance you can contact us at discord, https://discord.gg/tNt95Ba`)
 
 });
 
