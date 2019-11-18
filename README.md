@@ -1,4 +1,4 @@
-<h1 align="center">SupportBot 5</h1>
+<h1 align="center">SupportBot v5</h1>
 <h4 align="center">#1 Discord Support System</h4>
 
 <p align="center">
