@@ -2,7 +2,7 @@
 <h4 align="center">A Self Hosted discord application</h4>
 
 <p align="center">
-    <a href="https://discord.gg/hmWgxdF">
+    <a href="https://discord.gg/tNt95Ba">
     <img src="https://discordapp.com/api/guilds/516345301985132552/widget.png?style=shield" alt="Discord Server">
   </a>
   <img src="https://img.shields.io/badge/Made%20with-NodeJS-blue.svg" alt="Made with NodeJS">
@@ -18,7 +18,7 @@ SupportBot is a free & open source discord bot for your server that has the capa
 | 2.x     | 🚫                 | Discontinued       |
 | 3.x     | ✔️                 | Supported          |
 | 4.x     | ✔️                 | Supported          |
-| Premium | ❌                 | Not released yet   |
+| 5.0     | ✔️                     | Not released yet   |
 
 # Getting Started
 Firstly you will need to download the resource, Once you have downloaded the resource open a new tab in your browser and go to https://discordapp.com/developers/applications/. Create a new application and then open your app and select bot and then create your bot. Copy the bot token and paste it where it says ``"token": "BOT TOKEN HERE",`` in the ``settings.json`` file.
