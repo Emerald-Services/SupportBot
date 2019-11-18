@@ -2,7 +2,7 @@
     "SupportBot": "v5.0",
 
     "token": "BOT_TOKEN_HERE",
-    "prefix": "dev-",
+    "prefix": "-",
     "botname": "SupportBot",
     "colour": "#13bd2a",
     "footer": "Support Bot, By Emerald Services",
