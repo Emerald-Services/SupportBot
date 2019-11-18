@@ -1,4 +1,4 @@
-<h1 align="center">SupportBot v4.2.0</h1>
+<h1 align="center">SupportBot 5</h1>
 <h4 align="center">A Self Hosted discord application</h4>
 
 <p align="center">
@@ -123,7 +123,7 @@ Once you have setup your discord application such as invited the bot and added y
 
 # Community
 <p align="center">
-    <a href="https://discord.gg/hmWgxdF">
+    <a href="https://discord.gg/tNt95Ba">
     <img src="https://discordapp.com/api/guilds/516345301985132552/widget.png?style=banner1" alt="Discord Server">
   </a>
 </p>
