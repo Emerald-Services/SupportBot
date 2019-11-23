@@ -50,7 +50,7 @@ bot.on("ready", async () => {
   bot.user.setActivity(bot.settings.BotStatus, {type:"PLAYING"});
     console.log(`\u001b[32m`, `―――――――――――――――――― SupportBot ――――――――――――――――――`)
     console.log(`\u001b[37m`, `Emerald Services has successfully connected to discord`)
-    console.log(`\u001b[37m`, `Invite your bot with https://discordapp.com/api/oauth2/authorize?client_id=516372960110444574&permissions=8&scope=bot`)
+    console.log(`\u001b[37m`, `Invite your bot with https://discordapp.com/api/oauth2/authorize?client_id=${bot.user.id}&permissions=8&scope=bot`)
     console.log(`\u001b[37m`, `© ️SupportBot created by Emerald Services`)
     console.log(`\u001b[32m`, `―――――――――――――――――― SupportBot ――――――――――――――――――`)
     console.log(`\u001b[43;1m \u001b[37m \u001b[1m`, `If you require any assistance you can contact us at discord, https://discord.gg/tNt95Ba`)
