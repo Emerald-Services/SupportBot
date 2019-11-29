@@ -26,7 +26,7 @@ exports.run = (bot, message, args) => {
 		.setColor(bot.settings.colour) 
 	if (!message.channel.name.startsWith(`ticket-`)) return message.channel.send({embed: outsideticket});
 	const renameto = args.join(" ")
-	message.channel.setName(`ticket-${renameto}-${message.author.username}`)
+	message.channel.setName(`ticket-${renameto}`)
 	
     // Renamed Ticket Logistic   
 	const logEmbed = new Discord.RichEmbed()
