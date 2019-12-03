@@ -13,7 +13,7 @@ exports.run = ( bot, message, args ) => {
     message.delete();
 
 
-    if ( !message.channel.name.startsWith( `ticket-` ) ) {
+    if ( !message.channel.name.startsWith( `${bot.settings.Ticket_Channel_Name}-` ) ) {
         const embed = new Discord.RichEmbed()
             .setDescription( `:x: Cannot use this command becase you are outside a ticket channel.` )
             .setColor( bot.settings.colour );
