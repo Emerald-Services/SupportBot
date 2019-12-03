@@ -13,9 +13,9 @@ exports.run = (bot, message, args) => {
     const subject = args.join(" ") || `${bot.settings.Default_Ticket_Reason}`;
 
     const alreadyopen = new Discord.RichEmbed()
-        .setDescription(`:x: Cannot create a ticket because **ticket-${message.author.username}** already exists.`)
+        .setDescription(`:x: Cannot create a ticket because **${bot.settings.Ticket_Channel_Name}-${message.author.username}** already exists.`)
         .setColor(bot.settings.colour)
-    if (message.guild.channels.find(TicketChannel => TicketChannel.name === 'ticket-' + message.author.username)) return message.channel.send(alreadyopen);
+    if (message.guild.channels.find(TicketChannel => TicketChannel.name === `${bot.settings.Ticket_Channel_Name}` + message.author.username)) return message.channel.send(alreadyopen);
     message.guild.createChannel(`ticket-${message.author.username}`, {
         type: 'text',
     }).then(TicketChannel => {
