@@ -24,7 +24,7 @@ if (!message.member.roles.has(staffGroup.id)) return message.reply({embed: donot
 const outsideticket = new Discord.RichEmbed()
     .setDescription(`:x: Cannot use this command becase you are outside a ticket channel.`)
     .setColor(bot.settings.colour)    
-if (!message.channel.name.startsWith(`ticket-`)) return message.channel.send({embed: outsideticket});
+if (!message.channel.name.startsWith(`${bot.settings.Ticket_Channel_Name}-`)) return message.channel.send({embed: outsideticket});
         const log = message.guild.channels.find(channel => channel.name === bot.settings.Transcript_Logs)
         const uID = message.author
         const reason = args.join(" ") || "No Reason Provided.";
