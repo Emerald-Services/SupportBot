@@ -1,5 +1,5 @@
 {
-    "SupportBot": "v5.0",
+    "SupportBot": "v5.1",
 
     "token": "BOT_TOKEN_HERE",
     "prefix": "-",
@@ -19,6 +19,7 @@
     "Department_Role_3": "Sales",
 
     "category": "Tickets",
+    "Ticket_Channel_Name": "ticket"
     "Ticket_Message": "Your support ticket has been opened successfully\nPlease allow us some time to reach out to you.",
     "Ticket_Logs": "ticket-logs",
     "Default_Ticket_Reason": "No Subject",
