@@ -70,7 +70,7 @@ exports.run = (bot, message, args) => {
         .setFooter(bot.settings.footer)
 
         if (subject != 'No Subject.') {
-            TicketChannel.setTopic(subject);
+            TicketMessage.addField("Reason", subject);
         }
         
 
