@@ -37,20 +37,6 @@
     "Ticket_Department_Emoji_2": "🔐",
     "Ticket_Department_Emoji_3": "💵",
 
-    "General_Category": "General",
-    "InformationCategory": "Information",
-    "StaffCategory": "Staff",
-
-    "Access_Channel": "welcome",
-    "GeneralChannel": "general",
-    "BotSpam_Channel": "bot-spam",
-    "Tickets_Channel": "open-a-ticket",
-    "StaffChat": "staff-chat",
-    "StaffCmds": "staff-commands",
-    "StaffVoice": "Staff Room",
-    "TicketsVoice1": "Support Lounge",
-    "TicketsVoice2": "Support Lounge",
-
     "Commands_Log_Title": "SupportBot Logs",
     "Command_Log_Channel": "command-logs",
 
