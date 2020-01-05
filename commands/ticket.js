@@ -16,9 +16,8 @@ exports.run = (bot, message, args) => {
         .setDescription(`:x: Cannot create a ticket because **${bot.settings.Ticket_Channel_Name}-${message.author.username}** already exists.`)
         .setColor(bot.settings.colour)
     
-    if (message.guild.channels.exists('name', `${bot.settings.Ticket_Channel_Name}-` + message.author.username)) return message.channel.send(alreadyopen);
-    
     if (message.guild.channels.find(TicketChannel => TicketChannel.name === `${bot.settings.Ticket_Channel_Name}-` + message.author.username)) return message.channel.send(alreadyopen);
+    
     message.guild.createChannel(`${bot.settings.Ticket_Channel_Name}-${message.author.username}`, {
         type: 'text',
     }).then(TicketChannel => {
@@ -93,21 +92,21 @@ exports.run = (bot, message, args) => {
 			TicketChannel.overwritePermissions(staff, { SEND_MESSAGES: true, READ_MESSAGES: true })
             TicketChannel.overwritePermissions(department, { SEND_MESSAGES: true, READ_MESSAGES: true })
 
-            msg.channel.send("You have contacted out " + department + "\nPlease wait patiently for somone to reach out to you.")
+            msg.channel.send("You have contacted out " + department + "\nPlease wait patiently for someone to reach out to you.")
         }
 
         if (reaction.emoji.name === `${Emoji_2}`) {
 			TicketChannel.overwritePermissions(staff, { SEND_MESSAGES: true, READ_MESSAGES: true })
             TicketChannel.overwritePermissions(department2, { SEND_MESSAGES: true, READ_MESSAGES: true })
 
-            msg.channel.send("You have contacted out " + department2 + "\nPlease wait patiently for somone to reach out to you.")
+            msg.channel.send("You have contacted out " + department2 + "\nPlease wait patiently for someone to reach out to you.")
         }
 
         if (reaction.emoji.name === `${Emoji_3}`) {
 			TicketChannel.overwritePermissions(staff, { SEND_MESSAGES: true, READ_MESSAGES: true })
             TicketChannel.overwritePermissions(department3, { SEND_MESSAGES: true, READ_MESSAGES: true })
 
-            msg.channel.send("You have contacted out " + department3 + "\nPlease wait patiently for somone to reach out to you.")
+            msg.channel.send("You have contacted out " + department3 + "\nPlease wait patiently for someone to reach out to you.")
         }
 
         });
