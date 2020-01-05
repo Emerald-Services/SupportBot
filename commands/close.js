@@ -72,8 +72,8 @@ exports.run = ( bot, message, args ) => {
                                 }
                             } );
 
-                            message.author.send( `A transcript has been generated for the ticket you closed.` );
-                            message.author.send( new Discord.Attachment( Buffer.from( txt ), `${name}.txt` ) );
+                           // message.author.send( `A transcript has been generated for the ticket you closed.` );
+                           // message.author.send( new Discord.Attachment( Buffer.from( txt ), `${name}.txt` ) );
 
                             logChannel.send( logEmbed );
                             logChannel.send( new Discord.Attachment( Buffer.from( txt ), `${name}.txt` ) );
