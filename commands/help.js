@@ -15,7 +15,7 @@ exports.run = (bot, message, args) => {
 	userCommands += `**${bot.settings.prefix}${bot.settings.Ticket_Command} <reason>**: Create a support ticket\n`;
         userCommands += `**${bot.settings.prefix}${bot.settings.Close_Command}**: Close your support ticket\n`;
         userCommands += `**${bot.settings.prefix}${bot.settings.Suggest_Command} <suggestion>**: Create a server suggestion\n`;
-        userCommands += `**${bot.settings.prefix}${bot.settings.Report_Command} <user> <reason>**: Create a server suggestion\n`;
+        userCommands += `**${bot.settings.prefix}${bot.settings.Report_Command} <user> <reason>**: Report a valid user\n`;
 	
     let supportCommands = "";
 	supportCommands += `**${bot.settings.prefix}${bot.settings.Add_Command} <user>**: Adds a user to a ticket\n`;
