@@ -3,8 +3,10 @@
 
 const Discord = require("discord.js");
 const bot = new Discord.Client()
+const someaddon = new Discord.Client()
 
 bot.settings = require("../settings.json");
+someaddon.settings = require("./settings/someaddon.json");
 
 exports.run = async(bot, message, args) => {
     message.delete();
@@ -14,5 +16,5 @@ exports.run = async(bot, message, args) => {
 }
 
 exports.help = {
-    name: 'addon',
+    name: someaddon.settings.Addon_Example_Command,
 }
