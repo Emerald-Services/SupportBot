@@ -15,6 +15,9 @@ const bot = new Discord.Client();
 bot.commands = new Discord.Collection();
 bot.settings = require("./settings.json");
 
+const yaml = require('js-yaml');
+const supportbot.settings = yaml.load(fs.readFileSync('./supportbot-config.yml', 'utf8'));
+
 fs.readdir("./commands/", (err, files) => {
     if(err) console.log(err);
   
