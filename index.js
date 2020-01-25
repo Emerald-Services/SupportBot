@@ -4,10 +4,9 @@
 //  ___) | |_| | |_) | |_) | (_) | |  | |_| |_) | (_) | |_ 
 // |____/ \__,_| .__/| .__/ \___/|_|   \__|____/ \___/ \__|
 //             |_|   |_|                                   
-
-// Resource: SupportBot
-// Developed by Emerald Services
-// Version: 5.0.0
+//              © 2020 Created by Emerald Services
+//              Licnese: MIT
+//              SupportBot v5.1.0
 
 const Discord = require("discord.js");
 const fs = require("fs");
