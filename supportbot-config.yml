@@ -1,0 +1,7 @@
+#Bot Indentification
+Token: ""
+Prefix: "!"
+Bot_Name: "SupportBot"
+
+BotActivity: "SupportBot v5.1"
+ActivityType: "PLAYING"
