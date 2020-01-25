@@ -23,3 +23,16 @@ WelcomeMessage: "Welcome to the server!"
 
 LeaveChannel: "welcome"
 LeaveMessage: "Thank you for visiting us!"
+
+# Ticket Settings
+category: "Tickets"
+Ticket_Colour: "#000e42"
+Ticket_Channel_Name: "ticket"
+Ticket_Logs: "ticket-logs"
+
+Transcript_Log: "ticket-data"
+Transcript_Title: "Support Transcript"
+
+Ticket_Closing: "Your ticket is currently closing"
+Ticket_Message: "Your support ticket has been opened successfully\nPlease allow us some time to reach out to you."
+Default_Ticket_Reason: "No Subject"
