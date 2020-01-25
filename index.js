@@ -16,17 +16,17 @@ bot.commands = new Discord.Collection();
 bot.settings = require("./settings.json");
 
 const yaml = require('js-yaml');
-const supportbot.settings = yaml.load(fs.readFileSync('./supportbot-config.yml', 'utf8'));
+const supportbot = yaml.load(fs.readFileSync('./supportbot-config.yml', 'utf8'));
 
 fs.readdir("./commands/", (err, files) => {
     if(err) console.log(err);
   
     let jsfile = files.filter(f => f.split(".").pop() === "js")
-    if(jsfile.length <= 0) return console.log(`${bot.settings.botname} No commands found. Try to Re-download the resource`);
+    if(jsfile.length <= 0) return console.log(`${supportbot.Bot_Name} No commands found. Try to Re-download the resource`);
   
     jsfile.forEach((f, i) =>{
       let props = require(`./commands/${f}`);
-      console.log(`[${bot.settings.botname}] > Command Loaded > ${f}`);
+      console.log(`[${supportbot.Bot_Name}] > Command Loaded > ${f}`);
       bot.commands.set(props.help.name, props);
     });
   
@@ -38,18 +38,18 @@ fs.readdir("./sb-addons/", (err, files) => {
     if(err) console.log(err);
   
     let jsfile = files.filter(f => f.split(".").pop() === "js")
-    if(jsfile.length <= 0) return console.log(`${bot.settings.botname} No addons detected nor default! Either download addons from https://itzemerald.tk/`);
+    if(jsfile.length <= 0) return console.log(`${supportbot.Bot_Name} No addons detected nor default! Either download addons from https://itzemerald.tk/`);
   
     jsfile.forEach((f, i) =>{
       let props = require(`./sb-addons/${f}`);
-      console.log(`[${bot.settings.botname}] > Addons Loaded > ${f}`);
+      console.log(`[${supportbot.Bot_Name}] > Addons Loaded > ${f}`);
       bot.addons.set(props.help.name, props);
     });
   
   });
 
 bot.on("ready", async () => {
-  bot.user.setActivity(bot.settings.BotStatus, {type:"PLAYING"});
+  bot.user.setActivity(supportbot.BotActivity, {type: supportbot.ActvityType});
     console.log(`\u001b[32m`, `―――――――――――――――――― SupportBot ――――――――――――――――――`)
     console.log(`\u001b[37m`, `Emerald Services has successfully connected to discord`)
     console.log(`\u001b[37m`, `Invite your bot with https://discordapp.com/api/oauth2/authorize?client_id=516372960110444574&permissions=8&scope=bot`)
@@ -62,10 +62,10 @@ bot.on("ready", async () => {
 bot.on("message", async message => {
   if(message.author.bot) return;
   if(message.channel.type === "dm") return;
-  if (message.content.indexOf(bot.settings.prefix) !== 0) return;
+  if (message.content.indexOf(supportbot.Prefix) !== 0) return;
 
   let messageArray = message.content.split(" ");
-  const args = message.content.slice(bot.settings.prefix.length).trim().split(/ +/g);
+  const args = message.content.slice(supportbot.Prefix.length).trim().split(/ +/g);
   const command = args.shift().toLowerCase();
 
   const cmd = bot.commands.get(command);
@@ -76,10 +76,10 @@ bot.on("message", async message => {
 bot.on("message", async message => {
 if(message.author.bot) return;
 if(message.channel.type === "dm") return;
-if (message.content.indexOf(bot.settings.prefix) !== 0) return;
+if (message.content.indexOf(supportbot.Prefix) !== 0) return;
 
 let messageArray = message.content.split(" ");
-const args = message.content.slice(bot.settings.prefix.length).trim().split(/ +/g);
+const args = message.content.slice(supportbot.Prefix.length).trim().split(/ +/g);
 const addon = args.shift().toLowerCase();
 
 const cmd = bot.addons.get(addon);
@@ -90,13 +90,13 @@ cmd.run(bot, message, args);
 // [SupportBot] Welcome Message && Auto Join Role
 
 bot.on("guildMemberAdd", (member) => {
-  let channel = member.guild.channels.find(channel => channel.name === `${bot.settings.Welcome_Channel}`)
-  let autorole = member.guild.roles.find(autorole => autorole.name === `${bot.settings.Auto_Role}`)
+  let channel = member.guild.channels.find(channel => channel.name === `${supportbot.WelcomeChannel}`)
+  let autorole = member.guild.roles.find(autorole => autorole.name === `${supportbot.AutoRole}`)
   
   const WelcomeMsg= new Discord.RichEmbed()
-  .setColor(bot.settings.colour)
-  .setThumbnail(member.user.avatarURL)
-  .setDescription(`:wave: ${member.user.username}\n${bot.settings.Welcome_Message}`)
+    .setColor(supportbot.EmbedColour)
+    .setThumbnail(member.user.avatarURL)
+    .setDescription(`:wave: ${member.user.username}\n${supportbot.WelcomeMessage}`)
 
   channel.send(WelcomeMsg);
   member.addRole(autorole).catch(console.error);
@@ -106,15 +106,15 @@ bot.on("guildMemberAdd", (member) => {
 // [SupportBot] Leave Message
 
 bot.on("guildMemberRemove", (member) => {
-  let channel = member.guild.channels.find(channel => channel.name === `${bot.settings.Leave_Channel}`)
+  let channel = member.guild.channels.find(channel => channel.name === `${supportbot.LeaveChannel}`)
 
   const LeaveMsg= new Discord.RichEmbed()
-  .setColor(bot.settings.colour)
-  .setThumbnail(member.user.avatarURL)
-  .setDescription(`:wave: ${member.user.username}\n${bot.settings.Leave_Message}`)
+    .setColor(supportbot.EmbedColour)
+    .setThumbnail(member.user.avatarURL)
+    .setDescription(`:wave: ${member.user.username}\n${supportbot.LeaveMessage}`)
 
   channel.send(LeaveMsg);
 
 });
 
-bot.login(bot.settings.token);
+bot.login(supportbot.Token);
