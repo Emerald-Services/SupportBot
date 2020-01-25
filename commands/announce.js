@@ -1,14 +1,17 @@
 // SupportBot
-// Command: Say
+// Created by © 2020 Emerald Services
+// Command: Announce (including @everyone)
 
 const Discord = require("discord.js");
-const bot = new Discord.Client()
+const bot = new Discord.Client();
 
 bot.settings = require("../settings.json");
 
-exports.run = async(bot, message, args) => {
+exports.run = (bot, message, args) => {
     message.delete();
 
+    console.log(`\u001b[31;1m`, `${message.author.tag}`, `\u001b[32;1m`, `has executed`, `\u001b[31;1m`, `${bot.settings.prefix}${bot.settings.Announcement_Command}`);
+    
     let staffGroup = message.guild.roles.find(staffRole => staffRole.name === `${bot.settings.staff}`)
 
     const rolemissing = new Discord.RichEmbed()
@@ -35,27 +38,11 @@ exports.run = async(bot, message, args) => {
         ac.send(embed);
     });
 
-    const SuggestionSuccessEmbed = new Discord.RichEmbed()
-        .setDescription(`:white_check_mark: You have successfully created an announcement. <#${ac.id}>`)
+    const AccSuccessEmbed = new Discord.RichEmbed()
+        .setTitle("Announcement Created")
+        .setDescription(`👍 Successfully sent your announcement to <#${ac.id}>`)
         .setColor(bot.settings.colour)
-    message.channel.send(SuggestionSuccessEmbed);
-
-    console.log(`\x1b[36m`, `${message.author} has executed ${bot.settings.prefix}${bot.settings.Announcement_Command}`)
-
-    const CMDLog = new Discord.RichEmbed()
-        .setTitle(bot.settings.Commands_Log_Title)
-        .addField(`User`, `<@${message.author.id}>`)
-        .addField(`Command`, bot.settings.Announcement_Command, true)
-        .addField(`Channel`, message.channel, true)
-        .addField(`Executed At`, message.createdAt, true)
-        .setColor(bot.settings.colour)
-        .setFooter(bot.settings.footer)
-
-    let CommandLog = message.guild.channels.find(LogsChannel => LogsChannel.name === `${bot.settings.Command_Log_Channel}`);
-    if(!CommandLog) return message.channel.send(`:x: Error! Could not find the logs channel. **${bot.settings.Command_Log_Channel}**\nThis can be changed via ``settings.json```);
-    
-    CommandLog.send(CMDLog);
-
+    message.channel.send({embed: AccSucessEmbed});
 
 }
 
