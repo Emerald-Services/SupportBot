@@ -41,33 +41,20 @@ module.exports.run = async (bot, message, args) => {
     const cantfindchannel = new Discord.RichEmbed()
         .setDescription(`:x: Hmm! Does that ticket exist? I cannot find the ticket channel.`)
         .setColor(bot.settings.colour) 
+    
     if(!channel) return message.channel.send({embed: cantfindchannel});
         message.delete().catch(O_o=>{});
         message.channel.overwritePermissions(rUser, { READ_MESSAGES: true, SEND_MESSAGES: true });
 
     const useradded = new Discord.RichEmbed()
-        .setColor(bot.settings.colour) 
-        .setDescription(`:white_check_mark: Successfully Added ${rUser} to the ticket.`)
-        .setTimestamp();
-
-    message.channel.send({embed: useradded});
-    
-    console.log(`\x1b[36m`, `${message.author.tag} has successfully added ${rUser} to ${message.channel}`)
-
-    const CMDLog = new Discord.RichEmbed()
-        .setTitle(bot.settings.Commands_Log_Title)
-        .addField(`User`, `<@${message.author.id}>`)
-        .addField(`Command`, bot.settings.Add_Command, true)
-        .addField(`Channel`, message.channel, true)
-        .addField(`Executed At`, message.createdAt, true)
         .setColor(bot.settings.colour)
-        .setFooter(bot.settings.footer)
+        .setTitle("User Added")
+        .setDescription(`👍 ${rUser} has been added to this ticket`)
+        .setTimestamp();
+    message.channel.send({embed: useradded});
 
     let CommandLog = message.guild.channels.find(LogsChannel => LogsChannel === `${bot.settings.Command_Log_Channel}`);
     if(!CommandLog) return message.channel.send(`:x: Error! Could not find the logs channel. **${bot.settings.Command_Log_Channel}**\nThis can be changed via ``settings.json```);
-    
-    CommandLog.send(CMDLog);
-
 
 }
 
