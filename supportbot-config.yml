@@ -5,3 +5,21 @@ Bot_Name: "SupportBot"
 
 BotActivity: "SupportBot v5.1"
 ActivityType: "PLAYING"
+
+# Role Settings
+AutoRole: "Member"
+staff: "Support"
+
+locked_role: "@everyone"
+everyone: "@everyone"
+
+Department_Role_1: "Support"
+Department_Role_2: "Security"
+Department_Role_3: "Sales"
+
+# Welcome & Leave
+WelcomeChannel: "welcome"
+WelcomeMessage: "Welcome to the server!"
+
+LeaveChannel: "welcome"
+LeaveMessage: "Thank you for visiting us!"
