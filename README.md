@@ -1,8 +1,6 @@
-<div class="alert alert-damger" role="alert">
-  <span>Warning!</span> This documentation is outdated and due to be updated after the next update has been pushed.
-</div>
 <h1 align="center">SupportBot v5</h1>
-<h4 align="center">#1 Discord Support System</h4>
+<h4 align="center">#1 Discord Support System</h4> 
+<h4 align="center"><span>Warning!</span> This documentation is outdated and due to be updated after the next update has been pushed.</h4>
 
 <p align="center">
   <img src="https://img.shields.io/badge/Made%20with-NodeJS-blue.svg" alt="Made with NodeJS">
