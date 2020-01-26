@@ -1,4 +1,4 @@
-<div class="alert alert-primary" role="alert">
+<div class="alert alert-damger" role="alert">
   <span>Warning!</span> This documentation is outdated and due to be updated after the next update has been pushed.
 </div>
 <h1 align="center">SupportBot v5</h1>
