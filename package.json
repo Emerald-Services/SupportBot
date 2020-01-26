@@ -15,6 +15,7 @@
   "dependencies": {
     "array-sort": "^1.0.0",
     "discord.js": "^11.5.1",
+    "js-yaml": "^3.13.1",
     "table": "^5.4.4"
   },
   "repository": {

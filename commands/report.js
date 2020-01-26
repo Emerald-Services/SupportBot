@@ -1,19 +1,24 @@
 // SupportBot
+// Created by © 2020 Emerald Services
 // Command: Report
 
 const Discord = require("discord.js");
-const bot = new Discord.Client()
+const bot = new Discord.Client();
 
-bot.settings = require("../settings.json");
+const fs = require("fs");
+const yaml = require('js-yaml');
+
+const supportbot = yaml.load(fs.readFileSync('./supportbot-config.yml', 'utf8'));
 
 exports.run = (bot, message, args) => {
-    message.delete();
 
-    let staffGroup = message.guild.roles.find(staffRole => staffRole.name === `${bot.settings.staff}`);
+    console.log(`\u001b[33m`, `[${supportbot.Bot_Name}] > `, `\u001b[31;1m`, `${message.author.tag}`, `\u001b[32;1m`, `has executed`, `\u001b[31;1m`, `${supportbot.Prefix}${supportbot.Report_Command}`);
+
+    let staffGroup = message.guild.roles.find(staffRole => staffRole.name === `${supportbot.StaffRole}`);
 
     const rolemissing = new Discord.RichEmbed()
-        .setDescription(`:x: Looks like this server doesn't have the role **${bot.settings.staff}**`)
-        .setColor(bot.settings.colour);
+        .setDescription(`:x: Looks like this server doesn't have the role **${supportbot.StaffRole}**`)
+        .setColor(supportbot.EmbedColour);
 
     if(!staffGroup) {
         message.reply(rolemissing).catch(err => {
@@ -21,8 +26,8 @@ exports.run = (bot, message, args) => {
         });
     } else {
         const donothaverole = new Discord.RichEmbed()
-            .setDescription(`:x: Sorry! You cannot use this command with the role **${bot.settings.staff}**`)
-            .setColor(bot.settings.colour)
+            .setDescription(`:x: Sorry! You cannot use this command with the role **${supportbot.StaffRole}**`)
+            .setColor(supportbot.EmbedColour)
         if(!message.member.roles.has(staffGroup.id)) {
             message.reply(donothaverole);
         } else {
@@ -34,42 +39,27 @@ exports.run = (bot, message, args) => {
                 } else {
                   let reportDesc = args.slice(1).join(" ");
                     const embed = new Discord.RichEmbed()
-                        .setTitle(`${bot.settings.Report_Title}`)
+                        .setTitle(`${supportbot.Report_Title}`)
                         .setThumbnail(message.author.avatarURL)
                         .addField("Report by:", `<@${message.author.id}>`, false)
                         .addField("Description:", `${reportDesc}`, false)
                         .addField("Reported User:", `${args[0]}`, false)
                         .setTimestamp(new Date())
-                        .setColor(bot.settings.colour)
+                        .setColor(supportbot.EmbedColour)
                         .setFooter(`${message.author.username}#${message.author.discriminator}`, message.author.displayAvatarURL);
-                    let rc = message.guild.channels.find(ReportChannel => ReportChannel.name === `${bot.settings.Report_Channel}`)
+                    let rc = message.guild.channels.find(ReportChannel => ReportChannel.name === `${supportbot.Report_Channel}`)
                     if(!rc) {
-                        message.channel.send(`:x: Error! Could not find the logs channel **${bot.settings.Report_Channel}**`);
+                        message.channel.send(`:x: Error! Could not find the logs channel **${supportbot.Report_Channel}**`);
                     } else {
                         rc.send(embed);
-                        console.log(`\x1b[36m`, `${message.author} has executed ${bot.settings.prefix}${bot.settings.Report_Command}`);
-
-                         const CMDLog = new Discord.RichEmbed()
-                            .setTitle(bot.settings.Commands_Log_Title)
-                            .addField(`User`, `<@${message.author.id}>`)
-                            .addField(`Command`, bot.settings.Report_Command, true)
-                            .addField(`Channel`, message.channel, true)
-                            .addField(`Executed At`, message.createdAt, true)
-                            .setColor(bot.settings.colour)
-                            .setFooter(bot.settings.footer)
-
-                        let CommandLog = message.guild.channels.find(LogsChannel => LogsChannel.name === `${bot.settings.Command_Log_Channel}`);
-                        if(!CommandLog) return message.channel.send(`:x: Error! Could not find the logs channel. **${bot.settings.Command_Log_Channel}**\nThis can be changed via ``settings.json```);
-    
-                        CommandLog.send(CMDLog);
 
                     }
                 }
             }
         }
     }
-}
+};
 
 exports.help = {
-    name: bot.settings.Report_Command
+    name: supportbot.Report_Command
 }

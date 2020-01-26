@@ -1,60 +1,65 @@
 // SupportBot
-// Command: Close Ticket
+// Created by © 2020 Emerald Services
+// Command: Close
 
-const Discord = require( "discord.js" );
-const bot = new Discord.Client()
+const Discord = require("discord.js");
+const bot = new Discord.Client();
 
-bot.settings = require( "../settings.json" );
+const fs = require("fs");
+const yaml = require('js-yaml');
+
+const supportbot = yaml.load(fs.readFileSync('./supportbot-config.yml', 'utf8'));
 
 /**
  * @param {Discord.Message} message
  */
-exports.run = ( bot, message, args ) => {
-    message.delete();
 
+exports.run = (bot, message, args) => {
 
-    if ( !message.channel.name.startsWith( `${bot.settings.Ticket_Channel_Name}-` ) ) {
+    console.log(`\u001b[33m`, `[${supportbot.Bot_Name}] > `, `\u001b[31;1m`, `${message.author.tag}`, `\u001b[32;1m`, `has executed`, `\u001b[31;1m`, `${supportbot.Prefix}${supportbot.Close_Command}`);
+
+    if ( !message.channel.name.startsWith( `${supportbot.Ticket_Channel_Name}-` ) ) {
         const embed = new Discord.RichEmbed()
-            .setDescription( `:x: Cannot use this command becase you are outside a ticket channel.` )
-            .setColor( bot.settings.colour );
+            .setDescription(`:x: Cannot use this command becase you are outside a ticket channel.`)
+            .setColor(supportbot.EmbedColour);
 
-        message.channel.send( embed );
+        message.channel.send(embed);
         return;
     }
 
     const closeRequestEmbed = new Discord.RichEmbed()
-        .setDescription( `Looks like you have come to the end of your support ticket\nPlease confirm that you want to close your ticket by saying ||**confirm**||` )
-        .setFooter( "Your request will be avoided in 20 seconds" )
-        .setColor( bot.settings.colour )
+        .setDescription(`Looks like you have come to the end of your support ticket\nPlease confirm that you want to close your ticket by saying ||**confirm**||`)
+        .setFooter("Your request will be avoided in 20 seconds")
+        .setColor(supportbot.EmbedColour)
 
 
-    message.channel.send( closeRequestEmbed ).then( m => {
+    message.channel.send(closeRequestEmbed).then( m => {
         message.channel.awaitMessages( response => response.content.toLowerCase() === `confirm`, {
             max: 1,
             time: 20 * 1000,
             errors: [ 'time' ],
 
         } ).then( collected => {
-            let logChannel = message.guild.channels.find( channel => channel.name === bot.settings.Transcript_Logs );
+            let logChannel = message.guild.channels.find( channel => channel.name === supportbot.Transcript_Logs );
 
             let user = message.author;
 
-            let reason = args.join( " " ) || "No reason provided.";
+            let reason = args.join(" ") || "No reason provided.";
 
             let name = message.channel.name;
             let ticketChannel = message.channel;
 
-            message.channel.send( bot.settings.Ticket_Closing )
+            message.channel.send(supportbot.Ticket_Closing)
                 .then( () => {
                     const logEmbed = new Discord.RichEmbed()
-                        .setTitle( bot.settings.Transcript_Title )
-                        .setColor( bot.settings.colour )
-                        .setFooter( bot.settings.footer )
-                        .addField( "Ticket Author", user )
-                        .addField( "Closed By", message.author.tag )
-                        .addField( "Reason", reason );
+                        .setTitle(supportbot.Transcript_Title)
+                        .setColor(supportbot.EmbedColour)
+                        .setFooter(supportbot.EmbedFooter)
+                        .addField("Ticket Author", user)
+                        .addField("Closed By", message.author.tag)
+                        .addField("Reason", reason);
 
-                    message.channel.fetchMessages( { limit: 100 } )
+                    message.channel.fetchMessages({ limit: 100 })
                         .then( msgs => {
                             let txt = '';
 
@@ -92,34 +97,17 @@ exports.run = ( bot, message, args ) => {
                             //         log.send( { files: [ { attachment: Buffer.from( output, 'utf8' ), name: `${name}.txt` } ] } ).then( c.delete() ).catch( console.error ); // sends the file to logs
                             //         return log.send( embed1 ).catch( console.error );
                             //     } )
-                        } );
-                } )
+                        });
+                })
 
-        } ).catch( () => {
-            m.edit( 'The request to close the ticket has timed out.' ).then( m2 => m2.delete( 3000 ) );
-        } );
-    } );
-
-    console.log( `\x1b[36m`, `${message.author} has executed ${bot.settings.prefix}${bot.settings.Close_Command}` )
-
-    const CMDLog = new Discord.RichEmbed()
-        .setTitle( bot.settings.Commands_Log_Title )
-        .addField( `User`, `<@${message.author.id}>` )
-        .addField( `Command`, bot.settings.Close_Command, true )
-        .addField( `Channel`, message.channel, true )
-        .addField( `Executed At`, message.createdAt, true )
-        .setColor( bot.settings.colour )
-        .setFooter( bot.settings.footer )
-
-    let CommandLog = message.guild.channels.find( LogsChannel => LogsChannel.name === `${bot.settings.Command_Log_Channel}` );
-    if ( !CommandLog ) return message.channel.send( `:x: Error! Could not find the logs channel. **${bot.settings.Command_Log_Channel}**\nThis can be changed via ``settings.json``` );
-
-    CommandLog.send( CMDLog );
-
+        }).catch( () => {
+            m.edit('The request to close the ticket has timed out.').then( m2 => m2.delete( 3000 ) );
+        });
+    });
 
 }
 
 
 exports.help = {
-    name: bot.settings.Close_Command,
+    name: supportbot.Close_Command,
 }

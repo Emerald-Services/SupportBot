@@ -4,6 +4,8 @@
 
 const Discord = require("discord.js");
 const bot = new Discord.Client();
+
+const fs = require("fs")
 const yaml = require('js-yaml');
 
 const supportbot = yaml.load(fs.readFileSync('./supportbot-config.yml', 'utf8'));
@@ -11,7 +13,7 @@ const supportbot = yaml.load(fs.readFileSync('./supportbot-config.yml', 'utf8'))
 exports.run = (bot, message, args) => {
     message.delete();
 
-    console.log(`\u001b[31;1m`, `${message.author.tag}`, `\u001b[32;1m`, `has executed`, `\u001b[31;1m`, `${supportbot.Prefix}${supportbot.Announcement_Command}`);
+    console.log(`\u001b[33m`, `[${supportbot.Bot_Name}] > `, `\u001b[31;1m`, `${message.author.tag}`, `\u001b[32;1m`, `has executed`, `\u001b[31;1m`, `${supportbot.Prefix}${supportbot.Announcement_Command}`);
     
     let staffGroup = message.guild.roles.find(staffRole => staffRole.name === `${supportbot.StaffRole}`)
 
@@ -43,7 +45,7 @@ exports.run = (bot, message, args) => {
         .setTitle("Announcement Created")
         .setDescription(`👍 Successfully sent your announcement to <#${ac.id}>`)
         .setColor(supportbot.EmbedColour)
-    message.channel.send({embed: AccSucessEmbed});
+    message.channel.send({embed: AccSuccessEmbed});
 
 }
 

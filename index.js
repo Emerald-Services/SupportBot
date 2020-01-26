@@ -13,7 +13,6 @@ const fs = require("fs");
 const bot = new Discord.Client();
 
 bot.commands = new Discord.Collection();
-bot.settings = require("./settings.json");
 
 const yaml = require('js-yaml');
 const supportbot = yaml.load(fs.readFileSync('./supportbot-config.yml', 'utf8'));
@@ -55,36 +54,37 @@ bot.on("ready", async () => {
     console.log(`\u001b[37m`, `Invite your bot with https://discordapp.com/api/oauth2/authorize?client_id=516372960110444574&permissions=8&scope=bot`)
     console.log(`\u001b[37m`, `© ️SupportBot created by Emerald Services`)
     console.log(`\u001b[32m`, `―――――――――――――――――― SupportBot ――――――――――――――――――`)
-    console.log(`\u001b[43;1m \u001b[37m \u001b[1m`, `If you require any assistance you can contact us at discord, https://discord.gg/tNt95Ba`)
 
 });
 
 bot.on("message", async message => {
-  if(message.author.bot) return;
-  if(message.channel.type === "dm") return;
-  if (message.content.indexOf(supportbot.Prefix) !== 0) return;
+	if(message.author.bot) return;
+  	if(message.channel.type === "dm") return;
+  	if (message.content.indexOf(supportbot.Prefix) !== 0) return;
 
-  let messageArray = message.content.split(" ");
-  const args = message.content.slice(supportbot.Prefix.length).trim().split(/ +/g);
-  const command = args.shift().toLowerCase();
+  	let messageArray = message.content.split(" ");
+  	const args = message.content.slice(supportbot.Prefix.length).trim().split(/ +/g);
+  	const command = args.shift().toLowerCase();
 
-  const cmd = bot.commands.get(command);
-  if(!cmd) return;
-  cmd.run(bot, message, args);
+  	const cmd = bot.commands.get(command);
+  	if(!cmd) return;
+  	cmd.run(bot, message, args);
+    message.delete();
 });
 
 bot.on("message", async message => {
-if(message.author.bot) return;
-if(message.channel.type === "dm") return;
-if (message.content.indexOf(supportbot.Prefix) !== 0) return;
+	if(message.author.bot) return;
+	if(message.channel.type === "dm") return;
+	if (message.content.indexOf(supportbot.Prefix) !== 0) return;
 
-let messageArray = message.content.split(" ");
-const args = message.content.slice(supportbot.Prefix.length).trim().split(/ +/g);
-const addon = args.shift().toLowerCase();
+	let messageArray = message.content.split(" ");
+	const args = message.content.slice(supportbot.Prefix.length).trim().split(/ +/g);
+	const addon = args.shift().toLowerCase();
 
-const cmd = bot.addons.get(addon);
-if(!cmd) return;
-cmd.run(bot, message, args);
+	const cmd = bot.addons.get(addon);
+	if(!cmd) return;
+	cmd.run(bot, message, args);
+  message.delete();
 });
 
 // [SupportBot] Welcome Message && Auto Join Role

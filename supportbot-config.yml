@@ -1,10 +1,24 @@
+#    _________                                  __ __________        __   
+#   /   _____/__ ________ ______   ____________/  |\______   \ _____/  |_ 
+#   \_____  \|  |  \____ \\____ \ /  _ \_  __ \   __\    |  _//  _ \   __\
+#   /        \  |  /  |_> >  |_> >  <_> )  | \/|  | |    |   (  <_> )  |  
+#  /_______  /____/|   __/|   __/ \____/|__|   |__| |______  /\____/|__|  
+#          \/      |__|   |__|                             \/             
+#
+#                   SupportBot v5.1.0
+#                   Created by © 2020 Emerald Services
+#                   License: MIT
+
 #Bot Indentification
-Token: ""
+Token: "Bot_Token_Here"
 Prefix: "!"
 Bot_Name: "SupportBot"
 
 BotActivity: "SupportBot v5.1"
 ActivityType: "PLAYING"
+
+EmbedColour: "#4bbf5c"
+EmbedFooter: "SupportBot | The #1 Supportive Discord Bot"
 
 # Role Settings
 AutoRole: "Member"
@@ -72,12 +86,11 @@ Report_Title: "SupportBot Report"
 # Link Settings
 LINKS_TITLE: "SupportBot Links"
 
-LINKS: {
-  Discord: "https://discord.gg/",
-  Twitter: "https://twitter.com/",
-  Website: "https://example.com/",
-  AddMore: "AddMoreIfYouWant"
-},
+LINKS: 
+  "Discord": "https://discord.gg/"
+  "Twitter": "https://twitter.com/"
+  "Website": "https://example.com/"
+  "AddMore": "AddMoreIfYouWant"
 
 # Bot Command Settings
 Add_Command: "add"
@@ -89,11 +102,11 @@ Rename_Command: "rename"
 Lockchat_Command: "lock"
 UnLockchat_Command: "unlock"
 Announcement_Command: "announce"
-Say_Command": "say"
-Suggest_Command": "suggest"
-Ping_Command": "ping"
-Help_Command": "help"
-Link_Command": "links"
-Poll_Command": "poll"
-Report_Command": "report"
-Setup_Command": "setup"
+Say_Command: "say"
+Suggest_Command: "suggest"
+Ping_Command: "ping"
+Help_Command: "help"
+Link_Command: "links"
+Poll_Command: "poll"
+Report_Command: "report"
+Setup_Command: "setup"

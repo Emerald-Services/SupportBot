@@ -1,63 +1,51 @@
 // SupportBot
+// Created by © 2020 Emerald Services
 // Command: Help
 
 const Discord = require("discord.js");
 const bot = new Discord.Client()
 
-bot.settings = require("../settings.json");
+const fs = require("fs")
+const yaml = require('js-yaml');
+
+const supportbot = yaml.load(fs.readFileSync('./supportbot-config.yml', 'utf8'));
 
 exports.run = (bot, message, args) => {
-    message.delete();
+
+    console.log(`\u001b[33m`, `[${supportbot.Bot_Name}] > `, `\u001b[31;1m`, `${message.author.tag}`, `\u001b[32;1m`, `has executed`, `\u001b[31;1m`, `${supportbot.Prefix}${supportbot.Help_Command}`);
 
     let userCommands = "";
-        userCommands += `**${bot.settings.prefix}${bot.settings.Link_Command}**: Get some important links!\n`;
-        userCommands += `**${bot.settings.prefix}${bot.settings.Ping_Command}**: Check the bots ping. Pong!\n`;
-	userCommands += `**${bot.settings.prefix}${bot.settings.Ticket_Command} <reason>**: Create a support ticket\n`;
-        userCommands += `**${bot.settings.prefix}${bot.settings.Close_Command}**: Close your support ticket\n`;
-        userCommands += `**${bot.settings.prefix}${bot.settings.Suggest_Command} <suggestion>**: Create a server suggestion\n`;
-        userCommands += `**${bot.settings.prefix}${bot.settings.Report_Command} <user> <reason>**: Report a valid user\n`;
+        userCommands += `**${supportbot.Prefix}${supportbot.Link_Command}**: Get some important links!\n`;
+        userCommands += `**${supportbot.Prefix}${supportbot.Ping_Command}**: Check the bots ping. Pong!\n`;
+	    userCommands += `**${supportbot.Prefix}${supportbot.Ticket_Command} <reason>**: Create a support ticket\n`;
+        userCommands += `**${supportbot.Prefix}${supportbot.Close_Command}**: Close your support ticket\n`;
+        userCommands += `**${supportbot.Prefix}${supportbot.Suggest_Command} <suggestion>**: Create a server suggestion\n`;
+        userCommands += `**${supportbot.Prefix}${supportbot.Report_Command} <user> <reason>**: Report a valid user\n`;
 	
     let supportCommands = "";
-	supportCommands += `**${bot.settings.prefix}${bot.settings.Add_Command} <user>**: Adds a user to a ticket\n`;
-        supportCommands += `**${bot.settings.prefix}${bot.settings.Remove_Command} <user>**: Removes a user from a ticket\n`;
-        supportCommands += `**${bot.settings.prefix}${bot.settings.Forceclose_Command}**: Forceclose a support ticket\n`;
-	supportCommands += `**${bot.settings.prefix}${bot.settings.Rename_Command}**: Rename a support ticket\n`;
+	    supportCommands += `**${supportbot.Prefix}${supportbot.Add_Command} <user>**: Adds a user to a ticket\n`;
+        supportCommands += `**${supportbot.Prefix}${supportbot.Remove_Command} <user>**: Removes a user from a ticket\n`;
+        supportCommands += `**${supportbot.Prefix}${supportbot.Forceclose_Command}**: Forceclose a support ticket\n`;
+	    supportCommands += `**${supportbot.Prefix}${supportbot.Rename_Command}**: Rename a support ticket\n`;
 
-        let staffCommands = "";
-	staffCommands += `**${bot.settings.prefix}${bot.settings.Announcement_Command} <message>**: Create a bot announcement\n`;
-        staffCommands += `**${bot.settings.prefix}${bot.settings.Say_Command} <message>**: Send a message as the bot\n`;
-        staffCommands += `**${bot.settings.prefix}${bot.settings.Lockchat_Command}**: Lock the chat channel\n`;
-        staffCommands += `**${bot.settings.prefix}${bot.settings.UnLockchat_Command}**: UnLock the chat channel\n`;
-	staffCommands += `**${bot.settings.prefix}${bot.settings.Poll_Command}**: Create a poll\n`;
+    let staffCommands = "";
+	    staffCommands += `**${supportbot.Prefix}${supportbot.Announcement_Command} <message>**: Create a bot announcement\n`;
+        staffCommands += `**${supportbot.Prefix}${supportbot.Say_Command} <message>**: Send a message as the bot\n`;
+        staffCommands += `**${supportbot.Prefix}${supportbot.Lockchat_Command}**: Lock the chat channel\n`;
+        staffCommands += `**${supportbot.Prefix}${supportbot.UnLockchat_Command}**: UnLock the chat channel\n`;
+	    staffCommands += `**${supportbot.Prefix}${supportbot.Poll_Command}**: Create a poll\n`;
 
     const embed = new Discord.RichEmbed()
-        .setTitle(bot.settings.botname)
+        .setTitle(supportbot.Bot_Name)
         .addField(":ticket: Support Commands", userCommands)
         .addField(":pushpin: Support Commands", supportCommands, true)
         .addField(":pushpin: Staff Commands", staffCommands, true)
-        .setColor(bot.settings.colour)
-        .setFooter(bot.settings.footer, message.author.displayAvatarURL);
-
-	message.channel.send(embed)
-
-    console.log(`\x1b[36m`, `${message.author} has executed ${bot.settings.prefix}${bot.settings.Help_Command}`)
-
-    const CMDLog = new Discord.RichEmbed()
-        .setTitle(bot.settings.Commands_Log_Title)
-        .addField(`User`, `<@${message.author.id}>`)
-        .addField(`Command`, bot.settings.Help_Command, true)
-        .addField(`Channel`, message.channel, true)
-        .addField(`Executed At`, message.createdAt, true)
-        .setColor(bot.settings.colour)
-        .setFooter(bot.settings.footer)
-
-    let CommandLog = message.guild.channels.find(LogsChannel => LogsChannel.name === `${bot.settings.Command_Log_Channel}`);
-    if(!CommandLog) return message.channel.send(`:x: Error! Could not find the logs channel. **${bot.settings.Command_Log_Channel}**\nThis can be changed via settings.json`);
-    
-    CommandLog.send(CMDLog);
+        .setColor(supportbot.EmbedColour)
+        .setFooter(supportbot.EmbedFooter, message.author.displayAvatarURL);
+	message.channel.send(embed);
 
 }
 
 exports.help = {
-    name: bot.settings.Help_Command,
-}
+    name: supportbot.Help_Command,
+};

@@ -5,7 +5,6 @@ const Discord = require("discord.js");
 const bot = new Discord.Client()
 const someaddon = new Discord.Client()
 
-bot.settings = require("../settings.json");
 someaddon.settings = require("./settings/someaddon.json");
 
 exports.run = async(bot, message, args) => {

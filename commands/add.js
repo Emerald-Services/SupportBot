@@ -4,14 +4,15 @@
 
 const Discord = require("discord.js");
 const bot = new Discord.Client()
+
+const fs = require("fs")
 const yaml = require('js-yaml');
 
 const supportbot = yaml.load(fs.readFileSync('./supportbot-config.yml', 'utf8'));
 
-module.exports.run = (bot, message, args) => {
-    message.delete();
-    
-    console.log(`\u001b[31;1m`, `${message.author.tag}`, `\u001b[32;1m`, `has executed`, `\u001b[31;1m`, `${supportbot.Prefix}${supportbot.Add_Command}`);
+exports.run = (bot, message, args) => {
+
+    console.log(`\u001b[33m`, `[${supportbot.Bot_Name}] > `, `\u001b[31;1m`, `${message.author.tag}`, `\u001b[32;1m`, `has executed`, `\u001b[31;1m`, `${supportbot.Prefix}${supportbot.Add_Command}`);
     
     let staffGroup = message.guild.roles.find(staffRole => staffRole.name === supportbot.StaffRole);
 
@@ -44,7 +45,7 @@ module.exports.run = (bot, message, args) => {
         .setColor(supportbot.EmbedColour); 
     
     if(!channel) return message.channel.send({embed: cantfindchannel});
-        message.delete().catch(O_o=>{});
+       // message.delete().catch(O_o=>{});
         message.channel.overwritePermissions(rUser, { READ_MESSAGES: true, SEND_MESSAGES: true });
 
     const useradded = new Discord.RichEmbed()
