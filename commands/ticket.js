@@ -9,26 +9,26 @@ const fs = require("fs");
 const yaml = require('js-yaml');
 
 const supportbot = yaml.load(fs.readFileSync('./supportbot-config.yml', 'utf8'));
+const TicketNumberID = require('./utility/TicketNumber.js');
 
-exports.run = (bot, message, args) => {
+exports.run = async (bot, message, args) => {
 
     console.log(`\u001b[33m`, `[${supportbot.Bot_Name}] > `, `\u001b[31;1m`, `${message.author.tag}`, `\u001b[32;1m`, `has executed`, `\u001b[31;1m`, `${supportbot.Prefix}${supportbot.Ticket_Command}`);
 	
     // Ticket Number ID Settings
-	const TicketNumberID = require('../utils/TicketNumber.js');
-	let TicketNumberID = TicketId.pad(message.guild.id);
+	let ticketNumberID = TicketNumberID.pad(message.guild.id);
 	
     // Ticket Subject Settings
 	const subject = args.join(" ") || `${supportbot.Default_Ticket_Reason}`;
 
     // Ticket Limitiations
 	const alreadyopen = new Discord.RichEmbed()
-        	.setDescription(`:x: Cannot create a ticket because **${supportbot.Ticket_Channel_Name}-${TicketNumberID}** already exists.`)
+        	.setDescription(`:x: Cannot create a ticket because **${supportbot.Ticket_Channel_Name}-${ticketNumberID}** already exists.`)
         	.setColor(supportbot.EmbedColour)
     
     // Ticket Creation
     	if (message.guild.channels.find(TicketChannel => TicketChannel.name === `${supportbot.Ticket_Channel_Name}-` + message.author.username)) return message.channel.send(alreadyopen);
-    		message.guild.createChannel(`${supportbot.Ticket_Channel_Name}-${TicketNumberID}`, {
+    		message.guild.createChannel(`${supportbot.Ticket_Channel_Name}-${ticketNumberID}`, {
 			type: 'text',
 		}).then(TicketChannel => {
         
@@ -126,9 +126,9 @@ exports.run = (bot, message, args) => {
     // Ticket Logging
     const logEmbed = new Discord.RichEmbed()
         .setTitle(":ticket: Logistics of your Ticket")
-        .addField("Ticket ID", TicketNumberID, true)
+        .addField("Ticket ID", ticketNumberID, true)
         .addField("User", `<@${message.author.id}>`, true)
-        .addField("Channel", `ticket#${TicketNumberID}`, true)
+        .addField("Channel", `ticket#${ticketNumberID}`, true)
         .setColor(supportbot.EmbedColour)
         .setFooter(supportbot.EmbedFooter)
 
