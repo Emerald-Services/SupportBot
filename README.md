@@ -1,5 +1,5 @@
 <h1 align="center">SupportBot</h1>
 <p align="center">Created by Emerald Services</p>
-<h4 align="center">Our documentation is currently being rewritten, This will be updated once we push the next update (5.1). If you require our assitance please contact us in discord. bXjdkr8</h4>
+<h4 align="center">Our documentation is currently being rewritten, This will be updated once we push the next update (5.1). If you require our assitance please contact us in discord.</h4>
 
-<img alt="Discord" src="https://img.shields.io/discord/597779408295821323?style=flat-square">
+<img href="discord.gg/bXjdkr8" align="center" alt="Discord" src="https://img.shields.io/discord/597779408295821323?style=flat-square">
