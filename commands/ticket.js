@@ -9,7 +9,7 @@ const fs = require("fs");
 const yaml = require('js-yaml');
 
 const supportbot = yaml.load(fs.readFileSync('./supportbot-config.yml', 'utf8'));
-const TicketNumberID = require('./utility/TicketNumber.js');
+const TicketNumberID = require('../utility/TicketNumber');
 
 exports.run = async (bot, message, args) => {
 
