@@ -47,7 +47,9 @@ Ticket_Logs: "ticket-logs"
 Transcript_Log: "ticket-data"
 Transcript_Title: "Support Transcript"
 
-Ticket_Closing: "Your ticket is currently closing"
+Ticket_Closure: "Looks like you have come to the end of your support ticket\nPlease confirm that you want to close your ticket."
+Closure_Confirm_Word: "confirm"
+
 Ticket_Message: "Your support ticket has been opened successfully\nPlease allow us some time to reach out to you."
 Default_Ticket_Reason: "No Subject"
 
