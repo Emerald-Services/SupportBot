@@ -28,13 +28,14 @@ exports.run = (bot, message, args) => {
     }
 
     const closeRequestEmbed = new Discord.RichEmbed()
-        .setDescription(`Looks like you have come to the end of your support ticket\nPlease confirm that you want to close your ticket by saying ||**confirm**||`)
+        .setDescription(`**${supportbot.Ticket_Closure}**`)
+        .addField("Please confirm by repeating the following word..", `||**${supportbot.Closure_Confirm_Word}**||`)
         .setFooter("Your request will be avoided in 20 seconds")
         .setColor(supportbot.EmbedColour)
 
 
     message.channel.send(closeRequestEmbed).then( m => {
-        message.channel.awaitMessages( response => response.content.toLowerCase() === `confirm`, {
+        message.channel.awaitMessages( response => response.content.toLowerCase() === supportbot.Closure_Confirm_Word, {
             max: 1,
             time: 20 * 1000,
             errors: [ 'time' ],
