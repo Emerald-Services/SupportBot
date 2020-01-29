@@ -1,3 +1,5 @@
+const fs = require("fs");
+
 class TicketId {
     
         static pad(guildId) {
@@ -12,14 +14,14 @@ class TicketId {
     
     static get(guildId) {
     
-        let ticketIds = JSON.parse(fs.readFileSync("./ticketIds.json", "utf8"));
+        let ticketIds = JSON.parse(fs.readFileSync("./storage/tickets.json", "utf8"));
 
         if (!ticketIds[guildId]) {
             ticketIds[guildId] = {
                 id: 0
             }
 
-            fs.writeFileSync("./ticketIds.json", JSON.stringify(ticketIds, null, 4), err => {
+            fs.writeFileSync("./storage/tickets.json", JSON.stringify(ticketIds, null, 4), err => {
                 if (err) console.log(err);
             });
 
@@ -32,13 +34,13 @@ class TicketId {
     }
     
     static set(guildId, value) {
-        let ticketIds = JSON.parse(fs.readFileSync("./ticketIds.json", "utf8"));
+        let ticketIds = JSON.parse(fs.readFileSync("./storage/tickets.json", "utf8"));
         
         ticketIds[guildId] = {
             id: value
         }
 
-        fs.writeFileSync("./ticketIds.json", JSON.stringify(ticketIds, null, 4), err => {
+        fs.writeFileSync("./storage/tickets.json", JSON.stringify(ticketIds, null, 4), err => {
             if (err) console.log(err);
         });
 
@@ -46,13 +48,13 @@ class TicketId {
     }
     
     static reset(guildId) {
-        let ticketIds = JSON.parse(fs.readFileSync("./ticketIds.json", "utf8"));
+        let ticketIds = JSON.parse(fs.readFileSync("./storage/tickets.json", "utf8"));
         
         ticketIds[guildId] = {
             id: 0
         }
 
-        fs.writeFileSync("./ticketIds.json", JSON.stringify(ticketIds, null, 4), err => {
+        fs.writeFileSync("./storage/tickets.json", JSON.stringify(ticketIds, null, 4), err => {
             if (err) console.log(err);
         });
 
