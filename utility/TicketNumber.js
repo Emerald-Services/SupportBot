@@ -7,7 +7,7 @@ const fs = require("fs");
 const yaml = require('js-yaml');
 const supportbot = yaml.load(fs.readFileSync('./supportbot-config.yml', 'utf8'));
 
-class TicketId {
+class TicketNumberID {
     
         static pad(guildId) {
             let n = this.get(guildId) + '';
@@ -69,4 +69,4 @@ class TicketId {
     }
 }
 
-module.exports = TicketId;
+module.exports = TicketNumberID;
