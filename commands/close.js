@@ -37,7 +37,7 @@ exports.run = (bot, message, args) => {
     message.channel.send(closeRequestEmbed).then( m => {
         message.channel.awaitMessages( response => response.content.toLowerCase() === supportbot.Closure_Confirm_Word, {
             max: 1,
-            time: 20 * 1000,
+            time: 20000,
             errors: [ 'time' ],
 
         } ).then( collected => {
@@ -50,7 +50,7 @@ exports.run = (bot, message, args) => {
             let name = message.channel.name;
             let ticketChannel = message.channel;
 
-            message.channel.send(supportbot.Ticket_Closing)
+            message.channel.send(`**${supportbot.Ticket_Closing}**`)
                 .then( () => {
                     const logEmbed = new Discord.RichEmbed()
                         .setTitle(supportbot.Transcript_Title)
@@ -80,8 +80,8 @@ exports.run = (bot, message, args) => {
 
                            // message.author.send( `A transcript has been generated for the ticket you closed.` );
                            // message.author.send( new Discord.Attachment( Buffer.from( txt ), `${name}.txt` ) );
-
-                            logChannel.send( logEmbed );
+                           
+                            logChannel.send(logEmbed)
                             logChannel.send( new Discord.Attachment( Buffer.from( txt ), `${name}.txt` ) );
 
                             message.channel.delete();
