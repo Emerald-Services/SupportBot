@@ -47,6 +47,7 @@ Ticket_Logs: "ticket-logs"
 Transcript_Log: "ticket-data"
 Transcript_Title: "Support Transcript"
 
+Ticket_Closing: "⚠ Your ticket is now closing!"  
 Ticket_Closure: "Looks like you have come to the end of your support ticket\nPlease confirm that you want to close your ticket."
 Closure_Confirm_Word: "confirm"
 
