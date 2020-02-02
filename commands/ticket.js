@@ -45,7 +45,7 @@ exports.run = async (bot, message, args) => {
         TicketChannel.overwritePermissions(department2, { SEND_MESSAGES: false, READ_MESSAGES: false })
         TicketChannel.overwritePermissions(department3, { SEND_MESSAGES: false, READ_MESSAGES: false })
         TicketChannel.overwritePermissions(staff, { SEND_MESSAGES: true, READ_MESSAGES: true })
-        TicketChannel.overwritePermissions(message.author, { SEND_MESSAGES: true, READ_MESSAGES: true })
+        TicketChannel.overwritePermissions(message.author, { SEND_MESSAGES: false, READ_MESSAGES: true })
         TicketChannel.overwritePermissions(bot.user, { SEND_MESSAGES: true, READ_MESSAGES: true })
 
     // Category
