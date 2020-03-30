@@ -31,7 +31,7 @@ exports.run = async (bot, message, args) => {
         .setColor(supportbot.EmbedColour)    
     if (!message.channel.name.startsWith(`${supportbot.Ticket_Channel_Name}-`)) return message.channel.send({embed: outsideticket});
 
-    const log = message.guild.channels.find(channel => channel.name === supportbot.Transcript_Logs)
+    const log = message.guild.channels.find(channel => channel.name === supportbot.Transcript_Log)
     const uID = message.author
     const reason = args.join(" ") || "No Reason Provided.";
     const name = message.channel.name;
