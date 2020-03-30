@@ -41,7 +41,7 @@ exports.run = (bot, message, args) => {
             errors: [ 'time' ],
 
         } ).then( collected => {
-            let logChannel = message.guild.channels.find( channel => channel.name === supportbot.Transcript_Logs );
+            let logChannel = message.guild.channels.find(channel => channel.name === supportbot.Transcript_Log);
 
             let user = message.author;
 
@@ -51,7 +51,7 @@ exports.run = (bot, message, args) => {
             let ticketChannel = message.channel;
 
             message.channel.send(`**${supportbot.Ticket_Closing}**`)
-                .then( () => {
+                .then(() => {
                     const logEmbed = new Discord.RichEmbed()
                         .setTitle(supportbot.Transcript_Title)
                         .setColor(supportbot.EmbedColour)
@@ -81,7 +81,9 @@ exports.run = (bot, message, args) => {
                            // message.author.send( `A transcript has been generated for the ticket you closed.` );
                            // message.author.send( new Discord.Attachment( Buffer.from( txt ), `${name}.txt` ) );
                            
-                            logChannel.send(logEmbed)
+                            logChannel.send(logEmbed).catch(err => {
+                                message.reply(err)
+                            })
                             logChannel.send( new Discord.Attachment( Buffer.from( txt ), `${name}.txt` ) );
 
                             message.channel.delete();
