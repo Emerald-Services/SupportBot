@@ -6,7 +6,7 @@
 //             |_|   |_|                                   
 //              © 2020 Created by Emerald Services
 //              Licnese: MIT
-//              SupportBot v5.1.0
+//              SupportBot v5.1.1
 
 const Discord = require("discord.js");
 const fs = require("fs");
@@ -51,7 +51,7 @@ bot.on("ready", async () => {
   bot.user.setActivity(supportbot.BotActivity, {type: supportbot.ActvityType});
     console.log(`\u001b[32m`, `―――――――――――――――――― SupportBot ――――――――――――――――――`)
     console.log(`\u001b[37m`, `Emerald Services has successfully connected to discord`)
-    console.log(`\u001b[37m`, `Invite your bot with https://discordapp.com/api/oauth2/authorize?client_id=516372960110444574&permissions=8&scope=bot`)
+    console.log(`\u001b[37m`, `Invite your bot with https://discordapp.com/api/oauth2/authorize?client_id=${bot.user.id}&permissions=8&scope=bot`)
     console.log(`\u001b[37m`, `© ️SupportBot created by Emerald Services`)
     console.log(`\u001b[32m`, `―――――――――――――――――― SupportBot ――――――――――――――――――`)
 
