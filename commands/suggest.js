@@ -14,7 +14,7 @@ exports.run = async(bot, message, args) => {
     
     console.log(`\u001b[33m`, `[${supportbot.Bot_Name}] > `, `\u001b[31;1m`, `${message.author.tag}`, `\u001b[32;1m`, `has executed`, `\u001b[31;1m`, `${supportbot.Prefix}${supportbot.Suggest_Command}`);
 
-    const SuggestionEmbed = new Discord.RichEmbed()
+    const SuggestionEmbed = new Discord.MessageEmbed()
         .setTitle(`${supportbot.Suggestion_Title}`)
         .setDescription(`\`\`\`${args.join(" ")}\`\`\`\nFrom <@${message.author.id}>`)
         .setFooter(`${supportbot.EmbedFooter}`, message.author.avatarURL)
@@ -30,7 +30,7 @@ exports.run = async(bot, message, args) => {
         msg.react(supportbot.suggestyes).then(() => msg.react(supportbot.suggestno));
     });
 
-    const SuggestionSuccessEmbed = new Discord.RichEmbed()
+    const SuggestionSuccessEmbed = new Discord.MessageEmbed()
         .setDescription(`👍 Suggestion has been successfully created\nYou can view your suggestion in <#${sc.id}>`)
         .setColor(supportbot.EmbedColour)
     message.channel.send(SuggestionSuccessEmbed);
