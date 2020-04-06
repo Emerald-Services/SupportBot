@@ -16,17 +16,17 @@ exports.run = (bot, message, args) => {
 
     let staffGroup = message.guild.roles.find(staffRole => staffRole.name === `${supportbot.StaffRole}`)
 
-    const rolemissing = new Discord.RichEmbed()
+    const rolemissing = new Discord.MessageEmbed()
         .setDescription(`:x: Looks like this server doesn't have the role **${supportbot.StaffRole}**`)
         .setColor(supportbot.EmbedColour)
     if (!staffGroup) return message.reply(rolemissing).catch(err=>{console.error(err)})
         
-    const donothaverole = new Discord.RichEmbed()
+    const donothaverole = new Discord.MessageEmbed()
         .setDescription(`:x: Sorry! You cannot use this command with the role **${supportbot.StaffRole}**`)
         .setColor(supportbot.EmbedColour)
     if (!message.member.roles.has(staffGroup.id)) return message.reply(donothaverole)
     
-    const embed = new Discord.RichEmbed()
+    const embed = new Discord.MessageEmbed()
         .setTitle(`${supportbot.Poll_Title}`)
         .setDescription(args.join(" "))
         .setTimestamp()
