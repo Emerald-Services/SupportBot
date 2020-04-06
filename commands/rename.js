@@ -16,17 +16,17 @@ exports.run = async (bot, message, args) => {
 
 	let staffGroup = message.guild.roles.find(staffRole => staffRole.name === supportbot.StaffRole)
 
-	const rolemissing = new Discord.RichEmbed()
+	const rolemissing = new Discord.MessageEmbed()
 		.setDescription(`:x: Looks like this server doesn't have the role **${supportbot.StaffRole}**`)
 		.setColor(supportbot.colour) 
 	if (!staffGroup) return message.reply({embed: rolemissing});
 
-	const donothaverole = new Discord.RichEmbed()
+	const donothaverole = new Discord.MessageEmbed()
 		.setDescription(`:x: Sorry! You cannot use this command with the role **${supportbot.StaffRole}**`)
 		.setColor(supportbot.colour) 
 	if (!message.member.roles.has(staffGroup.id)) return message.reply({embed: donothaverole});
 	
-    const outsideticket = new Discord.RichEmbed()
+    const outsideticket = new Discord.MessageEmbed()
 		.setDescription(`:x: Cannot use this command becase you are outside a ticket channel.`)
 		.setColor(supportbot.colour) 
 	if (!message.channel.name.startsWith(`${supportbot.Ticket_Channel_Name}-`)) return message.channel.send({embed: outsideticket});
@@ -34,7 +34,7 @@ exports.run = async (bot, message, args) => {
 	message.channel.setName(`${supportbot.Ticket_Channel_Name}-${renameto}`)
 	
     // Renamed Ticket Logistic   
-	const logEmbed = new Discord.RichEmbed()
+	const logEmbed = new Discord.MessageEmbed()
         .setTitle(":ticket: Ticket Renamed")
 		.setDescription(`<@${message.author.id}> has renamed a ticket to ${supportbot.Ticket_Channel_Name}-${renameto}`)
         .setColor(supportbot.EmbedColour)
