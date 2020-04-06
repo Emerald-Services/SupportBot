@@ -35,7 +35,7 @@ exports.run = (bot, message, args) => {
         staffCommands += `**${supportbot.Prefix}${supportbot.UnLockchat_Command}**: UnLock the chat channel\n`;
 	    staffCommands += `**${supportbot.Prefix}${supportbot.Poll_Command}**: Create a poll\n`;
 
-    const embed = new Discord.RichEmbed()
+    const embed = new Discord.MessageEmbed()
         .setTitle(supportbot.Bot_Name)
         .addField("👨 User Commands", userCommands)
         .addField(":pushpin: Support Commands", supportCommands)
