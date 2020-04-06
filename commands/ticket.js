@@ -22,7 +22,7 @@ exports.run = async (bot, message, args) => {
 	const subject = args.join(" ") || `${supportbot.Default_Ticket_Reason}`;
 
     // Ticket Limitiations
-	const alreadyopen = new Discord.RichEmbed()
+	const alreadyopen = new Discord.MessageEmbed()
         	.setDescription(`:x: Cannot create a ticket because **${supportbot.Ticket_Channel_Name}-${ticketNumberID}** already exists.`)
         	.setColor(supportbot.EmbedColour)
     
@@ -58,7 +58,7 @@ exports.run = async (bot, message, args) => {
             }
         }
         
-    const ticketopened = new Discord.RichEmbed()
+    const ticketopened = new Discord.MessageEmbed()
         .setTitle(":white_check_mark: Support Ticket Created")
         .setDescription(`<@${message.author.id}> your support ticket created successfully`)
         .addField("Your Ticket:", `<#${TicketChannel.id}>`)
@@ -75,7 +75,7 @@ exports.run = async (bot, message, args) => {
     const Emoji_2 = supportbot.Ticket_Department_Emoji_2;
     const Emoji_3 = supportbot.Ticket_Department_Emoji_3;
 
-    const TicketMessage = new Discord.RichEmbed()
+    const TicketMessage = new Discord.MessageEmbed()
         .setDescription(ticketMessage, true)
         .addField("Available Departments", `${Emoji_1} ${Department_1}\n${Emoji_2} ${Department_2}\n${Emoji_3} ${Department_3}`)
         .setColor(supportbot.Ticket_Colour)
@@ -124,7 +124,7 @@ exports.run = async (bot, message, args) => {
     });
 
     // Ticket Logging
-    const logEmbed = new Discord.RichEmbed()
+    const logEmbed = new Discord.MessageEmbed()
         .setTitle(":ticket: Logistics of your Ticket")
         .addField("Ticket ID", ticketNumberID, true)
         .addField("User", `<@${message.author.id}>`, true)
