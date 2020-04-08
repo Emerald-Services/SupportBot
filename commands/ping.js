@@ -14,7 +14,7 @@ exports.run = (bot, message, args) => {
 
     console.log(`\u001b[33m`, `[${supportbot.Bot_Name}] > `, `\u001b[31;1m`, `${message.author.tag}`, `\u001b[32;1m`, `has executed`, `\u001b[31;1m`, `${supportbot.Prefix}${supportbot.Ping_Command}`);
 
-    const embed = new Discord.RichEmbed()
+    const embed = new Discord.MessageEmbed()
         .setDescription(`:ping_pong: **Pong!** \`${bot.ping}ms\` `)
         .setColor(supportbot.EmbedColour)
     message.channel.send(embed).catch(console.error);
