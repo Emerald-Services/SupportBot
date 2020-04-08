@@ -17,12 +17,12 @@ exports.run = async(bot, message, args) => {
     let staffGroup = message.guild.roles.find(staffRole => staffRole.name === `${supportbot.StaffRole}`)
     let lockedRole = message.guild.roles.find(lc => lc.name === `${supportbot.locked_role}`)
 
-    const rolemissing = new Discord.RichEmbed()
+    const rolemissing = new Discord.MessageEmbed()
         .setDescription(`:x: Looks like this server doesn't have the role **${supportbot.StaffRole}**`)
         .setColor(supportbot.EmbedColour)
     if (!staffGroup) return message.reply(rolemissing).catch(err=>{console.error(err)})
         
-    const donothaverole = new Discord.RichEmbed()
+    const donothaverole = new Discord.MessageEmbed()
         .setDescription(`:x: Sorry! You cannot use this command with the role **${supportbot.StaffRole}**`)
         .setColor(supportbot.EmbedColour)
     if (!message.member.roles.has(staffGroup.id)) return message.reply(donothaverole)
@@ -30,7 +30,7 @@ exports.run = async(bot, message, args) => {
     message.channel.overwritePermissions(lockedRole, { READ_MESSAGES: false, SEND_MESSAGES: false });
     message.channel.overwritePermissions(staffGroup, { READ_MESSAGES: true, SEND_MESSAGES: true });
 
-    const lockmsg = new Discord.RichEmbed()
+    const lockmsg = new Discord.MessageEmbed()
         .setDescription(":white_check_mark: **Chat Locked**")
         .setColor(supportbot.EmbedColour)
     message.channel.send(lockmsg);
