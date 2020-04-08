@@ -16,17 +16,17 @@ exports.run = async (bot, message, args) => {
 
     let staffGroup = message.guild.roles.find(staffRole => staffRole.name === `${supportbot.StaffRole}`)
 
-    const rolemissing = new Discord.RichEmbed()
+    const rolemissing = new Discord.MessageEmbed()
         .setDescription(`:x: Looks like this server doesn't have the role **${supportbot.StaffRole}**`)
         .setColor(supportbot.EmbedColour)    
     if (!staffGroup) return message.reply({embed: rolemissing});
     
-    const donothaverole = new Discord.RichEmbed()
+    const donothaverole = new Discord.MessageEmbed()
         .setDescription(`:x: Sorry! You cannot use this command with the role **${supportbot.StaffRole}**`)
         .setColor(supportbot.EmbedColour)    
     if (!message.member.roles.has(staffGroup.id)) return message.reply({embed: donothaverole});
 
-    const outsideticket = new Discord.RichEmbed()
+    const outsideticket = new Discord.MessageEmbed()
         .setDescription(`:x: Cannot use this command becase you are outside a ticket channel.`)
         .setColor(supportbot.EmbedColour)    
     if (!message.channel.name.startsWith(`${supportbot.Ticket_Channel_Name}-`)) return message.channel.send({embed: outsideticket});
@@ -41,7 +41,7 @@ exports.run = async (bot, message, args) => {
 
     .then(() => {
 
-        const embed1 = new Discord.RichEmbed()
+        const embed1 = new Discord.MessageEmbed()
             .setTitle(supportbot.Transcript_Title)
             .setColor(supportbot.EmbedColour)
             .setFooter(supportbot.EmbedFooter)
