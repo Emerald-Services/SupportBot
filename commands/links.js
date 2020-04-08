@@ -22,7 +22,7 @@ exports.run = ( bot, message, args ) => {
         links += `[${name}](${botLinks[ name ]})\n`;
     };
 
-    let embed = new Discord.RichEmbed()
+    let embed = new Discord.MessageEmbed()
         .setTitle(supportbot.LINKS_TITLE)
         .setDescription(links)
         .setColor(supportbot.EmbedColour)
