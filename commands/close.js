@@ -19,7 +19,7 @@ exports.run = (bot, message, args) => {
     console.log(`\u001b[33m`, `[${supportbot.Bot_Name}] > `, `\u001b[31;1m`, `${message.author.tag}`, `\u001b[32;1m`, `has executed`, `\u001b[31;1m`, `${supportbot.Prefix}${supportbot.Close_Command}`);
 
     if ( !message.channel.name.startsWith( `${supportbot.Ticket_Channel_Name}-` ) ) {
-        const embed = new Discord.RichEmbed()
+        const embed = new Discord.MessageEmbed()
             .setDescription(`:x: Cannot use this command becase you are outside a ticket channel.`)
             .setColor(supportbot.EmbedColour);
 
@@ -27,7 +27,7 @@ exports.run = (bot, message, args) => {
         return;
     }
 
-    const closeRequestEmbed = new Discord.RichEmbed()
+    const closeRequestEmbed = new Discord.MessageEmbed()
         .setDescription(`**${supportbot.Ticket_Closure}**`)
         .addField("Please confirm by repeating the following word..", `||**${supportbot.Closure_Confirm_Word}**||`)
         .setFooter("Your request will be avoided in 20 seconds")
@@ -52,7 +52,7 @@ exports.run = (bot, message, args) => {
 
             message.channel.send(`**${supportbot.Ticket_Closing}**`)
                 .then(() => {
-                    const logEmbed = new Discord.RichEmbed()
+                    const logEmbed = new Discord.MessageEmbed()
                         .setTitle(supportbot.Transcript_Title)
                         .setColor(supportbot.EmbedColour)
                         .setFooter(supportbot.EmbedFooter)
