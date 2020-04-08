@@ -16,31 +16,31 @@ exports.run = (bot, message, args) => {
     
     let staffGroup = message.guild.roles.find(staffRole => staffRole.name === supportbot.StaffRole);
 
-    const rolemissing = new Discord.RichEmbed()
+    const rolemissing = new Discord.MessageEmbed()
         .setDescription(`:x: Looks like this server doesn't have the role **${supportbot.StaffRole}**`)
         .setColor(supportbot.EmbedColour);
     if (!staffGroup) return message.reply({embed: rolemissing});
 
-    const donothaverole = new Discord.RichEmbed()
+    const donothaverole = new Discord.MessageEmbed()
         .setDescription(`:x: Sorry! You cannot use this command with the role **${supportbot.StaffRole}**`)
         .setColor(supportbot.EmbedColour); 
     if (!message.member.roles.has(staffGroup.id)) return message.reply({embed: donothaverole});
 
-    const outsideticket = new Discord.RichEmbed()
+    const outsideticket = new Discord.MessageEmbed()
         .setDescription(`:x: Cannot use this command becase you are outside a ticket channel.`)
         .setColor(supportbot.EmbedColour); 
     if (!message.channel.name.startsWith(`${supportbot.Ticket_Channel_Name}-`)) return message.channel.send({embed: outsideticket});
 
     let rUser = message.guild.member(message.mentions.users.first() || message.guild.members.get(args[0]));
 
-    const cantfinduser = new Discord.RichEmbed()
+    const cantfinduser = new Discord.MessageEmbed()
         .setDescription(`:x: Hmm! Does that user exist? I cannot find the user.`)
         .setColor(supportbot.EmbedColour); 
     if(!rUser) return message.channel.send({embed: cantfinduser});
 
     const channel = message.guild.channels.find(channel => channel.name === message.channel.name);
 
-    const cantfindchannel = new Discord.RichEmbed()
+    const cantfindchannel = new Discord.MessageEmbed()
         .setDescription(`:x: Hmm! Does that ticket exist? I cannot find the ticket channel.`)
         .setColor(supportbot.EmbedColour); 
     
@@ -48,7 +48,7 @@ exports.run = (bot, message, args) => {
        // message.delete().catch(O_o=>{});
         message.channel.overwritePermissions(rUser, { READ_MESSAGES: true, SEND_MESSAGES: true });
 
-    const useradded = new Discord.RichEmbed()
+    const useradded = new Discord.MessageEmbed()
         .setColor(supportbot.EmbedColour)
         .setTitle("User Added")
         .setDescription(`👍 ${rUser} has been added to this ticket`)
