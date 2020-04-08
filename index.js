@@ -93,7 +93,7 @@ bot.on("guildMemberAdd", (member) => {
   let channel = member.guild.channels.find(channel => channel.name === `${supportbot.WelcomeChannel}`)
   let autorole = member.guild.roles.find(autorole => autorole.name === `${supportbot.AutoRole}`)
   
-  const WelcomeMsg= new Discord.RichEmbed()
+  const WelcomeMsg= new Discord.MessageEmbed()
     .setColor(supportbot.EmbedColour)
     .setThumbnail(member.user.avatarURL)
     .setDescription(`:wave: ${member.user.username}\n${supportbot.WelcomeMessage}`)
@@ -108,7 +108,7 @@ bot.on("guildMemberAdd", (member) => {
 bot.on("guildMemberRemove", (member) => {
   let channel = member.guild.channels.find(channel => channel.name === `${supportbot.LeaveChannel}`)
 
-  const LeaveMsg= new Discord.RichEmbed()
+  const LeaveMsg= new Discord.MessageEmbed()
     .setColor(supportbot.EmbedColour)
     .setThumbnail(member.user.avatarURL)
     .setDescription(`:wave: ${member.user.username}\n${supportbot.LeaveMessage}`)
