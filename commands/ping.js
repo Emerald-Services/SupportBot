@@ -1,41 +1,26 @@
-// TicketDEX, Inspired by SupportBot
-// Created by Emerald Services
+// SupportBot
+// Created by © 2020 Emerald Services
+// Command: Ping
+
+const Discord = require("discord.js");
+const bot = new Discord.Client();
 
 const fs = require("fs");
-const Discord = require("discord.js");
-const { prefix, token, botname, color } = require("./config.json");
+const yaml = require('js-yaml');
 
-const client = new Discord.Client();
-client.commands = new Discord.Collection();
+const supportbot = yaml.load(fs.readFileSync('./supportbot-config.yml', 'utf8'));
 
-const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+exports.run = (bot, message, args) => {
 
-for (const file of commandFiles) {
-	const command = require(`./commands/${file}`);
-	client.commands.set(command.name, command);
+    console.log(`\u001b[33m`, `[${supportbot.Bot_Name}] > `, `\u001b[31;1m`, `${message.author.tag}`, `\u001b[32;1m`, `has executed`, `\u001b[31;1m`, `${supportbot.Prefix}${supportbot.Ping_Command}`);
+
+    const embed = new Discord.MessageEmbed()
+        .setDescription(`:ping_pong: **Pong!** \`${bot.ping}ms\` `)
+        .setColor(supportbot.EmbedColour)
+    message.channel.send(embed).catch(console.error);
+
+};
+
+exports.help = {
+    name: supportbot.Ping_Command,
 }
-
-client.on('ready', () => {
-	console.log("Bot Connected")
-})
-
-client.on('message', async message => {
-	const args = message.content.slice(prefix.length).split(/ +/);
-	const commandName = args.shift().toLowerCase();
-
-	if (!client.commands.has(commandName)) return;
-
-	const command = client.commands.get(commandName);
-
-	try {
-
-		command.execute(message, args);
-
-	} catch (error) {
-		console.error(error);
-		message.reply('Opps! Looks like there was an error trying to execute that command');
-	}
-
-});
-
-client.login(token)
