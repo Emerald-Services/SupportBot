@@ -6,7 +6,7 @@
 //             |_|   |_|                                   
 //              © 2020 Created by Emerald Services
 //              Licnese: MIT
-//              SupportBot v5.1.1
+//              SupportBot v5.1.2
 
 const Discord = require("discord.js");
 const fs = require("fs");
