@@ -11,21 +11,16 @@ const yaml = require('js-yaml');
 const supportbot = yaml.load(fs.readFileSync('./supportbot-config.yml', 'utf8'));
 
 exports.run = (bot, message, args) => {
-    message.delete();
 
     console.log(`\u001b[33m`, `[${supportbot.Bot_Name}] > `, `\u001b[31;1m`, `${message.author.tag}`, `\u001b[32;1m`, `has executed`, `\u001b[31;1m`, `${supportbot.Prefix}${supportbot.Announcement_Command}`);
     
-    let staffGroup = message.guild.roles.find(staffRole => staffRole.name === `${supportbot.StaffRole}`)
+    let staffGroup = message.guild.roles.cache.find(staffRole => staffRole.name === supportbot.StaffRole);
 
-    const rolemissing = new Discord.MessageEmbed()
-        .setDescription(`:x: Looks like this server doesn't have the role **${supportbot.StaffRole}**`)
-        .setColor(supportbot.EmbedColour)
-    if (!staffGroup) return message.reply(rolemissing).catch(err=>{console.error(err)})
-        
-    const donothaverole = new Discord.MessageEmbed()
-        .setDescription(`:x: Sorry! You cannot use this command with the role **${supportbot.StaffRole}**`)
-        .setColor(supportbot.EmbedColour)
-    if (!message.member.roles.has(staffGroup.id)) return message.reply(donothaverole)
+    const rolerequired = new Discord.MessageEmbed()
+        .setTitle("SupportBot Error!")
+        .setDescription(`:x: **Error!** Incorrect Permissions, You cannot execute this command as you do not have the required role.\n\nRole Required: \`${supportbot.StaffRole}\`\n\nError Code: \`SB-02\``)
+        .setColor(supportbot.ErrorColour); 
+    if (!message.member.roles.cache.has(staffGroup.id)) return message.reply({embed: rolerequired});
 
     const embed = new Discord.MessageEmbed()
         .setTitle(`${supportbot.Announcement_Title}`)
@@ -33,17 +28,23 @@ exports.run = (bot, message, args) => {
         .setTimestamp()
         .setColor(supportbot.EmbedColour)
         .setFooter(`${message.author.username}#${message.author.discriminator}`, message.author.displayAvatarURL)
-    
-    let ac = message.guild.channels.find(AnnounceChannel => AnnounceChannel.name === `${supportbot.Announcement_Channel}`)
-    if(!ac) return message.channel.send(`:x: Error! Could not find the logs channel **${supportbot.Announcement_Channel}**`)
 
-    ac.send("@everyone").then((msg) => {
-        ac.send(embed);
+    let locateChannel = message.guild.channels.cache.find(LocateChannel => LocateChannel.name === `${supportbot.Announcement_Channel}`)
+
+    const errornochannel = new Discord.MessageEmbed()
+        .setTitle("SupportBot Error!")
+        .setDescription(`:x: **Error!** Channel not Found, This command cannot be executed proberbly as their is no channel within this server.\nThis is configurable via **supportbot-config.yml**\n\nChannel Required: \`${supportbot.Announcement_Channel}\`\n\nError Code: \`SB-03\``)
+        .setColor(supportbot.ErrorColour);
+    if(!locateChannel) return message.channel.send(errornochannel);
+        
+    locateChannel.send(supportbot.everyone).then((msg) => {
+        locateChannel.send(embed);
     });
+
 
     const AccSuccessEmbed = new Discord.MessageEmbed()
         .setTitle("Announcement Created")
-        .setDescription(`👍 Successfully sent your announcement to <#${ac.id}>`)
+        .setDescription(`👍 Successfully sent your announcement to <#${locateChannel.id}>`)
         .setColor(supportbot.EmbedColour)
     message.channel.send({embed: AccSuccessEmbed});
 

@@ -14,42 +14,32 @@ exports.run = (bot, message, args) => {
 
     console.log(`\u001b[33m`, `[${supportbot.Bot_Name}] > `, `\u001b[31;1m`, `${message.author.tag}`, `\u001b[32;1m`, `has executed`, `\u001b[31;1m`, `${supportbot.Prefix}${supportbot.Add_Command}`);
     
-    let staffGroup = message.guild.roles.find(staffRole => staffRole.name === supportbot.StaffRole);
+    let staffGroup = message.guild.roles.cache.find(staffRole => staffRole.name === supportbot.StaffRole);
 
-    const rolemissing = new Discord.MessageEmbed()
-        .setDescription(`:x: Looks like this server doesn't have the role **${supportbot.StaffRole}**`)
-        .setColor(supportbot.EmbedColour);
-    if (!staffGroup) return message.reply({embed: rolemissing});
-
-    const donothaverole = new Discord.MessageEmbed()
-        .setDescription(`:x: Sorry! You cannot use this command with the role **${supportbot.StaffRole}**`)
-        .setColor(supportbot.EmbedColour); 
-    if (!message.member.roles.has(staffGroup.id)) return message.reply({embed: donothaverole});
+    const rolerequired = new Discord.MessageEmbed()
+        .setTitle("SupportBot Error!")
+        .setDescription(`:x: **Error!** Incorrect Permissions, You cannot execute this command as you do not have the required role.\n\nRole Required: \`${supportbot.StaffRole}\`\n\nError Code: \`SB-02\``)
+        .setColor(supportbot.ErrorColour); 
+    if (!message.member.roles.cache.has(staffGroup.id)) return message.reply({embed: rolerequired});
 
     const outsideticket = new Discord.MessageEmbed()
-        .setDescription(`:x: Cannot use this command becase you are outside a ticket channel.`)
-        .setColor(supportbot.EmbedColour); 
+        .setTitle("Incorrect Channel")
+        .setDescription(`:warning: You cannot execute this command here. This command is used when closing a ticket.`)
+        .setColor(supportbot.WarningColour); 
     if (!message.channel.name.startsWith(`${supportbot.Ticket_Channel_Name}-`)) return message.channel.send({embed: outsideticket});
 
-    let rUser = message.guild.member(message.mentions.users.first() || message.guild.members.get(args[0]));
+    let rUser = message.guild.member(message.mentions.users.first() || message.guild.members.cache.get(args[0]));
 
     const cantfinduser = new Discord.MessageEmbed()
-        .setDescription(`:x: Hmm! Does that user exist? I cannot find the user.`)
-        .setColor(supportbot.EmbedColour); 
+        .setTitle("Invalid User!")
+        .setDescription(`:warning: This user doesn't exist, Are they in this server?\n\nTry Again:\`${supportbot.Prefix}${supportbot.Add_Command} <user#0000>\``)
+        .setColor(supportbot.WarningColour); 
     if(!rUser) return message.channel.send({embed: cantfinduser});
 
-    const channel = message.guild.channels.find(channel => channel.name === message.channel.name);
-
-    const cantfindchannel = new Discord.MessageEmbed()
-        .setDescription(`:x: Hmm! Does that ticket exist? I cannot find the ticket channel.`)
-        .setColor(supportbot.EmbedColour); 
-    
-    if(!channel) return message.channel.send({embed: cantfindchannel});
-       // message.delete().catch(O_o=>{});
-        message.channel.overwritePermissions(rUser, { READ_MESSAGES: true, SEND_MESSAGES: true });
+        message.channel.updateOverwrite(rUser, { READ_MESSAGES: true, SEND_MESSAGES: true });
 
     const useradded = new Discord.MessageEmbed()
-        .setColor(supportbot.EmbedColour)
+        .setColor(supportbot.SuccessColour)
         .setTitle("User Added")
         .setDescription(`👍 ${rUser} has been added to this ticket`)
         .setTimestamp();

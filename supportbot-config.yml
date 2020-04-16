@@ -5,20 +5,25 @@
 #  /_______  /____/|   __/|   __/ \____/|__|   |__| |______  /\____/|__|  
 #          \/      |__|   |__|                             \/             
 #
-#                   SupportBot v5.1.2
+#                   SupportBot v5.2
 #                   Created by © 2020 Emerald Services
 #                   License: MIT
 
 #Bot Indentification
-Token: "Bot_Token_Here"
+Token: "BOT_TOKEN_HERE"
 Prefix: "!"
 Bot_Name: "SupportBot"
 
-BotActivity: "SupportBot v5.1"
+BotActivity: "SupportBot v5.2"
 ActivityType: "PLAYING"
 
 EmbedColour: "#4bbf5c"
 EmbedFooter: "SupportBot | The #1 Supportive Discord Bot"
+
+# Colour Settings
+ErrorColour: "#ff3030"
+SuccessColour: "#4bbf5c"
+WarningColour: "#fca117" 
 
 # Role Settings
 AutoRole: "Member"
@@ -28,19 +33,21 @@ locked_role: "@everyone"
 everyone: "@everyone"
 
 Department_Role_1: "Support"
-Department_Role_2: "Security"
-Department_Role_3: "Sales"
+Department_Role_2: "Sales"
+Department_Role_3: "Support"
 
-# Welcome & Leave
-WelcomeChannel: "welcome"
-WelcomeMessage: "Welcome to the server!"
+# Ticket Department Settings
+Ticket_Department_1: "Support"
+Ticket_Department_2: "Sales"
+Ticket_Department_3: "Other"
 
-LeaveChannel: "welcome"
-LeaveMessage: "Thank you for visiting us!"
+Ticket_Department_Emoji_1: "🟢"
+Ticket_Department_Emoji_2: "🔵"
+Ticket_Department_Emoji_3: "🔴"
 
 # Ticket Settings
 category: "Tickets"
-Ticket_Colour: "#000e42"
+Ticket_Colour: "#4bbf5c"
 Ticket_Channel_Name: "ticket"
 Ticket_Logs: "ticket-logs"
 
@@ -54,14 +61,12 @@ Closure_Confirm_Word: "confirm"
 Ticket_Message: "Your support ticket has been opened successfully\nPlease allow us some time to reach out to you."
 Default_Ticket_Reason: "No Subject"
 
-# Ticket Department Settings
-Ticket_Department_1: "Support"
-Ticket_Department_2: "Security"
-Ticket_Department_3: "Sales"
+# Welcome & Leave
+WelcomeChannel: "welcome"
+WelcomeMessage: "Welcome to the server!"
 
-Ticket_Department_Emoji_1: "🎧"
-Ticket_Department_Emoji_2: "🔐"
-Ticket_Department_Emoji_3: "💵"
+LeaveChannel: "welcome"
+LeaveMessage: "Thank you for visiting us!"
 
 # Announcement Settings
 Announcement_Title: "SupportBot Announcement"
@@ -69,11 +74,11 @@ Announcement_Channel: "announcements"
 Announcement_Tag_Role: "@everyone"
 
 # Poll Settings
-Poll_Channel": "polls"
-Poll_Title": "📊 Polls"
+Poll_Channel: "polls"
+Poll_Title: "📊 Polls"
 
-Reaction_Poll_1": "✅"
-Reaction_Poll_2": "❎"
+Reaction_Poll_1: "✅"
+Reaction_Poll_2: "❎"
 
 # Suggestion Settings
 Suggestion_Title: "SupportBot Suggestions"

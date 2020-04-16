@@ -14,24 +14,21 @@ exports.run = async (bot, message, args) => {
     
     console.log(`\u001b[33m`, `[${supportbot.Bot_Name}] > `, `\u001b[31;1m`, `${message.author.tag}`, `\u001b[32;1m`, `has executed`, `\u001b[31;1m`, `${supportbot.Prefix}${supportbot.Forceclose_Command}`);
 
-    let staffGroup = message.guild.roles.find(staffRole => staffRole.name === `${supportbot.StaffRole}`)
+    let staffGroup = message.guild.roles.cache.find(staffRole => staffRole.name === supportbot.StaffRole);
 
-    const rolemissing = new Discord.MessageEmbed()
-        .setDescription(`:x: Looks like this server doesn't have the role **${supportbot.StaffRole}**`)
-        .setColor(supportbot.EmbedColour)    
-    if (!staffGroup) return message.reply({embed: rolemissing});
-    
-    const donothaverole = new Discord.MessageEmbed()
-        .setDescription(`:x: Sorry! You cannot use this command with the role **${supportbot.StaffRole}**`)
-        .setColor(supportbot.EmbedColour)    
-    if (!message.member.roles.has(staffGroup.id)) return message.reply({embed: donothaverole});
+    const rolerequired = new Discord.MessageEmbed()
+        .setTitle("SupportBot Error!")
+        .setDescription(`:x: **Error!** Incorrect Permissions, You cannot execute this command as you do not have the required role.\n\nRole Required: \`${supportbot.StaffRole}\`\n\nError Code: \`SB-02\``)
+        .setColor(supportbot.ErrorColour); 
+    if (!message.member.roles.cache.has(staffGroup.id)) return message.reply({embed: rolerequired});
 
     const outsideticket = new Discord.MessageEmbed()
-        .setDescription(`:x: Cannot use this command becase you are outside a ticket channel.`)
-        .setColor(supportbot.EmbedColour)    
+        .setTitle("Incorrect Channel")
+        .setDescription(`:warning: You cannot execute this command here. This command is used when closing a ticket.`)
+        .setColor(supportbot.WarningColour);   
     if (!message.channel.name.startsWith(`${supportbot.Ticket_Channel_Name}-`)) return message.channel.send({embed: outsideticket});
 
-    const log = message.guild.channels.find(channel => channel.name === supportbot.Transcript_Log)
+    const log = message.guild.channels.cache.find(channel => channel.name === supportbot.Transcript_Log)
     const uID = message.author
     const reason = args.join(" ") || "No Reason Provided.";
     const name = message.channel.name;
@@ -48,10 +45,10 @@ exports.run = async (bot, message, args) => {
             .addField("Ticket Author", uID)
             .addField("Closed By", message.author.tag)
             .addField("Reason", reason)
-        message.channel.fetchMessages({ limit: 100 })
+        message.channel.messages.fetch({ limit: 100 })
         
         .then(msgs => {
-            message.channel.fetchMessages({ limit: 100, before: msgs.last().id })
+            message.channel.messages.fetch({ limit: 100, before: msgs.last().id })
         
         .then(msg => {
             const merged = msgs.concat(msg);

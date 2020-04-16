@@ -10,7 +10,7 @@ someaddon.settings = require("./settings/someaddon.json");
 exports.run = async(bot, message, args) => {
     message.delete();
     
-    message.channel.send(":white_check_mark: **SupportBot Addon**\nThis addon is here by default.\nWe are currently working on some super amazing addons for SupportBot\nHowever, If you would like to start creating your own support bot addon\ncontact us at EmeraldServices.\n")
+    message.channel.send(":white_check_mark: **SupportBot Addon**\nYou can download addons from our marketplace. https://emeraldservices.xyz/")
 
 }
 

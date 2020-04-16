@@ -6,7 +6,7 @@
 //             |_|   |_|                                   
 //              © 2020 Created by Emerald Services
 //              Licnese: MIT
-//              SupportBot v5.1.2
+//              SupportBot v5.2
 
 const Discord = require("discord.js");
 const fs = require("fs");
@@ -37,7 +37,7 @@ fs.readdir("./sb-addons/", (err, files) => {
     if(err) console.log(err);
   
     let jsfile = files.filter(f => f.split(".").pop() === "js")
-    if(jsfile.length <= 0) return console.log(`${supportbot.Bot_Name} No addons detected nor default! Either download addons from https://itzemerald.tk/`);
+    if(jsfile.length <= 0) return console.log(`${supportbot.Bot_Name} No addons detected nor default! Either download addons from https://emeraldservices.xyz/`);
   
     jsfile.forEach((f, i) =>{
       let props = require(`./sb-addons/${f}`);
@@ -50,9 +50,10 @@ fs.readdir("./sb-addons/", (err, files) => {
 bot.on("ready", async () => {
   bot.user.setActivity(supportbot.BotActivity, {type: supportbot.ActvityType});
     console.log(`\u001b[32m`, `―――――――――――――――――― SupportBot ――――――――――――――――――`)
-    console.log(`\u001b[37m`, `Emerald Services has successfully connected to discord`)
+    console.log(`\u001b[37m`, `${supportbot.Bot_Name} has successfully connected to discord`)
+    console.log(`\u001b[37m`, `You can download additional features from our marketplace https://emeraldservices.xyz/`)   
     console.log(`\u001b[37m`, `Invite your bot with https://discordapp.com/api/oauth2/authorize?client_id=${bot.user.id}&permissions=8&scope=bot`)
-    console.log(`\u001b[37m`, `© ️SupportBot created by Emerald Services`)
+    console.log(`\u001b[37m`, `© SupportBot created by Emerald Services`)
     console.log(`\u001b[32m`, `―――――――――――――――――― SupportBot ――――――――――――――――――`)
 
 });
@@ -65,6 +66,42 @@ bot.on("message", async message => {
   	let messageArray = message.content.split(" ");
   	const args = message.content.slice(supportbot.Prefix.length).trim().split(/ +/g);
   	const command = args.shift().toLowerCase();
+
+    let staffGroup = message.guild.roles.cache.find(staffRole => staffRole.name === `${supportbot.StaffRole}`)
+    let autoGroup = message.guild.roles.cache.find(autoRole => autoRole.name === `${supportbot.AutoRole}`)
+    let deptGroup1 = message.guild.roles.cache.find(deptRole1 => deptRole1.name === `${supportbot.Department_Role_1}`)
+    let deptGroup2 = message.guild.roles.cache.find(deptRole2 => deptRole2.name === `${supportbot.Department_Role_2}`)
+    let deptGroup3 = message.guild.roles.cache.find(deptRole3 => deptRole3.name === `${supportbot.Department_Role_3}`)
+
+    const rolemissing = new Discord.MessageEmbed()
+        .setTitle("SupportBot Error!")
+        .setDescription(`:x: **Error!** Staff role missing, You cannot execute any commands as the following role does not exist with this server.\nThis role is configurable via **supportbot-config.yml**\n\nPlease create the role: \`${supportbot.StaffRole}\`\n\nError Code: \`SB-01\``)
+        .setColor(supportbot.ErrorColour)
+    if (!staffGroup) return message.reply(rolemissing).catch(err=>{console.error(err)})
+
+    const rolemissing1 = new Discord.MessageEmbed()
+        .setTitle("SupportBot Error!")
+        .setDescription(`:x: **Error!** Auto Role missing, You cannot execute any commands as the following role does not exist with this server.\nThis role is configurable via **supportbot-config.yml**\n\nPlease create the role: \`${supportbot.AutoRole}\`\n\nError Code: \`SB-01\``)
+        .setColor(supportbot.ErrorColour)
+    if (!autoGroup) return message.reply(rolemissing1).catch(err=>{console.error(err)})
+
+    const rolemissing2 = new Discord.MessageEmbed()
+        .setTitle("SupportBot Error!")
+        .setDescription(`:x: **Error!** Department Role missing, You cannot execute any commands as the following role does not exist with this server.\nThis role is configurable via **supportbot-config.yml**\n\nPlease create the role: \`${supportbot.Department_Role_1}\`\n\nError Code: \`SB-01\``)
+        .setColor(supportbot.ErrorColour)
+    if (!deptGroup1) return message.reply(rolemissing2).catch(err=>{console.error(err)})
+
+    const rolemissing3 = new Discord.MessageEmbed()
+        .setTitle("SupportBot Error!")
+        .setDescription(`:x: **Error!** Department Role missing, You cannot execute any commands as the following role does not exist with this server.\nThis role is configurable via **supportbot-config.yml**\n\nPlease create the role: \`${supportbot.Department_Role_2}\`\n\nError Code: \`SB-01\``)
+        .setColor(supportbot.ErrorColour)
+    if (!deptGroup2) return message.reply(rolemissing3).catch(err=>{console.error(err)})
+
+    const rolemissing4 = new Discord.MessageEmbed()
+        .setTitle("SupportBot Error!")
+        .setDescription(`:x: **Error!** Department Role missing, You cannot execute any commands as the following role does not exist with this server.\nThis role is configurable via **supportbot-config.yml**\n\nPlease create the role: \`${supportbot.Department_Role_3}\`\n\nError Code: \`SB-01\` `)
+        .setColor(supportbot.ErrorColour)
+    if (!deptGroup3) return message.reply(rolemissing4).catch(err=>{console.error(err)})
 
   	const cmd = bot.commands.get(command);
   	if(!cmd) return;

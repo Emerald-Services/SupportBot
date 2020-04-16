@@ -37,11 +37,12 @@ exports.run = (bot, message, args) => {
 
     const embed = new Discord.MessageEmbed()
         .setTitle(supportbot.Bot_Name)
-        .addField("👨 User Commands", userCommands)
-        .addField(":pushpin: Support Commands", supportCommands)
-        .addField("🔑 Staff Commands", staffCommands)
+        .addField("🟨 User Commands", userCommands)
+        .addField("🎫 Support Commands", supportCommands)
+        .addField("🔐 Staff Commands", staffCommands)
         .setColor(supportbot.EmbedColour)
         .setFooter(supportbot.EmbedFooter, message.author.displayAvatarURL);
+
 	message.channel.send(embed);
 
 }

@@ -14,18 +14,14 @@ exports.run = async (bot, message, args) => {
 
     console.log(`\u001b[33m`, `[${supportbot.Bot_Name}] > `, `\u001b[31;1m`, `${message.author.tag}`, `\u001b[32;1m`, `has executed`, `\u001b[31;1m`, `${supportbot.Prefix}${supportbot.Rename_Command}`);
 
-	let staffGroup = message.guild.roles.find(staffRole => staffRole.name === supportbot.StaffRole)
+    let staffGroup = message.guild.roles.cache.find(staffRole => staffRole.name === supportbot.StaffRole);
 
-	const rolemissing = new Discord.MessageEmbed()
-		.setDescription(`:x: Looks like this server doesn't have the role **${supportbot.StaffRole}**`)
-		.setColor(supportbot.colour) 
-	if (!staffGroup) return message.reply({embed: rolemissing});
-
-	const donothaverole = new Discord.MessageEmbed()
-		.setDescription(`:x: Sorry! You cannot use this command with the role **${supportbot.StaffRole}**`)
-		.setColor(supportbot.colour) 
-	if (!message.member.roles.has(staffGroup.id)) return message.reply({embed: donothaverole});
-	
+    const rolerequired = new Discord.MessageEmbed()
+        .setTitle("SupportBot Error!")
+        .setDescription(`:x: **Error!** Incorrect Permissions, You cannot execute this command as you do not have the required role.\n\nRole Required: \`${supportbot.StaffRole}\`\n\nError Code: \`SB-02\``)
+        .setColor(supportbot.ErrorColour); 
+    if (!message.member.roles.cache.has(staffGroup.id)) return message.reply({embed: rolerequired});
+    
     const outsideticket = new Discord.MessageEmbed()
 		.setDescription(`:x: Cannot use this command becase you are outside a ticket channel.`)
 		.setColor(supportbot.colour) 
@@ -40,10 +36,15 @@ exports.run = async (bot, message, args) => {
         .setColor(supportbot.EmbedColour)
         .setFooter(supportbot.EmbedFooter)
   
-    let logChannel = message.guild.channels.find(TicketChannel => TicketChannel.name === `${supportbot.Ticket_Logs}`);
-    if(!logChannel) return message.channel.send(`:x: Error! Could not find the logs channel **${supportbot.Ticket_Logs}**`);
-    
-    logChannel.send({embed: logEmbed});
+    let locateChannel = message.guild.channels.cache.find(LocateChannel => LocateChannel.name === `${supportbot.Ticket_Logs}`)
+
+    const errornochannel = new Discord.MessageEmbed()
+        .setTitle("SupportBot Error!")
+        .setDescription(`:x: **Error!** Channel not Found, This command cannot be executed proberbly as their is no channel within this server.\nThis is configurable via **supportbot-config.yml**\n\nChannel Required: \`${supportbot.Ticket_Logs}\`\n\nError Code: \`SB-03\``)
+        .setColor(supportbot.ErrorColour);
+    if(!locateChannel) return message.channel.send(errornochannel);
+        
+    locateChannel.send(logEmbed)
 
 };
 

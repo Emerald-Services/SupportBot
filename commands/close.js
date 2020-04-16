@@ -20,9 +20,9 @@ exports.run = (bot, message, args) => {
 
     if ( !message.channel.name.startsWith( `${supportbot.Ticket_Channel_Name}-` ) ) {
         const embed = new Discord.MessageEmbed()
-            .setDescription(`:x: Cannot use this command becase you are outside a ticket channel.`)
-            .setColor(supportbot.EmbedColour);
-
+            .setTitle("Incorrect Channel")
+            .setDescription(`:warning: You cannot execute this command here. This command is used when closing a ticket.`)
+            .setColor(supportbot.WarningColour); 
         message.channel.send(embed);
         return;
     }
@@ -41,7 +41,7 @@ exports.run = (bot, message, args) => {
             errors: [ 'time' ],
 
         } ).then( collected => {
-            let logChannel = message.guild.channels.find(channel => channel.name === supportbot.Transcript_Log);
+            let logChannel = message.guild.channels.cache.find(channel => channel.name === supportbot.Transcript_Log);
 
             let user = message.author;
 
@@ -60,7 +60,7 @@ exports.run = (bot, message, args) => {
                         .addField("Closed By", message.author.tag)
                         .addField("Reason", reason);
 
-                    message.channel.fetchMessages({ limit: 100 })
+                    message.channel.messages.fetch({ limit: 100 })
                         .then( msgs => {
                             let txt = '';
 
@@ -84,11 +84,11 @@ exports.run = (bot, message, args) => {
                             logChannel.send(logEmbed).catch(err => {
                                 message.reply(err)
                             })
-                            logChannel.send( new Discord.Attachment( Buffer.from( txt ), `${name}.txt` ) );
+                            logChannel.send( new Discord.MessageAttachment( Buffer.from( txt ), `${name}.txt` ) );
 
                             message.channel.delete();
 
-                            // message.channel.fetchMessages( { limit: 100, before: msgs.last().id } )
+                            // message.channel.messages.fetch( { limit: 100, before: msgs.last().id } )
 
                             //     .then( msg => {
                             //         const merged = msgs.concat( msg );
