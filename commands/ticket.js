@@ -34,19 +34,18 @@ exports.run = async (bot, message, args) => {
         
     // Roles
         let staff = message.guild.roles.cache.find(supportRole => supportRole.name === `${supportbot.StaffRole}`)
-        let everyone = message.guild.roles.cache.find(everyoneRole => everyoneRole.name === "@everyone")
+        let everyone = message.guild.roles.cache.find(everyoneRole => everyoneRole.name === supportbot.everyone)
         let department = message.guild.roles.cache.find(DepartmentRole => DepartmentRole.name === `${supportbot.Department_Role_1}`)
         let department2 = message.guild.roles.cache.find(DepartmentRole => DepartmentRole.name === `${supportbot.Department_Role_2}`)
         let department3 = message.guild.roles.cache.find(DepartmentRole => DepartmentRole.name === `${supportbot.Department_Role_3}`)
 
     // Permissions
-        TicketChannel.updateOverwrite(everyone, { SEND_MESSAGES: false, READ_MESSAGES: false })
-        TicketChannel.updateOverwrite(department, { SEND_MESSAGES: false, READ_MESSAGES: false })
-        TicketChannel.updateOverwrite(department2, { SEND_MESSAGES: false, READ_MESSAGES: false })
-        TicketChannel.updateOverwrite(department3, { SEND_MESSAGES: false, READ_MESSAGES: false })
-        TicketChannel.updateOverwrite(staff, { SEND_MESSAGES: true, READ_MESSAGES: true })
-        TicketChannel.updateOverwrite(message.author, { SEND_MESSAGES: false, READ_MESSAGES: true })
-        TicketChannel.updateOverwrite(bot.user, { SEND_MESSAGES: true, READ_MESSAGES: true })
+        TicketChannel.updateOverwrite(everyone, { VIEW_CHANNEL: false });
+        TicketChannel.updateOverwrite(message.author, { VIEW_CHANNEL: true, CREATE_INVITE: false, SEND_MESSAGES: false, READ_MESSAGES: true });
+        TicketChannel.updateOverwrite(staff, { VIEW_CHANNEL: true, CREATE_INVITE: false, CREATE_INVITE: false, SEND_MESSAGES: true, READ_MESSAGES: true });
+        TicketChannel.updateOverwrite(department, { VIEW_CHANNEL: true, CREATE_INVITE: false, SEND_MESSAGES: true, READ_MESSAGES: true });
+        TicketChannel.updateOverwrite(department2, { VIEW_CHANNEL: true, CREATE_INVITE: false, SEND_MESSAGES: true, READ_MESSAGES: true });
+        TicketChannel.updateOverwrite(department3, { VIEW_CHANNEL: true, CREATE_INVITE: false, SEND_MESSAGES: true, READ_MESSAGES: true });
 
     // Category
     let category = message.guild.channels.cache.find(c => c.name === supportbot.category);
@@ -99,9 +98,10 @@ exports.run = async (bot, message, args) => {
             const reaction = collected.first();
 
         if (reaction.emoji.name === `${Emoji_1}`) {
-			TicketChannel.updateOverwrite(staff, { SEND_MESSAGES: true, READ_MESSAGES: true })
-            TicketChannel.updateOverwrite(department, { SEND_MESSAGES: true, READ_MESSAGES: true })
-
+            TicketChannel.updateOverwrite(message.author, { VIEW_CHANNEL: true, CREATE_INVITE: false, SEND_MESSAGES: true, READ_MESSAGES: true });
+			TicketChannel.updateOverwrite(staff, { VIEW_CHANNEL: true, CREATE_INVITE: false, SEND_MESSAGES: true, READ_MESSAGES: true });
+			TicketChannel.updateOverwrite(department, { VIEW_CHANNEL: true, CREATE_INVITE: false, SEND_MESSAGES: true, READ_MESSAGES: true });
+			
             const dept1 = new Discord.MessageEmbed()
                 .setDescription(`You have requested to contact ${department}. Please wait patiently for someone to reach out to you.`)
                 .setColor(supportbot.SuccessColour)
@@ -109,8 +109,9 @@ exports.run = async (bot, message, args) => {
         }
 
         if (reaction.emoji.name === `${Emoji_2}`) {
-			TicketChannel.updateOverwrite(staff, { SEND_MESSAGES: true, READ_MESSAGES: true })
-            TicketChannel.updateOverwrite(department2, { SEND_MESSAGES: true, READ_MESSAGES: true })
+            TicketChannel.updateOverwrite(message.author, { VIEW_CHANNEL: true, CREATE_INVITE: false, SEND_MESSAGES: true, READ_MESSAGES: true });
+			TicketChannel.updateOverwrite(staff, { VIEW_CHANNEL: true, CREATE_INVITE: false, SEND_MESSAGES: true, READ_MESSAGES: true });
+			TicketChannel.updateOverwrite(department2, { VIEW_CHANNEL: true, CREATE_INVITE: false, SEND_MESSAGES: true, READ_MESSAGES: true });
 
             const dept2 = new Discord.MessageEmbed()
                 .setDescription(`You have requested to contact ${department2}. Please wait patiently for someone to reach out to you.`)
@@ -119,9 +120,10 @@ exports.run = async (bot, message, args) => {
         }
 
         if (reaction.emoji.name === `${Emoji_3}`) {
-			TicketChannel.updateOverwrite(staff, { SEND_MESSAGES: true, READ_MESSAGES: true })
-            TicketChannel.updateOverwrite(department3, { SEND_MESSAGES: true, READ_MESSAGES: true })
-
+            TicketChannel.updateOverwrite(message.author, { VIEW_CHANNEL: true, CREATE_INVITE: false, SEND_MESSAGES: true, READ_MESSAGES: true });
+			TicketChannel.updateOverwrite(staff, { VIEW_CHANNEL: true, CREATE_INVITE: false, SEND_MESSAGES: true, READ_MESSAGES: true });
+			TicketChannel.updateOverwrite(department3, { VIEW_CHANNEL: true, CREATE_INVITE: false, SEND_MESSAGES: true, READ_MESSAGES: true });
+			
             const dept3 = new Discord.MessageEmbed()
                 .setDescription(`You have requested to contact ${department3}. Please wait patiently for someone to reach out to you.`)
                 .setColor(supportbot.SuccessColour)
