@@ -36,7 +36,7 @@ exports.run = (bot, message, args) => {
         .setColor(supportbot.WarningColour); 
     if(!rUser) return message.channel.send({embed: cantfinduser});
 
-        message.channel.updateOverwrite(ruser, { VIEW_CHANNEL: true, CREATE_INVITE: false, SEND_MESSAGES: true, READ_MESSAGES: true });
+        message.channel.updateOverwrite(rUser, { VIEW_CHANNEL: true, CREATE_INVITE: false, SEND_MESSAGES: true, READ_MESSAGES: true });
 
     const useradded = new Discord.MessageEmbed()
         .setColor(supportbot.SuccessColour)
