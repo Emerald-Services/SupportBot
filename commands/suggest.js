@@ -18,7 +18,8 @@ exports.run = async(bot, message, args) => {
     const SuggestionEmbed = new Discord.MessageEmbed()
         .setTitle(`${supportbot.Suggestion_Title}`)
         .setDescription(`\`\`\`${args.join(" ")}\`\`\`\nFrom <@${message.author.id}>`)
-        .setFooter(`${supportbot.EmbedFooter}`, message.author.avatarURL)
+        .setThumbnail(message.author.avatarURL)
+        .setFooter(`${supportbot.EmbedFooter}`)
         .setTimestamp(new Date())
         .setColor(supportbot.EmbedColour)
 
