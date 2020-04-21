@@ -127,8 +127,8 @@ bot.on("message", async message => {
 // [SupportBot] Welcome Message && Auto Join Role
 
 bot.on("guildMemberAdd", (member) => {
-  let channel = member.guild.channels.find(channel => channel.name === `${supportbot.WelcomeChannel}`)
-  let autorole = member.guild.roles.find(autorole => autorole.name === `${supportbot.AutoRole}`)
+  let channel = member.guild.channels.cache.find(channel => channel.name === `${supportbot.WelcomeChannel}`)
+  let autorole = member.guild.roles.cache.find(autorole => autorole.name === `${supportbot.AutoRole}`)
   
   const WelcomeMsg= new Discord.MessageEmbed()
     .setColor(supportbot.EmbedColour)
@@ -143,7 +143,7 @@ bot.on("guildMemberAdd", (member) => {
 // [SupportBot] Leave Message
 
 bot.on("guildMemberRemove", (member) => {
-  let channel = member.guild.channels.find(channel => channel.name === `${supportbot.LeaveChannel}`)
+  let channel = member.guild.channels.cache.find(channel => channel.name === `${supportbot.LeaveChannel}`)
 
   const LeaveMsg= new Discord.MessageEmbed()
     .setColor(supportbot.EmbedColour)
