@@ -136,7 +136,7 @@ bot.on("guildMemberAdd", (member) => {
     .setDescription(`:wave: ${member.user.username}\n${supportbot.WelcomeMessage}`)
 
   channel.send(WelcomeMsg);
-  member.addRole(autorole).catch(console.error);
+  member.roles.add(autorole).catch(console.error);
     
 });
 
