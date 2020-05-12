@@ -32,4 +32,4 @@ class SupportClient extends Discord.Client {
     }
 }
 
-module.exports = EarthClient;
+module.exports = SupportClient;
