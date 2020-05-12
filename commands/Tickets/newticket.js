@@ -5,7 +5,6 @@ module.exports = class New extends Command {
     constructor(client) {
         super(client, {
             name: 'config.Ticket_Command',
-            aliases: ['ticket'],
             description: `Open a ticket`,
             usage: 'new [reason]'
         });
