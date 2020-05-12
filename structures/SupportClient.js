@@ -7,7 +7,7 @@ class SupportClient extends Discord.Client {
     constructor(token, options) {
         super(options);
         this.token = token;
-
+        this.config = config;
         this.color = config.EmbedColour;
         require("./Library/d.js")(Discord)
         this.handler = new Handler(this);
