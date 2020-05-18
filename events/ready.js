@@ -1,16 +1,19 @@
-const Event = require('../structures/Event');
+// SupportBot 6.0, Created by Emerald Services
+// Ready Event
 
-const config = require('../supportbot-config.js');
-const moment = require('moment');
+const Discord = require("discord.js");
+const fs = require("fs");
 
-module.exports = class Ready extends Event {
-    constructor(client) {
-        super(client, {
-            name: 'ready'
-        });
-    }
-    async exec(message) {
-        this.client.logger.info(`started as ${this.client.user.username} at ${moment(this.client.readyAt).format('LLL')}`)
-        this.client.user.setActivity(config.BotActivity, { type: config.ActivityType })
-    }
-}
+const yaml = require('js-yaml');
+const supportbot = yaml.load(fs.readFileSync('./supportbot-config.yml', 'utf8'));
+
+  
+module.exports = async (bot) => {
+    bot.user.setActivity(supportbot.BotActivity, {
+        type: supportbot.ActvityType
+    });
+
+    console.log(`\u001b[32m`, `―――――――――――――――――― SupportBot ――――――――――――――――――`)
+    console.log(`\u001b[37m`, `${supportbot.Bot_Name} has successfully connected to discord`)
+    console.log(`\u001b[32m`, `―――――――――――――――――― SupportBot ――――――――――――――――――`)
+};

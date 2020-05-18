@@ -1,26 +1,24 @@
-const Event = require('../structures/Event');
+// SupportBot 6.0, Created by Emerald Services
+// Message Event
 
-module.exports = class Message extends Event {
-    constructor(client) {
-        super(client, {
-            name: 'message'
-        });
-    }
-    async exec(message) {
-        if (message.author.bot || !message.guild) return;
-        const guild = await message.guild.settings();
-   
-        if (!message.content.toLowerCase().startsWith(guild.prefix)) return;
-        const args = message.content.slice(guild.prefix.length).split(/ +/);
-        const command = args.shift().toLowerCase();
-        const cmd = this.client.handler.commands.get(command) || this.client.handler.commands.get(this.client.handler.aliases.get(command));
-        if (!cmd) return;
-        try {
-            this.client.logger.info(`command "${cmd.name}" executed in ${message.guild.id}`)
-            return cmd.exec(message, args);
-        } catch (e) {
-            this.client.logger.error(`sentry exception captured from "${cmd.name}": ${e}`);
-            return message.channel.send(`Boo! Something went wrong when running that command!`)
-        }
-    }
-}
+const Discord = require("discord.js");
+const fs = require("fs");
+
+const yaml = require('js-yaml');
+const supportbot = yaml.load(fs.readFileSync('./supportbot-config.yml', 'utf8'));
+
+module.exports = async (bot, message) => {
+	if(message.author.bot) return;
+  	if(message.channel.type === "dm") return;
+  	if (message.content.indexOf(supportbot.Prefix) !== 0) return;
+
+  	let messageArray = message.content.split(" ");
+  	const args = message.content.slice(supportbot.Prefix.length).trim().split(/ +/g);
+  	const command = args.shift().toLowerCase();
+
+  	const cmd = bot.commands.get(command);
+  	if(!cmd) return;
+  	cmd.execute(message, args);
+    message.delete();
+
+};
