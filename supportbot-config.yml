@@ -11,8 +11,8 @@
 
 # General Bot Configuration
 
-Token: "NjcyMTU5MjQyNjg5NzA4MDUz.XsLd3w.S9pXU5JwrIoYHKbzzyhMY7P7LEw"
-Prefix: "!!"
+Token: "BOT_TOKEN_HERE"
+Prefix: "!"
 Bot_Name: "SupportBot DEV"
 
 BotActivity: "SB-6.0 dev-0.1"
