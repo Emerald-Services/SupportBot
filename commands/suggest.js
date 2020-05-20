@@ -21,7 +21,7 @@ module.exports = {
         if(!locateChannel) return message.channel.send({ embed: errornochannel });
 
         const embed = new Discord.MessageEmbed()
-            .setDescription(supportbot.SuggestionStarter)
+            .setDescription(`> **${supportbot.SuggestionStarter}**`)
 	        .setColor(supportbot.EmbedColour)
         message.channel.send({ embed: embed });
 

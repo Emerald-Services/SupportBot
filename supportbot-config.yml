@@ -11,7 +11,7 @@
 
 # General Bot Configuration
 
-Token: "NjcyMTU5MjQyNjg5NzA4MDUz.XsLd3w.S9pXU5JwrIoYHKbzzyhMY7P7LEw"
+Token: "BOT TOKEN"
 Prefix: "!!"
 Bot_Name: "SupportBot DEV"
 
@@ -23,8 +23,8 @@ ActivityType: "PLAYING"
 EmbedColour: "#04b545"
 EmbedFooter: "SupportBot | The #1 Supportive Discord Bot"
 
-ErrorColour: "#04b545"
-SuccessColour: "#4bbf5c"
+ErrorColour: "#d12519"
+SuccessColour: "#04b545"
 WarningColour: "#fca117" 
 
 # Role Configuration
@@ -41,6 +41,11 @@ TicketCategory: "Tickets"
 maxTickets: 5
 
 TicketMessage: "Hello %ticketauthor%, Thank you for creating a support ticket\nPlease wait patiently whilst a member of our team reaches out to you."
+
+ReactToCreateTicket: true
+ReactionForTicket: 🎫
+
+# Ticket Department Configuration
 
 # System Message Configuration
 
@@ -71,15 +76,21 @@ SuggestReact_2: 👎
 
 # Poll Configuration
 
-Poll_Channel: "polls"
-PollReactions:
-    ":thumbsup:": "👍"
-    ":thumbsdown:": "👎"
+PollChannel: "polls"
+PollTitle: "Suggestion"
+PollStarter: "What would you like to create a poll about?"
+PollReact_1: 👍
+PollReact_2: 👎
+
 
 # Announcement Configuration
 
-Announcement_Channel: "announcements"
-Announcement_Title: "Servername Announcement"
+AnnouncementChannel: "announcements"
+AnnouncementTitle: "Servername Announcement"
+AnnouncementIcon: "https://i.imgur.com/HbkZyB7.png"
+
+AnnouncementStarter: "What would you like to announce?"
+
 MentionedRole: "@everyone"
 
 # General Command Configuration

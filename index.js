@@ -66,4 +66,24 @@ fs.readdir("./commands/", (err, files) => {
     console.info(`\u001b[37m`, "-----------------------------------------------------------------------------");
 });
 
+fs.readdir("./commands/", (err, files) => {
+    if (err) console.info(err, "error");
+    
+    let jsfiles = files.filter((f) => f.split(".").pop() === "js");
+
+    if (jsfiles.length <= 0) {
+        console.log(`[${supportbot.Bot_Name}]: No addons found. You can download addons from https://emeraldservices.xyz`);
+        return;
+    }
+  
+    jsfiles.forEach((f, i) => {
+        let props = require(`./commands/${f}`);
+        console.info(`\u001b[37m`, `[${supportbot.Bot_Name}]:`, `\u001b[31m`, `#${i + 1} Command Loaded: ${props.name.toProperCase()}`);
+        bot.commands.set(props.name, props);
+    });
+
+    console.info(`\u001b[37m`, `[${supportbot.Bot_Name}]:`, `\u001b[32m`, `Loaded ${jsfiles.length} commands!`);
+    console.info(`\u001b[37m`, "-----------------------------------------------------------------------------");
+});
+
 bot.login(supportbot.Token);
