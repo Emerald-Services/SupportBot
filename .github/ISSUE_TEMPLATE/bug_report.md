@@ -3,7 +3,7 @@ name: Bug report
 about: Create a bug report to help us improve SupportBot.
 title: "[BUG]"
 labels: bug
-assignees: EmeraldRusher
+assignees: 1tzEmerald
 
 ---
 
