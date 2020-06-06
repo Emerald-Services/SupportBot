@@ -66,7 +66,7 @@ fs.readdir("./commands/", (err, files) => {
     console.info(`\u001b[37m`, "-----------------------------------------------------------------------------");
 });
 
-fs.readdir("./commands/", (err, files) => {
+fs.readdir("./addons/", (err, files) => {
     if (err) console.info(err, "error");
     
     let jsfiles = files.filter((f) => f.split(".").pop() === "js");
