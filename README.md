@@ -12,6 +12,8 @@
                                     The #1 self-hosted discord ticket bot
 ```
 
+## UPPORTBOT SUPPORTED VERSIONS
+
 | SupportBot |   Status  |   Supported  |
 |------------|-----------|--------------|
 |    1.x     |    ❌     | Discontinued | 
