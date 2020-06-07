@@ -21,6 +21,16 @@ const supportbot = yaml.load(fs.readFileSync('./supportbot-config.yml', 'utf8'))
 const { promisify } = require("util");
 const readdir = promisify(require("fs").readdir);
 
+const Sequelize = require('sequelize');
+
+const sequelize = new Sequelize('database', 'user', 'password', {
+	host: 'localhost',
+	dialect: 'sqlite',
+	logging: false,
+	// SQLite only
+	storage: 'database.sqlite',
+});
+
 String.prototype.toProperCase = function () {
     return this.replace(
         /([^\W_]+[^\s-]*) */g,
