@@ -23,8 +23,8 @@ exports.run = async(bot, message, args) => {
         .setColor(supportbot.ErrorColour); 
     if (!message.member.roles.cache.has(staffGroup.id)) return message.reply({embed: rolerequired});
     
-    message.channel.overwritePermissions(lockedRole, { READ_MESSAGES: false, SEND_MESSAGES: false });
-    message.channel.overwritePermissions(staffGroup, { READ_MESSAGES: true, SEND_MESSAGES: true });
+    message.channel.updateOverwrite(lockedRole, { READ_MESSAGES: false, SEND_MESSAGES: false });
+    message.channel.updateOverwrite(staffGroup, { READ_MESSAGES: true, SEND_MESSAGES: true });
 
     const lockmsg = new Discord.MessageEmbed()
         .setDescription(":white_check_mark: **Chat Locked**")
