@@ -12,7 +12,7 @@
                                     The #1 self-hosted discord ticket bot
 ```
 
-## UPPORTBOT SUPPORTED VERSIONS
+## SUPPORTBOT SUPPORTED VERSIONS
 
 | SupportBot |   Status  |   Supported  |
 |------------|-----------|--------------|
@@ -22,3 +22,14 @@
 |    4.x     |    ✔️     |   Previous   | 
 |    5.x     |    ✔️     |   Current    | 
 |    6.x     |    ⚠️     |   Under Development    | 
+
+## INSTALLATION
+
+You need to have (Node.JS v12)[https://nodejs.org/en/download/] before you can host this bot.
+
+Here are the commands that install the required node package managers (NPM) you need in order to install SupportBot v6.x.
+
+```
+npm install discord.js
+npm install js-yaml
+```
