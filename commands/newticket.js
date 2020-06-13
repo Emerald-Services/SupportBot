@@ -87,7 +87,7 @@ module.exports = {
         // Ticket Created, Message Sent
         const TicketMessage = new Discord.MessageEmbed()
           .setTitle(supportbot.Ticket_Title)
-          .setDescription(supportbot.TicketMessage)
+          .setDescription(supportbot.TicketMessage.replace(/%ticketauthor%/g, message.author.id))
           .setColor(supportbot.EmbedColour)
         SupportTicket.send({ embed: TicketMessage });
 
