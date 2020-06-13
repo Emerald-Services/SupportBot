@@ -41,7 +41,7 @@ TicketCategory: "Tickets"
 maxTickets: 5
 
 Ticket_Title: "Server Support"
-TicketMessage: "Hello **%ticketauthor%**, Thank you for creating a support ticket\nPlease wait patiently whilst a member of our team reaches out to you."
+TicketMessage: "Hello **<@%ticketauthor%>**, Thank you for creating a support ticket\nPlease wait patiently whilst a member of our team reaches out to you."
 NoTicketSubject: "No Reason Provided!"
 
 ReactToCreateTicket: true
