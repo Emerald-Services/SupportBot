@@ -1,49 +1,57 @@
-
-// SupportBot
-// Created by © 2020 Emerald Services
-// Command: Say
+// SupportBot 6.0, Created by Emerald Services
+// Suggest Command
 
 const Discord = require("discord.js");
-const bot = new Discord.Client();
-
 const fs = require("fs");
-const yaml = require('js-yaml');
 
+const yaml = require('js-yaml');
 const supportbot = yaml.load(fs.readFileSync('./supportbot-config.yml', 'utf8'));
 
-exports.run = async(bot, message, args) => {
+module.exports = {
+    name: supportbot.SuggestCommand,
+
+    execute(message, args) {
+        let locateChannel = message.guild.channels.cache.find(SuggestionChannel => SuggestionChannel.name === supportbot.SuggestionChannel);
+
+        const errornochannel = new Discord.MessageEmbed()
+            .setTitle("SupportBot Error!")
+            .setDescription(`:x: **Error!** Channel not Found, This command cannot be executed proberbly as their is no channel within this server.\nThis is configurable via **supportbot-config.yml**\n\nChannel Required: \`${supportbot.SuggestionChannel}\`\n\nError Code: \`SB-03\``)
+            .setColor(supportbot.ErrorColour);
+
+        if(!locateChannel) return message.channel.send({ embed: errornochannel });
+
+        const embed = new Discord.MessageEmbed()
+            .setDescription(`> **${supportbot.SuggestionStarter}**`)
+	        .setColor(supportbot.EmbedColour)
+        message.channel.send({ embed: embed });
+
+        let suggestion = []
+        message.channel.awaitMessages(response => response.content.length > 2, {
+            max: 1,
+            time: 500000,
+            errors: ['time'],
+        }).then((collected) => {
+            suggestion.push(collected.map(r => r.content));
+
+            const SuggestionMessage = new Discord.MessageEmbed()
+                .setColor(supportbot.EmbedColour)
+                .setFooter(supportbot.EmbedFooter)
+
+                .setTitle(supportbot.SuggestionTitle)
+                .setDescription(`\`\`\`${suggestion}\`\`\``)
+
+                .addFields( { name: "From", value: `<@${message.author.id}>`, inline: false }, )
+
+            locateChannel.send({ embed: SuggestionMessage }).then(async function(msg) {
+                msg.react(supportbot.SuggestReact_1).then(() => msg.react(supportbot.SuggestReact_2));
+            });
+
+            const SuggestionComplete = new Discord.MessageEmbed()
+                .setColor(supportbot.SuccessColour)
+                .setDescription(`:white_check_mark: Your suggestion has been successfully created. <#${locateChannel.id}>`)
+            message.channel.send({ embed: SuggestionComplete })
+
+        });
     
-    console.log(`\u001b[33m`, `[${supportbot.Bot_Name}] > `, `\u001b[31;1m`, `${message.author.tag}`, `\u001b[32;1m`, `has executed`, `\u001b[31;1m`, `${supportbot.Prefix}${supportbot.Suggest_Command}`);
-
-    const SuggestionEmbed = new Discord.MessageEmbed()
-        .setTitle(`${supportbot.Suggestion_Title}`)
-        .setDescription(`\`\`\`${args.join(" ")}\`\`\`\nFrom <@${message.author.id}>`)
-        .setThumbnail(message.author.avatarURL)
-        .setFooter(`${supportbot.EmbedFooter}`)
-        .setTimestamp(new Date())
-        .setColor(supportbot.EmbedColour)
-
-    let locateChannel = message.guild.channels.cache.find(LocateChannel => LocateChannel.name === `${supportbot.Suggestion_Channel}`)
-
-    const errornochannel = new Discord.MessageEmbed()
-        .setTitle("SupportBot Error!")
-        .setDescription(`:x: **Error!** Channel not Found, This command cannot be executed proberbly as their is no channel within this server.\nThis is configurable via **supportbot-config.yml**\n\nChannel Required: \`${supportbot.Suggestion_Channel}\`\n\nError Code: \`SB-03\``)
-        .setColor(supportbot.ErrorColour);
-    if(!locateChannel) return message.channel.send(errornochannel);
-        
-    locateChannel.send(SuggestionEmbed)
-
-    .then(async function(msg) {
-        msg.react(supportbot.suggestyes).then(() => msg.react(supportbot.suggestno));
-    });
-
-    const SuggestionSuccessEmbed = new Discord.MessageEmbed()
-        .setDescription(`👍 Suggestion has been successfully created\nYou can view your suggestion in <#${locateChannel.id}>`)
-        .setColor(supportbot.EmbedColour)
-    message.channel.send(SuggestionSuccessEmbed);
-
+    }
 };
-
-exports.help = {
-    name: supportbot.Suggest_Command,
-}

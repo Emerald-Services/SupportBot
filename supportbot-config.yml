@@ -1,0 +1,155 @@
+#        _________                                  __ __________        __   
+#       /   _____/__ ________ ______   ____________/  |\______   \ _____/  |_ 
+#       \_____  \|  |  \____ \\____ \ /  _ \_  __ \   __\    |  _//  _ \   __\
+#       /        \  |  /  |_> >  |_> >  <_> )  | \/|  | |    |   (  <_> )  |  
+#      /_______  /____/|   __/|   __/ \____/|__|   |__| |______  /\____/|__|  
+#              \/      |__|   |__|                             \/             
+#
+#                      SupportBot version 6.0
+#                      Created by Emerald Services
+#                      Installed with MIT License
+
+# General Bot Configuration
+
+Token: "TOKEN"
+Prefix: "!!"
+Bot_Name: "SupportBot DEV"
+
+BotActivity: "SB-6.0 dev-0.1"
+ActivityType: "PLAYING"
+
+# Embed Configuration
+
+EmbedColour: "#04b545"
+EmbedFooter: "SupportBot | The #1 Supportive Discord Bot"
+
+ErrorColour: "#d12519"
+SuccessColour: "#04b545"
+WarningColour: "#fca117" 
+
+# Role Configuration
+
+AutoRole: "Member"
+
+Staff: "Support"
+Admin: "Admin"
+
+# Ticket Configuration
+
+TicketChannel: "ticket"
+TicketCategory: "Tickets"
+TicketLog: "ticket-logs"
+TranscriptLog: "transcripts"
+TicketSubject: "description"
+
+Ticket_Thumbnail: "https://images.emojiterra.com/google/android-pie/512px/1f39f.png"
+Ticket_Title: "Server Support | %ticketusername%"
+TicketMessage: "Hello <@%ticketauthor%>, Thank you for creating a support ticket\nPlease wait patiently whilst a member of our team reaches out to you."
+NoTicketSubject: "No Reason Provided!"
+TicketCreatedAlert: ":ticket: Your support ticket has been created: <#%ticketid%>"
+
+TicketPanel: true
+ReactionForTicket: 🎫
+
+# Ticket Department Configuration
+
+TicketDepartments: true
+# This option enable or disable the ticket departments. If set false Ticket Departments will not work
+
+AllowStaff: true
+# AllowStaff is an option to whether or not you want the users with the "Staff" role to be able to view inside tickets. If set false "Staff" will not view tickets.
+
+DepartmentTiming: "1000"
+
+DepartmentEmoji_1: "🙋"
+DepartmentEmoji_2: "💸"
+DepartmentEmoji_3: "📗"
+# Ticket emojis, the emojis are what users will need to react with inorder to proceed furthur if departments are enabled.
+
+DepartmentTitle_1: "Support"
+DepartmentTitle_2: "Billing"
+DepartmentTitle_3: "Other"
+# Ticket department title, This is the title for a ticket department to help users know what is available.
+
+DepartmentRole_1: "Support"
+DepartmentRole_2: "Admin"
+DepartmentRole_3: "Support"
+# Ticket roles are the roles that will be able to gain access to tickets depending on what department has been choosen. 
+
+# System Message Configuration
+
+SystemMessages: "true"
+
+SystemMessage_Channel: "system-messages"
+SystemMessages_Embed: "true"
+
+WelcomeMessage: "Hello %membertag%, Welcome to %guildname%!"
+LeaveMessage: "Goodbye %membertag%, Thank you for visting %guildname%!"
+
+# LINKS Configuration
+
+LinksTitle: "Quick Links"
+
+LINKS:
+  "Website": "https://www.example.com"
+  "Store": "https://store.example.com"
+  "Discord": "https://discord.gg/example"
+
+# Suggestions Configuration
+
+SuggestionChannel: "suggestions"
+SuggestionTitle: "Suggestion"
+SuggestionStarter: "What would you like to suggest?"
+SuggestReact_1: 👍
+SuggestReact_2: 👎
+
+# Poll Configuration
+
+PollChannel: "polls"
+PollTitle: "Suggestion"
+PollStarter: "What would you like to create a poll about?"
+PollReact_1: 👍
+PollReact_2: 👎
+
+
+# Announcement Configuration
+
+AnnouncementChannel: "announcements"
+AnnouncementTitle: "Servername Announcement"
+AnnouncementIcon: "https://i.imgur.com/HbkZyB7.png"
+
+AnnouncementStarter: "What would you like to announce?"
+
+MentionedRole: "@everyone"
+
+# General Command Configuration
+
+HelpCommand: "help"
+LinksCommand: "links"
+PingCommand: "ping"
+SuggestCommand: "suggest"
+
+# Staff Command Configuration
+
+SayCommand: "say"
+ChatLockCommand: "lock"
+ChatUnlockCommand: "unlock"
+
+# Management Command Configuration
+
+AnnounceCommand: "announce"
+
+# Support Command Configuration
+
+NewTicket: "ticket"
+CloseTicket: "close"
+AddUser: "add"
+RemoveUser: "remove"
+RenameTicket: "rename"
+
+
+
+
+
+
+

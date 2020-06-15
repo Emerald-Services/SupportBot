@@ -1,15 +1,15 @@
 {
   "name": "supportbot",
-  "version": "5.1.0",
-  "description": "a discord dbot that can you help with your servers support",
+  "version": "1.0.0",
+  "description": "A self hosted discord support bot. SUPPORTBOT v6 GO CRAZYYYY",
   "main": "index.js",
   "scripts": {
-    "test": "-help"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Emerald SRV",
-  "license": "MIT",
+  "author": "",
+  "license": "ISC",
   "dependencies": {
-    "discord.js": "^12.1.1",
+    "discord.js": "^12.2.0",
     "js-yaml": "^3.13.1"
   }
 }
