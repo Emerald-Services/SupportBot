@@ -114,7 +114,7 @@ module.exports = {
             await msg.react(Emoji_2);
             await msg.react(Emoji_3);
             let filter = (reaction, user) => {
-              if (user.bot) return;
+              if (user.id !== message.author.id) return;
               if (typeof reacted[ticketNumberID] !== "boolean") return;
               delete reacted[ticketNumberID];
               if (reaction.emoji.name === Emoji_1) {
