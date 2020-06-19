@@ -7,6 +7,8 @@ const yaml = require('js-yaml');
 const supportbot = yaml.load(fs.readFileSync('./supportbot-config.yml', 'utf8'));
 const TicketNumberID = require('../utils/TicketNumber.js');
 
+const reacted = [];
+
 module.exports = {
     name: supportbot.NewTicket,
 
@@ -105,72 +107,78 @@ module.exports = {
           const Emoji_2 = supportbot.DepartmentEmoji_2;
           const Emoji_3 = supportbot.DepartmentEmoji_3;
 
+          reacted[ticketNumberID] = false;
+
           if (supportbot.TicketDepartments === true) {
-            msg.react(Emoji_1).then(() => msg.react(Emoji_2)).then(() => msg.react(Emoji_3))
-            
-            const filter = (reaction, user) => {
+            await msg.react(Emoji_1);
+            await msg.react(Emoji_2);
+            await msg.react(Emoji_3);
+            let filter = (reaction, user) => {
+              if (user.id !== message.author.id) return;
+              if (typeof reacted[ticketNumberID] !== "boolean") return;
+              delete reacted[ticketNumberID];
+              if (reaction.emoji.name === Emoji_1) {
+                SupportTicket.updateOverwrite(message.author.id, { VIEW_CHANNEL: true, READ_MESSAGES: true, SEND_MESSAGES: true, })
+                SupportTicket.updateOverwrite(Admins, { VIEW_CHANNEL: true, READ_MESSAGES: true, SEND_MESSAGES: true, })
+                SupportTicket.updateOverwrite(DeptRole1, { VIEW_CHANNEL: true, READ_MESSAGES: true, SEND_MESSAGES: true, })
+          
+                if (supportbot.AllowStaff === true) {
+                  SupportTicket.updateOverwrite(SupportStaff, { VIEW_CHANNEL: true, READ_MESSAGES: true, SEND_MESSAGES: true, })
+                }
+          
+                const Department1 = new Discord.MessageEmbed()
+                  .setTitle(`> Thank for reaching out to the **${supportbot.DepartmentTitle_1} Department**. Please provide us information regarding your query.`)
+                  .setColor(supportbot.EmbedColour)
+                SupportTicket.send({ embed: Department1 });
+          
+              }
+          
+              if (reaction.emoji.name === Emoji_2) {
+                SupportTicket.updateOverwrite(message.author.id, { VIEW_CHANNEL: true, READ_MESSAGES: true, SEND_MESSAGES: true, })
+                SupportTicket.updateOverwrite(Admins, { VIEW_CHANNEL: true, READ_MESSAGES: true, SEND_MESSAGES: true, })
+                SupportTicket.updateOverwrite(DeptRole2, { VIEW_CHANNEL: true, READ_MESSAGES: true, SEND_MESSAGES: true, })
+          
+                if (supportbot.AllowStaff === true) {
+                  SupportTicket.updateOverwrite(SupportStaff, { VIEW_CHANNEL: true, READ_MESSAGES: true, SEND_MESSAGES: true, })
+                }
+          
+                const Department2 = new Discord.MessageEmbed()
+                .setTitle(`> Thank for reaching out to the **${supportbot.DepartmentTitle_2} Department**. Please provide us information regarding your query.`)
+                  .setColor(supportbot.EmbedColour)
+                SupportTicket.send({ embed: Department2 });
+          
+              }
+          
+              if (reaction.emoji.name === `${Emoji_3}`) {
+                SupportTicket.updateOverwrite(message.author.id, { VIEW_CHANNEL: true, READ_MESSAGES: true, SEND_MESSAGES: true, })
+                SupportTicket.updateOverwrite(Admins, { VIEW_CHANNEL: true, READ_MESSAGES: true, SEND_MESSAGES: true, })
+                SupportTicket.updateOverwrite(DeptRole3, { VIEW_CHANNEL: true, READ_MESSAGES: true, SEND_MESSAGES: true, })
+          
+                if (supportbot.AllowStaff === true) {
+                  SupportTicket.updateOverwrite(SupportStaff, { VIEW_CHANNEL: true, READ_MESSAGES: true, SEND_MESSAGES: true, })
+                }
+          
+                const Department3 = new Discord.MessageEmbed()
+                .setTitle(`> Thank for reaching out to the **${supportbot.DepartmentTitle_3} Department**. Please provide us information regarding your query.`)
+                  .setColor(supportbot.EmbedColour)
+                SupportTicket.send({ embed: Department3 });
+              }
               return [Emoji_1, Emoji_2, Emoji_3].includes(reaction.emoji.name) && user.id !== message.author.id;
             }
-            
+            msg.awaitReactions(filter, { 
+              max: 4, 
+              time: 60000, 
+              errors: ['time'] 
+            }).then(async collected => {
+            });
+
             setTimeout(async function() {
-              msg.awaitReactions(filter, { 
-                max: 4, 
-                time: 60000, 
-                errors: ['time'] 
-              }).then(async collected => {
-                const reaction = collected.first();
-            
-                if (reaction.emoji.name === Emoji_1) {
-                  SupportTicket.updateOverwrite(message.author.id, { VIEW_CHANNEL: true, READ_MESSAGES: true, SEND_MESSAGES: true, })
-                  SupportTicket.updateOverwrite(Admins, { VIEW_CHANNEL: true, READ_MESSAGES: true, SEND_MESSAGES: true, })
-                  SupportTicket.updateOverwrite(DeptRole1, { VIEW_CHANNEL: true, READ_MESSAGES: true, SEND_MESSAGES: true, })
-            
-                  if (supportbot.AllowStaff === true) {
-                    SupportTicket.updateOverwrite(SupportStaff, { VIEW_CHANNEL: true, READ_MESSAGES: true, SEND_MESSAGES: true, })
-                  }
-  
-                  const Department1 = new Discord.MessageEmbed()
-                    .setTitle(`> Thank for reaching out to the **${supportbot.DepartmentTitle_1} Department**. Please provide us information regarding your query.`)
-                    .setColor(supportbot.EmbedColour)
-                  SupportTicket.send({ embed: Department1 });
-            
-                }
-            
-                if (reaction.emoji.name === Emoji_2) {
-                  SupportTicket.updateOverwrite(message.author.id, { VIEW_CHANNEL: true, READ_MESSAGES: true, SEND_MESSAGES: true, })
-                  SupportTicket.updateOverwrite(Admins, { VIEW_CHANNEL: true, READ_MESSAGES: true, SEND_MESSAGES: true, })
-                  SupportTicket.updateOverwrite(DeptRole2, { VIEW_CHANNEL: true, READ_MESSAGES: true, SEND_MESSAGES: true, })
-            
-                  if (supportbot.AllowStaff === true) {
-                    SupportTicket.updateOverwrite(SupportStaff, { VIEW_CHANNEL: true, READ_MESSAGES: true, SEND_MESSAGES: true, })
-                  }
-  
-                  const Department2 = new Discord.MessageEmbed()
-                  .setTitle(`> Thank for reaching out to the **${supportbot.DepartmentTitle_2} Department**. Please provide us information regarding your query.`)
-                    .setColor(supportbot.EmbedColour)
-                  SupportTicket.send({ embed: Department2 });
-            
-                }
-            
-                if (reaction.emoji.name === `${Emoji_3}`) {
-                  SupportTicket.updateOverwrite(message.author.id, { VIEW_CHANNEL: true, READ_MESSAGES: true, SEND_MESSAGES: true, })
-                  SupportTicket.updateOverwrite(Admins, { VIEW_CHANNEL: true, READ_MESSAGES: true, SEND_MESSAGES: true, })
-                  SupportTicket.updateOverwrite(DeptRole3, { VIEW_CHANNEL: true, READ_MESSAGES: true, SEND_MESSAGES: true, })
-            
-                  if (supportbot.AllowStaff === true) {
-                    SupportTicket.updateOverwrite(SupportStaff, { VIEW_CHANNEL: true, READ_MESSAGES: true, SEND_MESSAGES: true, })
-                  }
-  
-                  const Department2 = new Discord.MessageEmbed()
-                  .setTitle(`> Thank for reaching out to the **${supportbot.DepartmentTitle_3} Department**. Please provide us information regarding your query.`)
-                    .setColor(supportbot.EmbedColour)
-                  SupportTicket.send({ embed: Department3 });
-  
-                }
-            
-              })
-            }, supportbot.DepartmentTiming);
- 
+              if (typeof reacted[ticketNumberID] == "boolean") {
+                delete reacted[ticketNumberID];
+                //delete channel because didn't react in a minute
+              }
+            }, 60000);
+
           }
   
         });
