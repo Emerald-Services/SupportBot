@@ -29,7 +29,9 @@ WarningColour: "#fca117"
 
 # Role Configuration
 
-AutoRole: "Member"
+AutoRole: "true"
+# By setting "AutoRole to 'true' the bot will automatically apply the role below when members joins. Set to 'false' to disable this feature.
+AutoRole_Role: "Member"
 
 Staff: "Support"
 Admin: "Admin"
@@ -59,8 +61,6 @@ TicketDepartments: true
 AllowStaff: true
 # AllowStaff is an option to whether or not you want the users with the "Staff" role to be able to view inside tickets. If set false "Staff" will not view tickets.
 
-DepartmentTiming: "1000"
-
 DepartmentEmoji_1: "🙋"
 DepartmentEmoji_2: "💸"
 DepartmentEmoji_3: "📗"
@@ -81,10 +81,15 @@ DepartmentRole_3: "Support"
 SystemMessages: "true"
 
 SystemMessage_Channel: "system-messages"
-SystemMessages_Embed: "true"
+SystemMessages_Type: "normal"
+# There are 2 types of how you can send system messages, 'normal' or 'embed'
 
-WelcomeMessage: "Hello %membertag%, Welcome to %guildname%!"
-LeaveMessage: "Goodbye %membertag%, Thank you for visting %guildname%!"
+WelcomeMessage: "Hello %member%, Welcome to %guildname%!"
+WelcomeMessage_Icon: "USER"
+
+LeaveMessage: "Goodbye %member%, Thank you for visting %guildname%!"
+
+SystemMessage_EmbedFooter: "false"
 
 # LINKS Configuration
 
@@ -94,6 +99,7 @@ LINKS:
   "Website": "https://www.example.com"
   "Store": "https://store.example.com"
   "Discord": "https://discord.gg/example"
+# "Twitter": "https://twitter.com/example"
 
 # Suggestions Configuration
 
