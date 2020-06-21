@@ -12,7 +12,14 @@ module.exports = {
     name: "bob",
 
     execute(message, args) {
+        console.log(`\u001b[32m`, `[${supportbot.Bot_Name}]:`, `\u001b[32m`, `${message.author.tag} has executed ${supportbot.Prefix}${supportbot.CloseTicket}!`);
         
-        message.channel.delete()
+        if (supportbot.Close === "staff") {
+            member.roles.cache.has(``)
+        }
+
+        if (supportbot.Close === "user") {
+
+        }
     }
 };

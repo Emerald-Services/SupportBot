@@ -14,13 +14,12 @@ module.exports = async (bot, member) => {
     
     if (!SystemChannel) return;
     
-    console.log(`[${supportbot.Bot_Name}]: ${member.user.username} has joined ${member.guild.name}!`)
-    console.log(supportbot.AutoRole_Role)
+    console.log(`[${supportbot.Bot_Name}]: ${member.user.username} has left ${member.guild.name}!`)
 
     if (supportbot.SystemMessage_Type === "embed") {
-      const GuildAddMember = new Discord.MessageEmbed()
-        .setTitle(supportbot.Welcome_Title)
-        .setDescription(supportbot.WelcomeMessage.replace(/%member%/g, member.user.username).replace(/%guildname%/g, member.guild.name))
+      const GuildRemoveMember = new Discord.MessageEmbed()
+        .setTitle(supportbot.Leave_Title)
+        .setDescription(supportbot.LeaveMessage.replace(/%member%/g, member.user.username).replace(/%guildname%/g, member.guild.name))
         .setColor(supportbot.EmbedColour)
 
         if (supportbot.SystemMessage_Icon === "BOT") {
@@ -36,12 +35,12 @@ module.exports = async (bot, member) => {
             GuildAddMember.setFooter(supportbot.EmbedFooter)
         }
 
-    SystemChannel.send({ embed: GuildAddMember });
+    SystemChannel.send({ embed: GuildRemoveMember });
         
     }
 
     if (supportbot.SystemMessage_Type === "normal") {
-        SystemChannel.send(supportbot.WelcomeMessage.replace(/%member%/g, member.user.username).replace(/%guildname%/g, member.guild.name))
+        SystemChannel.send(supportbot.LeaveMessage.replace(/%member%/g, member.user.username).replace(/%guildname%/g, member.guild.name))
 
     }
 

@@ -83,11 +83,12 @@ SystemMessages: "true"
 SystemMessage_Channel: "system-messages"
 SystemMessage_Type: "embed"
 # There are 2 types of how you can send system messages, 'normal' or 'embed'
+SystemMessage_Icon: "USER"
 
-Welcome_Title: "Welcome"
+Welcome_Title: "User Joined!"
 WelcomeMessage: "Hello %member%, Welcome to %guildname%!"
-WelcomeMessage_Icon: "USER"
 
+Leave_Title: "User Left!"
 LeaveMessage: "Goodbye %member%, Thank you for visting %guildname%!"
 
 SystemMessage_EmbedFooter: "false"
