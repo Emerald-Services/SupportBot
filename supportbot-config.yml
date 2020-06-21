@@ -81,9 +81,10 @@ DepartmentRole_3: "Support"
 SystemMessages: "true"
 
 SystemMessage_Channel: "system-messages"
-SystemMessages_Type: "normal"
+SystemMessage_Type: "embed"
 # There are 2 types of how you can send system messages, 'normal' or 'embed'
 
+Welcome_Title: "Welcome"
 WelcomeMessage: "Hello %member%, Welcome to %guildname%!"
 WelcomeMessage_Icon: "USER"
 

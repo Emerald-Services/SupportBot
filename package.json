@@ -1,15 +1,24 @@
 {
   "name": "supportbot",
-  "version": "1.0.0",
-  "description": "A self hosted discord support bot. SUPPORTBOT v6 GO CRAZYYYY",
+  "version": "6.0.0",
+  "description": "SupportBot | #1 Self-Hosted Ticket Bot",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "discord.js": "^12.2.0",
     "js-yaml": "^3.14.0"
-  }
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "help"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/1tzemerald/SupportBot.git"
+  },
+  "author": "Emerald Services",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/1tzemerald/SupportBot/issues"
+  },
+  "homepage": "https://github.com/1tzemerald/SupportBot#readme"
 }

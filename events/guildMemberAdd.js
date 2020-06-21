@@ -14,6 +14,9 @@ module.exports = async (bot, member) => {
     
     if (!SystemChannel) return;
     
+    console.log(`[${supportbot.Bot_Name}]: ${member.user.username} has joined ${member.guild.name}!`)
+    console.log(supportbot.AutoRole_Role)
+
     if (supportbot.SystemMessage_Type === "embed") {
       const GuildAddMember = new Discord.MessageEmbed()
         .setTitle(supportbot.Welcome_Title)
@@ -21,11 +24,11 @@ module.exports = async (bot, member) => {
         .setColor(supportbot.EmbedColour)
 
         if (supportbot.WelcomeMessage_Icon === "BOT") {
-            GuildAddMember.setThumbnail(bot.displayAvatarURL())
+            GuildAddMember.setThumbnail(bot.user.displayAvatarURL())
         }
 
         if (supportbot.WelcomeMessage_Icon === "USER") {
-            GuildAddMember.setThumbnail(member.displayAvatarURL())
+            GuildAddMember.setThumbnail(member.user.displayAvatarURL())
         }
 
 
@@ -40,10 +43,7 @@ module.exports = async (bot, member) => {
     if (supportbot.SystemMessage_Type === "normal") {
         SystemChannel.send(supportbot.WelcomeMessage.replace(/%member%/g, member.user.username).replace(/%guildname%/g, member.guild.name))
 
-        if (supportbot.AutoRole === "true") {
-            member.roles.add(supportbot.AutoRole_Role)
-        }
     }
-    
+
   }
 };
