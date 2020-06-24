@@ -13,13 +13,25 @@ module.exports = {
 
     execute(message, args) {
         console.log(`\u001b[32m`, `[${supportbot.Bot_Name}]:`, `\u001b[32m`, `${message.author.tag} has executed ${supportbot.Prefix}${supportbot.CloseTicket}!`);
-        
-        if (supportbot.Close === "staff") {
-            member.roles.cache.has(``)
+
+        if (!message.channel.name.startsWith( `${TicketChannel}-` )) {
+            const Exists = new Discord.MessageEmbed()
+                .setTitle("Incorrect Channel")
+                .setDescription(`:warning: You cannot execute this command here. This command is used when closing a ticket.`)
+                .setColor(supportbot.WarningColour);
+            message.channel.send({ embed: Exists });
+
+            return;
+
         }
 
-        if (supportbot.Close === "user") {
+        if (supportbot.CloseConfirmation === "true") {
+            const CloseTicketRequest = new Discord.MessageEmbed()
+                .setDescription(`**${supportbot.ClosingTicket}**`)
+                .addField("Please confirm by repeating the following word..", `**${supportbot.ClosingConfirmation_Word}**`)
 
         }
+
+
     }
 };

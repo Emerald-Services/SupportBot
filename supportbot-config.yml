@@ -18,6 +18,9 @@ Bot_Name: "SupportBot DEV"
 BotActivity: "SB-6.0 dev-0.1"
 ActivityType: "PLAYING"
 
+ShowErrorCodes: "true"
+# This feature will show supportbot error codes such as "SB-01"
+
 # Embed Configuration
 
 EmbedColour: "#04b545"
@@ -52,6 +55,11 @@ TicketCreatedAlert: ":ticket: Your support ticket has been created: <#%ticketid%
 
 TicketPanel: true
 ReactionForTicket: 🎫
+
+ClosingTicket: ":warning: You have requested to close your support ticket."
+ClosingConfirmation_Word: "confirm"
+CloseConfirmation: true
+Transcripts: true
 
 # Ticket Department Configuration
 
