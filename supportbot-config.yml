@@ -46,27 +46,26 @@ TicketCategory: "Tickets"
 TicketLog: "ticket-logs"
 TranscriptLog: "transcripts"
 TicketSubject: "description"
+# TicketSuvject: "description" means that the subject (reason) of the ticket will be displayed upon the channel description if set to "embed" it will be displayed within the embed.
 
 Ticket_Thumbnail: "https://images.emojiterra.com/google/android-pie/512px/1f39f.png"
 Ticket_Title: "Server Support | %ticketusername%"
 TicketMessage: "Hello <@%ticketauthor%>, Thank you for creating a support ticket\nPlease wait patiently whilst a member of our team reaches out to you."
 NoTicketSubject: "No Reason Provided!"
 TicketCreatedAlert: ":ticket: Your support ticket has been created: <#%ticketid%>"
-
-TicketPanel: true
-ReactionForTicket: 🎫
+TranscriptTitle: "Ticket Transcript"
 
 ClosingTicket: ":warning: You have requested to close your support ticket."
 ClosingConfirmation_Word: "confirm"
-CloseConfirmation: true
-Transcripts: true
+CloseConfirmation: "true"
+# CloseConfirmation to true will make users confirm that they want to close a their ticket, settings to false will just close the ticket.
 
 # Ticket Department Configuration
 
-TicketDepartments: true
+TicketDepartments: "true"
 # This option enable or disable the ticket departments. If set false Ticket Departments will not work
 
-AllowStaff: true
+AllowStaff: "true"
 # AllowStaff is an option to whether or not you want the users with the "Staff" role to be able to view inside tickets. If set false "Staff" will not view tickets.
 
 DepartmentEmoji_1: "🙋"

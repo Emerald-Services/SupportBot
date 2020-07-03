@@ -97,7 +97,7 @@ module.exports = {
           
         }
 
-        if (supportbot.TicketDepartments === true) {
+        if (supportbot.TicketDepartments === "true") {
           TicketMessage.addFields({ name: 'Departments', value: `${supportbot.DepartmentEmoji_1} **${supportbot.DepartmentTitle_1}**\n${supportbot.DepartmentEmoji_2} **${supportbot.DepartmentTitle_2}**\n${supportbot.DepartmentEmoji_3} **${supportbot.DepartmentTitle_3}**` })
         }
 
@@ -109,7 +109,7 @@ module.exports = {
 
           reacted[ticketNumberID] = false;
 
-          if (supportbot.TicketDepartments === true) {
+          if (supportbot.TicketDepartments === "true") {
             await msg.react(Emoji_1);
             await msg.react(Emoji_2);
             await msg.react(Emoji_3);
@@ -122,10 +122,14 @@ module.exports = {
                 SupportTicket.updateOverwrite(Admins, { VIEW_CHANNEL: true, READ_MESSAGES: true, SEND_MESSAGES: true, })
                 SupportTicket.updateOverwrite(DeptRole1, { VIEW_CHANNEL: true, READ_MESSAGES: true, SEND_MESSAGES: true, })
           
-                if (supportbot.AllowStaff === true) {
+                if (supportbot.AllowStaff === "true") {
                   SupportTicket.updateOverwrite(SupportStaff, { VIEW_CHANNEL: true, READ_MESSAGES: true, SEND_MESSAGES: true, })
                 }
           
+                if (supportbot.AllowStaff === "false") {
+                  SupportTicket.updateOverwrite(SupportStaff, { VIEW_CHANNEL: false, READ_MESSAGES: true, SEND_MESSAGES: true, })
+                }
+
                 const Department1 = new Discord.MessageEmbed()
                   .setTitle(`> Thank for reaching out to the **${supportbot.DepartmentTitle_1} Department**. Please provide us information regarding your query.`)
                   .setColor(supportbot.EmbedColour)
@@ -138,8 +142,12 @@ module.exports = {
                 SupportTicket.updateOverwrite(Admins, { VIEW_CHANNEL: true, READ_MESSAGES: true, SEND_MESSAGES: true, })
                 SupportTicket.updateOverwrite(DeptRole2, { VIEW_CHANNEL: true, READ_MESSAGES: true, SEND_MESSAGES: true, })
           
-                if (supportbot.AllowStaff === true) {
+                if (supportbot.AllowStaff === "true") {
                   SupportTicket.updateOverwrite(SupportStaff, { VIEW_CHANNEL: true, READ_MESSAGES: true, SEND_MESSAGES: true, })
+                }
+
+                if (supportbot.AllowStaff === "false") {
+                  SupportTicket.updateOverwrite(SupportStaff, { VIEW_CHANNEL: false, READ_MESSAGES: true, SEND_MESSAGES: true, })
                 }
           
                 const Department2 = new Discord.MessageEmbed()
@@ -153,9 +161,14 @@ module.exports = {
                 SupportTicket.updateOverwrite(message.author.id, { VIEW_CHANNEL: true, READ_MESSAGES: true, SEND_MESSAGES: true, })
                 SupportTicket.updateOverwrite(Admins, { VIEW_CHANNEL: true, READ_MESSAGES: true, SEND_MESSAGES: true, })
                 SupportTicket.updateOverwrite(DeptRole3, { VIEW_CHANNEL: true, READ_MESSAGES: true, SEND_MESSAGES: true, })
+                SupportTicket.updateOverwrite(SupportStaff, { VIEW_CHANNEL: false, READ_MESSAGES: true, SEND_MESSAGES: true, })
           
-                if (supportbot.AllowStaff === true) {
+                if (supportbot.AllowStaff === "true") {
                   SupportTicket.updateOverwrite(SupportStaff, { VIEW_CHANNEL: true, READ_MESSAGES: true, SEND_MESSAGES: true, })
+                }
+
+                if (supportbot.AllowStaff === "false") {
+                  SupportTicket.updateOverwrite(SupportStaff, { VIEW_CHANNEL: false, READ_MESSAGES: true, SEND_MESSAGES: true, })
                 }
           
                 const Department3 = new Discord.MessageEmbed()

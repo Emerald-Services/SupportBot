@@ -1,8 +1,0 @@
-            const rolerequired = new Discord.MessageEmbed()
-                .setTitle("SupportBot Error!")
-                .setDescription(`:x: **Error!** Incorrect Permissions, You cannot execute this command as you do not have the required role.\n\nRole Required: \`${supportbot.StaffRole}\`\n`)
-                .setColor(supportbot.ErrorColour); 
-
-                if (supportbot.ShowErrorCodes === "true") {
-                    rolerequired.addField("Error Code", "SB-02")
-                }
