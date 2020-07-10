@@ -37,8 +37,19 @@ module.exports = {
                 .setColor(supportbot.ErrorColor)
 
             if (!rUser) return message.channel.send({ embed: UserNotExist });
-
-
-
+        
+                message.channel.updateOverwrite(rUser, {
+                    VIEW_CHANNEL: true,
+                    CREATE_INVITE: false,
+                    SEND_MESSAGES: true,
+                    READ_MESSAGES: true
+                });
+        
+            const Complete = new Discord.MessageEmbed()
+                .setTitle("User Added!")
+                .setDescription(`👍 ${rUser} has been added to this ticket`)
+                .setTimestamp()
+                .setColor(supportbot.EmbedColour)
+           message.channel.send({ embed: Complete });
     }
 };
