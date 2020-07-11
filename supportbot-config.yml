@@ -35,6 +35,7 @@ WarningColour: "#fca117"
 AutoRole: "true"
 # By setting "AutoRole to 'true' the bot will automatically apply the role below when members joins. Set to 'false' to disable this feature.
 AutoRole_Role: "Member"
+LockdownRole: "@everyone"
 
 Staff: "Support"
 Admin: "Admin"
@@ -144,16 +145,6 @@ LinksCommand: "links"
 PingCommand: "ping"
 SuggestCommand: "suggest"
 
-# Staff Command Configuration
-
-SayCommand: "say"
-ChatLockCommand: "lock"
-ChatUnlockCommand: "unlock"
-
-# Management Command Configuration
-
-AnnounceCommand: "announce"
-
 # Support Command Configuration
 
 NewTicket: "ticket"
@@ -161,3 +152,11 @@ CloseTicket: "close"
 AddUser: "add"
 RemoveUser: "remove"
 RenameTicket: "rename"
+
+# Staff Command Configuration
+
+SayCommand: "say"
+
+# Admin Command Configuration
+
+AnnounceCommand: "announce"
