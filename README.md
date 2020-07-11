@@ -12,7 +12,7 @@
                                     The #1 self-hosted discord ticket bot
 ```
 
-## UPPORTBOT SUPPORTED VERSIONS
+## SUPPORTBOT SUPPORTED VERSIONS
 
 | SupportBot |   Status  |   Supported  |
 |------------|-----------|--------------|

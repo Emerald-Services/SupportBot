@@ -1,5 +1,5 @@
 // SupportBot 6.0, Created by Emerald Services
-// Remove User
+// Add User
 
 const Discord = require("discord.js");
 const fs = require("fs");
