@@ -9,13 +9,14 @@ const supportbot = yaml.load(fs.readFileSync('./supportbot-config.yml', 'utf8'))
 
 module.exports = {
     name: supportbot.SuggestCommand,
+    description: supportbot.SuggestionDesc,
 
     execute(message, args) {
         let locateChannel = message.guild.channels.cache.find(SuggestionChannel => SuggestionChannel.name === supportbot.SuggestionChannel);
 
         const errornochannel = new Discord.MessageEmbed()
-            .setTitle("SupportBot Error!")
-            .setDescription(`:x: **Error!** Channel not Found, This command cannot be executed proberbly as their is no channel within this server.\nThis is configurable via **supportbot-config.yml**\n\nChannel Required: \`${supportbot.SuggestionChannel}\`\n\nError Code: \`SB-03\``)
+            .setTitle("Invalid Channel")
+            .setDescription(`${supportbot.InvalidChannel}\n\nChannel Required: \`${supportbot.SuggestionChannel}\``)
             .setColor(supportbot.ErrorColour);
 
         if(!locateChannel) return message.channel.send({ embed: errornochannel });

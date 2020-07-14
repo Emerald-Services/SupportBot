@@ -11,7 +11,7 @@
 
 # General Bot Configuration
 
-Token: "TOKEN"
+Token: "NjcyMTU5MjQyNjg5NzA4MDUz.XwnBpg.6eCCVRv4m-aVPJuppHWNxpxpRs0"
 Prefix: "!!"
 Bot_Name: "SupportBot DEV"
 
@@ -55,6 +55,9 @@ TicketMessage: "Hello <@%ticketauthor%>, Thank you for creating a support ticket
 NoTicketSubject: "No Reason Provided!"
 TicketCreatedAlert: ":ticket: Your support ticket has been created: <#%ticketid%>"
 TranscriptTitle: "Ticket Transcript"
+
+AddedUser: "👍 <@%user%> has been added to this ticket"
+RemovedUser: "👍 <@%user%> has been removed from this ticket"
 
 ClosingTicket: ":warning: You have requested to close your support ticket."
 ClosingConfirmation_Word: "confirm"
@@ -155,8 +158,29 @@ RenameTicket: "rename"
 
 # Staff Command Configuration
 
-SayCommand: "say"
+BotSay: "say"
 
 # Admin Command Configuration
 
 AnnounceCommand: "announce"
+
+# Commmand Descriptions
+
+NewTicketDesc: "Create a new support ticket"
+AnnounceDesc: "Create a server announcement"
+CloseTicketDesc: "Close your support ticket"
+LinksDesc: "View some important links"
+PingDesc: "Get the bot's latency"
+HelpDesc: "Get a list of all the commands"
+RemoveUserDesc: "Remove a user from a support ticket"
+AddUserDesc: "Add a user to a support ticket"
+SuggestionDesc: "Create a server suggestion"
+BotSayDesc: "Say something with the bot"
+
+# Error / Warining Messages
+
+IncorrectPerms: ":x: **Err!** You do not have the correct permissions to use this command."
+InvalidChannel: ":x: **Err!** Channel not found. Please create it!"
+UserNotFound: ":x: **Err!** This user doesn't exist, Are they in this server?"
+NoValidTicket: ":warning: You cannot execute this command here. This command is used when closing a ticket."
+TicketExists: ":warning: This ticket cannot be opened, It already exists!"

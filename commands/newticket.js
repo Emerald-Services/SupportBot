@@ -11,6 +11,7 @@ const reacted = [];
 
 module.exports = {
     name: supportbot.NewTicket,
+    description: supportbot.NewTicketDesc,
 
     execute(message, args) {
       console.log(`\u001b[32m`, `[${supportbot.Bot_Name}]:`, `\u001b[32m`, `${message.author.tag} has executed ${supportbot.Prefix}${supportbot.NewTicket}!`);
@@ -24,7 +25,7 @@ module.exports = {
       // Ticket Exists
       const TicketExists = new Discord.MessageEmbed()
         .setTitle("Ticket Exists!")
-        .setDescription(":no_entry_sign: This ticket cannot be opened, It already exists!")
+        .setDescription(`${supportbot.TicketExists}`)
         .setColor(supportbot.WarningColour)
 
       if (message.guild.channels.cache.find(SupportTicket => SupportTicket.name === `${supportbot.TicketChannel}-${ticketNumberID}`)) 

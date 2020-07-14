@@ -9,6 +9,7 @@ const supportbot = yaml.load(fs.readFileSync('./supportbot-config.yml', 'utf8'))
 
 module.exports = {
     name: supportbot.PingCommand,
+    description: supportbot.PingDesc,
 
     execute(message, args) {        
         let ping = Date.now() - message.createdTimestamp + " ms";

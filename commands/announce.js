@@ -10,6 +10,7 @@ const supportbot = yaml.load(fs.readFileSync('./supportbot-config.yml', 'utf8'))
 
 module.exports = {
     name: supportbot.AnnounceCommand,
+    description: supportbot.AnnounceDesc,
 
     execute(message, args) {
 
@@ -17,7 +18,7 @@ module.exports = {
 
         const errornochannel = new Discord.MessageEmbed()
             .setTitle("Invalid Channel")
-            .setDescription(`:x: **Error!** Channel not Found, This command cannot be executed proberbly as their is no channel within this server.\nThis is configurable via **supportbot-config.yml**\n\nChannel Required: \`${supportbot.AnnouncementChannel}`)
+            .setDescription(`${supportbot.InvalidChannel}\n\nChannel Required: \`${supportbot.AnnouncementChannel}`)
             .setColor(supportbot.ErrorColour);
 
         if(!locateChannel) return message.channel.send({ embed: errornochannel });
@@ -26,9 +27,11 @@ module.exports = {
 
         const NoPerms = new Discord.MessageEmbed()
             .setTitle("Invalid Permissions!")
-            .setDescription(`:warning: **Err!** You do not have the correct permissions to use this command.\n\nRole Required: \`${supportbot.serverAdmins}\``)
+            .setDescription(`${supportbot.IncorrectPerms}\n\nRole Required: \`${serverAdmins.name}\``)
             .setColor(supportbot.WarningColour)
-        message.channel.send({ embed: NoPerms });
+
+            if (!message.member.roles.cache.has(serverAdmins.id)) 
+                return message.channel.send({ embed: NoPerms });
 
 
             const embed = new Discord.MessageEmbed()
