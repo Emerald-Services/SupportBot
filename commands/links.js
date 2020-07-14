@@ -10,6 +10,7 @@ const supportbot = yaml.load(fs.readFileSync('./supportbot-config.yml', 'utf8'))
 
 module.exports = {
     name: supportbot.LinksCommand,
+    description: supportbot.LinksDesc,
 
     execute(message, args) {
         
