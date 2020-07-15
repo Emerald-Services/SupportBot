@@ -19,18 +19,23 @@ module.exports = {
 
         const NoPerms = new Discord.MessageEmbed()
             .setTitle("Invalid Permissions!")
-            .setDescription(`${supportbot.IncorrectPerms}\n\nRole Required: \`${supportbot.Staff}\``)
+            .setDescription(`${supportbot.IncorrectPerms}\n\nRole Required: \`${supportbot.Staff}\` or \`${supportbot.Admin}\``)
             .setColor(supportbot.WarningColour)
 
-            if (!message.member.roles.cache.has(SupportStaff.id )) 
+            if (!message.member.roles.cache.has(SupportStaff.id || Admins.id)) {
+
+                const BotSpeaks = agrs.join(" ");
+
+                const Speaking = new Discord.MessageEmbed()
+                    .setDescription(args.join)
+                    .setColor(supportbot.EmbedColour)
+                message.channel.send({ embed: Speaking })        
+
+            } else {
+
                 return message.channel.send({ embed: NoPerms });
 
-        const BotSpeaks = agrs.join(" ");
-
-        const Speaking = new Discord.MessageEmbed()
-            .setDescription(args.join)
-            .setColor(supportbot.EmbedColour)
-        message.channel.send({ embed: Speaking })
+            }
 
     }
     

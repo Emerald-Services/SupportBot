@@ -40,13 +40,7 @@ module.exports = {
             .setColor(supportbot.EmbedColour)
             .setFooter(supportbot.EmbedFooter, message.author.displayAvatarURL());
 
-            if (message.member.roles.cache.some(role => role.name === supportbot.Staff, supportbot.Admin)) {
-                HelpCommandEmbed.addFields(
-                    { name: '🔑 Staff Commands', value: `${staffCommands}\n`, inline: false },
-                )
-            }
-
-            if (message.member.roles.cache.some(role => role.name === supportbot.Staff)) {
+            if (message.member.roles.cache.some(role => role.name === supportbot.Staff || supportbot.Admin)) {
                 HelpCommandEmbed.addFields(
                     { name: '🔑 Staff Commands', value: `${staffCommands}\n`, inline: false },
                 )

@@ -23,14 +23,14 @@ module.exports = {
 
         if(!locateChannel) return message.channel.send({ embed: errornochannel });
 
-        let serverAdmins = message.guild.roles.cache.find(adminRole => adminRole.name === supportbot.Admin);
+        let Admins = message.guild.roles.cache.find(adminRole => adminRole.name === supportbot.Admin);
 
         const NoPerms = new Discord.MessageEmbed()
             .setTitle("Invalid Permissions!")
-            .setDescription(`${supportbot.IncorrectPerms}\n\nRole Required: \`${serverAdmins.name}\``)
+            .setDescription(`${supportbot.IncorrectPerms}\n\nRole Required: \`${Admins.name}\``)
             .setColor(supportbot.WarningColour)
 
-            if (!message.member.roles.cache.has(serverAdmins.id)) 
+            if (!message.member.roles.cache.has(Admins.id)) 
                 return message.channel.send({ embed: NoPerms });
 
 
