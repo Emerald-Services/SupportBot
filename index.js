@@ -78,7 +78,7 @@ fs.readdir("./addons/", (err, files) => {
     }
   
     jsfiles.forEach((f, i) => {
-        let props = require(`./commands/${f}`);
+        let props = require(`./addons/${f}`);
         console.info(`\u001b[37m`, `[${supportbot.Bot_Name}]:`, `\u001b[31m`, `#${i + 1} Command Loaded: ${props.name.toProperCase()}`);
         bot.commands.set(props.name, props);
     });

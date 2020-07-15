@@ -11,15 +11,13 @@
 
 # General Bot Configuration
 
-Token: "NjcyMTU5MjQyNjg5NzA4MDUz.XwnBpg.6eCCVRv4m-aVPJuppHWNxpxpRs0"
-Prefix: "!!"
-Bot_Name: "SupportBot DEV"
+Token: "BOT_TOKEN_HERE"
+Prefix: "-"
+Bot_Name: "SupportBot"
 
-BotActivity: "SB-6.0 dev-0.1"
+BotActivity: "!help ~ SupportBot 6.0"
 ActivityType: "PLAYING"
-
-ShowErrorCodes: "true"
-# This feature will show supportbot error codes such as "SB-01"
+# Activity status can either be PLAYING, WATCHING or LISTENING.
 
 # Embed Configuration
 
@@ -98,9 +96,11 @@ SystemMessage_Icon: "USER"
 
 Welcome_Title: "User Joined!"
 WelcomeMessage: "Hello %member%, Welcome to %guildname%!"
+# %member% define the user who joined and %guildnamne% defines the server name.
 
 Leave_Title: "User Left!"
 LeaveMessage: "Goodbye %member%, Thank you for visting %guildname%!"
+# %member% define the user who left and %guildnamne% defines the server name.
 
 SystemMessage_EmbedFooter: "false"
 
