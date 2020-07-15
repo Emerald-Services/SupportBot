@@ -22,7 +22,7 @@ module.exports = {
             .setDescription(`${supportbot.IncorrectPerms}\n\nRole Required: \`${supportbot.Staff}\` or \`${supportbot.Admin}\``)
             .setColor(supportbot.WarningColour)
 
-            if (!message.member.roles.cache.has(SupportStaff.id || Admins.id)) {
+            if (!message.member.roles.cache.has(SupportStaff.id) || message.member.roles.cache.has(Admins.id)) {
                 if (!message.channel.name.startsWith( `${supportbot.TicketChannel}-` )) {
                     const Exists = new Discord.MessageEmbed()
                         .setTitle("No Ticket Found!")
