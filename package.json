@@ -9,7 +9,8 @@
   },
   "devDependencies": {},
   "scripts": {
-    "test": "help"
+    "test": "help",
+    "start": "node ."
   },
   "repository": {
     "type": "git",
