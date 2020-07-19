@@ -9,7 +9,7 @@ const { execute } = require("./help");
 const supportbot = yaml.load(fs.readFileSync('./supportbot-config.yml', 'utf8'));
 
 module.exports = {
-    name: supportbot.BotSay,
+    name: supportbot.BotSayCommand,
     description: supportbot.BotSayDesc,
 
     execute(message, args) {
