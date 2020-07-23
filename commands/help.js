@@ -14,7 +14,7 @@ module.exports = {
     execute(message, args) {
         let generalCommands = "";
             generalCommands += `**${supportbot.Prefix}${supportbot.HelpCommand}** ${supportbot.HelpDesc}\n`;
-            generalCommands += `**${supportbot.Prefix}${supportbot.LinksCommand}** ${supportbot.LinkDesc}\n`;
+            generalCommands += `**${supportbot.Prefix}${supportbot.LinksCommand}** ${supportbot.LinksDesc}\n`;
             generalCommands += `**${supportbot.Prefix}${supportbot.SuggestCommand}** ${supportbot.SuggestionDesc}\n`;
             generalCommands += `**${supportbot.Prefix}${supportbot.PingCommand}** ${supportbot.PingDesc}\n`;
         
@@ -25,7 +25,7 @@ module.exports = {
         let staffCommands = "";
             staffCommands += `**${supportbot.Prefix}${supportbot.AddUser} <user#0000>** ${supportbot.AddUserDesc}\n`
             staffCommands += `**${supportbot.Prefix}${supportbot.RemoveUser} <user#0000>** ${supportbot.RemoveUserDesc}\n`
-            staffCommands += `**${supportbot.Prefix}${supportbot.BotSayCommand}** ${supportbot.BotSayDesc}\n` 
+            staffCommands += `**${supportbot.Prefix}${supportbot.BotSay}** ${supportbot.BotSayDesc}\n` 
             staffCommands += `**${supportbot.Prefix}${supportbot.AnnounceCommand}** ${supportbot.AnnounceDesc}\n` 
             
         const HelpCommandEmbed = new Discord.MessageEmbed()
