@@ -25,7 +25,7 @@ module.exports = {
         let staffCommands = "";
             staffCommands += `**${supportbot.Prefix}${supportbot.AddUser} <user#0000>** ${supportbot.AddUserDesc}\n`
             staffCommands += `**${supportbot.Prefix}${supportbot.RemoveUser} <user#0000>** ${supportbot.RemoveUserDesc}\n`
-            staffCommands += `**${supportbot.Prefix}${supportbot.BotSayCommand}** ${supportbot.BotSayDesc}\n` 
+            staffCommands += `**${supportbot.Prefix}${supportbot.BotSay}** ${supportbot.BotSayDesc}\n` 
             staffCommands += `**${supportbot.Prefix}${supportbot.AnnounceCommand}** ${supportbot.AnnounceDesc}\n` 
             
         const HelpCommandEmbed = new Discord.MessageEmbed()
