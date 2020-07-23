@@ -1,4 +1,4 @@
-// SupportBot Utility
+// SupportBot Utils
 // Ticket Numbers
 
 const discord = require("discord.js")
@@ -21,14 +21,14 @@ class TicketNumberID {
     
     static get(guildId) {
     
-        let ticketnumberID = JSON.parse(fs.readFileSync("./storage/tickets.json", "utf8"));
+        let ticketnumberID = JSON.parse(fs.readFileSync("./storage/TicketID.json", "utf8"));
 
         if (!ticketnumberID[guildId]) {
             ticketnumberID[guildId] = {
                 id: 0
             }
 
-            fs.writeFileSync("./storage/tickets.json", JSON.stringify(ticketnumberID, null, 4), err => {
+            fs.writeFileSync("./storage/TicketID.json", JSON.stringify(ticketnumberID, null, 4), err => {
                 if (err) console.log(err);
             });
 
@@ -41,13 +41,13 @@ class TicketNumberID {
     }
     
     static set(guildId, value) {
-        let ticketnumberID = JSON.parse(fs.readFileSync("./storage/tickets.json", "utf8"));
+        let ticketnumberID = JSON.parse(fs.readFileSync("./storage/TicketID.json", "utf8"));
         
         ticketnumberID[guildId] = {
             id: value
         }
 
-        fs.writeFileSync("./storage/tickets.json", JSON.stringify(ticketnumberID, null, 4), err => {
+        fs.writeFileSync("./storage/TicketID.json", JSON.stringify(ticketnumberID, null, 4), err => {
             if (err) console.log(err);
         });
 
@@ -55,13 +55,13 @@ class TicketNumberID {
     }
     
     static reset(guildId) {
-        let ticketnumberID = JSON.parse(fs.readFileSync("./storage/tickets.json", "utf8"));
+        let ticketnumberID = JSON.parse(fs.readFileSync("./storage/TicketID.json", "utf8"));
         
         ticketnumberID[guildId] = {
             id: 0
         }
 
-        fs.writeFileSync("./storage/tickets.json", JSON.stringify(ticketnumberID, null, 4), err => {
+        fs.writeFileSync("./storage/TicketID.json", JSON.stringify(ticketnumberID, null, 4), err => {
             if (err) console.log(err);
         });
 
