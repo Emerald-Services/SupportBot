@@ -13,7 +13,8 @@ module.exports = {
     description: supportbot.BotSayDesc,
 
     execute(message, args) {
-
+	if (supportbot.DeleteMessages == "true") message.delete();
+	    
         let SupportStaff = message.guild.roles.cache.find(adminRole => adminRole.name === supportbot.Staff);
 
         const NoPerms = new Discord.MessageEmbed()
