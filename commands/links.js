@@ -13,6 +13,7 @@ module.exports = {
     description: supportbot.LinksDesc,
 
     execute(message, args) {
+        if (supportbot.DeleteMessages == "true") message.delete();
         
         const LinksEmbed = new Discord.MessageEmbed()
             .setColor(supportbot.EmbedColour)
