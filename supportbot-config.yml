@@ -19,6 +19,8 @@ BotActivity: "!help ~ SupportBot 6.0"
 ActivityType: "PLAYING"
 # Activity status can either be PLAYING, WATCHING or LISTENING.
 
+DeleteMessages: "true"
+
 # Embed Configuration
 
 EmbedColour: "#04b545"
