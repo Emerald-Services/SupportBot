@@ -12,6 +12,8 @@ module.exports = {
     description: supportbot.PingDesc,
 
     execute(message, args) {        
+	if (supportbot.DeleteMessages == "true") message.delete();
+	    
         let ping = Date.now() - message.createdTimestamp + " ms";
         
         const PingCommandEmbed = new Discord.MessageEmbed()
