@@ -19,6 +19,4 @@ module.exports = async (bot, message) => {
   	const cmd = bot.commands.get(command);
   	if(!cmd) return;
   	cmd.execute(message, args);
-    message.delete();
-
 };
