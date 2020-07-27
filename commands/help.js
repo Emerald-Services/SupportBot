@@ -12,6 +12,8 @@ module.exports = {
     description: supportbot.HelpDesc,
 
     execute(message, args) {
+	if (supportbot.DeleteMessages == "true") message.delete();
+	    
         let generalCommands = "";
             generalCommands += `**${supportbot.Prefix}${supportbot.HelpCommand}** ${supportbot.HelpDesc}\n`;
             generalCommands += `**${supportbot.Prefix}${supportbot.LinksCommand}** ${supportbot.LinkDesc}\n`;
