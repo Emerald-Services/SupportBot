@@ -23,16 +23,16 @@ module.exports = async (bot, member) => {
         .setColor(supportbot.EmbedColour)
 
         if (supportbot.SystemMessage_Icon === "BOT") {
-            GuildAddMember.setThumbnail(bot.user.displayAvatarURL())
+          GuildRemoveMember.setThumbnail(bot.user.displayAvatarURL())
         }
 
         if (supportbot.SystemMessage_Icon === "USER") {
-            GuildAddMember.setThumbnail(member.user.displayAvatarURL())
+          GuildRemoveMember.setThumbnail(member.user.displayAvatarURL())
         }
 
 
         if (supportbot.SystemMessage_EmbedFooter === "true") {
-            GuildAddMember.setFooter(supportbot.EmbedFooter)
+          GuildRemoveMember.setFooter(supportbot.EmbedFooter)
         }
 
     SystemChannel.send({ embed: GuildRemoveMember });
