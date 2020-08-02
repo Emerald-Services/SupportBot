@@ -19,6 +19,6 @@
 |    1.x     |    ❌     | Discontinued | 
 |    2.x     |    ❌     | Discontinued | 
 |    3.x     |    ❌     | Discontinued | 
-|    4.x     |    ✔️     |   Previous   | 
-|    5.x     |    ✔️     |   Current    | 
-|    6.x     |    ⚠️     |   Under Development    | 
+|    4.x     |    ❌     |   Discontinued   | 
+|    5.x     |    ✔️     |   Previous    | 
+|    6.x     |    ✔️     |   Current    | 
