@@ -1,24 +1,15 @@
- ```
-                 _________                                  __ __________        __   
-                /   _____/__ ________ ______   ____________/  |\______   \ _____/  |_ 
-                \_____  \|  |  \____ \\____ \ /  _ \_  __ \   __\    |  _//  _ \   __\
-                /        \  |  /  |_> >  |_> >  <_> )  | \/|  | |    |   (  <_> )  |  
-               /_______  /____/|   __/|   __/ \____/|__|   |__| |______  /\____/|__|  
-                \/      |__|   |__|                             \/         
-                
-                                    SupportBot version 6.0
-                                    Created by Emerald Services
-                
-                                    The #1 self-hosted discord ticket bot
-```
+![SupportBot](https://i.imgur.com/OFO3XB2.png)
 
-## SUPPORTBOT SUPPORTED VERSIONS
+SupportBot the #1 self-hosted discord ticket system with any customizations and features to help make your support system look clean, tidy and professional. It's self-hosted! No need to use someone's public discord bot thats used in a handful of servers. Create, Configure & Use your own discord bot installed with SupportBot.
 
-| SupportBot |   Status  |   Supported  |
-|------------|-----------|--------------|
-|    1.x     |    ❌     | Discontinued | 
-|    2.x     |    ❌     | Discontinued | 
-|    3.x     |    ❌     | Discontinued | 
-|    4.x     |    ❌     |   Discontinued   | 
-|    5.x     |    ✔️     |   Previous    | 
-|    6.x     |    ✔️     |   Current    | 
+### SupportBot Compatibility
+
+> Anything older than v6 we will no longer be supporting, However our terms & conditions still remain valid for all copies of our product "SupportBot".
+
+|---------|---------|
+| Version |         |
+|---------|---------|
+|   6.0.  |    ✅   |   
+|---------|---------|
+
+
