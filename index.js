@@ -5,7 +5,7 @@
 //      /_______  /____/|   __/|   __/ \____/|__|   |__| |______  /\____/|__|  
 //              \/      |__|   |__|                             \/             
 //
-//                      SupportBot version 6.0
+//                      SupportBot version 6.0.2
 //                      Created by Emerald Services
 //                      Installed with MIT License
 
