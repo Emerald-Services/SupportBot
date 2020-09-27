@@ -42,11 +42,13 @@ module.exports = {
         let DeptRole1 = message.guild.roles.cache.find(DepartmentRole => DepartmentRole.name === `${supportbot.DepartmentRole_1}`)
         let DeptRole2 = message.guild.roles.cache.find(DepartmentRole => DepartmentRole.name === `${supportbot.DepartmentRole_2}`)
         let DeptRole3 = message.guild.roles.cache.find(DepartmentRole => DepartmentRole.name === `${supportbot.DepartmentRole_3}`)
-
+        
         SupportTicket.updateOverwrite(AllUsers, {
           VIEW_CHANNEL: false,
+          READ_MESSAGES: false,
+          SEND_MESSAGES: false,
         })
-
+          
         SupportTicket.updateOverwrite(message.author, {
           VIEW_CHANNEL: true,
           READ_MESSAGES: true,
