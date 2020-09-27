@@ -12,6 +12,8 @@ module.exports = {
     description: supportbot.SuggestionDesc,
 
     execute(message, args) {
+	if (supportbot.DeleteMessages == "true") message.delete();
+	    
         let locateChannel = message.guild.channels.cache.find(SuggestionChannel => SuggestionChannel.name === supportbot.SuggestionChannel);
 
         const errornochannel = new Discord.MessageEmbed()

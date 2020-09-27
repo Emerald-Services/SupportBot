@@ -14,6 +14,7 @@ module.exports = {
     description: example.ExampleAddonDesc,
 
     execute(message, args) {
+        if (supportbot.DeleteMessages == "true") message.delete();
         message.channel.send(example.ExampleAddonMessage)
     }
 };
