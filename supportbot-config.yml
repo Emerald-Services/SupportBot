@@ -15,7 +15,7 @@ Token: "BOT_TOKEN_HERE"
 Prefix: "-"
 Bot_Name: "SupportBot"
 
-BotActivity: "!help ~ SupportBot 6.0"
+BotActivity: "-help ~ SupportBot 6.0"
 ActivityType: "PLAYING"
 # Activity status can either be PLAYING, WATCHING or LISTENING.
 
