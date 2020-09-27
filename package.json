@@ -7,7 +7,9 @@
     "discord.js": "^12.2.0",
     "js-yaml": "^3.14.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "node-fetch": ">=2.6.1"
+  },
   "scripts": {
     "test": "help"
   },
@@ -20,5 +22,5 @@
   "bugs": {
     "url": "https://github.com/1tzemerald/SupportBot/issues"
   },
-  "homepage": "https://github.com/1tzemerald/SupportBot#readme"
+  "homepage": "https://emeraldservices.xyz"
 }
