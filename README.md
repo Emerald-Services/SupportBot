@@ -1,15 +1,17 @@
-![SupportBot](https://i.imgur.com/OFO3XB2.png)
+# SupportBot
 
-SupportBot the #1 self-hosted discord ticket system with any customizations and features to help make your support system look clean, tidy and professional. It's self-hosted! No need to use someone's public discord bot thats used in a handful of servers. Create, Configure & Use your own discord bot installed with SupportBot.
+Welcome to the Official Documentation for SupportBot.   
+  
+SupportBot is a free discord application that can be easily customised to your own brand. Yes you heard me. This documentation will explain you how to setup & install SupportBot.
 
-### SupportBot Compatibility
+If you require any assistance one of our support agents you'd have to contact us over at discord and create a support ticket.
 
-> Anything older than v6 we will no longer be supporting, However our terms & conditions still remain valid for all copies of our product "SupportBot".
+**Important Links:**
 
-|---------|---------|
-| Version |         |
-|---------|---------|
-|   6.0.  |    ✅   |   
-|---------|---------|
+🤖 **SupportBot   
+GitHub:** [**https://github.com/1tzEmerald/SupportBot/**](https://github.com/1tzEmerald/SupportBot/)  
+**MC-Market:** [**https://www.mc-market.org/resources/8940/**](https://www.mc-market.org/resources/8940/)  
+**Revenact:** [**https://revenact.io/resources/supportbot-1-support-system-for-discord.2**](https://revenact.io/resources/supportbot-1-support-system-for-discord.27/updates)\*\*\*\*
 
+\*\*\*\*
 
