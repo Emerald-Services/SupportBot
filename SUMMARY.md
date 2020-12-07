@@ -25,4 +25,5 @@
 
 * [Minecraft Market](https://www.mc-market.org/resources/8940/)
 * [Minemen](https://minemen.com/resources/167/)
+* [Polymart](https://polymart.org/resource/supportbot-1-discord-ticket-bot.518)
 
