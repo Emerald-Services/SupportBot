@@ -1,6 +1,6 @@
 # SupportBot
 
-Welcome to the Official Documentation for SupportBot.   
+Welcome to the **Official Documentation** for **SupportBot**.   
   
 SupportBot is a free discord application that can be easily customised to your own brand. Yes you heard me. This documentation will explain you how to setup & install SupportBot.
 
