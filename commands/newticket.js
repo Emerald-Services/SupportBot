@@ -1,3 +1,7 @@
+// SupportBot Created by Emerald Services
+// Create Ticket
+
+
 const Discord = require("discord.js");
 const bot = new Discord.Client()
 
