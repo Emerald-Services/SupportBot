@@ -126,9 +126,9 @@ SuggestReact_2: 👎
 
 # Reaction Role Configuration
 
-ReactionRoles: "true"
-ReactionRole_Channel: "reaction-roles"
-ReactionRole_MessageID: "786944536152768582"
+ReactionRoles: "false"
+ReactionRole_Channel: "claim-roles"
+ReactionRole_MessageID: "MESSAGE_ID"
 
 ReactionRole_1: "Green"
 ReactionEmoji_1: ":green_square:"
