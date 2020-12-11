@@ -1,5 +1,5 @@
-// SupportBot 6.0, Created by Emerald Services
-// Links Command
+// SupportBot Created by Emerald Services
+// Close Command
 
 const Discord = require("discord.js");
 const fs = require("fs");
