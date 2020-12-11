@@ -1,5 +1,5 @@
-// SupportBot 6.0, Created by Emerald Services
-// Help Command
+// SupportBot Created by Emerald Services
+// Ping Command
 
 const Discord = require("discord.js");
 const fs = require("fs");
