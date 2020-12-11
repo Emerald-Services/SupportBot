@@ -124,14 +124,23 @@ SuggestionStarter: "What would you like to suggest?"
 SuggestReact_1: 👍
 SuggestReact_2: 👎
 
-# Poll Configuration
+# Reaction Role Configuration
 
-PollChannel: "polls"
-PollTitle: "Suggestion"
-PollStarter: "What would you like to create a poll about?"
-PollReact_1: 👍
-PollReact_2: 👎
+ReactionRoles: "true"
+ReactionRole_Channel: "reaction-roles"
+ReactionRole_MessageID: "786944536152768582"
 
+ReactionRole_1: "Green"
+ReactionEmoji_1: ":green_square:"
+
+ReactionRole_2: "Red"
+ReactionEmoji_2: ":red_square:"
+
+ReactionRole_3: "Brown"
+ReactionEmoji_3: ":brown_square:"
+
+ReactionRole_4: "Yellow"
+ReactionEmoji_4: ":yellow_square:"
 
 # Announcement Configuration
 
