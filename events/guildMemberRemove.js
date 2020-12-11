@@ -1,5 +1,5 @@
 // SupportBot Created by Emerald Services
-// Ready Event
+// Member Remove Event
 
 const Discord = require("discord.js");
 const fs = require("fs");
