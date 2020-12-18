@@ -1,5 +1,5 @@
-// SupportBot Created by Emerald Services
-// Create Ticket
+// SupportBot, Created by Emerald Services
+// Ticket Command
 
 
 const Discord = require("discord.js");

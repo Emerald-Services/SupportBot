@@ -1,4 +1,4 @@
-// SupportBot Created by Emerald Services
+// SupportBot 6.0, Created by Emerald Services
 // Message Event
 
 const Discord = require("discord.js");

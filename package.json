@@ -4,7 +4,7 @@
   "description": "SupportBot | #1 Self-Hosted Ticket Bot",
   "main": "index.js",
   "dependencies": {
-    "discord.js": "^12.2.0",
+    "discord.js": "^12.5.1",
     "js-yaml": "^3.14.0"
   },
   "devDependencies": {

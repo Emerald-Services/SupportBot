@@ -1,5 +1,5 @@
-// SupportBot Created by Emerald Services
-// Member Remove Event
+// SupportBot 6.0, Created by Emerald Services
+// Ready Event
 
 const Discord = require("discord.js");
 const fs = require("fs");

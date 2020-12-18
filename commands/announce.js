@@ -1,5 +1,5 @@
-// SupportBot Created by Emerald Services
-// Announce User
+// SupportBot, Created by Emerald Services
+// Announce
 
 const Discord = require("discord.js");
 const fs = require("fs");

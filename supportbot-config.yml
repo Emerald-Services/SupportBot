@@ -11,7 +11,7 @@
 
 # General Bot Configuration
 
-Token: "BOT_TOKEN_HERE"
+Token: "BOT TOKEN"
 Prefix: "-"
 Bot_Name: "SupportBot"
 
@@ -37,8 +37,8 @@ AutoRole: "true"
 AutoRole_Role: "Member"
 LockdownRole: "@everyone"
 
-Staff: "Support"
-Admin: "Admin"
+Staff: "Staff"
+Admin: "Administration Team"
 
 # Ticket Configuration
 
@@ -47,7 +47,12 @@ TicketCategory: "Tickets"
 TicketLog: "ticket-logs"
 TranscriptLog: "transcripts"
 TicketSubject: "description"
-# TicketSuvject: "description" means that the subject (reason) of the ticket will be displayed upon the channel description if set to "embed" it will be displayed within the embed.
+# TicketSubject: "description" means that the subject (reason) of the ticket will be displayed upon the channel description if set to "embed" it will be displayed within the embed.
+
+ReactionTickets: "true"
+ReactionMessage: "React with %reaction_emoji% to create a Support Ticket!"
+ReactionChannel: "open-a-ticket"
+ReactionEmoji: "📩"
 
 Ticket_Thumbnail: "https://images.emojiterra.com/google/android-pie/512px/1f39f.png"
 Ticket_Title: "Server Support | %ticketusername%"
@@ -123,6 +128,15 @@ SuggestionTitle: "Suggestion"
 SuggestionStarter: "What would you like to suggest?"
 SuggestReact_1: 👍
 SuggestReact_2: 👎
+
+# Poll Configuration
+
+PollChannel: "polls"
+PollTitle: "Suggestion"
+PollStarter: "What would you like to create a poll about?"
+PollReact_1: 👍
+PollReact_2: 👎
+
 
 # Announcement Configuration
 

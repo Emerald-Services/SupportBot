@@ -1,4 +1,4 @@
-// SupportBot Created by Emerald Services
+// SupportBot, Created by Emerald Services
 // Ping Command
 
 const Discord = require("discord.js");

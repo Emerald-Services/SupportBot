@@ -1,4 +1,4 @@
-// SupportBot Created by Emerald Services
+// SupportBot, Created by Emerald Services
 // Say Command
 
 const Discord = require("discord.js");
