@@ -32,8 +32,8 @@ module.exports = async (bot, message) => {
                             reaction.users.remove(r.id)
                         });
                     
-
-                        const cmd = bot.commands.get(supportbot.NewTicket);
+                        const ticketCMD = supportbot.NewTicket;
+                        const cmd = bot.commands.get(ticketCMD);
                         if(!cmd) return;
                         console.log("1")
                         cmd.execute(bot, message, args);
