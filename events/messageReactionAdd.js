@@ -36,7 +36,7 @@ module.exports = async (bot, message) => {
                         const cmd = bot.commands.get(ticketCMD);
                         if(!cmd) return;
                         console.log("1")
-                        cmd.execute(bot, message, args);
+                        cmd.execute(bot, message);
                             
                     }
                 }
