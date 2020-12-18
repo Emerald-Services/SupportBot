@@ -33,10 +33,14 @@ module.exports = async (bot, message) => {
                         });
                     
                         const ticketCMD = supportbot.NewTicket;
-                        const cmd = bot.commands.get("ticket");
-                        if(!cmd) return;
-                        console.log("1")
-                        cmd.execute(bot, message);
+                        try {
+                            const cmd = bot.commands.get("ticket");
+                            if(!cmd) return;
+                            console.log("1")
+                            cmd.execute(bot, message);
+                        } catch (error) {
+	                        console.error(error);
+                        }
                             
                     }
                 }
