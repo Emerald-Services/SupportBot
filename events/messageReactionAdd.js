@@ -33,7 +33,7 @@ module.exports = async (bot, message) => {
                         });
                     
                         const ticketCMD = supportbot.NewTicket;
-                        const cmd = bot.commands.get(ticketCMD);
+                        const cmd = bot.commands.get("ticket");
                         if(!cmd) return;
                         console.log("1")
                         cmd.execute(bot, message);
