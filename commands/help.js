@@ -44,7 +44,7 @@ module.exports = {
 
             if (message.member.roles.cache.some(role => role.name === supportbot.Staff || supportbot.Admin)) {
                 HelpCommandEmbed.addFields(
-                    { name: '🔑 Staff Commands', value: `${staffCommands}\n`, inline: false },
+                    { name: '🔐 Staff Commands', value: `${staffCommands}\n`, inline: false },
                 )
             }
 

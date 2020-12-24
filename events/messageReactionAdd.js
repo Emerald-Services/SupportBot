@@ -10,17 +10,13 @@ const tickets = yaml.load(fs.readFileSync('./storage/ticketreaction.yml', 'utf8'
 
 const reacted = [];
 
-module.exports = async (bot, message) => {
+module.exports = async (bot, message, reaction, user) => {
 
     // Ticket Creation Panel
     // This is an embed message where users are able to react and a ticket is created in return.
-
-    bot.on('messageReactionAdd', async (reaction, user) => {
-
-
         if (supportbot.ReactionTickets === "true") { 
 
-            
+            const reaction = collected.first();
 
             if (reaction.message.id === tickets.ReactionMessage_ID) {
 
@@ -32,18 +28,20 @@ module.exports = async (bot, message) => {
                             reaction.users.remove(r.id)
                         });
                     
-
-                        const cmd = bot.commands.get(supportbot.NewTicket);
-                        if(!cmd) return;
-                        console.log("1")
-                        cmd.execute(bot, message, args);
+                        const ticketCMD = supportbot.NewTicket;
+                        try {
+                            const cmd = bot.commands.get("ticket");
+                            if(!cmd) return;
+                            console.log("1")
+                            cmd.execute(bot, message);
+                        } catch (error) {
+	                        console.error(error);
+                        }
                             
                     }
                 }
             }
             
         }
-
-    })
 
 };

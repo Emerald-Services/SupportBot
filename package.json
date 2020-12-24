@@ -5,6 +5,7 @@
   "main": "index.js",
   "dependencies": {
     "discord.js": "^12.5.1",
+    "javascript-obfuscator": "^2.9.4",
     "js-yaml": "^3.14.0"
   },
   "devDependencies": {
