@@ -4,12 +4,4 @@ SupportBot the #1 self-hosted discord ticket system with any customizations and 
 
 ### SupportBot Compatibility
 
-> Anything older than v6 we will no longer be supporting, However our terms & conditions still remain valid for all copies of our product "SupportBot".
-
-|---------|---------|
-| Version |         |
-|---------|---------|
-|   6.0.  |    ✅   |   
-|---------|---------|
-
-
+SupportBot is a free & open projected create by Emerald Services, Anything older than version 6.0 we will not SupportBot. Following off that if you have recieved SupportBot from a third-party user we will not provide support no matter what version you are using. It is against of terms of service to sell our product.
