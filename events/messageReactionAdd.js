@@ -16,8 +16,6 @@ module.exports = async (bot, message, reaction, user) => {
     // This is an embed message where users are able to react and a ticket is created in return.
         if (supportbot.ReactionTickets === "true") { 
 
-            const reaction = collected.first();
-
             if (reaction.message.id === tickets.ReactionMessage_ID) {
 
                 let user = await reaction.message.guild.members.fetch(user);
