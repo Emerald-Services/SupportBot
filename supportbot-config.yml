@@ -16,9 +16,11 @@ Prefix: "-"
 Bot_Name: "SupportBot"
 
 BotActivity: "-help | SupportBot"
+StreamingURL: "https://www.twitch.tv/YOUR_TWITCH_NAME"
+# Must set ActivityType to STREAMING in order for Streaming URL to work in the bots status.
 
 ActivityType: "PLAYING"
-# Activity status can either be PLAYING, WATCHING or LISTENING.
+# Activity status can either be PLAYING, WATCHING, LISTENING or STREAMING.
 
 DeleteMessages: "true"
 

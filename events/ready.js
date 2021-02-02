@@ -11,7 +11,8 @@ const tickets = yaml.load(fs.readFileSync('./storage/ticketreaction.yml', 'utf8'
   
 module.exports = async (bot) => {
     bot.user.setActivity(supportbot.BotActivity, {
-        type: supportbot.ActvityType
+        type: supportbot.ActivityType, 
+        url: supportbot.StreamingURL
         
     });
     

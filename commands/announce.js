@@ -18,6 +18,8 @@ module.exports = {
 	    
         let locateChannel = message.guild.channels.cache.find(AnnouncementChannel => AnnouncementChannel.name === supportbot.AnnouncementChannel);
 
+        console.log(`\u001b[32m`, `[${supportbot.Bot_Name}]:`, `\u001b[32m`, `${message.author.tag} has executed ${supportbot.Prefix}${supportbot.AnnounceCommand}!`);
+
         const errornochannel = new Discord.MessageEmbed()
             .setTitle("Invalid Channel")
             .setDescription(`${supportbot.InvalidChannel}\n\nChannel Required: \`${supportbot.AnnouncementChannel}`)
@@ -49,6 +51,7 @@ module.exports = {
             }).then((collected) => {
                 announcement.push(collected.map(r => r.content));
 
+                locateChannel.send('@everyone')
                 const AnnouncementEmbed = new Discord.MessageEmbed()
                     .setTitle(supportbot.AnnouncementTitle)
                     .setThumbnail(supportbot.AnnouncementIcon)

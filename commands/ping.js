@@ -13,7 +13,9 @@ module.exports = {
 
     execute(message, args) {        
 	if (supportbot.DeleteMessages == "true") message.delete();
-	    
+        
+    console.log(`\u001b[32m`, `[${supportbot.Bot_Name}]:`, `\u001b[32m`, `${message.author.tag} has executed ${supportbot.Prefix}${supportbot.PingCommand}!`)
+
         let ping = Date.now() - message.createdTimestamp + " ms";
         
         const PingCommandEmbed = new Discord.MessageEmbed()

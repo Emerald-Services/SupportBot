@@ -13,7 +13,9 @@ module.exports = {
 
     execute(message, args) {
 	if (supportbot.DeleteMessages == "true") message.delete();
-	    
+        
+    console.log(`\u001b[32m`, `[${supportbot.Bot_Name}]:`, `\u001b[32m`, `${message.author.tag} has executed ${supportbot.Prefix}${supportbot.HelpCommand}!`);
+
         let generalCommands = "";
             generalCommands += `**${supportbot.Prefix}${supportbot.HelpCommand}** ${supportbot.HelpDesc}\n`;
             generalCommands += `**${supportbot.Prefix}${supportbot.LinksCommand}** ${supportbot.LinkDesc}\n`;

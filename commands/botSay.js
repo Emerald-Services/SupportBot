@@ -17,6 +17,8 @@ module.exports = {
 	    
         let SupportStaff = message.guild.roles.cache.find(adminRole => adminRole.name === supportbot.Staff);
 
+        console.log(`\u001b[32m`, `[${supportbot.Bot_Name}]:`, `\u001b[32m`, `${message.author.tag} has executed ${supportbot.Prefix}${supportbot.BotSay}!`);
+
         const NoPerms = new Discord.MessageEmbed()
             .setTitle("Invalid Permissions!")
             .setDescription(`${supportbot.IncorrectPerms}\n\nRole Required: \`${SupportStaff.name}\``)
