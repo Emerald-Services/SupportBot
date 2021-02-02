@@ -11,11 +11,12 @@
 
 # General Bot Configuration
 
-Token: "NjUyNjUzMDU3OTQyODgwMjU2.Xerkhg.dhNMOR_rFyQKvoQJYkGRqZ7fq4E"
+Token: "BOT_TOKEN"
 Prefix: "-"
 Bot_Name: "SupportBot"
 
-BotActivity: "-help ~ SupportBot 6.0"
+BotActivity: "-help | SupportBot"
+
 ActivityType: "PLAYING"
 # Activity status can either be PLAYING, WATCHING or LISTENING.
 
@@ -38,7 +39,7 @@ AutoRole_Role: "Member"
 LockdownRole: "@everyone"
 
 Staff: "Staff"
-Admin: "Administration Team"
+Admin: "Admin"
 
 # Ticket Configuration
 
@@ -51,14 +52,9 @@ TicketSubject: "description"
 
 ReactionTickets: "true"
 ReactionMessage: "React with %reaction_emoji% to create a Support Ticket!"
-ReactionChannel: "open-a-ticket"
+ReactionChannel: "create-ticket"
 ReactionEmoji: "📩"
-
-Verification: "false"
-Verification_Channel: "verification"
-
-VerificationMessage: "React with %VerificationEmoji% to get access to this server!"
-VerificationEmoji: "✅"
+# Custom Emojis: <:test:EMOJI_ID>
 
 Ticket_Thumbnail: "https://images.emojiterra.com/google/android-pie/512px/1f39f.png"
 Ticket_Title: "Server Support | %ticketusername%"

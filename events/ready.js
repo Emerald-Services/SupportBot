@@ -7,13 +7,14 @@ const fs = require("fs");
 const yaml = require('js-yaml');
 const supportbot = yaml.load(fs.readFileSync('./supportbot-config.yml', 'utf8'));
 const tickets = yaml.load(fs.readFileSync('./storage/ticketreaction.yml', 'utf8'));
-const verif = yaml.load(fs.readFileSync('./supportbot-config.yml', 'utf8'));
+
   
 module.exports = async (bot) => {
     bot.user.setActivity(supportbot.BotActivity, {
         type: supportbot.ActvityType
+        
     });
-
+    
     console.log(`\u001b[32m`, `―――――――――――――――――― SupportBot ――――――――――――――――――`)
     console.log(`\u001b[37m`, `${supportbot.Bot_Name} has successfully connected to discord`)
     console.log(`\u001b[32m`, `―――――――――――――――――― SupportBot ――――――――――――――――――`)
@@ -40,37 +41,13 @@ module.exports = async (bot) => {
                 }
                 let yamlStr = yaml.dump(data);
                 fs.writeFileSync('./storage/ticketreaction.yml', yamlStr, 'utf8');
-                r.react(supportbot.ReactionEmoji)
+                
+                r.react(supportbot.ReactionEmoji);
             }).catch(e => {
                 console.log(e)
             })
         })
     }
 
-    if (supportbot.Verification === "true") {
-        let chan2 = bot.channels.cache.find(channel => channel.name === supportbot.Verification_Channel)
 
-        if (!chan2) {
-            console.log('\u001b[33m', "[WARN] Verification Reaction panel is not setup, You can do so via the configuration file!")
-            return false;
-        }
-
-        chan2.messages.fetch(verif.verification_msg).catch(r => {
-            let embed = new Discord.MessageEmbed()
-                .setTitle(supportbot.VerificationMessage.replace(/%VerificationEmoji%/g, supportbot.VerificationEmoji))
-                .setColor(supportbot.EmbedColour)
-                .setFooter(supportbot.EmbedFooter);
-
-            bot.channels.cache.find(channel => channel.name === supportbot.Verification_Channel).send({embed: embed}).then(r => {
-                let data = {
-                    "verification_msg": `${r.id}`
-                }
-                let yamlStr = yaml.dump(data);
-                fs.writeFileSync('./storage/verification.yml', yamlStr, 'utf8');
-                r.react(supportbot.VerificationEmoji)
-            }).catch(e => {
-                console.log(e)
-            })
-        })
-    }
 };

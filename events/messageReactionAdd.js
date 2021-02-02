@@ -7,7 +7,6 @@ const fs = require("fs");
 const yaml = require('js-yaml');
 const supportbot = yaml.load(fs.readFileSync('./supportbot-config.yml', 'utf8'));
 const tickets = yaml.load(fs.readFileSync('./storage/ticketreaction.yml', 'utf8'));
-const verif = yaml.load(fs.readFileSync('./supportbot-config.yml', 'utf8'));
 
 module.exports = async (client, reaction, user) => {
 
@@ -20,34 +19,17 @@ module.exports = async (client, reaction, user) => {
 
     if (supportbot.ReactionTickets === "true") {
         if (reaction.message.id === tickets.ReactionMessage_ID) {
-            switch (reaction.emoji.id) {
-                case supportbot.ReactionEmoji: {
-                    await reaction.users.remove(user.id)
+            if (reaction.emoji.name == supportbot.ReactionEmoji || reaction.emoji.id == supportbot.ReactionEmoji) {
+                await reaction.users.remove(user.id)
 
-                    try {
-                        const cmd = client.commands.get("ticket");
-                        if(!cmd) return;
-
-                        cmd.execute(message, "undefined");
-                    } catch (error) {
-                        console.error(error);
-                    }
-                }
-            }
-        }
-    }
-
-    if (supportbot.Verification === "true") {
-        if (reaction.message.id === verif.verification_msg) {
-            switch (reaction.emoji.id) {
-                case supportbot.VerificationEmoji: {
-                    await reaction.users.remove(user.id)
-
-                    let r = reaction.message.channel.guild.roles.cache.find(r => r.name === "verified")
-
-                    await reaction.message.channel.guild.members.cache.get(user.id).roles.add(r)
-
-                }
+            	try {
+            	    const cmd = client.commands.get("ticket");
+            	    if(!cmd) return;
+            	    
+            	    cmd.execute(message, "undefined");
+            	} catch (error) {
+            	    console.error(error);
+            	}
             }
         }
     }
