@@ -13,7 +13,7 @@ module.exports = async (client, reaction, user) => {
     let message = {
         guild: reaction.message.channel.guild,
         author: user,
-        content: "Not available",
+        content: "N/A",
         channel: reaction.message.channel
     }
 
