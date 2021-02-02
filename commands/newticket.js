@@ -87,7 +87,11 @@ module.exports = {
         }
 
         // Ticket Created, Message Sent
-        SupportTicket.send(`<@${message.author.id}>`)
+
+        if (supportbot.AllowTicketMentions === "true") {
+          SupportTicket.send(`<@${message.author.id}>`)
+        }
+
         const TicketMessage = new Discord.MessageEmbed()
           .setTitle(supportbot.Ticket_Title.replace(/%ticketauthor%/g, message.author.id).replace(/%ticketid%/g, SupportTicket.id).replace(/%ticketusername%/g, message.author.username))
           .setDescription(supportbot.TicketMessage.replace(/%ticketauthor%/g, message.author.id).replace(/%ticketid%/g, SupportTicket.id).replace(/%ticketusername%/g, message.author.username))
@@ -146,7 +150,10 @@ module.exports = {
                   .setTitle(`> Thank for reaching out to the **${supportbot.DepartmentTitle_1} Department**. Please provide us information regarding your query.`)
                   .setColor(supportbot.EmbedColour)
                 SupportTicket.send({ embed: Department1 });
-                SupportTicket.send(`@here`)
+
+                if (supportbot.AllowTicketMentions === "true") {
+                  SupportTicket.send(`@here`)
+                }
           
               }
           
@@ -167,7 +174,10 @@ module.exports = {
                   .setTitle(`> Thank for reaching out to the **${supportbot.DepartmentTitle_2} Department**. Please provide us information regarding your query.`)
                   .setColor(supportbot.EmbedColour)
                 SupportTicket.send({ embed: Department2 });
-                SupportTicket.send(`@here`)
+
+                if (supportbot.AllowTicketMentions === "true") {
+                  SupportTicket.send(`@here`)
+                }
           
               }
           
@@ -189,7 +199,11 @@ module.exports = {
                 .setTitle(`> Thank for reaching out to the **${supportbot.DepartmentTitle_3} Department**. Please provide us information regarding your query.`)
                   .setColor(supportbot.EmbedColour)
                 SupportTicket.send({ embed: Department3 });
-                SupportTicket.send(`@here`)
+
+                if (supportbot.AllowTicketMentions === "true") {
+                  SupportTicket.send(`@here`)
+                }
+
               }
               return [Emoji_1, Emoji_2, Emoji_3].includes(reaction.emoji.name) && user.id !== message.author.id;
             }

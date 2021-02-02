@@ -8,6 +8,8 @@
 //                      SupportBot version 6.1
 //                      Created by Emerald Services
 //                      Installed with MIT License
+//
+//                      Support Server: discord.gg/jspKFcE
 
 const Discord = require("discord.js");
 const fs = require("fs");

@@ -1,6 +1,6 @@
 {
   "name": "supportbot",
-  "version": "6.0.0",
+  "version": "6.1",
   "description": "SupportBot | #1 Self-Hosted Ticket Bot",
   "main": "index.js",
   "dependencies": {
@@ -23,5 +23,5 @@
   "bugs": {
     "url": "https://github.com/1tzemerald/SupportBot/issues"
   },
-  "homepage": "https://emeraldservices.xyz"
+  "homepage": "https://emeraldsrv.dev"
 }

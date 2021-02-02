@@ -8,10 +8,12 @@
 #                      SupportBot version 6.1
 #                      Created by Emerald Services
 #                      Installed with MIT License
+#
+#                      Support Server: discord.gg/jspKFcE
 
 # General Bot Configuration
 
-Token: "BOT_TOKEN"
+Token: "BOT_TOKEN_HERE"
 Prefix: "-"
 Bot_Name: "SupportBot"
 
@@ -51,6 +53,11 @@ TicketLog: "ticket-logs"
 TranscriptLog: "transcripts"
 TicketSubject: "description"
 # TicketSubject: "description" means that the subject (reason) of the ticket will be displayed upon the channel description if set to "embed" it will be displayed within the embed.
+
+AllowTicketMentions: "true"
+# Set to "true" to allow the ticket to mention the author and the support team.
+# Set to "false" to dis-allow mentions within tickets.
+
 
 # Ticket Panel (Ticket Reaction Create)
 
