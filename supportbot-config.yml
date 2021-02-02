@@ -52,6 +52,8 @@ TranscriptLog: "transcripts"
 TicketSubject: "description"
 # TicketSubject: "description" means that the subject (reason) of the ticket will be displayed upon the channel description if set to "embed" it will be displayed within the embed.
 
+# Ticket Panel (Ticket Reaction Create)
+
 ReactionTickets: "true"
 ReactionMessage: "React with %reaction_emoji% to create a Support Ticket!"
 ReactionChannel: "create-ticket"
@@ -140,7 +142,6 @@ PollTitle: "Suggestion"
 PollStarter: "What would you like to create a poll about?"
 PollReact_1: 👍
 PollReact_2: 👎
-
 
 # Announcement Configuration
 
