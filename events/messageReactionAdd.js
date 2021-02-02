@@ -7,39 +7,48 @@ const fs = require("fs");
 const yaml = require('js-yaml');
 const supportbot = yaml.load(fs.readFileSync('./supportbot-config.yml', 'utf8'));
 const tickets = yaml.load(fs.readFileSync('./storage/ticketreaction.yml', 'utf8'));
+const verif = yaml.load(fs.readFileSync('./supportbot-config.yml', 'utf8'));
 
-const reacted = [];
+module.exports = async (client, reaction, user) => {
 
-module.exports = async (bot, message, reaction, user) => {
+    let message = {
+        guild: reaction.message.channel.guild,
+        author: user,
+        content: "Not available",
+        channel: reaction.message.channel
+    }
 
-    // Ticket Creation Panel
-    // This is an embed message where users are able to react and a ticket is created in return.
-        if (supportbot.ReactionTickets === "true") { 
+    if (supportbot.ReactionTickets === "true") {
+        if (reaction.message.id === tickets.ReactionMessage_ID) {
+            switch (reaction.emoji.id) {
+                case supportbot.ReactionEmoji: {
+                    await reaction.users.remove(user.id)
 
-            if (reaction.message.id === tickets.ReactionMessage_ID) {
+                    try {
+                        const cmd = client.commands.get("ticket");
+                        if(!cmd) return;
 
-                let user = await reaction.message.guild.members.fetch(user);
-
-                switch (reaction.emoji.id) {
-                    case supportbot.ReactionEmoji: {
-                        reaction.message.guild.members.fetch(user).then(r => {
-                            reaction.users.remove(r.id)
-                        });
-                    
-                        const ticketCMD = supportbot.NewTicket;
-                        try {
-                            const cmd = bot.commands.get("ticket");
-                            if(!cmd) return;
-                            console.log("1")
-                            cmd.execute(bot, message);
-                        } catch (error) {
-	                        console.error(error);
-                        }
-                            
+                        cmd.execute(message, "undefined");
+                    } catch (error) {
+                        console.error(error);
                     }
                 }
             }
-            
         }
+    }
 
+    if (supportbot.Verification === "true") {
+        if (reaction.message.id === verif.verification_msg) {
+            switch (reaction.emoji.id) {
+                case supportbot.VerificationEmoji: {
+                    await reaction.users.remove(user.id)
+
+                    let r = reaction.message.channel.guild.roles.cache.find(r => r.name === "verified")
+
+                    await reaction.message.channel.guild.members.cache.get(user.id).roles.add(r)
+
+                }
+            }
+        }
+    }
 };

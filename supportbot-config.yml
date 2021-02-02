@@ -11,7 +11,7 @@
 
 # General Bot Configuration
 
-Token: "BOT TOKEN"
+Token: "NjUyNjUzMDU3OTQyODgwMjU2.Xerkhg.dhNMOR_rFyQKvoQJYkGRqZ7fq4E"
 Prefix: "-"
 Bot_Name: "SupportBot"
 
@@ -53,6 +53,12 @@ ReactionTickets: "true"
 ReactionMessage: "React with %reaction_emoji% to create a Support Ticket!"
 ReactionChannel: "open-a-ticket"
 ReactionEmoji: "📩"
+
+Verification: "false"
+Verification_Channel: "verification"
+
+VerificationMessage: "React with %VerificationEmoji% to get access to this server!"
+VerificationEmoji: "✅"
 
 Ticket_Thumbnail: "https://images.emojiterra.com/google/android-pie/512px/1f39f.png"
 Ticket_Title: "Server Support | %ticketusername%"

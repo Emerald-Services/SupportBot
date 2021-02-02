@@ -18,7 +18,9 @@ module.exports = {
     description: supportbot.NewTicketDesc,
 
     execute(message, args) {
-      if (supportbot.DeleteMessages == "true") message.delete();
+      if (!message.channel.name === supportbot.ReactionChannel) {
+        if (supportbot.DeleteMessages == "true") message.delete();
+      }
         
       console.log(`\u001b[32m`, `[${supportbot.Bot_Name}]:`, `\u001b[32m`, `${message.author.tag} has executed ${supportbot.Prefix}${supportbot.NewTicket}!`);
 
@@ -26,7 +28,7 @@ module.exports = {
       let ticketNumberID = TicketNumberID.pad(message.guild.id);
 
       // Ticket Subject
-      const TicketSubject = args.join(" ") || supportbot.NoTicketSubject;
+      const TicketSubject = args || supportbot.NoTicketSubject;
 
       // Ticket Exists
       const TicketExists = new Discord.MessageEmbed()
@@ -86,8 +88,8 @@ module.exports = {
 
         // Ticket Created, Message Sent
         const TicketMessage = new Discord.MessageEmbed()
-          .setTitle(supportbot.Ticket_Title.replace(/%ticketauthor%/g, message.author.id).replace(/%ticketid%/g, SupportTicket.id).replace(/%ticketusername%/g, message.member.user.username))
-          .setDescription(supportbot.TicketMessage.replace(/%ticketauthor%/g, message.author.id).replace(/%ticketid%/g, SupportTicket.id).replace(/%ticketusername%/g, message.member.user.username))
+          .setTitle(supportbot.Ticket_Title.replace(/%ticketauthor%/g, message.author.id).replace(/%ticketid%/g, SupportTicket.id).replace(/%ticketusername%/g, message.author.username))
+          .setDescription(supportbot.TicketMessage.replace(/%ticketauthor%/g, message.author.id).replace(/%ticketid%/g, SupportTicket.id).replace(/%ticketusername%/g, message.author.username))
           .setColor(supportbot.EmbedColour)
 
         if (supportbot.TicketSubject === "embed") {
@@ -204,11 +206,20 @@ module.exports = {
           }
   
         });
-        const CreatedTicket = new Discord.MessageEmbed()
-          .setDescription(supportbot.TicketCreatedAlert.replace(/%ticketauthor%/g, message.author.id).replace(/%ticketid%/g, SupportTicket.id).replace(/%ticketusername%/g, message.member.user.username))
-          .setColor(supportbot.EmbedColour)
-        message.channel.send({ embed: CreatedTicket });
 
+        if (message.channel.name === supportbot.ReactionChannel) {
+          const CreatedTicket = new Discord.MessageEmbed()
+              .setDescription(supportbot.TicketCreatedAlert.replace(/%ticketauthor%/g, message.author.id).replace(/%ticketid%/g, SupportTicket.id).replace(/%ticketusername%/g, message.author.username))
+              .setColor(supportbot.EmbedColour)
+          message.channel.send({embed: CreatedTicket}).then((r) => {
+            r.delete({ timeout:5000 })
+          })
+        } else {
+          const CreatedTicket = new Discord.MessageEmbed()
+              .setDescription(supportbot.TicketCreatedAlert.replace(/%ticketauthor%/g, message.author.id).replace(/%ticketid%/g, SupportTicket.id).replace(/%ticketusername%/g, message.author.username))
+              .setColor(supportbot.EmbedColour)
+          message.channel.send({embed: CreatedTicket});
+        }
         fs.writeFileSync("./storage/SupportTickets.json", '{\n    "ticket": "' + SupportTicket.name + '", \n    "id":' + message.author.id + "\n}", (err) => {
           if (!err) return;
           console.error(err)
