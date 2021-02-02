@@ -26,7 +26,7 @@ module.exports = async (client, reaction, user) => {
             	    const cmd = client.commands.get("ticket");
             	    if(!cmd) return;
             	    
-            	    cmd.execute(message, "undefined");
+            	    cmd.execute(message, message.content);
             	} catch (error) {
             	    console.error(error);
             	}
