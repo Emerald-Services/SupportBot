@@ -142,14 +142,6 @@ SuggestionStarter: "What would you like to suggest?"
 SuggestReact_1: 👍
 SuggestReact_2: 👎
 
-# Poll Configuration
-
-PollChannel: "polls"
-PollTitle: "Suggestion"
-PollStarter: "What would you like to create a poll about?"
-PollReact_1: 👍
-PollReact_2: 👎
-
 # Announcement Configuration
 
 AnnouncementChannel: "announcements"
@@ -157,8 +149,6 @@ AnnouncementTitle: "Servername Announcement"
 AnnouncementIcon: "https://i.imgur.com/HbkZyB7.png"
 
 AnnouncementStarter: "What would you like to announce?"
-
-MentionedRole: "@everyone"
 
 # General Command Configuration
 
