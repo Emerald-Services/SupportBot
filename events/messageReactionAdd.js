@@ -13,7 +13,7 @@ module.exports = async (client, reaction, user) => {
     let message = {
         guild: reaction.message.channel.guild,
         author: user,
-        content: "Not available",
+        content: "N/A",
         channel: reaction.message.channel
     }
 
@@ -26,7 +26,7 @@ module.exports = async (client, reaction, user) => {
             	    const cmd = client.commands.get("ticket");
             	    if(!cmd) return;
             	    
-            	    cmd.execute(message, "undefined");
+            	    cmd.execute(message, message.content);
             	} catch (error) {
             	    console.error(error);
             	}
