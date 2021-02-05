@@ -16,7 +16,10 @@ module.exports = async (bot, member) => {
     
     console.log(`[${supportbot.Bot_Name}]: ${member.user.username} has joined ${member.guild.name}!`)
     console.log(supportbot.AutoRole_Role)
-    member.roles.add(supportbot.AutoRole_Role).catch(console.error);
+    
+    const role = member.guild.roles.cache.find(role => role.name === supportbot.AutoRole_Role)
+    
+    member.roles.add(role).catch(console.error);
     
     if (supportbot.SystemMessage_Type === "embed") {
       const GuildAddMember = new Discord.MessageEmbed()
