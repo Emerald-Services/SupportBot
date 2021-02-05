@@ -31,7 +31,7 @@ module.exports = async (bot) => {
         chan1.messages.fetch(tickets.ReactionMessage_ID).catch(r => {
             let embed = new Discord.MessageEmbed()
                 .setTitle(supportbot.ReactionMessage.replace(/%reaction_emoji%/g, supportbot.ReactionEmoji))
-                .setColor(supportbot.SuccessColour)
+                .setColor(supportbot.EmbedColour)
                 .setFooter(supportbot.EmbedFooter);
 
             bot.channels.cache.find(channel => channel.name === supportbot.ReactionChannel).send({ 
