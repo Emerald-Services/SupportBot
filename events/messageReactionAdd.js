@@ -23,7 +23,7 @@ module.exports = async (client, reaction, user) => {
                 await reaction.users.remove(user.id)
 
             	try {
-            	    const cmd = client.commands.get("ticket");
+            	    const cmd = client.commands.get(supportbot.NewTicket);
             	    if(!cmd) return;
             	    
             	    cmd.execute(message, message.content);
