@@ -1,0 +1,195 @@
+#        _________                                  __ __________        __   
+#       /   _____/__ ________ ______   ____________/  |\______   \ _____/  |_ 
+#       \_____  \|  |  \____ \\____ \ /  _ \_  __ \   __\    |  _//  _ \   __\
+#       /        \  |  /  |_> >  |_> >  <_> )  | \/|  | |    |   (  <_> )  |  
+#      /_______  /____/|   __/|   __/ \____/|__|   |__| |______  /\____/|__|  
+#              \/      |__|   |__|                             \/             
+#
+#                      SupportBot version 6.1
+#                      Created by Emerald Services
+#                      Installed with MIT License
+#
+#                      Support Server: discord.gg/jspKFcE
+
+# General Bot Configuration
+
+Token: "BOT_TOKEN_HERE"
+Prefix: "-"
+Bot_Name: "SupportBot"
+
+BotActivity: "-help | SupportBot"
+StreamingURL: "https://www.twitch.tv/YOUR_TWITCH_NAME"
+# Doit définir ActivityType a STREAMING afin que l’URL de streaming fonctionne dans le statut bots.
+
+ActivityType: "PLAYING"
+# L’état d’activité peut être PLAYING, WATCHING, LISTENING ou STREAMING.
+
+DeleteMessages: "true"
+
+# Embed Configuration
+
+EmbedColour: "#04b545"
+EmbedFooter: "SupportBot | The #1 Supportive Discord Bot"
+
+ErrorColour: "#d12519"
+SuccessColour: "#04b545"
+WarningColour: "#fca117" 
+
+# Role Configuration
+
+AutoRole: "true"
+# En parametre "AutoRole a 'true' le bot appliquera automatiquement le rôle ci-dessous lorsque les membres se joindra. Mis à 'false' désactiver cette fonctionnalite.
+AutoRole_Role: "Membre"
+LockdownRole: "@everyone"
+
+Staff: "Personnel"
+Admin: "Admin"
+
+# Ticket Configuration
+
+TicketChannel: "ticket"
+TicketCategory: "Tickets"
+TicketLog: "ticket-logs"
+TranscriptLog: "transcripts"
+TicketSubject: "description"
+# TicketSubject: "description" signifie que le sujet (reason) du billet sera affiché sur la description du canal s’il est défini pour "embed" il sera affiché dans l’intégration.
+
+AllowTicketMentions: "true"
+# Mis a "true" pour permettre au billet de mentionner l’auteur et l’équipe de soutien.
+# Mis a "false" pour désa autoriser les mentions dans les billets.
+
+
+# Ticket Panel (Ticket Reaction Create)
+
+ReactionTickets: "true"
+ReactionMessage: "Réagissez avec %reaction_emoji% pour créer un ticket de support !"
+ReactionChannel: "creer-billet"
+ReactionEmoji: "📩"
+# Custom Emojis: <:test:EMOJI_ID>
+
+Ticket_Thumbnail: "https://images.emojiterra.com/google/android-pie/512px/1f39f.png"
+Ticket_Title: "Prise en charge du serveur | %ticketusername%"
+TicketMessage: "Bonjour <@%ticketauthor%>, Merci d’avoir créé un billet de support\nS’il vous plaît attendre patiemment pendant qu’un membre de notre équipe vous tend la main."
+NoTicketSubject: "Aucune raison fournie!"
+TicketCreatedAlert: ":ticket: Votre ticket de support a été créé : <#%ticketid%>"
+TranscriptTitle: "Transcription du billet"
+
+AddedUser: "👍 <@%user%> a ete ajoute a ce billet"
+RemovedUser: "👍 <@%user%> a ete retiré de ce billet"
+
+ClosingTicket: ":warning: Vous avez demandé de fermer votre billet de soutien."
+ClosingConfirmation_Word: "confirm"
+CloseConfirmation: "true"
+# CloseConfirmation a vrai fera confirmer aux utilisateurs qu’ils veulent fermer un leur billet, les paramètres à faux va juste fermer le billet.
+
+# Ticket Department Configuration
+
+TicketDepartments: "true"
+# Cette option permet ou désactive les départements de billetterie. Si définissez faux départements de billets ne fonctionnera pas
+
+AllowStaff: "true"
+# AllowStaff est une option pour savoir si oui ou non vous voulez les utilisateurs avec le "Staff" rôle pour être en mesure de voir à l’intérieur des billets. S’il est mis faux "Staff" ne affichera pas les billets.
+
+DepartmentEmoji_1: "🙋"
+DepartmentEmoji_2: "💸"
+DepartmentEmoji_3: "📗"
+# Emojis billet, les emojis sont ce que les utilisateurs devront réagir avec inorder pour procéder furthur si les départements sont activés.
+
+DepartmentTitle_1: "Soutien"
+DepartmentTitle_2: "Facturation"
+DepartmentTitle_3: "Autres"
+# Titre du département des billets, C’est le titre d’un service de billetterie pour aider les utilisateurs à savoir ce qui est disponible.
+
+DepartmentRole_1: "Soutien"
+DepartmentRole_2: "Admin"
+DepartmentRole_3: "Soutien"
+# Les rôles de billets sont les rôles qui seront en mesure d’accéder aux billets en fonction du ministère qui a été choisi.
+
+# System Message Configuration
+
+SystemMessages: "true"
+
+SystemMessage_Channel: "messages-systeme"
+SystemMessage_Type: "embed"
+# Il existe 2 types de la façon dont vous pouvez envoyer des messages système, 'normal' or 'embed'
+SystemMessage_Icon: "USER"
+
+Welcome_Title: "Utilisateur rejoint!"
+WelcomeMessage: "Bonjour %member%, Bienvenue à %guildname%!"
+# %member% définir l’utilisateur qui a rejoint et %guildnamne% définit le nom du serveur.
+
+Leave_Title: "Utilisateur à gauche!"
+LeaveMessage: "Au revoir %member%, Merci d’avoir visting %guildname%!"
+# %member% définir l’utilisateur qui est parti et %guildnamne% définit le nom du serveur.
+
+SystemMessage_EmbedFooter: "false"
+
+# LINKS Configuration
+
+LinksTitle: "Liens rapides"
+
+LINKS:
+  "Website": "https://www.example.com"
+  "Store": "https://store.example.com"
+  "Discord": "https://discord.gg/example"
+# "Twitter": "https://twitter.com/example"
+
+# Suggestions Configuration
+
+SuggestionChannel: "suggestions"
+SuggestionTitle: "Suggestion"
+SuggestionStarter: "Qu’aimeriez-vous suggérer?"
+SuggestReact_1: 👍
+SuggestReact_2: 👎
+
+# Announcement Configuration
+
+AnnouncementChannel: "annonces"
+AnnouncementTitle: "Annonce servername"
+AnnouncementIcon: "https://i.imgur.com/HbkZyB7.png"
+
+AnnouncementStarter: "Qu’aimeriez-vous annoncer?"
+
+# General Command Configuration
+
+HelpCommand: "aide"
+LinksCommand: "liens"
+PingCommand: "ping"
+SuggestCommand: "suggerer"
+
+# Support Command Configuration
+
+NewTicket: "billet"
+CloseTicket: "proche"
+AddUser: "ajouter"
+RemoveUser: "retirer"
+RenameTicket: "renommer"
+
+# Staff Command Configuration
+
+BotSay: "dire"
+
+# Admin Command Configuration
+
+AnnounceCommand: "annoncer"
+
+# Commmand Descriptions
+
+NewTicketDesc: "Créer un nouveau ticket de support"
+AnnounceDesc: "Créer une annonce de serveur"
+CloseTicketDesc: "Fermez votre billet de support"
+LinksDesc: "View some important links"
+PingDesc: "Obtenez la latence du bot"
+HelpDesc: "Obtenez une liste de toutes les commandes"
+RemoveUserDesc: "Supprimer un utilisateur d’un ticket de support"
+AddUserDesc: "Ajouter un utilisateur à un ticket de support"
+SuggestionDesc: "Créer une suggestion de serveur"
+BotSayDesc: "Dites quelque chose avec le bot"
+
+# Error / Warining Messages
+
+IncorrectPerms: ":x: **Err!** Vous n’avez pas les autorisations correctes pour utiliser cette commande."
+InvalidChannel: ":x: **Err!** Canal ina pas trouvé. S’il vous plaît le créer!"
+UserNotFound: ":x: **Err!** Vous ne pouvez pas exécuter cette commande ici. Cette commande est utilisée lors de la fermeture d’un billet. ..."
+NoValidTicket: ":warning: Vous ne pouvez pas exécuter cette commande ici. Cette commande est utilisée lors de la fermeture d’un billet."
+TicketExists: ":warning: Ce billet ne peut pas être ouvert, il existe déjà!"
