@@ -58,14 +58,15 @@ AllowTicketMentions: "true"
 # Establecer en "true" para permitir que el boleto mencione al autor y al equipo de apoyo.
 # Establecer en "false" para desautorizar las menciones dentro de los boletos.
 
-
 # Ticket Panel (Ticket Reaction Create)
 
 ReactionTickets: "true"
-ReactionMessage: "React with %reaction_emoji% to create a Support Ticket!"
-ReactionChannel: "create-ticket"
+ReactionMessage: "React with %reaction_emoji% para crear un Ticket de Soporte!"
+ReactionChannel: "crear-ticket"
+ReactionDescription: "Cree un ticket de soporte para contactar a un miembro del personal."
 ReactionEmoji: "📩"
 # Custom Emojis: <:test:EMOJI_ID>
+ReactionThumbnail: "https://hotemoji.com/images/dl/5/ticket-emoji-by-twitter.png"
 
 Ticket_Thumbnail: "https://images.emojiterra.com/google/android-pie/512px/1f39f.png"
 Ticket_Title: "Server Support | %ticketusername%"
