@@ -64,8 +64,10 @@ AllowTicketMentions: "true"
 ReactionTickets: "true"
 ReactionMessage: "Réagissez avec %reaction_emoji% pour créer un ticket de support !"
 ReactionChannel: "creer-billet"
+ReactionDescription: "Créez un ticket de support pour contacter un membre du personnel."
 ReactionEmoji: "📩"
 # Custom Emojis: <:test:EMOJI_ID>
+ReactionThumbnail: "https://hotemoji.com/images/dl/5/ticket-emoji-by-twitter.png"
 
 Ticket_Thumbnail: "https://images.emojiterra.com/google/android-pie/512px/1f39f.png"
 Ticket_Title: "Prise en charge du serveur | %ticketusername%"
