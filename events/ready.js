@@ -43,7 +43,7 @@ module.exports = async (bot) => {
             }
 
             if (supportbot.ReactionPanel_Image = true) {
-                embed.setThumbnail(supportbot.ReactionImage)
+                embed.setImage(supportbot.ReactionImage)
             }
             
             bot.channels.cache.find(channel => channel.name === supportbot.ReactionChannel).send({ 
