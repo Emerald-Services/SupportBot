@@ -61,17 +61,15 @@ AllowTicketMentions: "true"
 
 # Ticket Panel (Ticket Reaction Create)
 
-ReactionTickets: true
+ReactionTickets: "true"
 ReactionMessage: "React with %reaction_emoji% to create a Support Ticket!"
-ReactionPanel_Description: true
+ReactionPanel_Description: "true"
 ReactionDescription: "Create a support ticket to contact a member of staff."
 ReactionChannel: "create-ticket"
 ReactionEmoji: "📩"
 # Custom Emojis: <:test:EMOJI_ID>
-ReactionPanel_Thumbnail: true
+ReactionPanel_Thumbnail: "true"
 ReactionThumbnail: "https://hotemoji.com/images/dl/5/ticket-emoji-by-twitter.png"
-ReactionPanel_Image: true
-ReactionImage: "https://wallpapercave.com/wp/wp4462546.jpg"
 
 Ticket_Thumbnail: "https://images.emojiterra.com/google/android-pie/512px/1f39f.png"
 Ticket_Title: "Server Support | %ticketusername%"

@@ -20,7 +20,7 @@ module.exports = async (bot) => {
     console.log(`\u001b[37m`, `${supportbot.Bot_Name} has successfully connected to discord`)
     console.log(`\u001b[32m`, `―――――――――――――――――― SupportBot ――――――――――――――――――`)
 
-    if (supportbot.ReactionTickets === "true") {
+    if (supportbot.ReactionTickets === true) {
         let chan1 = bot.channels.cache.find(channel => channel.name === supportbot.ReactionChannel)
 
         if (!chan1) {
@@ -33,7 +33,19 @@ module.exports = async (bot) => {
                 .setTitle(supportbot.ReactionMessage.replace(/%reaction_emoji%/g, supportbot.ReactionEmoji))
                 .setColor(supportbot.SuccessColour)
                 .setFooter(supportbot.EmbedFooter);
+            
+            if (supportbot.ReactionPanel_Description = true) {
+                embed.setDescription(supportbot.ReactionDescription)
+            }
+            
+            if (supportbot.ReactionPanel_Thumbnail = true) {
+                embed.setThumbnail(supportbot.ReactionThumbnail)
+            }
 
+            if (supportbot.ReactionPanel_Image = true) {
+                embed.setThumbnail(supportbot.ReactionImage)
+            }
+            
             bot.channels.cache.find(channel => channel.name === supportbot.ReactionChannel).send({ 
                 embed: embed 
             }).then(r => {
