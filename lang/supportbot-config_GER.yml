@@ -67,8 +67,10 @@ ReactionDescription: "Erstellen Sie ein Support-Ticket, um einen Mitarbeiter zu 
 ReactionChannel: "create-ticket"
 ReactionEmoji: "📩"
 # Custom Emojis: <:test:EMOJI_ID>
-ReactionPanel_Thumbnail: "true"
+ReactionPanel_Thumbnail: true
 ReactionThumbnail: "https://hotemoji.com/images/dl/5/ticket-emoji-by-twitter.png"
+ReactionPanel_Image: true
+ReactionImage: "https://wallpapercave.com/wp/wp4462546.jpg"
 
 Ticket_Thumbnail: "https://images.emojiterra.com/google/android-pie/512px/1f39f.png"
 Ticket_Title: "Server Support | %ticketusername%"
@@ -153,6 +155,22 @@ AnnouncementIcon: "https://i.imgur.com/HbkZyB7.png"
 
 AnnouncementStarter: "Was möchtest du ankündigen?"
 
+# Moderation System Configuration
+
+BanTitle: "User Banned!"
+DaysBannedFor: 7
+BanLogColour: "#D911B4"
+
+KickTitle: "User Kicked!"
+KickLogColour: "#D9B111"
+
+ModThumbnail: "https://i.imgur.com/l6P3DF6.png"
+ModLogChannel: "mod-logs"
+
+PruneLogTitle: "Bulk Delete"
+PruneThumbnail: "https://i.imgur.com/OAgW2vR.png"
+PruneColour: "#1BA30C"
+
 # General Command Konfiguration
 
 HelpCommand: "help"
@@ -169,11 +187,15 @@ RemoveUser: "remove"
 RenameTicket: "rename"
 
 # Staff Command Konfiguration
+
 BotSay: "say"
+PurgeMessage: "purge"
 
 # Admin Command Konfiguration
 
 AnnounceCommand: "announce"
+BanUser: "ban"
+KickUser: "kick"
 
 # Commmand Beschreibungen (help)
 
@@ -187,6 +209,9 @@ RemoveUserDesc: "Entferne einen Nutzer aus einem Ticket"
 AddUserDesc: "Füge einen Nutzer einem Ticket hinzu"
 SuggestionDesc: "Erstelle einen Server Vorschlag"
 BotSayDesc: "Sage etwas mit dem Bot"
+BanDesc: "Verbannen Sie ein Mitglied von diesem Server."
+KickDesc: "Treten Sie ein Mitglied von diesem Server."
+PurgeDesc: "Nachrichten aus dem Chat löschen."
 
 # Error / Warning Nachrichten
 

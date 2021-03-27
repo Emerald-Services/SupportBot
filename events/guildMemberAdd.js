@@ -24,7 +24,7 @@ module.exports = async (bot, member) => {
     if (supportbot.SystemMessage_Type === "embed") {
       const GuildAddMember = new Discord.MessageEmbed()
         .setTitle(supportbot.Welcome_Title)
-        .setDescription(supportbot.WelcomeMessage.replace(/%member%/g, member.user.username).replace(/%guildname%/g, member.guild.name))
+        .setDescription(supportbot.WelcomeMessage.replace(/%member%/g, member.user.id).replace(/%guildname%/g, member.guild.name))
         .setColor(supportbot.EmbedColour)
 
         if (supportbot.SystemMessage_Icon === "BOT") {

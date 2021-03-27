@@ -45,6 +45,12 @@ LockdownRole: "@everyone"
 Staff: "Staff"
 Admin: "Admin"
 
+# Help Configuration
+
+HelpMenu_withKey: "false"
+# If set to true, emojis will be used as a key to define the access level of commands.
+
+
 # Ticket Configuration
 
 TicketChannel: "ticket"
@@ -58,18 +64,19 @@ AllowTicketMentions: "true"
 # Set to "true" to allow the ticket to mention the author and the support team.
 # Set to "false" to dis-allow mentions within tickets.
 
-
 # Ticket Panel (Ticket Reaction Create)
 
-ReactionTickets: "true"
+ReactionTickets: true
 ReactionMessage: "React with %reaction_emoji% to create a Support Ticket!"
-ReactionPanel_Description: "true"
+ReactionPanel_Description: true
 ReactionDescription: "Create a support ticket to contact a member of staff."
 ReactionChannel: "create-ticket"
 ReactionEmoji: "📩"
 # Custom Emojis: <:test:EMOJI_ID>
-ReactionPanel_Thumbnail: "true"
+ReactionPanel_Thumbnail: true
 ReactionThumbnail: "https://hotemoji.com/images/dl/5/ticket-emoji-by-twitter.png"
+ReactionPanel_Image: true
+ReactionImage: "https://wallpapercave.com/wp/wp4462546.jpg"
 
 Ticket_Thumbnail: "https://images.emojiterra.com/google/android-pie/512px/1f39f.png"
 Ticket_Title: "Server Support | %ticketusername%"
@@ -154,6 +161,23 @@ AnnouncementIcon: "https://i.imgur.com/HbkZyB7.png"
 
 AnnouncementStarter: "What would you like to announce?"
 
+# Moderation System Configuration
+
+BanTitle: "User Banned!"
+DaysBannedFor: 7
+BanLogColour: "#D911B4"
+
+KickTitle: "User Kicked!"
+KickLogColour: "#D9B111"
+
+ModThumbnail: "https://i.imgur.com/l6P3DF6.png"
+ModLogChannel: "mod-logs"
+
+PruneLogTitle: "Bulk Delete"
+PruneThumbnail: "https://i.imgur.com/OAgW2vR.png"
+PruneColour: "#1BA30C"
+
+
 # General Command Configuration
 
 HelpCommand: "help"
@@ -172,10 +196,13 @@ RenameTicket: "rename"
 # Staff Command Configuration
 
 BotSay: "say"
+PurgeMessage: "purge"
 
 # Admin Command Configuration
 
 AnnounceCommand: "announce"
+BanUser: "ban"
+KickUser: "kick"
 
 # Commmand Descriptions
 
@@ -189,6 +216,9 @@ RemoveUserDesc: "Remove a user from a support ticket"
 AddUserDesc: "Add a user to a support ticket"
 SuggestionDesc: "Create a server suggestion"
 BotSayDesc: "Say something with the bot"
+BanDesc: "Ban a member from this server."
+KickDesc: "Kick a member from this server."
+PurgeDesc: "Purge messages from the chat."
 
 # Error / Warining Messages
 
