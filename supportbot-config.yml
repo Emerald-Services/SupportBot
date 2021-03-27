@@ -42,7 +42,7 @@ AutoRole: "true"
 AutoRole_Role: "Member"
 LockdownRole: "@everyone"
 
-Staff: "Administration"
+Staff: "Staff"
 Admin: "Administration"
 
 # Ticket Configuration
