@@ -34,15 +34,15 @@ module.exports = async (bot) => {
                 .setColor(supportbot.SuccessColour)
                 .setFooter(supportbot.EmbedFooter);
             
-            if (supportbot.ReactionPanel_Description = true) {
+            if (supportbot.ReactionPanel_Description === true) {
                 embed.setDescription(supportbot.ReactionDescription)
             }
             
-            if (supportbot.ReactionPanel_Thumbnail = true) {
+            if (supportbot.ReactionPanel_Thumbnail === true) {
                 embed.setThumbnail(supportbot.ReactionThumbnail)
             }
 
-            if (supportbot.ReactionPanel_Image = true) {
+            if (supportbot.ReactionPanel_Image === true) {
                 embed.setImage(supportbot.ReactionImage)
             }
             
