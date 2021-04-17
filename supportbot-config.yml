@@ -44,6 +44,7 @@ LockdownRole: "@everyone"
 
 Staff: "Staff"
 Admin: "Administration"
+TicketBlackListRole: "Blacklisted"
 
 # Ticket Configuration
 
@@ -78,6 +79,7 @@ TicketMessage: "Hello <@%ticketauthor%>, Thank you for creating a support ticket
 NoTicketSubject: "No Reason Provided!"
 TicketCreatedAlert: ":ticket: Your support ticket has been created: <#%ticketid%>"
 TranscriptTitle: "Ticket Transcript"
+TicketBlackListMessage: "You are not allowed to open a ticket"
 
 AddedUser: "👍 <@%user%> has been added to this ticket"
 RemovedUser: "👍 <@%user%> has been removed from this ticket"
