@@ -21,6 +21,15 @@ module.exports = {
       if (!message.channel.name === supportbot.ReactionChannel) {
         if (supportbot.DeleteMessages == "true") message.delete();
       }
+
+      let reactionUser = message.guild.members.cache.get(message.author.id)
+
+      if (reactionUser.roles.cache.find(role => role.name === supportbot.TicketBlackListRole) || reactionUser.roles.cache.find(role => role.id === supportbot.TicketBlackListRole)) {
+            return message.channel.send(`<@${message.author.id}> ${supportbot.TicketBlackListMessage}`).then(msg => {
+                msg.delete({timeout: 3500})
+            })
+        }
+
         
       console.log(`\u001b[32m`, `[${supportbot.Bot_Name}]:`, `\u001b[32m`, `${message.author.tag} has executed ${supportbot.Prefix}${supportbot.NewTicket}!`);
 
