@@ -199,6 +199,7 @@ PurgeMessage: "purge"
 AnnounceCommand: "announce"
 BanUser: "ban"
 KickUser: "kick"
+BlacklistUser: "blacklist"
 
 # Commmand Descriptions
 
@@ -215,6 +216,7 @@ BotSayDesc: "Say something with the bot"
 BanDesc: "Ban a member from this server."
 KickDesc: "Kick a member from this server."
 PurgeDesc: "Purge messages from the chat."
+BlacklistDesc: "Decline a member to open a ticket"
 
 # Error / Warining Messages
 
