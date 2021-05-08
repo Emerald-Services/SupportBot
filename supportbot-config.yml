@@ -173,6 +173,9 @@ PruneLogTitle: "Bulk Delete"
 PruneThumbnail: "https://i.imgur.com/OAgW2vR.png"
 PruneColour: "#1BA30C"
 
+BlacklistTitle: "Blacklisted User"
+BlacklistColour: "#000000"
+
 
 # General Command Configuration
 

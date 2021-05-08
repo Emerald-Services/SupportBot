@@ -86,6 +86,17 @@ module.exports = {
             embed: embed5
         });
 
+        const logEmbed = new Discord.MessageEmbed()
+                .setTitle(supportbot.BlacklistTitle)
+                .setThumbnail(supportbot.ModThumbnail)
+                .addField('Banned User:', user)
+                .addField('Staff Member', message.author)
+                .setFooter(supportbot.EmbedFooter)
+                .setColor(supportbot.BlacklistColour)
+                .setTimestamp()
+
+        locateChannel.send({ embed: logEmbed });
+
     }
 
 };
