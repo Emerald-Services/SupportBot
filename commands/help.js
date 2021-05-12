@@ -35,6 +35,7 @@ module.exports = {
             staffCommands += `**${supportbot.Prefix}${supportbot.AnnounceCommand}** ${supportbot.AnnounceDesc} \`Admin Only\`\n` 
             staffCommands += `**${supportbot.Prefix}${supportbot.BanUser}** ${supportbot.BanDesc} \`Admin Only\` \n` 
             staffCommands += `**${supportbot.Prefix}${supportbot.KickUser}** ${supportbot.KickDesc} \`Admin Only\` \n` 
+            staffCommands += `**${supportbot.Prefix}${supportbot.BlacklistUser}** ${supportbot.BlacklistDesc} \`Admin Only\` \n` 
             
         const HelpEmbed1 = new Discord.MessageEmbed()
             .setTitle(supportbot.Bot_Name)
