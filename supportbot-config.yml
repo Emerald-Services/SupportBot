@@ -24,7 +24,7 @@ StreamingURL: "https://www.twitch.tv/YOUR_TWITCH_NAME"
 ActivityType: "PLAYING"
 # Activity status can either be PLAYING, WATCHING, LISTENING or STREAMING.
 
-DeleteMessages: "true"
+DeleteMessages: true
 
 # Embed Configuration
 
@@ -37,7 +37,7 @@ WarningColour: "#fca117"
 
 # Role Configuration
 
-AutoRole: "true"
+AutoRole: true
 # By setting "AutoRole to 'true' the bot will automatically apply the role below when members joins. Set to 'false' to disable this feature.
 AutoRole_Role: "Member"
 LockdownRole: "@everyone"
@@ -55,9 +55,9 @@ TranscriptLog: "transcripts"
 TicketSubject: "description"
 # TicketSubject: "description" means that the subject (reason) of the ticket will be displayed upon the channel description if set to "embed" it will be displayed within the embed.
 
-AllowTicketMentions: "true"
-# Set to "true" to allow the ticket to mention the author and the support team.
-# Set to "false" to dis-allow mentions within tickets.
+AllowTicketMentions: true
+# Set to true to allow the ticket to mention the author and the support team.
+# Set to false to dis-allow mentions within tickets.
 
 # Ticket Panel (Ticket Reaction Create)
 
@@ -86,15 +86,15 @@ RemovedUser: "👍 <@%user%> has been removed from this ticket"
 
 ClosingTicket: ":warning: You have requested to close your support ticket."
 ClosingConfirmation_Word: "confirm"
-CloseConfirmation: "true"
+CloseConfirmation: true
 # CloseConfirmation to true will make users confirm that they want to close a their ticket, settings to false will just close the ticket.
 
 # Ticket Department Configuration
 
-TicketDepartments: "true"
+TicketDepartments: true
 # This option enable or disable the ticket departments. If set false Ticket Departments will not work
 
-AllowStaff: "true"
+AllowStaff: true
 # AllowStaff is an option to whether or not you want the users with the "Staff" role to be able to view inside tickets. If set false "Staff" will not view tickets.
 
 DepartmentEmoji_1: "🙋"
@@ -114,7 +114,7 @@ DepartmentRole_3: "Support"
 
 # System Message Configuration
 
-SystemMessages: "true"
+SystemMessages: true
 
 SystemMessage_Channel: "system-messages"
 SystemMessage_Type: "embed"
@@ -129,7 +129,7 @@ Leave_Title: "User Left!"
 LeaveMessage: "Goodbye %member%, Thank you for visting %guildname%!"
 # %member% define the user who left and %guildnamne% defines the server name.
 
-SystemMessage_EmbedFooter: "false"
+SystemMessage_EmbedFooter: false
 
 # LINKS Configuration
 
