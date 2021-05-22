@@ -70,7 +70,7 @@ module.exports = {
             .setDescription(`${user} is already blacklisted`)
             .setColor(supportbot.ErrorColour)
         
-        if(user.roles.cache.find(role => role.name === supportbot.TicketBlackListRole) || reactionUser.roles.cache.find(role => role.id === supportbot.TicketBlackListRole)) {
+        if(user.roles.cache.find(role => role.name === supportbot.TicketBlackListRole) || user.roles.cache.find(role => role.id === supportbot.TicketBlackListRole)) {
             return message.channel.send({
                 embed: embed4
             })
