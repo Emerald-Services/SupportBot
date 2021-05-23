@@ -9,15 +9,15 @@ const supportbot = yaml.load(fs.readFileSync('./supportbot-config.yml', 'utf8'))
 
 module.exports = async (bot, member) => {
 
-  if (supportbot.SystemMessages === "true") {
-    const SystemChannel = member.guild.channels.cache.find(channel => channel.name === supportbot.SystemMessage_Channel)
+  if (supportbot.SystemMessages) {
+    const SystemChannel = member.guild.channels.cache.find(channel => channel.name === supportbot.SystemMessage_Channel) || member.guild.channels.cache.get(supportbot.SystemMessage_Channel)
     
     if (!SystemChannel) return;
     
     console.log(`[${supportbot.Bot_Name}]: ${member.user.username} has joined ${member.guild.name}!`)
     console.log(supportbot.AutoRole_Role)
     
-    const role = member.guild.roles.cache.find(role => role.name === supportbot.AutoRole_Role)
+    const role = member.guild.roles.cache.find(role => role.name === supportbot.AutoRole_Role) || member.guild.roles.cache.find(role => role.id === supportbot.AutoRole_Role)
     
     member.roles.add(role).catch(console.error);
     
@@ -37,7 +37,7 @@ module.exports = async (bot, member) => {
         }
 
 
-        if (supportbot.SystemMessage_EmbedFooter === "true") {
+        if (supportbot.SystemMessage_EmbedFooter) {
             GuildAddMember.setFooter(supportbot.EmbedFooter)
         }
 
