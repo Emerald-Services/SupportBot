@@ -35,6 +35,10 @@ ErrorColour: "#d12519"
 SuccessColour: "#04b545"
 WarningColour: "#fca117" 
 
+# Help Menu Configuration, Do Not Change.
+
+HelpMenu_WithKey: true 
+
 # Role Configuration
 
 AutoRole: true
