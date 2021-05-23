@@ -9,8 +9,8 @@ const supportbot = yaml.load(fs.readFileSync('./supportbot-config.yml', 'utf8'))
 
 module.exports = async (bot, member) => {
 
-  if (supportbot.SystemMessages === "true") {
-    const SystemChannel = member.guild.channels.cache.find(channel => channel.name === supportbot.SystemMessage_Channel)
+  if (supportbot.SystemMessages) {
+    const SystemChannel = member.guild.channels.cache.find(channel => channel.name === supportbot.SystemMessage_Channel) || member.guild.channels.cache.get(supportbot.SystemMessage_Channel)
     
     if (!SystemChannel) return;
     
