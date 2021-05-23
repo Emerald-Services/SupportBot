@@ -20,8 +20,8 @@ module.exports = async (bot) => {
     console.log(`\u001b[37m`, `${supportbot.Bot_Name} has successfully connected to discord`)
     console.log(`\u001b[32m`, `―――――――――――――――――― SupportBot ――――――――――――――――――`)
 
-    if (supportbot.ReactionTickets === true) {
-        let chan1 = bot.channels.cache.find(channel => channel.name === supportbot.ReactionChannel)
+    if (supportbot.ReactionTickets) {
+        let chan1 = bot.channels.cache.find(channel => channel.name === supportbot.ReactionChannel) || bot.channels.cache.find(channel => channel.id === supportbot.ReactionChannel)
 
         if (!chan1) {
             console.log('\u001b[33m', "[WARN] Ticket reaction panel is not setup, You can do so via the configuration file!")
@@ -34,19 +34,19 @@ module.exports = async (bot) => {
                 .setColor(supportbot.SuccessColour)
                 .setFooter(supportbot.EmbedFooter);
             
-            if (supportbot.ReactionPanel_Description === true) {
+            if (supportbot.ReactionPanel_Description) {
                 embed.setDescription(supportbot.ReactionDescription)
             }
             
-            if (supportbot.ReactionPanel_Thumbnail === true) {
+            if (supportbot.ReactionPanel_Thumbnail) {
                 embed.setThumbnail(supportbot.ReactionThumbnail)
             }
 
-            if (supportbot.ReactionPanel_Image === true) {
+            if (supportbot.ReactionPanel_Image) {
                 embed.setImage(supportbot.ReactionImage)
             }
             
-            bot.channels.cache.find(channel => channel.name === supportbot.ReactionChannel).send({ 
+            chan1.send({ 
                 embed: embed 
             }).then(r => {
                 let data = {
