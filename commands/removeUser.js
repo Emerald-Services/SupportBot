@@ -12,12 +12,12 @@ module.exports = {
     description: supportbot.RemoveUserDesc,
 
     execute(message, args) {        
-        if (supportbot.DeleteMessages == "true") message.delete();
+        if (supportbot.DeleteMessages) message.delete();
         
         console.log(`\u001b[32m`, `[${supportbot.Bot_Name}]:`, `\u001b[32m`, `${message.author.tag} has executed ${supportbot.Prefix}${supportbot.RemoveUser}!`);
 
-        let SupportStaff = message.guild.roles.cache.find(SupportTeam => SupportTeam.name === supportbot.Staff)
-        let Admins = message.guild.roles.cache.find(AdminUser => AdminUser.name === supportbot.Admin)
+        let SupportStaff = message.guild.roles.cache.find(SupportTeam => SupportTeam.name === supportbot.Staff) || message.guild.roles.cache.find(SupportTeam => SupportTeam.id === supportbot.Staff)
+        let Admins = message.guild.roles.cache.find(AdminUser => AdminUser.name === supportbot.Admin) || message.guild.roles.cache.find(AdminUser => AdminUser.id === supportbot.Admin)
 
         const NoPerms = new Discord.MessageEmbed()
             .setTitle("Invalid Permissions!")

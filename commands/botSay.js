@@ -13,9 +13,9 @@ module.exports = {
     description: supportbot.BotSayDesc,
 
     execute(message, args) {
-	if (supportbot.DeleteMessages == "true") message.delete();
+	if (supportbot.DeleteMessages) message.delete();
 	    
-        let SupportStaff = message.guild.roles.cache.find(adminRole => adminRole.name === supportbot.Staff);
+        let SupportStaff = message.guild.roles.cache.find(adminRole => adminRole.name === supportbot.Staff) || message.guild.roles.cache.find(adminRole => adminRole.id === supportbot.Staff)
 
         console.log(`\u001b[32m`, `[${supportbot.Bot_Name}]:`, `\u001b[32m`, `${message.author.tag} has executed ${supportbot.Prefix}${supportbot.BotSay}!`);
 

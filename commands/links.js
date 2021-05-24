@@ -13,7 +13,7 @@ module.exports = {
     description: supportbot.LinksDesc,
 
     execute(message, args) {
-        if (supportbot.DeleteMessages == "true") message.delete();
+        if (supportbot.DeleteMessages) message.delete();
         
         console.log(`\u001b[32m`, `[${supportbot.Bot_Name}]:`, `\u001b[32m`, `${message.author.tag} has executed ${supportbot.Prefix}${supportbot.LinksCommand}!`);
 

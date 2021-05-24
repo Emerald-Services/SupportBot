@@ -12,9 +12,9 @@ module.exports = {
     description: supportbot.SuggestionDesc,
 
     execute(message, args) {
-	if (supportbot.DeleteMessages == "true") message.delete();
+	if (supportbot.DeleteMessages) message.delete();
 	    
-        let locateChannel = message.guild.channels.cache.find(SuggestionChannel => SuggestionChannel.name === supportbot.SuggestionChannel);
+        let locateChannel = message.guild.channels.cache.find(SuggestionChannel => SuggestionChannel.name === supportbot.SuggestionChannel) || message.guild.channels.cache.find(SuggestionChannel => SuggestionChannel.id === supportbot.SuggestionChannel)
 
         console.log(`\u001b[32m`, `[${supportbot.Bot_Name}]:`, `\u001b[32m`, `${message.author.tag} has executed ${supportbot.Prefix}${supportbot.SuggestCommand}!`);
 

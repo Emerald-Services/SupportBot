@@ -12,14 +12,16 @@ module.exports = {
     description: supportbot.HelpDesc,
 
     execute(message, args) {
-	if (supportbot.DeleteMessages == "true") message.delete();
+	if (supportbot.DeleteMessages) message.delete();
+
+    let SupportStaff = message.guild.roles.cache.find(adminRole => adminRole.name === supportbot.Admin) || message.guild.roles.cache.find(adminRole => adminRole.id === supportbot.Admin);
         
     console.log(`\u001b[32m`, `[${supportbot.Bot_Name}]:`, `\u001b[32m`, `${message.author.tag} has executed ${supportbot.Prefix}${supportbot.HelpCommand}!`);
     
-    if (supportbot.helpmenu_withkey = "true") {
+    if (supportbot.HelpMenu_WithKey) {
         let generalCommands = "";
             generalCommands += `**${supportbot.Prefix}${supportbot.HelpCommand}** ${supportbot.HelpDesc}\n`;
-            generalCommands += `**${supportbot.Prefix}${supportbot.LinksCommand}** ${supportbot.LinkDesc}\n`;
+            generalCommands += `**${supportbot.Prefix}${supportbot.LinksCommand}** ${supportbot.LinksDesc}\n`;
             generalCommands += `**${supportbot.Prefix}${supportbot.SuggestCommand}** ${supportbot.SuggestionDesc}\n`;
             generalCommands += `**${supportbot.Prefix}${supportbot.PingCommand}** ${supportbot.PingDesc}\n`;
         
@@ -49,7 +51,7 @@ module.exports = {
             .setColor(supportbot.EmbedColour)
             .setFooter(supportbot.EmbedFooter, message.author.displayAvatarURL());
 
-            if (message.member.roles.cache.some(role => role.name === supportbot.Staff || supportbot.Admin)) {
+            if (message.member.roles.cache.has(SupportStaff.id)) {
                 HelpEmbed1.addFields(
                     { name: '🔐 Staff Commands\n', value: `${staffCommands}\n`, inline: false },
                 )

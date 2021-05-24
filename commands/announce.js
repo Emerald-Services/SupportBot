@@ -14,9 +14,9 @@ module.exports = {
 
     execute(message, args) {
 	    
-	if (supportbot.DeleteMessages == "true") message.delete();
+	if (supportbot.DeleteMessages) message.delete();
 	    
-        let locateChannel = message.guild.channels.cache.find(AnnouncementChannel => AnnouncementChannel.name === supportbot.AnnouncementChannel);
+        let locateChannel = message.guild.channels.cache.find(AnnouncementChannel => AnnouncementChannel.name === supportbot.AnnouncementChannel) || message.guild.channels.cache.find(AnnouncementChannel => AnnouncementChannel.id === supportbot.AnnouncementChannel)
 
         console.log(`\u001b[32m`, `[${supportbot.Bot_Name}]:`, `\u001b[32m`, `${message.author.tag} has executed ${supportbot.Prefix}${supportbot.AnnounceCommand}!`);
 
@@ -27,7 +27,7 @@ module.exports = {
 
         if(!locateChannel) return message.channel.send({ embed: errornochannel });
 
-        let Admins = message.guild.roles.cache.find(adminRole => adminRole.name === supportbot.Admin);
+        let Admins = message.guild.roles.cache.find(adminRole => adminRole.name === supportbot.Admin) || message.guild.roles.cache.find(adminRole => adminRole.id === supportbot.Admin)
 
         const NoPerms = new Discord.MessageEmbed()
             .setTitle("Invalid Permissions!")

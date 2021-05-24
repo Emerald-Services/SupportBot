@@ -13,9 +13,9 @@ module.exports = {
     description: supportbot.BanDesc,
 
     execute(message, args, member) {
-	if (supportbot.DeleteMessages == "true") message.delete();
+	if (supportbot.DeleteMessages) message.delete();
 	    
-        let SupportStaff = message.guild.roles.cache.find(adminRole => adminRole.name === supportbot.Admin);
+        let SupportStaff = message.guild.roles.cache.find(adminRole => adminRole.name === supportbot.Admin) || message.guild.roles.cache.find(adminRole => adminRole.id === supportbot.Admin)
 
         console.log(`\u001b[32m`, `[${supportbot.Bot_Name}]:`, `\u001b[32m`, `${message.author.tag} has executed ${supportbot.Prefix}${supportbot.BanUser}!`);
 
@@ -27,7 +27,7 @@ module.exports = {
             if (!message.member.roles.cache.has(SupportStaff.id)) 
                 return message.channel.send({ embed: NoPerms });
 
-            let locateChannel = message.guild.channels.cache.find(ModLogChannel => ModLogChannel.name === supportbot.ModLogChannel);
+            let locateChannel = message.guild.channels.cache.find(ModLogChannel => ModLogChannel.name === supportbot.ModLogChannel) || message.guild.channels.cache.find(ModLogChannel => ModLogChannel.id === supportbot.ModLogChannel)
 
         const errornochannel = new Discord.MessageEmbed()
             .setTitle("Invalid Channel")

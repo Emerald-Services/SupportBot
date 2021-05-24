@@ -18,8 +18,8 @@ module.exports = {
     description: supportbot.NewTicketDesc,
 
     execute(message, args) {
-      if (!message.channel.name === supportbot.ReactionChannel) {
-        if (supportbot.DeleteMessages == "true") message.delete();
+      if (!message.channel.name === supportbot.ReactionChannel || !message.channel.id === supportbot.ReactionChannel) {
+        if (supportbot.DeleteMessages) message.delete();
       }
 
       let reactionUser = message.guild.members.cache.get(message.author.id)
@@ -50,21 +50,21 @@ module.exports = {
 
       message.guild.channels.create(`${supportbot.TicketChannel}-${ticketNumberID}`, {
         type: "text",
+        permissionOverwrites: [
+          {
+            id: message.guild.roles.everyone,
+            deny: ['VIEW_CHANNEL'],
+          }
+        ]
       }).then(SupportTicket => {
 
         let AllUsers = message.guild.roles.cache.find(everyone => everyone.name === '@everyone')
-        let SupportStaff = message.guild.roles.cache.find(SupportTeam => SupportTeam.name === supportbot.Staff)
-        let Admins = message.guild.roles.cache.find(AdminUser => AdminUser.name === supportbot.Admin)
+        let SupportStaff = message.guild.roles.cache.find(SupportTeam => SupportTeam.name === supportbot.Staff) || message.guild.roles.cache.find(SupportTeam => SupportTeam.id === supportbot.Staff)
+        let Admins = message.guild.roles.cache.find(AdminUser => AdminUser.name === supportbot.Admin) || message.guild.roles.cache.find(AdminUser => AdminUser.id === supportbot.Admin)
 
-        let DeptRole1 = message.guild.roles.cache.find(DepartmentRole => DepartmentRole.name === `${supportbot.DepartmentRole_1}`)
-        let DeptRole2 = message.guild.roles.cache.find(DepartmentRole => DepartmentRole.name === `${supportbot.DepartmentRole_2}`)
-        let DeptRole3 = message.guild.roles.cache.find(DepartmentRole => DepartmentRole.name === `${supportbot.DepartmentRole_3}`)
-        
-        SupportTicket.updateOverwrite(AllUsers, {
-          VIEW_CHANNEL: false,
-          READ_MESSAGES: false,
-          SEND_MESSAGES: false,
-        })
+        let DeptRole1 = message.guild.roles.cache.find(DepartmentRole => DepartmentRole.name === `${supportbot.DepartmentRole_1}`) || message.guild.roles.cache.find(DepartmentRole => DepartmentRole.id === `${supportbot.DepartmentRole_1}`)
+        let DeptRole2 = message.guild.roles.cache.find(DepartmentRole => DepartmentRole.name === `${supportbot.DepartmentRole_2}`) || message.guild.roles.cache.find(DepartmentRole => DepartmentRole.id === `${supportbot.DepartmentRole_2}`)
+        let DeptRole3 = message.guild.roles.cache.find(DepartmentRole => DepartmentRole.name === `${supportbot.DepartmentRole_3}`) || message.guild.roles.cache.find(DepartmentRole => DepartmentRole.id === `${supportbot.DepartmentRole_3}`)
           
         SupportTicket.updateOverwrite(message.author, {
           VIEW_CHANNEL: true,
@@ -84,20 +84,22 @@ module.exports = {
           SEND_MESSAGES: true,
         })
 
+        SupportTicket.updateOverwrite(AllUsers, {
+          VIEW_CHANNEL: false
+        })
+
+        
+
         // Ticket Category
-        let TicketCategory = message.guild.channels.cache.find(category => category.name === supportbot.TicketCategory)
+        let TicketCategory = message.guild.channels.cache.find(category => category.name === supportbot.TicketCategory) || message.guild.channels.cache.find(category => category.id === supportbot.TicketCategory)
 
         if (TicketCategory) {
           SupportTicket.setParent(TicketCategory.id)
-        } else {
-          if (message.guild.channels.cache.get(supportbot.TicketCategory)) {
-            SupportTicket.setParent(message.guild.channels.cache.get(supportbot.TicketCategory).id);
-          }
         }
 
         // Ticket Created, Message Sent
 
-        if (supportbot.AllowTicketMentions === "true") {
+        if (supportbot.AllowTicketMentions) {
           SupportTicket.send(`<@${message.author.id}>`)
         }
 
@@ -122,7 +124,7 @@ module.exports = {
           
         }
 
-        if (supportbot.TicketDepartments === "true") {
+        if (supportbot.TicketDepartments) {
           TicketMessage.addFields({ name: 'Departments', value: `${supportbot.DepartmentEmoji_1} **${supportbot.DepartmentTitle_1}**\n${supportbot.DepartmentEmoji_2} **${supportbot.DepartmentTitle_2}**\n${supportbot.DepartmentEmoji_3} **${supportbot.DepartmentTitle_3}**` })
         }
 
@@ -134,7 +136,7 @@ module.exports = {
 
           reacted[ticketNumberID] = false;
 
-          if (supportbot.TicketDepartments === "true") {
+          if (supportbot.TicketDepartments) {
             await msg.react(Emoji_1);
             await msg.react(Emoji_2);
             await msg.react(Emoji_3);
@@ -147,11 +149,11 @@ module.exports = {
                 SupportTicket.updateOverwrite(Admins, { VIEW_CHANNEL: true, READ_MESSAGES: true, SEND_MESSAGES: true, })
                 SupportTicket.updateOverwrite(DeptRole1, { VIEW_CHANNEL: true, READ_MESSAGES: true, SEND_MESSAGES: true, })
           
-                if (supportbot.AllowStaff === "true") {
+                if (supportbot.AllowStaff) {
                   SupportTicket.updateOverwrite(SupportStaff, { VIEW_CHANNEL: true, READ_MESSAGES: true, SEND_MESSAGES: true, })
                 }
           
-                if (supportbot.AllowStaff === "false") {
+                if (!supportbot.AllowStaff) {
                   SupportTicket.updateOverwrite(SupportStaff, { VIEW_CHANNEL: false, READ_MESSAGES: true, SEND_MESSAGES: true, })
                 }
 
@@ -160,7 +162,7 @@ module.exports = {
                   .setColor(supportbot.EmbedColour)
                 SupportTicket.send({ embed: Department1 });
 
-                if (supportbot.AllowTicketMentions === "true") {
+                if (supportbot.AllowTicketMentions) {
                   SupportTicket.send(`@here`)
                 }
           
@@ -171,11 +173,11 @@ module.exports = {
                 SupportTicket.updateOverwrite(Admins, { VIEW_CHANNEL: true, READ_MESSAGES: true, SEND_MESSAGES: true, })
                 SupportTicket.updateOverwrite(DeptRole2, { VIEW_CHANNEL: true, READ_MESSAGES: true, SEND_MESSAGES: true, })
           
-                if (supportbot.AllowStaff === "true") {
+                if (supportbot.AllowStaff) {
                   SupportTicket.updateOverwrite(SupportStaff, { VIEW_CHANNEL: true, READ_MESSAGES: true, SEND_MESSAGES: true, })
                 }
 
-                if (supportbot.AllowStaff === "false") {
+                if (!supportbot.AllowStaff) {
                   SupportTicket.updateOverwrite(SupportStaff, { VIEW_CHANNEL: false, READ_MESSAGES: true, SEND_MESSAGES: true, })
                 }
           
@@ -184,7 +186,7 @@ module.exports = {
                   .setColor(supportbot.EmbedColour)
                 SupportTicket.send({ embed: Department2 });
 
-                if (supportbot.AllowTicketMentions === "true") {
+                if (supportbot.AllowTicketMentions) {
                   SupportTicket.send(`@here`)
                 }
           
@@ -196,11 +198,11 @@ module.exports = {
                 SupportTicket.updateOverwrite(DeptRole3, { VIEW_CHANNEL: true, READ_MESSAGES: true, SEND_MESSAGES: true, })
                 SupportTicket.updateOverwrite(SupportStaff, { VIEW_CHANNEL: false, READ_MESSAGES: true, SEND_MESSAGES: true, })
           
-                if (supportbot.AllowStaff === "true") {
+                if (supportbot.AllowStaff) {
                   SupportTicket.updateOverwrite(SupportStaff, { VIEW_CHANNEL: true, READ_MESSAGES: true, SEND_MESSAGES: true, })
                 }
 
-                if (supportbot.AllowStaff === "false") {
+                if (!supportbot.AllowStaff) {
                   SupportTicket.updateOverwrite(SupportStaff, { VIEW_CHANNEL: false, READ_MESSAGES: true, SEND_MESSAGES: true, })
                 }
           
@@ -209,7 +211,7 @@ module.exports = {
                   .setColor(supportbot.EmbedColour)
                 SupportTicket.send({ embed: Department3 });
 
-                if (supportbot.AllowTicketMentions === "true") {
+                if (supportbot.AllowTicketMentions) {
                   SupportTicket.send(`@here`)
                 }
 
@@ -234,7 +236,7 @@ module.exports = {
   
         });
 
-        if (message.channel.name === supportbot.ReactionChannel) {
+        if (message.channel.name === supportbot.ReactionChannel || message.channel.id === supportbot.ReactionChannel) {
           const CreatedTicket = new Discord.MessageEmbed()
               .setDescription(supportbot.TicketCreatedAlert.replace(/%ticketauthor%/g, message.author.id).replace(/%ticketid%/g, SupportTicket.id).replace(/%ticketusername%/g, message.author.username))
               .setColor(supportbot.EmbedColour)
@@ -269,7 +271,7 @@ module.exports = {
           .setColor(supportbot.EmbedColour)
           .setFooter(supportbot.EmbedFooter)
 
-        let locateChannel = message.guild.channels.cache.find(LocateChannel => LocateChannel.name === supportbot.TicketLog)
+        let locateChannel = message.guild.channels.cache.find(LocateChannel => LocateChannel.name === supportbot.TicketLog) || message.guild.channels.cache.find(LocateChannel => LocateChannel.id === supportbot.TicketLog)
 
         if(!locateChannel) return message.channel.send({ embed: errornochannel });
 

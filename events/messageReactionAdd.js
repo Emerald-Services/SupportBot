@@ -17,7 +17,7 @@ module.exports = async (client, reaction, user) => {
         channel: reaction.message.channel
     }
 
-    if (supportbot.ReactionTickets === true) {
+    if (supportbot.ReactionTickets) {
         if (reaction.message.id === tickets.ReactionMessage_ID) {
             if (reaction.emoji.name == supportbot.ReactionEmoji || reaction.emoji.id == supportbot.ReactionEmoji) {
                 await reaction.users.remove(user.id)
