@@ -3,7 +3,7 @@
 
 
 const Discord = require("discord.js");
-const bot = new Discord.Client()
+const bot = new Discord.Client();
 
 const fs = require("fs")
 const yaml = require('js-yaml');
@@ -47,16 +47,39 @@ module.exports = {
 
       if (message.guild.channels.cache.find(SupportTicket => SupportTicket.name === `${supportbot.TicketChannel}-${ticketNumberID}`)) 
       return message.channel.send({ embed: TicketExists });
+    
+      let permsToHave = ['VIEW_CHANNEL', 'SEND_MESSAGES', 'ATTACH_FILES', 'READ_MESSAGE_HISTORY', 'ADD_REACTIONS']
+
+      let user = message.author
+
+      let AllUsers = message.guild.roles.cache.find(everyone => everyone.name === '@everyone')
+      let SupportStaff = message.guild.roles.cache.find(SupportTeam => SupportTeam.name === supportbot.Staff) || message.guild.roles.cache.find(SupportTeam => SupportTeam.id === supportbot.Staff)
+      let Admins = message.guild.roles.cache.find(AdminUser => AdminUser.name === supportbot.Admin) || message.guild.roles.cache.find(AdminUser => AdminUser.id === supportbot.Admin)
+
+      let TicketCategory = message.guild.channels.cache.find(category => category.name === supportbot.TicketCategory) || message.guild.channels.cache.find(category => category.id === supportbot.TicketCategory)
 
       message.guild.channels.create(`${supportbot.TicketChannel}-${ticketNumberID}`, {
         type: "text",
         permissionOverwrites: [
-          {
-            id: message.guild.roles.everyone,
-            deny: ['VIEW_CHANNEL'],
-          }
-        ]
-      }).then(SupportTicket => {
+            {
+                id: AllUsers.id,
+                deny: ['VIEW_CHANNEL']
+            },
+            {
+                id: SupportStaff.id,
+                allow: permsToHave
+            },
+            {
+                id: Admins.id,
+                allow: permsToHave
+            },
+            {
+                id: user.id,
+                allow: permsToHave
+            }
+        ],
+        parent: TicketCategory.id
+      }).then(async SupportTicket => {
 
         let AllUsers = message.guild.roles.cache.find(everyone => everyone.name === '@everyone')
         let SupportStaff = message.guild.roles.cache.find(SupportTeam => SupportTeam.name === supportbot.Staff) || message.guild.roles.cache.find(SupportTeam => SupportTeam.id === supportbot.Staff)
@@ -65,38 +88,8 @@ module.exports = {
         let DeptRole1 = message.guild.roles.cache.find(DepartmentRole => DepartmentRole.name === `${supportbot.DepartmentRole_1}`) || message.guild.roles.cache.find(DepartmentRole => DepartmentRole.id === `${supportbot.DepartmentRole_1}`)
         let DeptRole2 = message.guild.roles.cache.find(DepartmentRole => DepartmentRole.name === `${supportbot.DepartmentRole_2}`) || message.guild.roles.cache.find(DepartmentRole => DepartmentRole.id === `${supportbot.DepartmentRole_2}`)
         let DeptRole3 = message.guild.roles.cache.find(DepartmentRole => DepartmentRole.name === `${supportbot.DepartmentRole_3}`) || message.guild.roles.cache.find(DepartmentRole => DepartmentRole.id === `${supportbot.DepartmentRole_3}`)
-          
-        SupportTicket.updateOverwrite(message.author, {
-          VIEW_CHANNEL: true,
-          READ_MESSAGES: true,
-          SEND_MESSAGES: true,
-        })
-
-        SupportTicket.updateOverwrite(SupportStaff, {
-          VIEW_CHANNEL: true,
-          READ_MESSAGES: true,
-          SEND_MESSAGES: true,
-        })
-
-        SupportTicket.updateOverwrite(Admins, {
-          VIEW_CHANNEL: true,
-          READ_MESSAGES: true,
-          SEND_MESSAGES: true,
-        })
-
-        SupportTicket.updateOverwrite(AllUsers, {
-          VIEW_CHANNEL: false
-        })
-
         
-
-        // Ticket Category
-        let TicketCategory = message.guild.channels.cache.find(category => category.name === supportbot.TicketCategory) || message.guild.channels.cache.find(category => category.id === supportbot.TicketCategory)
-
-        if (TicketCategory) {
-          SupportTicket.setParent(TicketCategory.id)
-        }
-
+        
         // Ticket Created, Message Sent
 
         if (supportbot.AllowTicketMentions) {
@@ -145,7 +138,7 @@ module.exports = {
               if (typeof reacted[ticketNumberID] !== "boolean") return;
               delete reacted[ticketNumberID];
               if (reaction.emoji.name === Emoji_1) {
-                SupportTicket.updateOverwrite(message.author.id, { VIEW_CHANNEL: true, READ_MESSAGES: true, SEND_MESSAGES: true, })
+                SupportTicket.updateOverwrite(message.author, { VIEW_CHANNEL: true, READ_MESSAGES: true, SEND_MESSAGES: true, })
                 SupportTicket.updateOverwrite(Admins, { VIEW_CHANNEL: true, READ_MESSAGES: true, SEND_MESSAGES: true, })
                 SupportTicket.updateOverwrite(DeptRole1, { VIEW_CHANNEL: true, READ_MESSAGES: true, SEND_MESSAGES: true, })
           
@@ -193,7 +186,7 @@ module.exports = {
               }
           
               if (reaction.emoji.name === `${Emoji_3}`) {
-                SupportTicket.updateOverwrite(message.author.id, { VIEW_CHANNEL: true, READ_MESSAGES: true, SEND_MESSAGES: true, })
+                SupportTicket.updateOverwrite(message.author, { VIEW_CHANNEL: true, READ_MESSAGES: true, SEND_MESSAGES: true, })
                 SupportTicket.updateOverwrite(Admins, { VIEW_CHANNEL: true, READ_MESSAGES: true, SEND_MESSAGES: true, })
                 SupportTicket.updateOverwrite(DeptRole3, { VIEW_CHANNEL: true, READ_MESSAGES: true, SEND_MESSAGES: true, })
                 SupportTicket.updateOverwrite(SupportStaff, { VIEW_CHANNEL: false, READ_MESSAGES: true, SEND_MESSAGES: true, })
@@ -218,12 +211,19 @@ module.exports = {
               }
               return [Emoji_1, Emoji_2, Emoji_3].includes(reaction.emoji.name) && user.id !== message.author.id;
             }
+
+            const NoDepartmentReaction = new Discord.MessageEmbed()
+              .setTitle(supportbot.NoDepartmentReaction)
+              .setColor(supportbot.ErrorColour)
             msg.awaitReactions(filter, { 
               max: 4, 
               time: 60000, 
               errors: ['time'] 
             }).then(async collected => {
-            });
+            }).catch (err => {
+              SupportTicket.send({ embed: NoDepartmentReaction })
+            })
+            
 
             setTimeout(async function() {
               if (typeof reacted[ticketNumberID] == "boolean") {
