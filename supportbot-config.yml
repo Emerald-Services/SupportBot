@@ -81,6 +81,7 @@ Ticket_Thumbnail: "https://images.emojiterra.com/google/android-pie/512px/1f39f.
 Ticket_Title: "Server Support | %ticketusername%"
 TicketMessage: "Hello <@%ticketauthor%>, Thank you for creating a support ticket\nPlease wait patiently whilst a member of our team reaches out to you."
 NoTicketSubject: "No Reason Provided!"
+NoDepartmentReaction: "You didnt specified any Department"
 TicketCreatedAlert: ":ticket: Your support ticket has been created: <#%ticketid%>"
 TranscriptTitle: "Ticket Transcript"
 TicketBlackListMessage: "You are not allowed to open a ticket"
