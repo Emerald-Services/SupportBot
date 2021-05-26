@@ -21,7 +21,7 @@ module.exports = {
       if (!message.channel.name === supportbot.ReactionChannel || !message.channel.id === supportbot.ReactionChannel) {
         if (supportbot.DeleteMessages) message.delete();
       }
-
+      //Blacklist Check
       let reactionUser = message.guild.members.cache.get(message.author.id)
 
       if (reactionUser.roles.cache.find(role => role.name === supportbot.TicketBlackListRole) || reactionUser.roles.cache.find(role => role.id === supportbot.TicketBlackListRole)) {
@@ -45,6 +45,12 @@ module.exports = {
         .setDescription(`${supportbot.TicketExists}`)
         .setColor(supportbot.WarningColour)
 
+      //Category not found
+      const noCategory = new Discord.MessageEmbed()
+        .setTitle("Category not found")
+        .setDescription(supportbot.Category_NotFound)
+        .setColor(supportbot.ErrorColour)
+
       if (message.guild.channels.cache.find(SupportTicket => SupportTicket.name === `${supportbot.TicketChannel}-${ticketNumberID}`)) 
       return message.channel.send({ embed: TicketExists });
     
@@ -57,7 +63,7 @@ module.exports = {
       let Admins = message.guild.roles.cache.find(AdminUser => AdminUser.name === supportbot.Admin) || message.guild.roles.cache.find(AdminUser => AdminUser.id === supportbot.Admin)
 
       let TicketCategory = message.guild.channels.cache.find(category => category.name === supportbot.TicketCategory) || message.guild.channels.cache.find(category => category.id === supportbot.TicketCategory)
-
+      if(!TicketCategory) return message.channel.send({ embed: noCategory })
       message.guild.channels.create(`${supportbot.TicketChannel}-${ticketNumberID}`, {
         type: "text",
         permissionOverwrites: [
@@ -81,7 +87,7 @@ module.exports = {
         parent: TicketCategory.id
       }).then(async SupportTicket => {
 
-        let AllUsers = message.guild.roles.cache.find(everyone => everyone.name === '@everyone')
+        //get all required Roles
         let SupportStaff = message.guild.roles.cache.find(SupportTeam => SupportTeam.name === supportbot.Staff) || message.guild.roles.cache.find(SupportTeam => SupportTeam.id === supportbot.Staff)
         let Admins = message.guild.roles.cache.find(AdminUser => AdminUser.name === supportbot.Admin) || message.guild.roles.cache.find(AdminUser => AdminUser.id === supportbot.Admin)
 
