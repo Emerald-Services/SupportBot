@@ -54,6 +54,7 @@ TicketBlackListRole: "Blacklisted"
 
 TicketChannel: "ticket"
 TicketCategory: "Tickets"
+Category_NotFound: "Ticket Category not found, please check your config"
 TicketLog: "ticket-logs"
 TranscriptLog: "transcripts"
 TicketSubject: "description"
