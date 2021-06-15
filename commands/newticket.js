@@ -31,8 +31,6 @@ module.exports = {
         }
 
         
-      console.log(`\u001b[32m`, `[${supportbot.Bot_Name}]:`, `\u001b[32m`, `${message.author.tag} has executed ${supportbot.Prefix}${supportbot.NewTicket}!`);
-
       // Ticket ID
       let ticketNumberID = TicketNumberID.pad(message.guild.id);
 
