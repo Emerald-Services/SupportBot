@@ -16,12 +16,30 @@ module.exports = async (bot) => {
         
     });
     
-    console.log(`\u001b[32m`, `―――――――――――――――――― SupportBot ――――――――――――――――――`)
-    console.log(`\u001b[37m`, `${supportbot.Bot_Name} has successfully connected to discord`)
-    console.log(`\u001b[32m`, `―――――――――――――――――― SupportBot ――――――――――――――――――`)
+    console.log(`\u001b[32m`, `┏━━━┓╋╋╋╋╋╋╋╋╋╋╋╋╋┏┓┏━━┓╋╋╋┏┓`)
+    console.log(`\u001b[32m`, `┃┏━┓┃╋╋╋╋╋╋╋╋╋╋╋╋┏┛┗┫┏┓┃╋╋┏┛┗┓`)
+    console.log(`\u001b[32m`, `┃┗━━┳┓┏┳━━┳━━┳━━┳┻┓┏┫┗┛┗┳━┻┓┏┛`)
+    console.log(`\u001b[32m`, `┗━━┓┃┃┃┃┏┓┃┏┓┃┏┓┃┏┫┃┃┏━┓┃┏┓┃┃`)
+    console.log(`\u001b[32m`, `┃┗━┛┃┗┛┃┗┛┃┗┛┃┗┛┃┃┃┗┫┗━┛┃┗┛┃┗┓`)
+    console.log(`\u001b[32m`, `┗━━━┻━━┫┏━┫┏━┻━━┻┛┗━┻━━━┻━━┻━┛`)
+    console.log(`\u001b[32m`, `┗╋╋╋╋╋╋╋┃┃╋┃┃`)
+    console.log(`\u001b[32m`, `╋╋╋╋╋╋╋┗┛╋┗┛`)
+    console.log(`	`)
+    console.log(`\u001b[31m`, `――――――――――――――――――――――――――――――――――――――――――――`)
+    console.log(`	`)
+    console.log(`\u001b[33m`, `${supportbot.Bot_Name}`, `\u001b[36m`, `Connected to Discord`)
+    console.log(`\u001b[33m`, `Documentation:`, `\u001b[36m`, `https://docs.emeraldsrv.dev`)
+    console.log(`\u001b[33m`, `Discord:`, `\u001b[36m`, `https://emeraldsrv.dev/discord`)
+    console.log(`\u001b[33m`, `Hosting:`, `\u001b[36m`, `https://emeraldsrv.dev/hosting`)
+    console.log(`	`)
+    console.log(`\u001b[37m`, `SupportBot proudly created by Emerald Services`)
+    console.log(`	`)
+    console.log(`\u001b[31m`, `――――――――――――――――――――――――――――――――――――――――――――`)
+    
 
-    if (supportbot.ReactionTickets) {
-        let chan1 = bot.channels.cache.find(channel => channel.name === supportbot.ReactionChannel) || bot.channels.cache.find(channel => channel.id === supportbot.ReactionChannel)
+    
+    if (supportbot.ReactionTickets === true) {
+        let chan1 = bot.channels.cache.find(channel => channel.name === supportbot.ReactionChannel)
 
         if (!chan1) {
             console.log('\u001b[33m', "[WARN] Ticket reaction panel is not setup, You can do so via the configuration file!")
@@ -34,19 +52,19 @@ module.exports = async (bot) => {
                 .setColor(supportbot.SuccessColour)
                 .setFooter(supportbot.EmbedFooter);
             
-            if (supportbot.ReactionPanel_Description) {
+            if (supportbot.ReactionPanel_Description === true) {
                 embed.setDescription(supportbot.ReactionDescription)
             }
             
-            if (supportbot.ReactionPanel_Thumbnail) {
+            if (supportbot.ReactionPanel_Thumbnail === true) {
                 embed.setThumbnail(supportbot.ReactionThumbnail)
             }
 
-            if (supportbot.ReactionPanel_Image) {
+            if (supportbot.ReactionPanel_Image === true) {
                 embed.setImage(supportbot.ReactionImage)
             }
             
-            chan1.send({ 
+            bot.channels.cache.find(channel => channel.name === supportbot.ReactionChannel).send({ 
                 embed: embed 
             }).then(r => {
                 let data = {
