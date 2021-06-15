@@ -15,8 +15,6 @@ module.exports = {
     execute(message, args) {
         if (supportbot.DeleteMessages) message.delete();
         
-        console.log(`\u001b[32m`, `[${supportbot.Bot_Name}]:`, `\u001b[32m`, `${message.author.tag} has executed ${supportbot.Prefix}${supportbot.CloseTicket}!`);
-
         if (!message.channel.name.startsWith( `${supportbot.TicketChannel}-` )) {
             const Exists = new Discord.MessageEmbed()
                 .setTitle("No Ticket Found!")
