@@ -5,7 +5,7 @@
 //      /_______  /____/|   __/|   __/ \____/|__|   |__| |______  /\____/|__|  
 //              \/      |__|   |__|                             \/             
 //
-//                      SupportBot version 6.4
+//                      SupportBot version 6.1
 //                      Created by Emerald Services
 //                      Installed with MIT License
 //
@@ -33,23 +33,30 @@ String.prototype.toProperCase = function () {
 const init = async () => {
     const evtFiles = await readdir("./events/");
     
+        console.info(`\u001b[36m`, `➢ SupportBot Events`);
+        console.info(`	`);
+    
     evtFiles.forEach((file, i) => {
         const eventName = file.split(".")[0];
         const event = require(`./events/${file}`);
-        
-        console.info(`\u001b[37m`, `[${supportbot.Bot_Name}]:`, `\u001b[31m`, `#${i + 1} Event Loaded: ${eventName.toProperCase()} `);
+        console.info(`\u001b[32m`, `[${supportbot.Bot_Name}]:`, `\u001b[36m`, `#${i + 1} Event Loaded: ${eventName.toProperCase()} `);
         
         bot.on(eventName, event.bind(null, bot));
         delete require.cache[require.resolve(`./events/${file}`)];
     });
 
-    console.info(`\u001b[37m`, `[${supportbot.Bot_Name}]:`, `\u001b[32m`, `Successfully loaded ${evtFiles.length} events.`);
-    console.info(`\u001b[37m`, "-----------------------------------------------------------------------------");
+    console.info(`\u001b[32m`, `[${supportbot.Bot_Name}]:`, `\u001b[36m`, `Successfully loaded ${evtFiles.length} events.`);
+    console.log(`\u001b[31m`, `――――――――――――――――――――――――――――――――――――――――――――`)
+    console.log(`	`)
 };
 
 init();
 
 fs.readdir("./commands/", (err, files) => {
+    
+        console.info(`\u001b[36m`, `➢ SupportBot Commands`);
+        console.info(`	`);
+    
     if (err) console.info(err, "error");
     
     let jsfiles = files.filter((f) => f.split(".").pop() === "js");
@@ -61,32 +68,40 @@ fs.readdir("./commands/", (err, files) => {
   
     jsfiles.forEach((f, i) => {
         let props = require(`./commands/${f}`);
-        console.info(`\u001b[37m`, `[${supportbot.Bot_Name}]:`, `\u001b[31m`, `#${i + 1} Command Loaded: ${props.name.toProperCase()}`);
+        
+        console.info(`\u001b[32m`, `[${supportbot.Bot_Name}]:`, `\u001b[36m`, `#${i + 1} Command Loaded: ${props.name.toProperCase()}`);
         bot.commands.set(props.name, props);
     });
 
-    console.info(`\u001b[37m`, `[${supportbot.Bot_Name}]:`, `\u001b[32m`, `Loaded ${jsfiles.length} commands!`);
-    console.info(`\u001b[37m`, "-----------------------------------------------------------------------------");
+    console.info(`\u001b[32m`, `[${supportbot.Bot_Name}]:`, `\u001b[36m`, `Loaded ${jsfiles.length} commands!`);
+    console.log(`\u001b[31m`, `――――――――――――――――――――――――――――――――――――――――――――`)
+    console.log(`	`)
 });
 
 fs.readdir("./addons/", (err, files) => {
+    
+        console.info(`\u001b[36m`, `➢ SupportBot Addons`);
+        console.info(`	`);
+    
     if (err) console.info(err, "error");
     
     let jsfiles = files.filter((f) => f.split(".").pop() === "js");
 
     if (jsfiles.length <= 0) {
-        console.log(`[${supportbot.Bot_Name}]: No addons found. You can download addons from https://emeraldservices.xyz`);
+        console.log(`[${supportbot.Bot_Name}]: No addons found. You can download addons from https://emeraldsrv.dev`);
         return;
     }
   
     jsfiles.forEach((f, i) => {
         let props = require(`./addons/${f}`);
-        console.info(`\u001b[37m`, `[${supportbot.Bot_Name}]:`, `\u001b[31m`, `#${i + 1} Command Loaded: ${props.name.toProperCase()}`);
+        
+        console.info(`\u001b[32m`, `[${supportbot.Bot_Name}]:`, `\u001b[36m`, `#${i + 1} Addon Loaded: ${props.name.toProperCase()}`);
         bot.commands.set(props.name, props);
     });
 
-    console.info(`\u001b[37m`, `[${supportbot.Bot_Name}]:`, `\u001b[32m`, `Loaded ${jsfiles.length} commands!`);
-    console.info(`\u001b[37m`, "-----------------------------------------------------------------------------");
+    console.info(`\u001b[32m`, `[${supportbot.Bot_Name}]:`, `\u001b[36m`, `Loaded ${jsfiles.length} addons!`);
+    console.log(`\u001b[31m`, `――――――――――――――――――――――――――――――――――――――――――――`)
+    console.log(`	`)
 });
 
 bot.login(supportbot.Token);
