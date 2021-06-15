@@ -14,7 +14,8 @@ module.exports = {
     execute(message, args) {
 	if (supportbot.DeleteMessages) message.delete();
 
-    let SupportStaff = message.guild.roles.cache.find(adminRole => adminRole.name === supportbot.Admin) || message.guild.roles.cache.find(adminRole => adminRole.id === supportbot.Admin);
+    let SupportStaff = message.guild.roles.cache.find(adminRole => adminRole.name === supportbot.Staff) || message.guild.roles.cache.find(staffRole => staffRole.id === supportbot.Staff);
+    let AdminStaff = message.guild.roles.cache.find(adminRole => adminRole.name === supportbot.Admin) || message.guild.roles.cache.find(adminRole => adminRole.id === supportbot.Admin);
         
     if (supportbot.HelpMenu_WithKey) {
         let generalCommands = "";
@@ -36,6 +37,12 @@ module.exports = {
             staffCommands += `**${supportbot.Prefix}${supportbot.BanUser}** ${supportbot.BanDesc} \`Admin Only\` \n` 
             staffCommands += `**${supportbot.Prefix}${supportbot.KickUser}** ${supportbot.KickDesc} \`Admin Only\` \n` 
             staffCommands += `**${supportbot.Prefix}${supportbot.BlacklistUser}** ${supportbot.BlacklistDesc} \`Admin Only\` \n` 
+	    
+        let adminCommands = "";
+            adminCommands += `**${supportbot.Prefix}${supportbot.AnnounceCommand}** ${supportbot.AnnounceDesc} \`Admin Only\`\n` 
+            adminCommands += `**${supportbot.Prefix}${supportbot.BanUser}** ${supportbot.BanDesc} \`Admin Only\` \n` 
+            adminCommands += `**${supportbot.Prefix}${supportbot.KickUser}** ${supportbot.KickDesc} \`Admin Only\` \n` 
+            adminCommands += `**${supportbot.Prefix}${supportbot.BlacklistUser}** ${supportbot.BlacklistDesc} \`Admin Only\` \n` 
             
         const HelpEmbed1 = new Discord.MessageEmbed()
             .setTitle(supportbot.Bot_Name)
@@ -52,6 +59,12 @@ module.exports = {
             if (message.member.roles.cache.has(SupportStaff.id)) {
                 HelpEmbed1.addFields(
                     { name: '🔐 Staff Commands\n', value: `${staffCommands}\n`, inline: false },
+                )
+            }
+	    
+            if (message.member.roles.cache.has(AdminStaff.id)) {
+                HelpEmbed1.addFields(
+                    { name: '🔐 Admin Commands\n', value: `${adminCommands}\n`, inline: false },
                 )
             }
 
