@@ -50,7 +50,7 @@ WarningColour: "#fca117"
 # -------------------------
 
 HelpMenu: true # Do not change!
-SendHelpPage: "dm" # Set to channel or dm
+SendHelpPage: "channel" # Set to channel or dm
 
 # -------------------------
 #  Role Configuration
