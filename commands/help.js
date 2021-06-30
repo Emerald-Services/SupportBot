@@ -17,7 +17,7 @@ module.exports = {
     let SupportStaff = message.guild.roles.cache.find(adminRole => adminRole.name === supportbot.Staff) || message.guild.roles.cache.find(staffRole => staffRole.id === supportbot.Staff);
     let AdminStaff = message.guild.roles.cache.find(adminRole => adminRole.name === supportbot.Admin) || message.guild.roles.cache.find(adminRole => adminRole.id === supportbot.Admin);
         
-    if (supportbot.HelpMenu_WithKey) {
+    if (supportbot.HelpMenu) {
         let generalCommands = "";
             generalCommands += `**${supportbot.Prefix}${supportbot.HelpCommand}** ${supportbot.HelpDesc}\n`;
             generalCommands += `**${supportbot.Prefix}${supportbot.LinksCommand}** ${supportbot.LinksDesc}\n`;
@@ -64,9 +64,19 @@ module.exports = {
                 )
             }
 
-	    message.channel.send({ 
-            embed: HelpEmbed1
-        });
+        if (supportbot.SendHelpPage === "dm") {
+            message.author.send({ 
+                embed: HelpEmbed1
+            });
+        }
+
+        if (supportbot.SendHelpPage === "channel") {
+            message.channel.send({ 
+                embed: HelpEmbed1
+            });
+        }
+
+
     }
 
     }

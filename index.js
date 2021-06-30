@@ -1,15 +1,13 @@
-//        _________                                  __ __________        __   
-//       /   _____/__ ________ ______   ____________/  |\______   \ _____/  |_ 
-//       \_____  \|  |  \____ \\____ \ /  _ \_  __ \   __\    |  _//  _ \   __\
-//       /        \  |  /  |_> >  |_> >  <_> )  | \/|  | |    |   (  <_> )  |  
-//      /_______  /____/|   __/|   __/ \____/|__|   |__| |______  /\____/|__|  
-//              \/      |__|   |__|                             \/             
+//      ___                            _    ___        _   
+//    / __> _ _  ___  ___  ___  _ _ _| |_ | . > ___ _| |_ 
+//     \__ \| | || . \| . \/ . \| '_> | |  | . \/ . \ | |  
+//     <___/`___||  _/|  _/\___/|_|   |_|  |___/\___/ |_|  
+//                |_|  |_|                                  
 //
-//                      SupportBot version 6.1
-//                      Created by Emerald Services
-//                      Installed with MIT License
+//           SupportBot created by Emerald Services
+//           Installed with MIT License
 //
-//                      Support Server: discord.gg/jspKFcE
+//           Discord Support: https://emeraldsrv.dev/discord
 
 const Discord = require("discord.js");
 const fs = require("fs");

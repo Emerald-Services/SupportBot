@@ -1,26 +1,18 @@
 {
   "name": "supportbot",
-  "version": "6.4",
-  "description": "SupportBot | #1 Self-Hosted Ticket Bot",
+  "version": "7.0.0",
+  "description": "SupportBot, a free open-source discord ticket application with ease of use.",
   "main": "index.js",
-  "dependencies": {
-    "discord.js": "^12.5.1",
-    "js-yaml": "^4.0.0"
-  },
-  "devDependencies": {
-    "node-fetch": ">=2.6.1"
-  },
   "scripts": {
-    "test": "help"
+    "supportbot": "node index.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/1tzemerald/SupportBot.git"
-  },
+  "keywords": [
+    "supportbot"
+  ],
   "author": "Emerald Services",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/1tzemerald/SupportBot/issues"
-  },
-  "homepage": "https://emeraldsrv.dev"
+  "dependencies": {
+    "discord.js": "^12.5.3",
+    "js-yaml": "^4.1.0"
+  }
 }

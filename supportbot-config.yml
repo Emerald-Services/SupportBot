@@ -1,105 +1,150 @@
-#        _________                                  __ __________        __   
-#       /   _____/__ ________ ______   ____________/  |\______   \ _____/  |_ 
-#       \_____  \|  |  \____ \\____ \ /  _ \_  __ \   __\    |  _//  _ \   __\
-#       /        \  |  /  |_> >  |_> >  <_> )  | \/|  | |    |   (  <_> )  |  
-#      /_______  /____/|   __/|   __/ \____/|__|   |__| |______  /\____/|__|  
-#              \/      |__|   |__|                             \/             
+#      ___                            _    ___        _   
+#     / __> _ _  ___  ___  ___  _ _ _| |_ | . > ___ _| |_ 
+#     \__ \| | || . \| . \/ . \| '_> | |  | . \/ . \ | |  
+#     <___/`___||  _/|  _/\___/|_|   |_|  |___/\___/ |_|  
+#                |_|  |_|                                  
 #
-#                      SupportBot version 6.4
-#                      Created by Emerald Services
-#                      Installed with MIT License
+#           SupportBot created by Emerald Services
+#           Installed with MIT License
 #
-#                      Support Server: discord.gg/jspKFcE
+#           Discord Support: https://emeraldsrv.dev/discord
 
-# General Bot Configuration
+SupportBot Version: "7.0"
 
-Token: "BOT_TOKEN_HERE"
-Prefix: "-"
+# -------------------------
+#   General Configuration
+# -------------------------
+
+Token: "TOKEN HERE"
+Prefix: "!!"
 Bot_Name: "SupportBot"
 
+DeleteMessages: true
+# Should the bot delete command messages after executed?
+
+# -------------------------
+#  Activity Configuration
+# -------------------------
+
 BotActivity: "-help | SupportBot"
+
 StreamingURL: "https://www.twitch.tv/YOUR_TWITCH_NAME"
-# Must set ActivityType to STREAMING in order for Streaming URL to work in the bots status.
+# Set The ActivityType to "STREAMING" for a streaming status!
 
 ActivityType: "PLAYING"
 # Activity status can either be PLAYING, WATCHING, LISTENING or STREAMING.
 
-DeleteMessages: true
+# -------------------------
+#  Embed Configuration
+# -------------------------
 
-# Embed Configuration
-
-EmbedColour: "#04b545"
+EmbedColour: "#f74343"
 EmbedFooter: "SupportBot | The #1 Supportive Discord Bot"
 
 ErrorColour: "#d12519"
 SuccessColour: "#04b545"
 WarningColour: "#fca117" 
 
-# Help Menu Configuration, Do Not Change.
+# -------------------------
+#  Help Configuration
+# -------------------------
 
-HelpMenu_WithKey: true 
+HelpMenu: true # Do not change!
+SendHelpPage: "dm" # Set to channel or dm
 
-# Role Configuration
+# -------------------------
+#  Role Configuration
+# -------------------------
 
 AutoRole: true
-# By setting "AutoRole to 'true' the bot will automatically apply the role below when members joins. Set to 'false' to disable this feature.
 AutoRole_Role: "Member"
 LockdownRole: "@everyone"
 
 Staff: "Staff"
-Admin: "Administration"
+Admin: "Admin"
 TicketBlackListRole: "Blacklisted"
 
-# Ticket Configuration
+# -------------------------
+#  Tickets Configuration
+# -------------------------
 
+# --- General Config ---
+#     --- Start ---
+
+TicketCategory: "Support Tickets"
 TicketChannel: "ticket"
-TicketCategory: "Tickets"
+
 TicketLog: "ticket-logs"
 TranscriptLog: "transcripts"
+
+TranscriptTitle: "Ticket Transcript"
+TicketBlackListMessage: "You are not allowed to open a ticket"
+
 TicketSubject: "description"
-# TicketSubject: "description" means that the subject (reason) of the ticket will be displayed upon the channel description if set to "embed" it will be displayed within the embed.
+# "description" will displays the ticket reason within the channel description
+# "embed" will displays the ticket reason within the ticket embed
 
 AllowTicketMentions: true
 # Set to true to allow the ticket to mention the author and the support team.
 # Set to false to dis-allow mentions within tickets.
 
-# Ticket Panel (Ticket Reaction Create)
+# --- Panel Config ---
+#   --- Start ---
+
+ReactionChannel: "create-ticket"
+ReactionEmoji: "📩" 
+# For cusomt emojis: <:emoji_name:EMOJI_ID>
 
 ReactionTickets: true
 ReactionMessage: "React with %reaction_emoji% to create a Support Ticket!"
+
 ReactionPanel_Description: true
 ReactionDescription: "Create a support ticket to contact a member of staff."
-ReactionChannel: "create-ticket"
-ReactionEmoji: "📩"
-# Custom Emojis: <:test:EMOJI_ID>
+
 ReactionPanel_Thumbnail: true
 ReactionThumbnail: "https://hotemoji.com/images/dl/5/ticket-emoji-by-twitter.png"
+
 ReactionPanel_Image: true
 ReactionImage: "https://wallpapercave.com/wp/wp4462546.jpg"
 
-Ticket_Thumbnail: "https://images.emojiterra.com/google/android-pie/512px/1f39f.png"
+# --- Creation Config ---
+#      --- Start ---
+
+# Available Placeholders:
+
+# %ticketusername% - User who created the ticket.
+# <@%ticketauthor%> - Tags the user who created the ticket.
+# <#%ticketid%> - Mentions the ticket channel.
+
+
 Ticket_Title: "Server Support | %ticketusername%"
 TicketMessage: "Hello <@%ticketauthor%>, Thank you for creating a support ticket\nPlease wait patiently whilst a member of our team reaches out to you."
+
+Ticket_Thumbnail: "https://images.emojiterra.com/google/android-pie/512px/1f39f.png"
 NoTicketSubject: "No Reason Provided!"
+
 TicketCreatedAlert: ":ticket: Your support ticket has been created: <#%ticketid%>"
-TranscriptTitle: "Ticket Transcript"
-TicketBlackListMessage: "You are not allowed to open a ticket"
 
 AddedUser: "👍 <@%user%> has been added to this ticket"
 RemovedUser: "👍 <@%user%> has been removed from this ticket"
 
+# --- Closing Config ---
+#    --- Start ---
+
 ClosingTicket: ":warning: You have requested to close your support ticket."
 ClosingConfirmation_Word: "confirm"
 CloseConfirmation: true
-# CloseConfirmation to true will make users confirm that they want to close a their ticket, settings to false will just close the ticket.
 
-# Ticket Department Configuration
+# --- Departments Config ---
+#     --- Start ---
 
 TicketDepartments: true
-# This option enable or disable the ticket departments. If set false Ticket Departments will not work
 
 AllowStaff: true
-# AllowStaff is an option to whether or not you want the users with the "Staff" role to be able to view inside tickets. If set false "Staff" will not view tickets.
+# If set to true users with the "Staff" role will not be able to view tickets 
+# without a valid department role set below.
+
+# Set to false to allow "Staff" to see tickets whether its a department for them or not.
 
 DepartmentEmoji_1: "🙋"
 DepartmentEmoji_2: "💸"
@@ -116,14 +161,23 @@ DepartmentRole_2: "Admin"
 DepartmentRole_3: "Support"
 # Ticket roles are the roles that will be able to gain access to tickets depending on what department has been choosen. 
 
-# System Message Configuration
+# --------------------------------
+#  System Messages Configuration
+# --------------------------------
+
+# Available Placeholders:
+# %guildname% - This displays the name of the discord server.
 
 SystemMessages: true
+SystemMessage_EmbedFooter: false
 
 SystemMessage_Channel: "system-messages"
 SystemMessage_Type: "embed"
 # There are 2 types of how you can send system messages, 'normal' or 'embed'
+
 SystemMessage_Icon: "USER"
+# USER - This will display the user's icon of who joins.
+# BOT - This will display the bot's icon when a someone joins.
 
 Welcome_Title: "User Joined!"
 WelcomeMessage: "Hello %member%, Welcome to %guildname%!"
@@ -133,27 +187,33 @@ Leave_Title: "User Left!"
 LeaveMessage: "Goodbye %member%, Thank you for visting %guildname%!"
 # %member% define the user who left and %guildnamne% defines the server name.
 
-SystemMessage_EmbedFooter: false
+# -------------------------
+#  Links Configuration
+# -------------------------
 
-# LINKS Configuration
-
-LinksTitle: "Quick Links"
+LinksTitle: "Server Links"
 
 LINKS:
   "Website": "https://www.example.com"
   "Store": "https://store.example.com"
   "Discord": "https://discord.gg/example"
 # "Twitter": "https://twitter.com/example"
+# "Add More": "Just follow this format!"
 
-# Suggestions Configuration
+# --------------------------
+#  Suggestion Configuration
+# --------------------------
 
 SuggestionChannel: "suggestions"
 SuggestionTitle: "Suggestion"
+
 SuggestionStarter: "What would you like to suggest?"
 SuggestReact_1: 👍
 SuggestReact_2: 👎
 
-# Announcement Configuration
+# ----------------------------
+#  Announcement Configuration
+# ----------------------------
 
 AnnouncementChannel: "announcements"
 AnnouncementTitle: "Servername Announcement"
@@ -161,7 +221,9 @@ AnnouncementIcon: "https://i.imgur.com/HbkZyB7.png"
 
 AnnouncementStarter: "What would you like to announce?"
 
-# Moderation System Configuration
+# --------------------------
+#  Moderation Configuration
+# --------------------------
 
 BanTitle: "User Banned!"
 DaysBannedFor: 7
@@ -180,15 +242,18 @@ PruneColour: "#1BA30C"
 BlacklistTitle: "Blacklisted User"
 BlacklistColour: "#000000"
 
+# --------------------------
+#  Command Configuration
+# --------------------------
 
-# General Command Configuration
+# --- User Commands ---
 
 HelpCommand: "help"
 LinksCommand: "links"
 PingCommand: "ping"
 SuggestCommand: "suggest"
 
-# Support Command Configuration
+# --- Ticket Commands ---
 
 NewTicket: "ticket"
 CloseTicket: "close"
@@ -196,19 +261,21 @@ AddUser: "add"
 RemoveUser: "remove"
 RenameTicket: "rename"
 
-# Staff Command Configuration
+# --- Staff/Admin Commands ---
 
 BotSay: "say"
 PurgeMessage: "purge"
-
-# Admin Command Configuration
 
 AnnounceCommand: "announce"
 BanUser: "ban"
 KickUser: "kick"
 BlacklistUser: "blacklist"
 
-# Commmand Descriptions
+# --------------------------
+#  Messages Configuration
+# --------------------------
+
+# --- Command Messages ---
 
 NewTicketDesc: "Create a new support ticket"
 AnnounceDesc: "Create a server announcement"
@@ -225,7 +292,7 @@ KickDesc: "Kick a member from this server."
 PurgeDesc: "Purge messages from the chat."
 BlacklistDesc: "Decline a member to open a ticket"
 
-# Error / Warining Messages
+# Error / Warning Messages
 
 IncorrectPerms: ":x: **Err!** You do not have the correct permissions to use this command."
 InvalidChannel: ":x: **Err!** Channel not found. Please create it!"
