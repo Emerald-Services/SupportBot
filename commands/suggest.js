@@ -40,10 +40,20 @@ module.exports = {
                 .setColor(supportbot.EmbedColour)
                 .setFooter(supportbot.EmbedFooter)
 
-                .setTitle(supportbot.SuggestionTitle)
-                .setDescription(`\`\`\`${suggestion}\`\`\``)
+                .addField(supportbot.SuggestionTitle, suggestion, true)
+                .addField("From", `<@${message.author.id}>`, true)
 
-                .addFields( { name: "From", value: `<@${message.author.id}>`, inline: false }, )
+                if (supportbot.SuggestionMessage_Icon === "BOT") {
+                    SuggestionMessage.setThumbnail(bot.user.displayAvatarURL())
+                }
+        
+                if (supportbot.SuggestionMessage_Icon === "USER") {
+                    SuggestionMessage.setThumbnail(message.author.displayAvatarURL())
+                }
+
+                if (supportbot.SuggestionMessage_Icon === "CUSTOM") {
+                    SuggestionMessage.setThumbnail(supportbot.SuggestionIcon_URL)
+                }
 
             locateChannel.send({ embed: SuggestionMessage }).then(async function(msg) {
                 msg.react(supportbot.SuggestReact_1).then(() => msg.react(supportbot.SuggestReact_2));

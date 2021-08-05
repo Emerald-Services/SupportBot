@@ -36,6 +36,10 @@ module.exports = async (bot, member) => {
             GuildAddMember.setThumbnail(member.user.displayAvatarURL())
         }
 
+        if (supportbot.SystemMessage_Icon === "CUSTOM") {
+          SuggestionMessage.setThumbnail(supportbot.SystemMessageIcon_URL)
+      }
+
 
         if (supportbot.SystemMessage_EmbedFooter) {
             GuildAddMember.setFooter(supportbot.EmbedFooter)

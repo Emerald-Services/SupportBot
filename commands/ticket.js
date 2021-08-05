@@ -208,7 +208,7 @@ module.exports = {
             .setColor(supportbot.ErrorColour);
   
           const TicketLogs = new Discord.MessageEmbed()
-            .setTitle("Ticket Log")
+            .setTitle(supportbot.TicketLog_Title)
             .setThumbnail(supportbot.Ticket_Thumbnail)
             .addFields(
               { name: 'Ticket', value: `<#${channel.id}>` },

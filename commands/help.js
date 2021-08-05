@@ -33,12 +33,13 @@ module.exports = {
             staffCommands += `**${supportbot.Prefix}${supportbot.RemoveUser} <user#0000>** ${supportbot.RemoveUserDesc}\n`
             staffCommands += `**${supportbot.Prefix}${supportbot.BotSay}** ${supportbot.BotSayDesc}\n` 
             staffCommands += `**${supportbot.Prefix}${supportbot.PurgeMessage}** ${supportbot.PurgeDesc}\n` 
+            staffCommands += `**${supportbot.Prefix}${supportbot.ChatLog}** ${supportbot.ChatLogDesc}\n` 
 	    
         let adminCommands = "";
             adminCommands += `**${supportbot.Prefix}${supportbot.AnnounceCommand}** ${supportbot.AnnounceDesc} \`Admin Only\`\n` 
             adminCommands += `**${supportbot.Prefix}${supportbot.BanUser}** ${supportbot.BanDesc} \`Admin Only\` \n` 
             adminCommands += `**${supportbot.Prefix}${supportbot.KickUser}** ${supportbot.KickDesc} \`Admin Only\` \n` 
-            adminCommands += `**${supportbot.Prefix}${supportbot.BlacklistUser}** ${supportbot.BlacklistDesc} \`Admin Only\` \n` 
+            adminCommands += `**${supportbot.Prefix}${supportbot.BlacklistUser}** ${supportbot.BlacklistDesc} \`Admin Only\` \n`
             
         const HelpEmbed1 = new Discord.MessageEmbed()
             .setTitle(supportbot.Bot_Name)

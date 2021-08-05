@@ -78,6 +78,7 @@ TicketLog: "ticket-logs"
 TranscriptLog: "transcripts"
 
 TranscriptTitle: "Ticket Transcript"
+TicketLog_Title: "Ticket Log"
 TicketBlackListMessage: "You are not allowed to open a ticket"
 
 TicketSubject: "description"
@@ -187,6 +188,8 @@ SystemMessage_Type: "embed"
 SystemMessage_Icon: "USER"
 # USER - This will display the user's icon of who joins.
 # BOT - This will display the bot's icon when a someone joins.
+# CUSTOM - This will allow you to use a custom image, set this below!
+SystemMessageIcon_URL: "https://imgur.com/example.png"
 
 Welcome_Title: "User Joined!"
 WelcomeMessage: "Hello %member%, Welcome to %guildname%!"
@@ -220,6 +223,12 @@ SuggestionStarter: "What would you like to suggest?"
 SuggestReact_1: 👍
 SuggestReact_2: 👎
 
+SuggestionMessage_Icon: "USER"
+# USER - This will display the user's icon of who joins.
+# BOT - This will display the bot's icon when a someone joins.
+# CUSTOM - This will allow you to use a custom image, set this below!
+SuggestionIcon_URL: "https://imgur.com/example.png"
+
 # ----------------------------
 #  Announcement Configuration
 # ----------------------------
@@ -233,6 +242,12 @@ AnnouncementStarter: "What would you like to announce?"
 # --------------------------
 #  Moderation Configuration
 # --------------------------
+
+ChatLog_Title: "Chat Log"
+ChatLogChannel: "chat-logs"
+ChatLogColour: "#1BA30C"
+ChatLog_Thumbnail: "https://cdn.iconscout.com/icon/free/png-256/chat-2639493-2187526.png"
+ChatLogSavedMessage: "📝 **Channel Transcript Saved!**"
 
 BanTitle: "User Banned!"
 DaysBannedFor: 7
@@ -272,6 +287,7 @@ RenameTicket: "rename"
 
 # --- Staff/Admin Commands ---
 
+ChatLog: "transcript"
 BotSay: "say"
 PurgeMessage: "purge"
 
@@ -286,6 +302,8 @@ BlacklistUser: "blacklist"
 
 # --- Command Messages ---
 
+BotSayDesc: "Say something with the bot"
+ChatLogDesc: "Get a transcript of a channel"
 NewTicketDesc: "Create a new support ticket"
 AnnounceDesc: "Create a server announcement"
 CloseTicketDesc: "Close your support ticket"
@@ -295,7 +313,6 @@ HelpDesc: "Get a list of all the commands"
 RemoveUserDesc: "Remove a user from a support ticket"
 AddUserDesc: "Add a user to a support ticket"
 SuggestionDesc: "Create a server suggestion"
-BotSayDesc: "Say something with the bot"
 BanDesc: "Ban a member from this server."
 KickDesc: "Kick a member from this server."
 PurgeDesc: "Purge messages from the chat."
