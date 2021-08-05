@@ -58,18 +58,18 @@ module.exports = {
                             .addField("Reason", reason);
 
                         message.channel.messages.fetch({ limit: 100 }).then( msgs => {
-                            let txt = '';
+                            let html = '';
 
                             msgs = msgs.sort( ( a, b ) => a.createdTimestamp - b.createdTimestamp );
-                            txt += `${message.guild.name}\n`;
-                            txt += `#${ticketChannel.name}\n`;
-                            txt += `${msgs.size} messages\n\n\n`;
+                            html += `<strong>Server Name:</strong> ${message.guild.name}<br>`;
+                            html += `<strong>Ticket:</strong> ${ticketChannel.name}<br>`;
+                            html += `<strong>Message:</strong> ${msgs.size} Messages<br><br><br>`;
 
                             msgs.forEach( msg => {
                                 if ( msg.content ) {
-                                    txt += `----- ${msg.author.tag} at ${msg.createdAt}\n`;
-                                    txt += `${msg.content}\n`;
-                                    txt += `-----\n\n`;
+                                    html += `<strong>User:</strong> ${msg.author.tag}<br>`;
+                                    html += `<strong>Message:</strong> ${msg.content}<br>`;
+                                    html += `-----<br><br>`;
                                 }
                             });
 
@@ -77,7 +77,7 @@ module.exports = {
                                 message.reply(err)
                             })
 
-                            logChannel.send( new Discord.MessageAttachment( Buffer.from( txt ), `${name}.txt` ) );
+                            logChannel.send( new Discord.MessageAttachment( Buffer.from( html ), `${name}.html` ) );
 
                             message.channel.delete();
 
@@ -112,18 +112,18 @@ module.exports = {
                             .addField("Reason", reason);
 
                         message.channel.messages.fetch({ limit: 100 }).then( msgs => {
-                            let txt = '';
+                            let html = '';
 
                             msgs = msgs.sort( ( a, b ) => a.createdTimestamp - b.createdTimestamp );
-                            txt += `${message.guild.name}\n`;
-                            txt += `#${ticketChannel.name}\n`;
-                            txt += `${msgs.size} messages\n\n\n`;
+                            html += `<strong>Server Name:</strong> ${message.guild.name}<br>`;
+                            html += `<strong>Ticket:</strong> ${ticketChannel.name}<br>`;
+                            html += `<strong>Message:</strong> ${msgs.size} Messages<br><br><br>`;
 
                             msgs.forEach( msg => {
                                 if ( msg.content ) {
-                                    txt += `----- ${msg.author.tag} at ${msg.createdAt}\n`;
-                                    txt += `${msg.content}\n`;
-                                    txt += `-----\n\n`;
+                                    html += `<strong>User:</strong> ${msg.author.tag}<br>`;
+                                    html += `<strong>Message:</strong> ${msg.content}<br>`;
+                                    html += `-----<br><br>`;
                                 }
                             });
 
@@ -131,7 +131,7 @@ module.exports = {
                                 message.reply(err)
                             })
 
-                            logChannel.send( new Discord.MessageAttachment( Buffer.from( txt ), `${name}.txt` ) );
+                            logChannel.send( new Discord.MessageAttachment( Buffer.from( html ), `${name}.html` ) );
 
                             message.channel.delete();
 

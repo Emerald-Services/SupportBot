@@ -1,6 +1,6 @@
 {
   "name": "supportbot",
-  "version": "7.0.0",
+  "version": "7.1-pre-1",
   "description": "SupportBot, a free open-source discord ticket application with ease of use.",
   "main": "index.js",
   "scripts": {
@@ -13,6 +13,7 @@
   "license": "MIT",
   "dependencies": {
     "discord.js": "^12.5.3",
-    "js-yaml": "^4.1.0"
+    "js-yaml": "^4.1.0",
+    "jsdom": "^16.7.0"
   }
 }

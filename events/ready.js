@@ -27,7 +27,7 @@ module.exports = async (bot) => {
     console.log(`	`)
     console.log(`\u001b[31m`, `――――――――――――――――――――――――――――――――――――――――――――`)
     console.log(`	`)
-    console.log(`\u001b[33m`, `${supportbot.Bot_Name}`, `\u001b[36m`, `Connected to Discord`)
+    console.log(`\u001b[33m`, `${supportbot.Bot_Name} v${supportbot.SupportBot_Version}`, `\u001b[36m`, `Connected to Discord`)
     console.log(`\u001b[33m`, `Documentation:`, `\u001b[36m`, `https://docs.emeraldsrv.dev`)
     console.log(`\u001b[33m`, `Discord:`, `\u001b[36m`, `https://emeraldsrv.dev/discord`)
     console.log(`\u001b[33m`, `Hosting:`, `\u001b[36m`, `https://emeraldsrv.dev/hosting`)

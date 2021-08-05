@@ -9,13 +9,13 @@
 #
 #           Discord Support: https://emeraldsrv.dev/discord
 
-SupportBot Version: "7.0"
+SupportBot_Version: "7.1 pre-1"
 
 # -------------------------
 #   General Configuration
 # -------------------------
 
-Token: "TOKEN HERE"
+Token: "BOT_TOKEN_HERE"
 Prefix: "!!"
 Bot_Name: "SupportBot"
 
@@ -71,7 +71,7 @@ TicketBlackListRole: "Blacklisted"
 # --- General Config ---
 #     --- Start ---
 
-TicketCategory: "Support Tickets"
+TicketCategory: "▬▬ TICKETS ▬▬"
 TicketChannel: "ticket"
 
 TicketLog: "ticket-logs"
@@ -127,6 +127,15 @@ TicketCreatedAlert: ":ticket: Your support ticket has been created: <#%ticketid%
 
 AddedUser: "👍 <@%user%> has been added to this ticket"
 RemovedUser: "👍 <@%user%> has been removed from this ticket"
+
+
+TicketLockReaction: "🔒"
+TicketDeleteReaction: "⛔"
+
+TranscriptSavedMessage: "📝 **Transcript Saved!**"
+TicketLockMessage: "❌ **Ticket Locked!**"
+TicketDeleteMessage: "⚠ **Ticket Deleting!**" # Tickets deleting after 5 seconds by default.
+TicketDeleteTime: 5000 # Time must be set in miliseconds.
 
 # --- Closing Config ---
 #    --- Start ---
