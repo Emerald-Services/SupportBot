@@ -21,12 +21,12 @@ module.exports = {
             .setDescription(`${supportbot.InvalidChannel}\n\nChannel Required: \`${supportbot.SuggestionChannel}\``)
             .setColor(supportbot.ErrorColour);
 
-        if(!locateChannel) return message.channel.send({ embed: errornochannel });
+        if(!locateChannel) return message.channel.send({ embeds: [errornochannel] });
 
         const embed = new Discord.MessageEmbed()
             .setDescription(`> **${supportbot.SuggestionStarter}**`)
 	        .setColor(supportbot.EmbedColour)
-        message.channel.send({ embed: embed });
+        message.channel.send({ embeds: [embed] });
 
         let suggestion = []
         message.channel.awaitMessages(response => response.content.length > 2, {
@@ -55,14 +55,14 @@ module.exports = {
                     SuggestionMessage.setThumbnail(supportbot.SuggestionIcon_URL)
                 }
 
-            locateChannel.send({ embed: SuggestionMessage }).then(async function(msg) {
+            locateChannel.send({ embeds: [SuggestionMessage] }).then(async function(msg) {
                 msg.react(supportbot.SuggestReact_1).then(() => msg.react(supportbot.SuggestReact_2));
             });
 
             const SuggestionComplete = new Discord.MessageEmbed()
                 .setColor(supportbot.SuccessColour)
                 .setDescription(`:white_check_mark: Your suggestion has been successfully created. <#${locateChannel.id}>`)
-            message.channel.send({ embed: SuggestionComplete })
+            message.channel.send({ embeds: [SuggestionComplete] })
 
         });
     

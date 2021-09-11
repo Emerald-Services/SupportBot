@@ -23,7 +23,7 @@ module.exports = {
             .setDescription(`${supportbot.InvalidChannel}\n\nChannel Required: \`${supportbot.AnnouncementChannel}`)
             .setColor(supportbot.ErrorColour);
 
-        if(!locateChannel) return message.channel.send({ embed: errornochannel });
+        if(!locateChannel) return message.channel.send({ embeds: [errornochannel] });
 
         let Admins = message.guild.roles.cache.find(adminRole => adminRole.name === supportbot.Admin) || message.guild.roles.cache.find(adminRole => adminRole.id === supportbot.Admin)
 
@@ -33,13 +33,13 @@ module.exports = {
             .setColor(supportbot.WarningColour)
 
             if (!message.member.roles.cache.has(Admins.id)) 
-                return message.channel.send({ embed: NoPerms });
+                return message.channel.send({ embeds: [NoPerms] });
 
 
             const embed = new Discord.MessageEmbed()
                 .setDescription(`> **${supportbot.AnnouncementStarter}**`)
 	            .setColor(supportbot.EmbedColour)
-            message.channel.send({ embed: embed });
+            message.channel.send({ embeds: [embed] });
 
             let announcement = []
             message.channel.awaitMessages(response => response.content.length > 2, {
@@ -61,7 +61,7 @@ module.exports = {
                     const AnnouncementComplete = new Discord.MessageEmbed()
                         .setColor(supportbot.SuccessColour)
                         .setDescription(`:white_check_mark: You have successfully created an announcement. <#${locateChannel.id}>`)
-                    message.channel.send({ embed: AnnouncementComplete })
+                    message.channel.send({ embeds: [AnnouncementComplete] })
                 })
 
             });

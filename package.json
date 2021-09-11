@@ -12,7 +12,9 @@
   "author": "Emerald Services",
   "license": "MIT",
   "dependencies": {
-    "discord.js": "^12.5.3",
+    "@discordjs/rest": "^0.1.0-canary.0",
+    "discord-api-types": "^0.23.1",
+    "discord.js": "^13.1.0",
     "js-yaml": "^4.1.0",
     "jsdom": "^16.7.0"
   }

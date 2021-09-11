@@ -11,6 +11,7 @@ module.exports = {
     name: supportbot.HelpCommand,
     description: supportbot.HelpDesc,
 
+    
     execute(message, args) {
 	if (supportbot.DeleteMessages) message.delete();
 
@@ -67,13 +68,13 @@ module.exports = {
 
         if (supportbot.SendHelpPage === "dm") {
             message.author.send({ 
-                embed: HelpEmbed1
+                embeds: [HelpEmbed1]
             });
         }
 
         if (supportbot.SendHelpPage === "channel") {
             message.channel.send({ 
-                embed: HelpEmbed1
+                embeds: [HelpEmbed1]
             });
         }
 

@@ -9,11 +9,18 @@
 //
 //           Discord Support: https://emeraldsrv.dev/discord
 
-const Discord = require("discord.js");
-const fs = require("fs");
-const bot = new Discord.Client();
+// const Discord = require("discord.js");
+const { Client, Intents, Collection } = require("discord.js");
 
-bot.commands = new Discord.Collection();
+const fs = require("fs");
+
+const bot = new Client({
+    intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES]
+});
+
+const { REST } = require('@discordjs/rest');
+
+bot.commands = new Collection();
 
 const yaml = require('js-yaml');
 const supportbot = yaml.load(fs.readFileSync('./supportbot-config.yml', 'utf8'));
@@ -50,7 +57,7 @@ const init = async () => {
 
 init();
 
-fs.readdir("./commands/", (err, files) => {
+fs.readdir("./commands/", async (err, files) => {
     
         console.info(`\u001b[36m`, `➢ SupportBot Commands`);
         console.info(`	`);
@@ -70,7 +77,7 @@ fs.readdir("./commands/", (err, files) => {
         console.info(`\u001b[32m`, `[${supportbot.Bot_Name}]:`, `\u001b[36m`, `#${i + 1} Command Loaded: ${props.name.toProperCase()}`);
         bot.commands.set(props.name, props);
     });
-
+    
     console.info(`\u001b[32m`, `[${supportbot.Bot_Name}]:`, `\u001b[36m`, `Loaded ${jsfiles.length} commands!`);
     console.log(`\u001b[31m`, `――――――――――――――――――――――――――――――――――――――――――――`)
     console.log(`	`)

@@ -23,7 +23,7 @@ module.exports = {
             .setColor(supportbot.WarningColour)
 
         if (!message.member.roles.cache.has(SupportStaff.id)) {
-            return message.channel.send({ embed: NoPerms });
+            return message.channel.send({ embeds: [NoPerms] });
         }
 
         let locateChannel = message.guild.channels.cache.find(ModLogChannel => ModLogChannel.name === supportbot.ModLogChannel) || message.guild.channels.cache.find(ModLogChannel => ModLogChannel.id === supportbot.ModLogChannel)
@@ -35,14 +35,14 @@ module.exports = {
             .setDescription(`${supportbot.InvalidChannel}\n\nChannel Required: \`${supportbot.ModLogChannel}\``)
             .setColor(supportbot.ErrorColour);
     
-        if(!locateChannel) return message.channel.send({ embed: errornochannel });
+        if(!locateChannel) return message.channel.send({ embeds: [errornochannel] });
 
         const embed1 = new Discord.MessageEmbed()
                 .setDescription("> :x: Please mention or write an ID\n\n`Try Again!`")
 	            .setColor(supportbot.ErrorColour)
 
         if (!args[0]) return message.channel.send({
-                embed: embed1
+                embeds: [embed1]
         });
 
         const embed2 = new Discord.MessageEmbed()
@@ -50,7 +50,7 @@ module.exports = {
 	            .setColor(supportbot.EmbedColour)
 
         if (!user) return message.channel.send({
-            embed: embed2
+            embeds: [embed2]
         });
 
         let role = message.guild.roles.cache.find(role => role.name === supportbot.TicketBlackListRole) || message.guild.roles.cache.find(role => role.id === supportbot.TicketBlackListRole)
@@ -61,7 +61,7 @@ module.exports = {
         
 
         if (!role) return message.channel.send({
-            embed: embed3
+            embeds: [embed3]
         });
 
         const embed4 = new Discord.MessageEmbed()
@@ -70,7 +70,7 @@ module.exports = {
         
         if(user.roles.cache.find(role => role.name === supportbot.TicketBlackListRole) || user.roles.cache.find(role => role.id === supportbot.TicketBlackListRole)) {
             return message.channel.send({
-                embed: embed4
+                embeds: [embed4]
             })
         };
 
@@ -81,7 +81,7 @@ module.exports = {
             .setColor(supportbot.EmbedColour)
 
         message.channel.send({
-            embed: embed5
+            embeds: [embed5]
         });
 
         const logEmbed = new Discord.MessageEmbed()
@@ -93,7 +93,7 @@ module.exports = {
                 .setColor(supportbot.BlacklistColour)
                 .setTimestamp()
 
-        locateChannel.send({ embed: logEmbed });
+        locateChannel.send({ embeds: [logEmbed] });
 
     }
 

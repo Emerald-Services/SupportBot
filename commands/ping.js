@@ -20,6 +20,6 @@ module.exports = {
             .setDescription(`🏓 **Pong!** \`${Date.now() - message.createdTimestamp}ms\``)
             .setColor(supportbot.EmbedColour)
 
-	    message.channel.send({ embed: PingCommandEmbed });
+	    message.channel.send({ embeds: [PingCommandEmbed] });
     }
 };

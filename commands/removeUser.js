@@ -28,7 +28,7 @@ module.exports = {
                         .setTitle("No Ticket Found!")
                         .setDescription(`${supportbot.NoValidTicket}`)
                         .setColor(supportbot.WarningColour);
-                    message.channel.send({ embed: Exists });
+                    message.channel.send({ embeds: [Exists] });
         
                     return;
                 }
@@ -39,7 +39,7 @@ module.exports = {
                         .setDescription(`${supportbot.UserNotFound}\n\nTry Again:\`${supportbot.Prefix}${supportbot.RemoveUser} <user#0000>\``)
                         .setColor(supportbot.ErrorColour)
         
-                    if (!rUser) return message.channel.send({ embed: UserNotExist });
+                    if (!rUser) return message.channel.send({ embeds: [UserNotExist] });
                 
                         message.channel.updateOverwrite(rUser, {
                             VIEW_CHANNEL: false,
@@ -53,9 +53,9 @@ module.exports = {
                         .setDescription(supportbot.RemovedUser.replace(/%user%/g, rUser.id))
                         .setTimestamp()
                         .setColor(supportbot.EmbedColour)
-                   message.channel.send({ embed: Complete });
+                   message.channel.send({ embeds: [Complete] });
             } else {
-                return message.channel.send({ embed: NoPerms });
+                return message.channel.send({ embeds: [NoPerms] });
             }
 
     }

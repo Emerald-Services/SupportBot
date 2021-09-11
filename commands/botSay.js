@@ -23,13 +23,13 @@ module.exports = {
             .setColor(supportbot.WarningColour)
 
             if (!message.member.roles.cache.has(SupportStaff.id)) 
-                return message.channel.send({ embed: NoPerms });
+                return message.channel.send({ embeds: [NoPerms] });
 
 
             const embed = new Discord.MessageEmbed()
                 .setDescription(`> **What would you like me to say!**`)
 	            .setColor(supportbot.EmbedColour)
-            message.channel.send({ embed: embed });
+            message.channel.send({ embeds: [embed] });
 
             let announcement = []
             message.channel.awaitMessages(response => response.content.length > 2, {
@@ -43,7 +43,7 @@ module.exports = {
                     .setDescription(announcement)
                     .setColor(supportbot.EmbedColour)
                 
-                message.channel.send({ embed: AnnouncementEmbed })
+                message.channel.send({ embeds: [AnnouncementEmbed] })
         })
 
     } 

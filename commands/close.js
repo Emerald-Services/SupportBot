@@ -73,13 +73,22 @@ module.exports = {
                                 }
                             });
 
-                            logChannel.send(logEmbed).catch(err => {
+                            logChannel.send({embeds: [logEmbed]}).catch(err => {
                                 message.reply(err)
                             })
 
-                            logChannel.send( new Discord.MessageAttachment( Buffer.from( html ), `${name}.html` ) );
 
-                            message.channel.delete();
+                            let file = new Discord.MessageAttachment( Buffer.from( html ), `${name}.html` )
+                            logChannel.send({embeds: [logEmbed], files: [file]}).catch(err => {
+                                message.reply(err)
+                            })
+
+                            message.channel.delete().catch(error => {
+                                if (error.code !== Discord.Constants.APIErrors.UNKNOWN_CHANNEL) {
+                                    console.error('Failed to delete the message:', error);
+                                }
+                            });
+
 
                         })
                     })
@@ -87,7 +96,7 @@ module.exports = {
                 })
 
             }).catch( () => {
-                m.edit('The request to close the ticket has timed out.').then( m2 => m2.delete( 3000 ) );
+                interaction.m.edit({content: 'The request to close the ticket has timed out.'}).then(m2 => setTimeout(() => channel.delete(3000)) );
             });
 
         }
@@ -127,18 +136,25 @@ module.exports = {
                                 }
                             });
 
-                            logChannel.send(logEmbed).catch(err => {
+                            logChannel.send({embeds: [logEmbed]}).catch(err => {
                                 message.reply(err)
                             })
 
-                            logChannel.send( new Discord.MessageAttachment( Buffer.from( html ), `${name}.html` ) );
+                            let file = new Discord.MessageAttachment( Buffer.from( html ), `${name}.html` )
+                            logChannel.send({embeds: [logEmbed], files: [file]}).catch(err => {
+                                message.reply(err)
+                            })
 
-                            message.channel.delete();
+                            message.channel.delete().catch(error => {
+                                if (error.code !== Discord.Constants.APIErrors.UNKNOWN_CHANNEL) {
+                                    console.error('Failed to delete the message:', error);
+                                }
+                            });
 
                         })
 
                     }).catch( () => {
-                        m.edit('The request to close the ticket has timed out.').then( m2 => m2.delete( 3000 ) );
+                        interaction.m.edit({content: 'The request to close the ticket has timed out.'}).then(m2 => setTimeout(() => channel.delete(3000)) );
                     });
 
         }

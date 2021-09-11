@@ -23,7 +23,7 @@ module.exports = {
             .setColor(supportbot.WarningColour)
 
             if (!message.member.roles.cache.has(SupportStaff.id)) 
-                return message.channel.send({ embed: NoPerms });
+                return message.channel.send({ embeds: [NoPerms] });
 
             let locateChannel = message.guild.channels.cache.find(ModLogChannel => ModLogChannel.name === supportbot.ModLogChannel) || message.guild.channels.cache.find(ModLogChannel => ModLogChannel.id === supportbot.ModLogChannel)
 
@@ -32,14 +32,14 @@ module.exports = {
             .setDescription(`${supportbot.InvalidChannel}\n\nChannel Required: \`${supportbot.ModLogChannel}\``)
             .setColor(supportbot.ErrorColour);
     
-            if(!locateChannel) return message.channel.send({ embed: errornochannel });
+            if(!locateChannel) return message.channel.send({ embeds: [errornochannel] });
 
             const embed1 = new Discord.MessageEmbed()
                 .setDescription(`> :thinking: **Hmm!** Please enter a valid number of message to purge!\n\n\`${supportbot.Prefix}${supportbot.PurgeMessage} <message count>\` `)
 	            .setColor(supportbot.WarningColour)
 
             if (!args[0]) return message.channel.send({
-                embed: embed1
+                embeds: [embed1]
             });
 
             const messagePrune = parseInt(args[0])
@@ -49,7 +49,7 @@ module.exports = {
 	            .setColor(supportbot.ErrorColour)
 
             if (isNaN(messagePrune)) return message.reply({
-                embed: embed2
+                embeds: [embed2]
             })
 
             message.channel.bulkDelete(messagePrune).then(() => {
@@ -58,7 +58,7 @@ module.exports = {
                     .setDescription(`> :recycle: \`${args[0]} messages\` **have been purged!** `)
 	                .setColor(supportbot.ErrorColour)
                 message.channel.send({
-                    embed: embed3
+                    embeds: [embed3]
                 })
             })
 
@@ -71,7 +71,7 @@ module.exports = {
                 .setColor(supportbot.PruneColour)
                 .setTimestamp()
 
-                locateChannel.send({ embed: logEmbed })
+                locateChannel.send({ embeds: [logEmbed] })
     
 
 

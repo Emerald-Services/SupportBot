@@ -28,7 +28,7 @@ module.exports = {
 
         LinksEmbed.addField(supportbot.LinksTitle, links)
 
-        message.channel.send({ embed: LinksEmbed });
+        message.channel.send({ embeds: [LinksEmbed] });
 
     }
 };

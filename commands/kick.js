@@ -23,7 +23,7 @@ module.exports = {
             .setColor(supportbot.WarningColour)
 
             if (!message.member.roles.cache.has(SupportStaff.id)) 
-                return message.channel.send({ embed: NoPerms });
+                return message.channel.send({ embeds: [NoPerms] });
 
             let locateChannel = message.guild.channels.cache.find(ModLogChannel => ModLogChannel.name === supportbot.ModLogChannel) || message.guild.channels.cache.find(ModLogChannel => ModLogChannel.id === supportbot.ModLogChannel)
 
@@ -32,7 +32,7 @@ module.exports = {
             .setDescription(`${supportbot.InvalidChannel}\n\nChannel Required: \`${supportbot.ModLogChannel}\``)
             .setColor(supportbot.ErrorColour);
     
-            if(!locateChannel) return message.channel.send({ embed: errornochannel });
+            if(!locateChannel) return message.channel.send({ embeds: [errornochannel] });
 
             const user = message.mentions.members.first() || message.guild.members.cache.get(args[0]);
 
@@ -41,7 +41,7 @@ module.exports = {
 	            .setColor(supportbot.ErrorColour)
 
             if (!args[0]) return message.channel.send({
-                embed: embed1
+                embeds: [embed1]
             });
 
             const embed2 = new Discord.MessageEmbed()
@@ -49,7 +49,7 @@ module.exports = {
 	            .setColor(supportbot.EmbedColour)
 
             if (!user) return message.channel.send({
-                embed: embed2
+                embeds: [embed2]
             })
 
             const embed3 = new Discord.MessageEmbed()
@@ -57,7 +57,7 @@ module.exports = {
 	            .setColor(supportbot.EmbedColour)
 
             if(!user.kickable) return message.channel.send({
-                embed: embed3
+                embeds: [embed3]
             });
 
             const embed4 = new Discord.MessageEmbed()
@@ -65,7 +65,7 @@ module.exports = {
 	            .setColor(supportbot.EmbedColour)
 
             if(user.id === message.author.id) return message.channel.send({
-                embed: embed4
+                embeds: [embed4]
             });
 
             let reason = args.slice(1).join(" ");
@@ -77,7 +77,7 @@ module.exports = {
 	            .setColor(supportbot.EmbedColour)
 
                   user.kick({ reason: `${reason}` }).catch(err => { 
-                    message.channel.send({ embed: embed5 })
+                    message.channel.send({ embeds: [embed5] })
                       console.log(err)
                   })
 
@@ -87,7 +87,7 @@ module.exports = {
                 .setColor(supportbot.SuccessColour)
 
             message.channel.send({
-                embed: successEmbed
+                embeds: [successEmbed]
             })
 
             const logEmbed = new Discord.MessageEmbed()
@@ -100,7 +100,7 @@ module.exports = {
                 .setColor(supportbot.KickLogColour)
                 .setTimestamp()
 
-                locateChannel.send({ embed: logEmbed })
+                locateChannel.send({ embeds: [logEmbed] })
     
 
 

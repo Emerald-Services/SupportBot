@@ -33,7 +33,7 @@ module.exports = {
             const TranscriptSavedEmbed = new Discord.MessageEmbed()
               .setDescription(supportbot.ChatLogSavedMessage)
               .setColor(supportbot.SuccessColour)
-            message.channel.send({embed: TranscriptSavedEmbed})
+            message.channel.send({embeds: [TranscriptSavedEmbed]})
             const errornochannel = new Discord.MessageEmbed()
                 .setTitle("SupportBot Error!")
                 .setDescription(`:x: **Error!** Channel not Found, This command cannot be executed proberbly as their is no channel within this server.\nThis is configurable via **supportbot-config.yml**\n\nChannel Required: \`${supportbot.ChatLogChannel}\`\n\nError Code: \`SB-03\``)
@@ -50,10 +50,10 @@ module.exports = {
                 .setFooter(supportbot.EmbedFooter)
             let locateChannel = message.guild.channels.cache.find(LocateChannel => LocateChannel.name === supportbot.ChatLogChannel) || message.guild.channels.cache.find(LocateChannel => LocateChannel.id === supportbot.ChatLogChannel)
   
-            if(!locateChannel) return message.channel.send({ embed: errornochannel });
-    
-            locateChannel.send( new Discord.MessageAttachment( Buffer.from( html ), `${name}.html` ) );
-            locateChannel.send({ embed: ChatLogs });
+            if(!locateChannel) return message.channel.send({ embeds: [errornochannel] });
+            
+            let file = new Discord.MessageAttachment( Buffer.from( html ), `${name}.html` )
+            locateChannel.send({embeds: [ChatLogs], files: [file]})
     
         })
     }
