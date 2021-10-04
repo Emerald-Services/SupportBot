@@ -16,13 +16,12 @@ module.exports = {
 	if (supportbot.DeleteMessages) message.delete();
 	    
         let SupportStaff = message.guild.roles.cache.find(adminRole => adminRole.name === supportbot.Staff) || message.guild.roles.cache.find(adminRole => adminRole.id === supportbot.Staff)
-
         const NoPerms = new Discord.MessageEmbed()
             .setTitle("Invalid Permissions!")
-            .setDescription(`${supportbot.IncorrectPerms}\n\nRole Required: \`${SupportStaff.name}\``)
+            .setDescription(`${supportbot.IncorrectPerms}\n\nRole Required: \`${SupportStaff}\``)
             .setColor(supportbot.WarningColour)
 
-            if (!message.member.roles.cache.has(SupportStaff.id)) 
+            if (!message.member.roles.cache.has(supportbot.Staff)) 
                 return message.channel.send({ embeds: [NoPerms] });
 
             let locateChannel = message.guild.channels.cache.find(ModLogChannel => ModLogChannel.name === supportbot.ModLogChannel) || message.guild.channels.cache.find(ModLogChannel => ModLogChannel.id === supportbot.ModLogChannel)
@@ -66,7 +65,7 @@ module.exports = {
                 .setTitle(supportbot.PruneLogTitle)
                 .setThumbnail(supportbot.PruneThumbnail)
                 .addField('Messages Purged', `\`${args[0]} messages\``)
-                .addField('Staff Member', message.author)
+                .addField('Staff Member', `${message.author}`)
                 .setFooter(supportbot.EmbedFooter)
                 .setColor(supportbot.PruneColour)
                 .setTimestamp()

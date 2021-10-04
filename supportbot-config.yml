@@ -15,7 +15,7 @@ SupportBot_Version: "7.2"
 #   General Configuration
 # -------------------------
 
-Token: "BOT_TOKEN"
+Token: "ODU0NDQyMzg5ODE1OTUxMzgw.YMj_fA.o2ehchfkXPWlgWenQNZ8a2E0S2A"
 Prefix: "-"
 Bot_Name: "SupportBot"
 
@@ -60,7 +60,7 @@ AutoRole: true
 AutoRole_Role: "Member"
 LockdownRole: "@everyone"
 
-Staff: "Server Staff"
+Staff: "Staff"
 Admin: "Server Admin"
 TicketBlackListRole: "Blacklisted"
 # -------------------------
@@ -195,24 +195,30 @@ CloseConfirmation: false
 # %guildname% - This displays the name of the discord server.
 
 SystemMessages: true
-SystemMessage_EmbedFooter: false
+SystemMessage_EmbedFooter: true
 
-SystemMessage_Channel: "system-messages"
-SystemMessage_Type: "embed"
+UserJoined_Type: "embed"
+UserDeparted_Type: "normal"
 # There are 2 types of how you can send system messages, 'normal' or 'embed'
+# embed - sends the message in an embed
+# normal - sends the message as a normal text message
+
+UserJoined_Channel: "joined"
+UserDeparted_Channel: "departed"
 
 SystemMessage_Icon: "USER"
+# This applies to both the Joined and Departed message
 # USER - This will display the user's icon of who joins.
 # BOT - This will display the bot's icon when a someone joins.
 # CUSTOM - This will allow you to use a custom image, set this below!
 SystemMessageIcon_URL: "https://imgur.com/example.png"
 
-Welcome_Title: "User Joined!"
+Welcome_Title: "Welcome!"
 WelcomeMessage: "Hello %member%, Welcome to %guildname%!"
 # %member% define the user who joined and %guildnamne% defines the server name.
 
-Leave_Title: "User Left!"
-LeaveMessage: "Goodbye %member%, Thank you for visting %guildname%!"
+Departed_Title: "Goodbye!"
+DepartedMessage: "Goodbye %member%, Thank you for visting %guildname%!"
 # %member% define the user who left and %guildnamne% defines the server name.
 
 # -------------------------

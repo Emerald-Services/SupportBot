@@ -10,7 +10,7 @@ const supportbot = yaml.load(fs.readFileSync('./supportbot-config.yml', 'utf8'))
 module.exports = async (bot, member) => {
 
   if (supportbot.SystemMessages) {
-    const SystemChannel = member.guild.channels.cache.find(channel => channel.name === supportbot.SystemMessage_Channel) || member.guild.channels.cache.get(supportbot.SystemMessage_Channel)
+    const SystemChannel = member.guild.channels.cache.find(channel => channel.name === supportbot.UserJoined_Channel) || member.guild.channels.cache.get(supportbot.UserJoined_Channel)
     
     if (!SystemChannel) return;
     
@@ -45,12 +45,12 @@ module.exports = async (bot, member) => {
             GuildAddMember.setFooter(supportbot.EmbedFooter)
         }
 
-    SystemChannel.send({ embed: GuildAddMember });
+    SystemChannel.send({ embeds: [GuildAddMember] });
         
     }
 
     if (supportbot.SystemMessage_Type === "normal") {
-        SystemChannel.send(supportbot.WelcomeMessage.replace(/%member%/g, member.user.username).replace(/%guildname%/g, member.guild.name))
+        SystemChannel.send({content: supportbot.WelcomeMessage.replace(/%member%/g, member.user.username).replace(/%guildname%/g, member.guild.name)})
 
     }
 
