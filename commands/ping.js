@@ -1,25 +1,29 @@
-// SupportBot, Created by Emerald Services
+// SupportBot | Emerald Services
 // Ping Command
 
-const Discord = require("discord.js");
 const fs = require("fs");
 
+const Discord = require("discord.js");
 const yaml = require('js-yaml');
-const supportbot = yaml.load(fs.readFileSync('./supportbot-config.yml', 'utf8'));
+const supportbot = yaml.load(fs.readFileSync('./Data/supportbot.yml', 'utf8'));
 
-module.exports = {
-    name: supportbot.PingCommand,
-    description: supportbot.PingDesc,
+const Command = require("../Structures/Command.js");
 
-    execute(message, args) {        
-	if (supportbot.DeleteMessages) message.delete();
-        
-        let ping = Date.now() - message.createdTimestamp + " ms";
-        
-        const PingCommandEmbed = new Discord.MessageEmbed()
-            .setDescription(`🏓 **Pong!** \`${Date.now() - message.createdTimestamp}ms\``)
-            .setColor(supportbot.EmbedColour)
+module.exports = new Command({
+	name: "ping",
+	description: "Shows the ping of the bot!",
+	type: "BOTH",
+	slashCommandOptions: [],
+	permission: "SEND_MESSAGES",
 
-	    message.channel.send({ embeds: [PingCommandEmbed] });
-    }
-};
+	async run(message, args, client) {
+
+		const PingEmbed = new Discord.MessageEmbed()
+			.setDescription(`:ping_pong: **Ping:** \`${client.ws.ping} ms\``)
+			.setColor(supportbot.EmbedColour)
+
+		message.channel.send({
+			embeds: [PingEmbed]
+		});
+	}
+});

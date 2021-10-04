@@ -1,24 +1,50 @@
-// SupportBot 6.0, Created by Emerald Services
-// Message Event
+// SupportBot | Emerald Services
+// Message Create Event
 
-const Discord = require("discord.js");
 const fs = require("fs");
 
+const Discord = require("discord.js");
 const yaml = require('js-yaml');
-const supportbot = yaml.load(fs.readFileSync('./supportbot-config.yml', 'utf8'));
+const supportbot = yaml.load(fs.readFileSync('./Data/supportbot.yml', 'utf8'));
 
-module.exports = async (bot, message) => {
-	if(message.author.bot) return;
-  	if(message.channel.type === "dm") return;
-  	if (message.content.indexOf(supportbot.Prefix) !== 0) return;
+const Event = require("../Structures/Event.js");
 
-  	let messageArray = message.content.split(" ");
-  	const args = message.content.slice(supportbot.Prefix.length).trim().split(/ +/g);
-  	const command = args.shift().toLowerCase();
-    
-    console.log(`\u001b[32m`, `[${supportbot.Bot_Name}]`, `\u001b[36m`, `${message.author.tag}`, `\u001b[33m`, `has executed the command`, `\u001b[36m`,`${supportbot.Prefix}${command}`)
+module.exports = new Event("messageCreate", (client, message) => {
+	if (message.author.bot) return;
 
-  	const cmd = bot.commands.get(command);
-  	if(!cmd) return;
-  	cmd.execute(message, args);
-};
+	if (!message.content.startsWith(client.prefix)) return;
+
+	const args = message.content.substring(client.prefix.length).split(/ +/);
+
+	const command = client.commands.find(cmd => cmd.name == args[0]);
+
+    const NotValid = new Discord.MessageEmbed()
+        .setDescription(`:x: \`${args[0]}\` is an Invalid Command `)
+		.setColor(supportbot.ErrorColour)
+
+	if (!command) return message.reply({
+		embeds: [NotValid]
+	});
+
+    const OnlySlashCmd = new Discord.MessageEmbed()
+        .setDescription(`:warning: That command is only useable as a \`Slash Command\` `)
+		.setColor(supportbot.WarnColour)
+
+	if (!["BOTH", "TEXT"].includes(command.type))
+		return message.reply({
+			embeds: [OnlySlashCmd]
+		})
+
+	const permission = message.member.permissions.has(command.permission, true);
+
+    const ValidPerms = new Discord.MessageEmbed()
+        .setDescription(":x: Do you have the \`${command.permission}\` permissions to execute this command?")
+		.setColor(supportbot.ErrorColour)
+
+	if (!permission)
+		return message.reply(
+			`You do not have the permission \`${command.permission}\` to run this command!`
+		);
+
+	command.run(message, args, client);
+});
