@@ -10,13 +10,15 @@
 #           Discord Support: https:#emeraldsrv.dev/discord
 #           Community Resources: https:#emeraldsrv.dev/resources
 
+SupportBot_Version: "7.2 pre-2"
+
 # -------------------------
 #   General Configuration
 # -------------------------
 
 Name: "SupportBot"
 Prefix: "!"
-Token: "BOT_TOKEN"
+Token: "TOKEN"
 
 # -------------------------
 #  Activity Configuration
@@ -63,6 +65,7 @@ LockdownRole: "@everyone"
 Staff: "Support Team"
 Admin: "Project Developer"
 TicketBlackListRole: "Blacklisted"
+
 # -------------------------
 #  Tickets Configuration
 # -------------------------
@@ -84,25 +87,6 @@ TicketSubject: "description"
 AllowTicketMentions: true
 # Set to true to allow the ticket to mention the author and the support team.
 # Set to false to dis-allow mentions within tickets.
-
-# --- Panel Config ---
-#   --- Start ---
-
-ReactionChannel: "create-ticket"
-ReactionEmoji: "📩" 
-# For cusomt emojis: <:emoji_name:EMOJI_ID>
-
-ReactionTickets: true
-ReactionMessage: "React with %reaction_emoji% to create a Support Ticket!"
-
-ReactionPanel_Description: true
-ReactionDescription: "Create a support ticket to contact a member of staff."
-
-ReactionPanel_Thumbnail: true
-ReactionThumbnail: "https://hotemoji.com/images/dl/5/ticket-emoji-by-twitter.png"
-
-ReactionPanel_Image: true
-ReactionImage: "https://wallpapercave.com/wp/wp4462546.jpg"
 
 # --- Creation Config ---
 #      --- Start ---

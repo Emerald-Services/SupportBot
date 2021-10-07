@@ -6,6 +6,7 @@ const fs = require("fs");
 const Discord = require("discord.js");
 const yaml = require('js-yaml');
 const supportbot = yaml.load(fs.readFileSync('./Data/supportbot.yml', 'utf8'));
+const cmdconfig = yaml.load(fs.readFileSync('./Data/commands.yml', 'utf8'));
 
 const Command = require("../Structures/Command.js");
 const TicketNumberID = require('../Structures/TicketID.js');
@@ -17,8 +18,8 @@ async function asyncForEach(array, callback) {
   }
 
 module.exports = new Command({
-	name: "close",
-	description: "Close a support ticket",
+	name: cmdconfig.CloseTicket,
+	description: cmdconfig.CloseTicketDesc,
 	type: "BOTH",
 	slashCommandOptions: [],
 	permission: "SEND_MESSAGES",

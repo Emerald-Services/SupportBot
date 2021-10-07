@@ -1,0 +1,31 @@
+#      ___                            _    ___        _   
+#    / __> _ _  ___  ___  ___  _ _ _| |_ | . > ___ _| |_ 
+#     \__ \| | || . \| . \/ . \| '_> | |  | . \/ . \ | |  
+#     <___/`___||  _/|  _/\___/|_|   |_|  |___/\___/ |_|  
+#                |_|  |_|                                  
+#
+#           SupportBot created by Emerald Services
+#           Installed with MIT License
+#
+#           Discord Support: https:#emeraldsrv.dev/discord
+#           Community Resources: https:#emeraldsrv.dev/resources
+
+# -------------------------------
+#   Commamnd Name Configuration
+# -------------------------------
+
+OpenTicket: "ticket"
+CloseTicket: "close"
+InfoCommand: "info"
+PingCommand: "ping"
+
+# ---------------------------------------
+#   Commamnd Description Configuration
+# ---------------------------------------
+
+OpenTicketDesc: "Open a new support ticket."
+CloseTicketDesc: "Close your support ticket"
+InfoCommandDesc: "Get information about the brand"
+PingCommandDesc: "Pong!"
+
+
