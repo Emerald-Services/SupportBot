@@ -14,18 +14,24 @@
 #   Commamnd Name Configuration
 # -------------------------------
 
+TicketAdd: "ticketadd"
+TicketRemove: "ticketremove"
 OpenTicket: "ticket"
 CloseTicket: "close"
 InfoCommand: "info"
 PingCommand: "ping"
+HelpCommand: "help"
 
 # ---------------------------------------
 #   Commamnd Description Configuration
 # ---------------------------------------
 
+TicketAddDesc: "Add a user to a support ticket."
+TicketRemoveDesc: "Remove a user from a support ticket."
 OpenTicketDesc: "Open a new support ticket."
-CloseTicketDesc: "Close your support ticket"
-InfoCommandDesc: "Get information about the brand"
+CloseTicketDesc: "Close your support ticket."
+InfoCommandDesc: "Get information about the brand."
 PingCommandDesc: "Pong!"
+HelpCommandDesc: "Get a list of all the commands."
 
 

@@ -10,7 +10,7 @@
 #           Discord Support: https:#emeraldsrv.dev/discord
 #           Community Resources: https:#emeraldsrv.dev/resources
 
-SupportBot_Version: "7.2 pre-2"
+SupportBot_Version: "7.2 pre-3"
 
 # -------------------------
 #   General Configuration
@@ -18,7 +18,7 @@ SupportBot_Version: "7.2 pre-2"
 
 Name: "SupportBot"
 Prefix: "!"
-Token: "TOKEN"
+Token: "BOT_TOKEN"
 
 # -------------------------
 #  Activity Configuration
@@ -53,6 +53,13 @@ AboutMe: "Hi, I'm SupportBot an advanced discord ticket bot with 100% customisat
 InfoButtonText: "Visit Site"
 InfoURL: "https://emeraldsrv.dev"
 InfoColour: "#f74343"
+
+# -------------------------
+#  Help Configuration
+# -------------------------
+
+HelpMenu: true # Do not change!
+SendHelpPage: "channel" # Set to channel or dm
 
 # -------------------------
 #  Role Configuration
@@ -171,3 +178,12 @@ ClosingTicket: ":warning: You have requested to close your support ticket."
 ClosingConfirmation_Word: "confirm"
 CloseConfirmation: false
 
+# ---------------------------
+#  Error / Warning Messages
+# ---------------------------
+
+IncorrectPerms: ":x: **Err!** You do not have the correct permissions to use this command."
+InvalidChannel: ":x: **Err!** Channel not found. Please create it!"
+UserNotFound: ":x: **Err!** This user doesn't exist, Are they in this server?"
+NoValidTicket: ":warning: You cannot execute this command here."
+TicketExists: ":warning: This ticket cannot be opened, It already exists!"
