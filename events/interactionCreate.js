@@ -27,7 +27,6 @@ module.exports = new Event("interactionCreate", (client, interaction) => {
           (v) => `${interaction.options.get(v.name).value}`
         ),
     ];
-    console.log(args)
 
     const NotValid = new Discord.MessageEmbed()
       .setDescription(`:x: \`Invalid Command\` `)
