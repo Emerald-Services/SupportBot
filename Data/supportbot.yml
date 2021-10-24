@@ -17,14 +17,14 @@ SupportBot_Version: "7.2 pre-3"
 # -------------------------
 
 Name: "SupportBot"
-Prefix: "!"
+Prefix: "!" # Everything uses the new Slash (/) Commands feature!
 Token: "BOT_TOKEN"
 
 # -------------------------
 #  Activity Configuration
 # -------------------------
 
-BotActivity: "Need Help? -ticket"
+BotActivity: "Need Help? /ticket"
 
 StreamingURL: "https://www.twitch.tv/YOUR_TWITCH_NAME"
 # Set The ActivityType to "STREAMING" for a streaming status!
