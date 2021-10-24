@@ -19,15 +19,6 @@ module.exports = new Event("interactionCreate", (client, interaction) => {
     if (interaction.user.bot || !interaction.isCommand() || !interaction.guild)
       return;
 
-    const args = [
-      interaction.commandName,
-      ...client.commands
-        .find((cmd) => cmd.name.toLowerCase() == interaction.commandName)
-        .slashCommandOptions.map(
-          (v) => `${interaction.options.get(v.name).value}`
-        ),
-    ];
-
     const NotValid = new Discord.MessageEmbed()
       .setDescription(`:x: \`Invalid Command\` `)
       .setColor(supportbot.ErrorColour);
@@ -49,23 +40,15 @@ module.exports = new Event("interactionCreate", (client, interaction) => {
       return interaction.reply({
         embeds: [ValidPerms],
       });
-    interaction.author = interaction.user;
-    command.run(interaction, args, client);
+    interaction.user = interaction.user;
+    command.run(interaction);
   }
   if (interaction.isButton()) {
     if (interaction.customId === "openticket") {
-      interaction.message.fetch();
-      interaction.deferUpdate();
-      let message = {
-        guild: client.guilds.cache.get(interaction.message.guildId),
-        author: client.users.cache.get(interaction.user.id),
-        content: "N/A",
-        channel: client.channels.cache.get(interaction.message.channelId),
-      };
       try {
         const cmd = client.commands.get(cmdconfig.OpenTicket);
         if (!cmd) return;
-        cmd.run(message, message.content);
+        cmd.run(interaction);
       } catch (error) {
         console.error(error);
       }
