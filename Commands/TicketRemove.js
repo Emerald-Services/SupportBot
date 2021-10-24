@@ -70,7 +70,7 @@ module.exports = new Command({
       const UserNotExist = new Discord.MessageEmbed()
         .setTitle("User Not Found!")
         .setDescription(
-          `${supportbot.UserNotFound}\n\nTry Again:\`${supportbot.Prefix}${cmdconfig.TicketRemove} <user#0000>\``
+          `${supportbot.UserNotFound}\n\nTry Again:\`/${cmdconfig.TicketRemove} <user#0000>\``
         )
         .setColor(supportbot.ErrorColour);
 

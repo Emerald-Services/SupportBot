@@ -41,17 +41,17 @@ module.exports = new Command({
 
     if (supportbot.HelpMenu) {
       let botCommands = "";
-      botCommands += `**${supportbot.Prefix}${cmdconfig.HelpCommand}** ${cmdconfig.HelpCommandDesc}\n`;
-      botCommands += `**${supportbot.Prefix}${cmdconfig.InfoCommand}** ${cmdconfig.InfoCommandDesc}\n`;
-      botCommands += `**${supportbot.Prefix}${cmdconfig.PingCommand}** ${cmdconfig.PingCommandDesc}\n`;
+      botCommands += `**/${cmdconfig.HelpCommand}** ${cmdconfig.HelpCommandDesc}\n`;
+      botCommands += `**/${cmdconfig.InfoCommand}** ${cmdconfig.InfoCommandDesc}\n`;
+      botCommands += `**/${cmdconfig.PingCommand}** ${cmdconfig.PingCommandDesc}\n`;
 
       let ticketCommands = "";
-      ticketCommands += `**${supportbot.Prefix}${cmdconfig.OpenTicket}** ${cmdconfig.OpenTicketDesc}\n`;
-      ticketCommands += `**${supportbot.Prefix}${cmdconfig.CloseTicket}** ${cmdconfig.CloseTicketDesc}\n`;
+      ticketCommands += `**/${cmdconfig.OpenTicket}** ${cmdconfig.OpenTicketDesc}\n`;
+      ticketCommands += `**/${cmdconfig.CloseTicket}** ${cmdconfig.CloseTicketDesc}\n`;
 
       let staffCommands = "";
-      staffCommands += `**${supportbot.Prefix}${cmdconfig.TicketAdd}** ${cmdconfig.TicketAddDesc}\n`;
-      staffCommands += `**${supportbot.Prefix}${cmdconfig.TicketRemove}** ${cmdconfig.TicketRemoveDesc}\n`;
+      staffCommands += `**/${cmdconfig.TicketAdd}** ${cmdconfig.TicketAddDesc}\n`;
+      staffCommands += `**/${cmdconfig.TicketRemove}** ${cmdconfig.TicketRemoveDesc}\n`;
 
       const HelpEmbed1 = new Discord.MessageEmbed()
         .setTitle(supportbot.Name + " Commands")

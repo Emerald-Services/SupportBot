@@ -17,7 +17,6 @@ SupportBot_Version: "7.2 pre-3"
 # -------------------------
 
 Name: "SupportBot"
-Prefix: "!"
 Token: "BOT_TOKEN"
 
 # -------------------------

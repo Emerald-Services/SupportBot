@@ -16,8 +16,6 @@ class Client extends Discord.Client {
     super({ intents });
 
     this.commands = new Discord.Collection();
-
-    this.prefix = supportbot.Prefix;
   }
 
   start(token) {
