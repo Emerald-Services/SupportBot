@@ -23,6 +23,12 @@ class Client extends Discord.Client {
       .readdirSync("./Commands")
       .filter((file) => file.endsWith(".js"));
 
+    const addonFiles = fs
+      .readdirSync("./Addons")
+      .filter((file) => file.endsWith(".js"));
+
+    const addons = addonFiles.map((file) => require(`../Addons/${file}`))
+ 
     const commands = commandFiles.map((file) => require(`../Commands/${file}`));
 
     console.log(`\u001b[34;1m`, "▬▬▬▬▬▬▬ Commands ▬▬▬▬▬▬▬");
@@ -32,49 +38,49 @@ class Client extends Discord.Client {
       this.commands.set(cmd.name, cmd);
     });
 
-    console.log(`\u001b[34;1m`, "▬▬▬▬▬▬▬ Commands ▬▬▬▬▬▬▬");
-
-    // Addons
-
-    const addonFiles = fs
-      .readdirSync("./Addons")
-      .filter((file) => file.endsWith(".js"));
-
-    const addons = addonFiles.map((file) => require(`../Addons/${file}`));
-
-    console.log("   ");
-    console.log(`\u001b[34;1m`, "▬▬▬▬▬▬▬ Addons ▬▬▬▬▬▬▬");
-
     addons.forEach((addon) => {
-      console.log(`\u001b[31;1m`, `${addon.name}`, `\u001b[32;1m`, "Loaded");
+      console.log(`\u001b[33m`, `[ADDON]`, `\u001b[31;1m`, `${addon.name}`, `\u001b[32;1m`, "Loaded");
       this.commands.set(addon.name, addon);
     });
 
-    console.log(`\u001b[34;1m`, "▬▬▬▬▬▬▬ Addons ▬▬▬▬▬▬▬");
-    console.log("   ");
+    console.log(`\u001b[34;1m`, "▬▬▬▬▬▬▬ Commands ▬▬▬▬▬▬▬");
 
     // Slash Commands
 
     const slashCommands = commands.map((cmd) => ({
-      name: cmd.name.toLowerCase(),
+      name: cmd.name.toLowerCase(), 
       description: cmd.description,
       permissions: [],
       options: cmd.slashCommandOptions,
+      defaultPermission: true,
+    }))
+
+    const slashCommands1 = addons.map((addon) => ({
+      name: addon.name.toLowerCase(), 
+      description: addon.description,
+      permissions: [],
+      options: addon.slashCommandOptions,
       defaultPermission: true,
     }));
 
     this.removeAllListeners();
 
     this.on("ready", async () => {
-      const cmds = await this.application?.commands.set(slashCommands);
+      const cmds = await this.application?.commands.set(slashCommands)
+      const addons = await this.application?.commands.set(slashCommands1)
 
       console.log("   ");
       console.log(`\u001b[34;1m`, "▬▬▬▬▬▬▬ Slash Command ▬▬▬▬▬▬▬"),
         console.log("   ");
 
       cmds.forEach((cmd) =>
-        console.log(`Slash Command ${cmd.name} registered`)
+        console.log(`\u001b[31;1m`, `${cmd.name}`, `\u001b[32;1m`,  `| Slash Command Registered`)
       );
+
+      addons.forEach((addon) =>
+        console.log(`\u001b[33m`, `[ADDON]`, `\u001b[31;1m`,`${addon.name}`, `\u001b[32;1m`,  `| Slash Command Registered`)
+      );
+
     });
 
     console.log("   ");
