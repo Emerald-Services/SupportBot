@@ -1,8 +1,8 @@
-#      ___                            _    ___        _   
-#    / __> _ _  ___  ___  ___  _ _ _| |_ | . > ___ _| |_ 
-#     \__ \| | || . \| . \/ . \| '_> | |  | . \/ . \ | |  
-#     <___/`___||  _/|  _/\___/|_|   |_|  |___/\___/ |_|  
-#                |_|  |_|                                  
+#      ___                            _    ___        _
+#    / __> _ _  ___  ___  ___  _ _ _| |_ | . > ___ _| |_
+#     \__ \| | || . \| . \/ . \| '_> | |  | . \/ . \ | |
+#     <___/`___||  _/|  _/\___/|_|   |_|  |___/\___/ |_|
+#                |_|  |_|
 #
 #           SupportBot created by Emerald Services
 #           Installed with MIT License
@@ -41,7 +41,7 @@ EmbedFooter: "SupportBot | An Advanced Ticket System"
 
 ErrorColour: "#d12519"
 SuccessColour: "#04b545"
-WarningColour: "#fca117" 
+WarningColour: "#fca117"
 
 # -------------------------
 #  Information Configuration
@@ -115,7 +115,6 @@ TicketCreatedAlert: ":ticket: Your support ticket has been created: <#%ticketid%
 AddedUser: "👍 <@%user%> has been added to this ticket"
 RemovedUser: "👍 <@%user%> has been removed from this ticket"
 
-
 # --- Buttons Config ---
 #      --- Start ---
 
@@ -156,7 +155,7 @@ TicketDeleteTime: 5000 # Time must be set in miliseconds.
 TicketDepartments: true
 
 AllowStaff: true
-# If set to false users with the "Staff" role will not be able to view tickets 
+# If set to false users with the "Staff" role will not be able to view tickets
 # without a valid department role set below.
 
 # Set to false to allow "Staff" to see tickets whether its a department for them or not.
@@ -169,7 +168,7 @@ DepartmentTitle_3: "Admin Team"
 DepartmentRole_1: "Support Team"
 DepartmentRole_2: "Support Team"
 DepartmentRole_3: "Project Developer"
-# Ticket roles are the roles that will be able to gain access to tickets depending on what department has been choosen. 
+# Ticket roles are the roles that will be able to gain access to tickets depending on what department has been choosen.
 
 # --- Closing Config ---
 #    --- Start ---

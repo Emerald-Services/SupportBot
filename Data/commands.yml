@@ -1,8 +1,8 @@
-#      ___                            _    ___        _   
-#    / __> _ _  ___  ___  ___  _ _ _| |_ | . > ___ _| |_ 
-#     \__ \| | || . \| . \/ . \| '_> | |  | . \/ . \ | |  
-#     <___/`___||  _/|  _/\___/|_|   |_|  |___/\___/ |_|  
-#                |_|  |_|                                  
+#      ___                            _    ___        _
+#    / __> _ _  ___  ___  ___  _ _ _| |_ | . > ___ _| |_
+#     \__ \| | || . \| . \/ . \| '_> | |  | . \/ . \ | |
+#     <___/`___||  _/|  _/\___/|_|   |_|  |___/\___/ |_|
+#                |_|  |_|
 #
 #           SupportBot created by Emerald Services
 #           Installed with MIT License
@@ -33,5 +33,3 @@ CloseTicketDesc: "Close your support ticket."
 InfoCommandDesc: "Get information about the brand."
 PingCommandDesc: "Pong!"
 HelpCommandDesc: "Get a list of all the commands."
-
-
