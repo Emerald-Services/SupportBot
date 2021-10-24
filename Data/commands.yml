@@ -11,7 +11,7 @@
 #           Community Resources: https:#emeraldsrv.dev/resources
 
 # -------------------------------
-#   Commamnd Name Configuration
+#   Command Name Configuration
 # -------------------------------
 
 TicketAdd: "ticketadd"
@@ -23,7 +23,7 @@ PingCommand: "ping"
 HelpCommand: "help"
 
 # ---------------------------------------
-#   Commamnd Description Configuration
+#   Command Description Configuration
 # ---------------------------------------
 
 TicketAddDesc: "Add a user to a support ticket."

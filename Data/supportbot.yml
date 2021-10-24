@@ -48,7 +48,7 @@ WarningColour: "#fca117"
 # -------------------------
 
 InfoTitle: "Information"
-AboutMe: "Hi, I'm SupportBot an advanced discord ticket bot with 100% customisation! [Download](https://emeraldsrv.dev/download)"
+AboutMe: "Hi, I'm SupportBot an advanced discord ticket bot with 100% customization! [Download](https://emeraldsrv.dev/download)"
 
 InfoButtonText: "Visit Site"
 InfoURL: "https://emeraldsrv.dev"
@@ -147,7 +147,7 @@ TicketDept3Emoji: "3️⃣"
 TranscriptSavedMessage: "📝 **Transcript Saved!**"
 TicketLockMessage: "❌ **Ticket Locked!**"
 TicketDeleteMessage: "⚠ **Ticket Deleting!**" # Tickets deleting after 5 seconds by default.
-TicketDeleteTime: 5000 # Time must be set in miliseconds.
+TicketDeleteTime: 5000 # Time must be set in milliseconds.
 
 # --- Departments Config ---
 #     --- Start ---
@@ -168,7 +168,7 @@ DepartmentTitle_3: "Admin Team"
 DepartmentRole_1: "Support Team"
 DepartmentRole_2: "Support Team"
 DepartmentRole_3: "Project Developer"
-# Ticket roles are the roles that will be able to gain access to tickets depending on what department has been choosen.
+# Ticket roles are the roles that will be able to gain access to tickets depending on what department has been chosen.
 
 # --- Closing Config ---
 #    --- Start ---
