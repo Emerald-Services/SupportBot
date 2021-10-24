@@ -1,8 +1,8 @@
-#      ___                            _    ___        _   
-#    / __> _ _  ___  ___  ___  _ _ _| |_ | . > ___ _| |_ 
-#     \__ \| | || . \| . \/ . \| '_> | |  | . \/ . \ | |  
-#     <___/`___||  _/|  _/\___/|_|   |_|  |___/\___/ |_|  
-#                |_|  |_|                                  
+#      ___                            _    ___        _
+#    / __> _ _  ___  ___  ___  _ _ _| |_ | . > ___ _| |_
+#     \__ \| | || . \| . \/ . \| '_> | |  | . \/ . \ | |
+#     <___/`___||  _/|  _/\___/|_|   |_|  |___/\___/ |_|
+#                |_|  |_|
 #
 #           SupportBot created by Emerald Services
 #           Installed with MIT License
@@ -23,7 +23,7 @@ TicketPanel: true
 Channel: "create-ticket"
 ButtonEmoji: "📩"
 ButtonLabel: "Open Ticket"
-ButtonColour: "SUCCESS" 
+ButtonColour: "SUCCESS"
 # Colour Options:
 #   -> PRIMARY - Blurple
 #   -> SECONDARY - Grey
@@ -39,4 +39,3 @@ TicketPanel_Image: false
 PanelMessage: "Click the button to open a new support ticket."
 PanelThumbnail: "https://i.imgur.com/ieeZejl.png"
 PanelImage: "https://i.imgur.com/5NkcmDq.png"
-

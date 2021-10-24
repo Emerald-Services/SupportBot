@@ -1,8 +1,8 @@
-#      ___                            _    ___        _   
-#    / __> _ _  ___  ___  ___  _ _ _| |_ | . > ___ _| |_ 
-#     \__ \| | || . \| . \/ . \| '_> | |  | . \/ . \ | |  
-#     <___/`___||  _/|  _/\___/|_|   |_|  |___/\___/ |_|  
-#                |_|  |_|                                  
+#      ___                            _    ___        _
+#    / __> _ _  ___  ___  ___  _ _ _| |_ | . > ___ _| |_
+#     \__ \| | || . \| . \/ . \| '_> | |  | . \/ . \ | |
+#     <___/`___||  _/|  _/\___/|_|   |_|  |___/\___/ |_|
+#                |_|  |_|
 #
 #           SupportBot created by Emerald Services
 #           Installed with MIT License
@@ -11,7 +11,7 @@
 #           Community Resources: https:#emeraldsrv.dev/resources
 
 # -------------------------------
-#   Commamnd Name Configuration
+#   Command Name Configuration
 # -------------------------------
 
 TicketAdd: "add"
@@ -24,7 +24,7 @@ HelpCommand: "help"
 EmbedCommand: "embed"
 
 # ---------------------------------------
-#   Commamnd Description Configuration
+#   Command Description Configuration
 # ---------------------------------------
 
 TicketAddDesc: "Add a user to a support ticket."
