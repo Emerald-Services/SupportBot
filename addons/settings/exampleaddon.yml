@@ -1,9 +1,0 @@
-#
-# SupportBot, Created by Emerald Services
-# Example Addon
-#
-
-ExampleAddonCommand: "exampleaddon"
-ExampleAddonDesc: "This is the default/example addon for SupportBot."
-
-ExampleAddonMessage: "> :white_check_mark: This is the **default** addon for SupportBot. You can download addons from our website, https://emeraldservices.xyz/"

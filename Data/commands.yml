@@ -1,0 +1,39 @@
+#      ___                            _    ___        _
+#    / __> _ _  ___  ___  ___  _ _ _| |_ | . > ___ _| |_
+#     \__ \| | || . \| . \/ . \| '_> | |  | . \/ . \ | |
+#     <___/`___||  _/|  _/\___/|_|   |_|  |___/\___/ |_|
+#                |_|  |_|
+#
+#           SupportBot created by Emerald Services
+#           Installed with MIT License
+#
+#           Discord Support: https:#emeraldsrv.dev/discord
+#           Community Resources: https:#emeraldsrv.dev/resources
+
+# -------------------------------
+#   Command Name Configuration
+# -------------------------------
+
+TicketAdd: "add"
+TicketRemove: "remove"
+OpenTicket: "ticket"
+CloseTicket: "close"
+InfoCommand: "info"
+PingCommand: "ping"
+HelpCommand: "help"
+EmbedCommand: "embed"
+
+# ---------------------------------------
+#   Command Description Configuration
+# ---------------------------------------
+
+TicketAddDesc: "Add a user to a support ticket."
+TicketRemoveDesc: "Remove a user from a support ticket."
+OpenTicketDesc: "Open a new support ticket."
+CloseTicketDesc: "Close your support ticket."
+InfoCommandDesc: "Get information about the brand."
+PingCommandDesc: "Pong!"
+HelpCommandDesc: "Get a list of all the commands."
+EmbedCommandDesc: "Send a message as an embed."
+
+

@@ -1,21 +1,23 @@
 {
   "name": "supportbot",
-  "version": "7.1",
-  "description": "SupportBot, a free open-source discord ticket application with ease of use.",
+  "version": "7.2.0",
+  "description": "SupportBot is an open-sourced support system for discord. It's completely free to use with high amounts of customization to match your own brand.",
   "main": "index.js",
   "scripts": {
-    "supportbot": "node index.js"
+    "start": "npm i && node index.js"
   },
-  "keywords": [
-    "supportbot"
-  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/1tzemerald/SupportBot.git"
+  },
   "author": "Emerald Services",
   "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/1tzemerald/SupportBot/issues"
+  },
+  "homepage": "https://github.com/1tzemerald/SupportBot#readme",
   "dependencies": {
-    "@discordjs/rest": "^0.1.0-canary.0",
-    "discord-api-types": "^0.23.1",
-    "discord.js": "^13.1.0",
-    "js-yaml": "^4.1.0",
-    "jsdom": "^16.7.0"
+    "discord.js": "^13.2.0",
+    "js-yaml": "^4.1.0"
   }
 }
