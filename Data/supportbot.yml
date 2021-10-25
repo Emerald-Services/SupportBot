@@ -10,7 +10,7 @@
 #           Discord Support: https:#emeraldsrv.dev/discord
 #           Community Resources: https:#emeraldsrv.dev/resources
 
-SupportBot_Version: "7.2 pre-3"
+SupportBot_Version: "7.2"
 
 # -------------------------
 #   General Configuration
@@ -18,7 +18,7 @@ SupportBot_Version: "7.2 pre-3"
 
 Name: "SupportBot"
 Prefix: "!" # Everything uses the new Slash (/) Commands feature!
-Token: "ODUwNTMxNzExNDkwMzI2NTI5.YLrFYg.2qDnbXB5sSEmK0HEfo5kz1LdFlk"
+Token: "BOT_TOKEN"
 
 # -------------------------
 #  Activity Configuration
