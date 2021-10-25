@@ -73,6 +73,12 @@ Staff: "Support Team"
 Admin: "Project Developer"
 TicketBlackListRole: "Blacklisted"
 
+# ----------------------------
+#  Suggestions Configuration
+# ----------------------------
+
+SuggestionChannel: "suggestions"
+
 # -------------------------
 #  Tickets Configuration
 # -------------------------
