@@ -15,22 +15,20 @@ module.exports = new Command({
   description: cmdconfig.EmbedCommandDesc,
   slashCommandOptions: [
     {
-        name: "title",
-        description: "Embed Title",
-        type: "STRING",
-      },
+      name: "title",
+      description: "Embed Title",
+      type: "STRING",
+    },
 
     {
       name: "message",
       description: "Embed Message",
       type: "STRING",
     },
-
   ],
   permission: "SEND_MESSAGES",
 
   async run(interaction) {
-
     let SupportStaff =
       interaction.guild.roles.cache.find(
         (SupportTeam) => SupportTeam.name === supportbot.Staff
@@ -57,22 +55,18 @@ module.exports = new Command({
       interaction.member.roles.cache.has(SupportStaff.id) ||
       interaction.member.roles.cache.has(Admins.id)
     ) {
+      const EmbedTitle = interaction.options.getString("title");
+      const EmbedSubject = interaction.options.getString("message");
 
-        const EmbedTitle = interaction.options.getString("title")
-        const EmbedSubject = interaction.options.getString("message")
-    
-        const EmbedMsg = new Discord.MessageEmbed()
-          .setTitle(EmbedTitle)
-          .setDescription(EmbedSubject)
-    
-        interaction.reply({
-          embeds: [EmbedMsg],
-        });
+      const EmbedMsg = new Discord.MessageEmbed()
+        .setTitle(EmbedTitle)
+        .setDescription(EmbedSubject);
 
+      interaction.reply({
+        embeds: [EmbedMsg],
+      });
     } else {
-        return interaction.reply({ embeds: [NoPerms] });
+      return interaction.reply({ embeds: [NoPerms] });
     }
-
   },
-
 });

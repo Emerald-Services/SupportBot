@@ -35,5 +35,3 @@ InfoCommandDesc: "Get information about the brand."
 PingCommandDesc: "Pong!"
 HelpCommandDesc: "Get a list of all the commands."
 EmbedCommandDesc: "Send a message as an embed."
-
-
