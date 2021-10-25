@@ -27,8 +27,8 @@ class Client extends Discord.Client {
       .readdirSync("./Addons")
       .filter((file) => file.endsWith(".js"));
 
-    const addons = addonFiles.map((file) => require(`../Addons/${file}`))
- 
+    const addons = addonFiles.map((file) => require(`../Addons/${file}`));
+
     const commands = commandFiles.map((file) => require(`../Commands/${file}`));
 
     console.log(`\u001b[34;1m`, "▬▬▬▬▬▬▬ Commands ▬▬▬▬▬▬▬");
@@ -39,7 +39,14 @@ class Client extends Discord.Client {
     });
 
     addons.forEach((addon) => {
-      console.log(`\u001b[33m`, `[ADDON]`, `\u001b[31;1m`, `${addon.name}`, `\u001b[32;1m`, "Loaded");
+      console.log(
+        `\u001b[33m`,
+        `[ADDON]`,
+        `\u001b[31;1m`,
+        `${addon.name}`,
+        `\u001b[32;1m`,
+        "Loaded"
+      );
       this.commands.set(addon.name, addon);
     });
 
@@ -48,15 +55,15 @@ class Client extends Discord.Client {
     // Slash Commands
 
     const slashCommands = commands.map((cmd) => ({
-      name: cmd.name.toLowerCase(), 
+      name: cmd.name.toLowerCase(),
       description: cmd.description,
       permissions: [],
       options: cmd.slashCommandOptions,
       defaultPermission: true,
-    }))
+    }));
 
     const slashCommands1 = addons.map((addon) => ({
-      name: addon.name.toLowerCase(), 
+      name: addon.name.toLowerCase(),
       description: addon.description,
       permissions: [],
       options: addon.slashCommandOptions,
@@ -66,21 +73,32 @@ class Client extends Discord.Client {
     this.removeAllListeners();
 
     this.on("ready", async () => {
-      const cmds = await this.application?.commands.set(slashCommands)
-      const addons = await this.application?.commands.set(slashCommands1)
+      const allCommands = slashCommands.concat(slashCommands1);
+      await this.application?.commands.set(allCommands);
 
       console.log("   ");
       console.log(`\u001b[34;1m`, "▬▬▬▬▬▬▬ Slash Command ▬▬▬▬▬▬▬"),
         console.log("   ");
 
-      cmds.forEach((cmd) =>
-        console.log(`\u001b[31;1m`, `${cmd.name}`, `\u001b[32;1m`,  `| Slash Command Registered`)
+      slashCommands.forEach((cmd) =>
+        console.log(
+          `\u001b[31;1m`,
+          `${cmd.name}`,
+          `\u001b[32;1m`,
+          `| Slash Command Registered`
+        )
       );
 
-      addons.forEach((addon) =>
-        console.log(`\u001b[33m`, `[ADDON]`, `\u001b[31;1m`,`${addon.name}`, `\u001b[32;1m`,  `| Slash Command Registered`)
+      slashCommands1.forEach((addon) =>
+        console.log(
+          `\u001b[33m`,
+          `[ADDON]`,
+          `\u001b[31;1m`,
+          `${addon.name}`,
+          `\u001b[32;1m`,
+          `| Slash Command Registered`
+        )
       );
-
     });
 
     console.log("   ");
