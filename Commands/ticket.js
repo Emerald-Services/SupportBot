@@ -66,7 +66,7 @@ module.exports = new Command({
     if (
       interaction.guild.channels.cache.find(
         (ticketChannel) =>
-          ticketChannel.name === `${supportbot.TicketChannel}-${ticketNumberID}`
+          ticketChannel.name === `${supportbot.TicketPrefix}${ticketNumberID}`
       )
     ) {
       return interaction.reply({ embeds: [TicketExists] });
@@ -115,7 +115,7 @@ module.exports = new Command({
     const Author = interaction.user;
     const Everyone = interaction.guild.id;
     const ticketChannel = await interaction.guild.channels.create(
-      `${supportbot.TicketChannel}-${ticketNumberID}`,
+      `${supportbot.TicketPrefix}${ticketNumberID}`,
       {
         type: "GUILD_TEXT",
       }

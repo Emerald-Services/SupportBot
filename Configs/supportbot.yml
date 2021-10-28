@@ -69,8 +69,8 @@ AutoRole: true
 AutoRole_Role: "Member"
 LockdownRole: "@everyone"
 
-Staff: "Support Team"
-Admin: "Project Developer"
+Staff: "Staff"
+Admin: "Admin"
 TicketBlackListRole: "Blacklisted"
 
 # ----------------------------
@@ -83,11 +83,11 @@ SuggestionChannel: "suggestions"
 #  Tickets Configuration
 # -------------------------
 
-TicketCategory: "▬▬ TICKETS ▬▬"
-TicketChannel: "ticket"
+TicketCategory: "Tickets"
+TicketPrefix: "ticket-" # The prefix for ticket channel names
 
-TicketLog: "ticket-log"
-TranscriptLog: "ticket-data"
+TicketLog: "logs"
+TranscriptLog: "transcripts"
 
 TranscriptTitle: "Ticket Transcript"
 TicketLog_Title: "Ticket Log"

@@ -32,7 +32,7 @@ module.exports = new Command({
   permission: "SEND_MESSAGES",
 
   async run(interaction) {
-    if (!interaction.channel.name.startsWith(`${supportbot.TicketChannel}-`)) {
+    if (!interaction.channel.name.startsWith(`${supportbot.TicketPrefix}`)) {
       const Exists = new Discord.MessageEmbed()
         .setTitle("No Ticket Found!")
         .setDescription(`${supportbot.NoValidTicket}`)
@@ -97,6 +97,7 @@ module.exports = new Command({
                       msgs = msgs.sort(
                         (a, b) => a.createdTimestamp - b.createdTimestamp
                       );
+                      html += `<style>* {background-color: #2c2f33;color: #fff;}</style>`;
                       html += `<strong>Server Name:</strong> ${interaction.guild.name}<br>`;
                       html += `<strong>Ticket:</strong> ${ticketChannel.name}<br>`;
                       html += `<strong>Message:</strong> ${msgs.size} Messages<br><br><br>`;
