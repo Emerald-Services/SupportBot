@@ -58,9 +58,7 @@ module.exports = new Command({
       interaction.member.roles.cache.has(SupportStaff.id) ||
       interaction.member.roles.cache.has(Admins.id)
     ) {
-      if (
-        !interaction.channel.name.startsWith(`${supportbot.TicketChannel}-`)
-      ) {
+      if (!interaction.channel.name.startsWith(`${supportbot.TicketPrefix}`)) {
         const Exists = new Discord.MessageEmbed()
           .setTitle("No Ticket Found!")
           .setDescription(`${supportbot.NoValidTicket}`)
