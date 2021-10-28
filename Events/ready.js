@@ -117,7 +117,11 @@ module.exports = new Event("ready", (client) => {
           let data = {
             TicketPanelID: `${r.id}`,
           };
-          fs.writeFileSync("./Data/ticket-panel-id.json", data, "utf8");
+          fs.writeFileSync(
+            "./Data/ticket-panel-id.json",
+            JSON.stringify(data),
+            "utf8"
+          );
         })
         .catch((e) => {
           console.log("Raw" + e);
