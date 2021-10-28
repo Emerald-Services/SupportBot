@@ -64,10 +64,9 @@ module.exports = new Command({
       .setColor(supportbot.WarningColour);
 
     if (
-      interaction.guild.channels.cache.find(
-        (ticketChannel) =>
-          ticketChannel.name === `${supportbot.TicketPrefix}${ticketNumberID}`
-      )
+      await interaction.guild.channels.cache.find((ticketChannel) => {
+        ticketChannel.name === `${supportbot.TicketPrefix}${ticketNumberID}`;
+      })
     ) {
       return interaction.reply({ embeds: [TicketExists] });
     }
