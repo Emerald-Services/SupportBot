@@ -15,16 +15,17 @@ module.exports = new Command({
   description: cmdconfig.SuggestCommandDesc,
   slashCommandOptions: [
     {
-        name: "suggestion",
-        description: "Create a Suggestion",
-        type: "STRING",
-      },
+      name: "suggestion",
+      description: "Create a Suggestion",
+      type: "STRING",
+    },
   ],
   permission: "SEND_MESSAGES",
 
   async run(interaction) {
-
-    const suggestChannel = client.channels.cache.get(supportbot.SuggestionChannel);
+    const suggestChannel = client.channels.cache.get(
+      supportbot.SuggestionChannel
+    );
 
     const NoChannel = new Discord.MessageEmbed()
       .setTitle("Missing Channel!")
@@ -33,26 +34,25 @@ module.exports = new Command({
 
     if (!suggestChannel) return interaction.reply({ embeds: [NoChannel] });
 
-    let suggestion =
-    interaction.options.getString("suggestion");
+    let suggestion = interaction.options.getString("suggestion");
 
     const SuggestEmbed = new Discord.MessageEmbed()
-        .addField("Suggestion", suggestion, true)
-        .addField("From", `<@${interaction.user.id}>`)
-        .setThumbnail(interaction.user.displayAvatarURL())
-        .setFooter(supportbot.EmbedFooter, interaction.user.displayAvatarURL())
-        .setColor(supportbot.EmbedColour);
+      .addField("Suggestion", suggestion, true)
+      .addField("From", `<@${interaction.user.id}>`)
+      .setThumbnail(interaction.user.displayAvatarURL())
+      .setFooter(supportbot.EmbedFooter, interaction.user.displayAvatarURL())
+      .setColor(supportbot.EmbedColour);
 
-    suggestChannel.reply({ embeds: [SuggestEmbed ]})
+    suggestChannel.reply({ embeds: [SuggestEmbed] });
 
     const Submitted = new Discord.MessageEmbed()
       .setTitle("Suggestion Submitted!")
-      .setDescription(`:white_check_mark: You have successfully submitted a suggestion.`)
+      .setDescription(
+        `:white_check_mark: You have successfully submitted a suggestion.`
+      )
       .addField("Sent to:", `<#${suggestChannel.id}>`)
       .setColor(supportbot.WarningColour);
 
-    return interaction.reply({ embeds: [Submitted] })
-
+    return interaction.reply({ embeds: [Submitted] });
   },
-
 });
