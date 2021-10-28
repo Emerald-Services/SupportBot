@@ -22,6 +22,7 @@ InfoCommand: "info"
 PingCommand: "ping"
 HelpCommand: "help"
 EmbedCommand: "embed"
+SuggestCommand: "suggest"
 
 # ---------------------------------------
 #   Command Description Configuration
@@ -35,3 +36,4 @@ InfoCommandDesc: "Get information about the brand."
 PingCommandDesc: "Pong!"
 HelpCommandDesc: "Get a list of all the commands."
 EmbedCommandDesc: "Send a message as an embed."
+SuggestCommandDesc: "Suggest a feature for the server."
