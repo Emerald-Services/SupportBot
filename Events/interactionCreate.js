@@ -94,7 +94,7 @@ module.exports = new Event("interactionCreate", (client, interaction) => {
               msgs = msgs.sort(
                 (a, b) => a.createdTimestamp - b.createdTimestamp
               );
-              html += `<style>* {background-color: #2c2f33;color: #fff;}</style>`;
+              html += `<style>* {background-color: #2c2f33;color: #fff;font-family: Arial, Helvetica, sans-serif;}</style>`;
               html += `<strong>Server Name:</strong> ${interaction.guild.name}<br>`;
               html += `<strong>Ticket:</strong> ${ticketChannel.name}<br>`;
               html += `<strong>Message:</strong> ${msgs.size} Messages<br><br><br>`;
