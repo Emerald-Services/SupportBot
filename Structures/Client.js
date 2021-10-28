@@ -9,7 +9,9 @@ const Event = require("./Event.js");
 const intents = new Discord.Intents(32767);
 
 const yaml = require("js-yaml");
-const supportbot = yaml.load(fs.readFileSync("./Data/supportbot.yml", "utf8"));
+const supportbot = yaml.load(
+  fs.readFileSync("./Configs/supportbot.yml", "utf8")
+);
 
 class Client extends Discord.Client {
   constructor() {

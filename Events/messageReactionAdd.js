@@ -5,10 +5,12 @@ const fs = require("fs");
 
 const Discord = require("discord.js");
 const yaml = require("js-yaml");
-const supportbot = yaml.load(fs.readFileSync("./Data/supportbot.yml", "utf8"));
-const cmdconfig = yaml.load(fs.readFileSync("./Data/commands.yml", "utf8"));
+const supportbot = yaml.load(
+  fs.readFileSync("./Configs/supportbot.yml", "utf8")
+);
+const cmdconfig = yaml.load(fs.readFileSync("./Configs/commands.yml", "utf8"));
 const panelconfig = yaml.load(
-  fs.readFileSync("./Data/ticket-panel.yml", "utf8")
+  fs.readFileSync("./Configs/ticket-panel.yml", "utf8")
 );
 
 const Event = require("../Structures/Event.js");

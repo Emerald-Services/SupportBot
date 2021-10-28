@@ -9,7 +9,9 @@ const Client = require("./Client.js");
 const Event = require("./Event.js");
 
 const yaml = require("js-yaml");
-const supportbot = yaml.load(fs.readFileSync("./Data/supportbot.yml", "utf8"));
+const supportbot = yaml.load(
+  fs.readFileSync("./Configs/supportbot.yml", "utf8")
+);
 
 class TicketNumberID {
   static pad(guildId) {

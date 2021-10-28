@@ -14,7 +14,9 @@ const fs = require("fs");
 
 const Discord = require("discord.js");
 const yaml = require("js-yaml");
-const supportbot = yaml.load(fs.readFileSync("./Data/supportbot.yml", "utf8"));
+const supportbot = yaml.load(
+  fs.readFileSync("./Configs/supportbot.yml", "utf8")
+);
 
 const Client = require("./Structures/Client.js");
 const client = new Client({});
