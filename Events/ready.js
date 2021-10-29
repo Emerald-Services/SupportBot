@@ -5,9 +5,11 @@ const fs = require("fs");
 
 const Discord = require("discord.js");
 const yaml = require("js-yaml");
-const supportbot = yaml.load(fs.readFileSync("./Data/supportbot.yml", "utf8"));
+const supportbot = yaml.load(
+  fs.readFileSync("./Configs/supportbot.yml", "utf8")
+);
 const panelconfig = yaml.load(
-  fs.readFileSync("./Data/ticket-panel.yml", "utf8")
+  fs.readFileSync("./Configs/ticket-panel.yml", "utf8")
 );
 
 const Event = require("../Structures/Event.js");
@@ -77,8 +79,8 @@ module.exports = new Event("ready", (client) => {
       return false;
     }
 
-    const panelid = yaml.load(
-      fs.readFileSync("./Data/ticket-panel-id.yml", "utf8")
+    const panelid = JSON.parse(
+      fs.readFileSync("./Data/ticket-panel-id.json", "utf8")
     );
 
     chan1.messages.fetch(panelid.TicketPanelID).catch(async (r) => {
@@ -115,8 +117,11 @@ module.exports = new Event("ready", (client) => {
           let data = {
             TicketPanelID: `${r.id}`,
           };
-          let yamlStr = yaml.dump(data);
-          fs.writeFileSync("./Data/ticket-panel-id.yml", yamlStr, "utf8");
+          fs.writeFileSync(
+            "./Data/ticket-panel-id.json",
+            JSON.stringify(data),
+            "utf8"
+          );
         })
         .catch((e) => {
           console.log("Raw" + e);

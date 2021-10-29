@@ -5,8 +5,10 @@ const fs = require("fs");
 
 const Discord = require("discord.js");
 const yaml = require("js-yaml");
-const supportbot = yaml.load(fs.readFileSync("./Data/supportbot.yml", "utf8"));
-const cmdconfig = yaml.load(fs.readFileSync("./Data/commands.yml", "utf8"));
+const supportbot = yaml.load(
+  fs.readFileSync("./Configs/supportbot.yml", "utf8")
+);
+const cmdconfig = yaml.load(fs.readFileSync("./Configs/commands.yml", "utf8"));
 
 const Command = require("../Structures/Command.js");
 const TicketNumberID = require("../Structures/TicketID.js");
@@ -62,10 +64,9 @@ module.exports = new Command({
       .setColor(supportbot.WarningColour);
 
     if (
-      interaction.guild.channels.cache.find(
-        (ticketChannel) =>
-          ticketChannel.name === `${supportbot.TicketChannel}-${ticketNumberID}`
-      )
+      await interaction.guild.channels.cache.find((ticketChannel) => {
+        ticketChannel.name === `${supportbot.TicketPrefix}${ticketNumberID}`;
+      })
     ) {
       return interaction.reply({ embeds: [TicketExists] });
     }
@@ -113,7 +114,7 @@ module.exports = new Command({
     const Author = interaction.user;
     const Everyone = interaction.guild.id;
     const ticketChannel = await interaction.guild.channels.create(
-      `${supportbot.TicketChannel}-${ticketNumberID}`,
+      `${supportbot.TicketPrefix}${ticketNumberID}`,
       {
         type: "GUILD_TEXT",
       }

@@ -5,8 +5,10 @@ const fs = require("fs");
 
 const Discord = require("discord.js");
 const yaml = require("js-yaml");
-const supportbot = yaml.load(fs.readFileSync("./Data/supportbot.yml", "utf8"));
-const cmdconfig = yaml.load(fs.readFileSync("./Data/commands.yml", "utf8"));
+const supportbot = yaml.load(
+  fs.readFileSync("./Configs/supportbot.yml", "utf8")
+);
+const cmdconfig = yaml.load(fs.readFileSync("./Configs/commands.yml", "utf8"));
 
 const Event = require("../Structures/Event.js");
 
@@ -55,7 +57,7 @@ module.exports = new Event("interactionCreate", (client, interaction) => {
     }
 
     if (interaction.customId === "ticketclose") {
-      if (interaction.channel.name.startsWith(`${supportbot.TicketChannel}-`)) {
+      if (interaction.channel.name.startsWith(`${supportbot.TicketPrefix}`)) {
         interaction.message.fetch();
         interaction.deferUpdate();
         const DeleteTicketEmbed = new Discord.MessageEmbed()
@@ -92,6 +94,7 @@ module.exports = new Event("interactionCreate", (client, interaction) => {
               msgs = msgs.sort(
                 (a, b) => a.createdTimestamp - b.createdTimestamp
               );
+              html += `<style>* {background-color: #2c2f33;color: #fff;font-family: Arial, Helvetica, sans-serif;}</style>`;
               html += `<strong>Server Name:</strong> ${interaction.guild.name}<br>`;
               html += `<strong>Ticket:</strong> ${ticketChannel.name}<br>`;
               html += `<strong>Message:</strong> ${msgs.size} Messages<br><br><br>`;
@@ -124,7 +127,7 @@ module.exports = new Event("interactionCreate", (client, interaction) => {
       }
     }
     if (interaction.customId === "ticketlock") {
-      if (interaction.channel.name.startsWith(`${supportbot.TicketChannel}`)) {
+      if (interaction.channel.name.startsWith(`${supportbot.TicketPrefix}`)) {
         interaction.message.fetch();
         interaction.deferUpdate();
         let Admin =

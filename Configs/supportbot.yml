@@ -7,17 +7,17 @@
 #           SupportBot created by Emerald Services
 #           Installed with MIT License
 #
-#           Discord Support: https:#emeraldsrv.dev/discord
-#           Community Resources: https:#emeraldsrv.dev/resources
+#           Discord Support: https://emeraldsrv.dev/discord
+#           Community Resources: https://emeraldsrv.dev/resources
 
-SupportBot_Version: "7.2 pre-3"
+SupportBot_Version: "7.2"
 
 # -------------------------
 #   General Configuration
 # -------------------------
 
 Name: "SupportBot"
-Prefix: "!" # Everything uses the new Slash (/) Commands feature!
+# No Prefix, as everything uses the new Slash (/) Commands feature!
 Token: "BOT_TOKEN"
 
 # -------------------------
@@ -69,19 +69,25 @@ AutoRole: true
 AutoRole_Role: "Member"
 LockdownRole: "@everyone"
 
-Staff: "Support Team"
+Staff: "Staff"
 Admin: "Project Developer"
 TicketBlackListRole: "Blacklisted"
+
+# ----------------------------
+#  Suggestions Configuration
+# ----------------------------
+
+SuggestionChannel: "suggestions"
 
 # -------------------------
 #  Tickets Configuration
 # -------------------------
 
-TicketCategory: "▬▬ TICKETS ▬▬"
-TicketChannel: "ticket"
+TicketCategory: "Tickets"
+TicketPrefix: "ticket-" # The prefix for ticket channel names
 
-TicketLog: "ticket-log"
-TranscriptLog: "ticket-data"
+TicketLog: "logs"
+TranscriptLog: "transcripts"
 
 TranscriptTitle: "Ticket Transcript"
 TicketLog_Title: "Ticket Log"
@@ -165,9 +171,9 @@ DepartmentTitle_2: "Billing Support"
 DepartmentTitle_3: "Admin Team"
 # Ticket department title, This is the title for a ticket department to help users know what is available.
 
-DepartmentRole_1: "Support Team"
-DepartmentRole_2: "Support Team"
-DepartmentRole_3: "Project Developer"
+DepartmentRole_1: "Support"
+DepartmentRole_2: "Support"
+DepartmentRole_3: "Admin"
 # Ticket roles are the roles that will be able to gain access to tickets depending on what department has been chosen.
 
 # --- Closing Config ---

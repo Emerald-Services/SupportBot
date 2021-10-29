@@ -5,8 +5,10 @@ const fs = require("fs");
 
 const Discord = require("discord.js");
 const yaml = require("js-yaml");
-const supportbot = yaml.load(fs.readFileSync("./Data/supportbot.yml", "utf8"));
-const cmdconfig = yaml.load(fs.readFileSync("./Data/commands.yml", "utf8"));
+const supportbot = yaml.load(
+  fs.readFileSync("./Configs/supportbot.yml", "utf8")
+);
+const cmdconfig = yaml.load(fs.readFileSync("./Configs/commands.yml", "utf8"));
 
 const Command = require("../Structures/Command.js");
 
@@ -56,9 +58,7 @@ module.exports = new Command({
       interaction.member.roles.cache.has(SupportStaff.id) ||
       interaction.member.roles.cache.has(Admins.id)
     ) {
-      if (
-        !interaction.channel.name.startsWith(`${supportbot.TicketChannel}-`)
-      ) {
+      if (!interaction.channel.name.startsWith(`${supportbot.TicketPrefix}`)) {
         const Exists = new Discord.MessageEmbed()
           .setTitle("No Ticket Found!")
           .setDescription(`${supportbot.NoValidTicket}`)
