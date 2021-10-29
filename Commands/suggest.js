@@ -25,14 +25,18 @@ module.exports = new Command({
   permission: "SEND_MESSAGES",
 
   async run(interaction) {
-    const suggestChannel = client.channels.cache.get(
-      supportbot.SuggestionChannel
-    );
+    const suggestChannel =
+      interaction.guild.channels.cache.find(
+        (channel) => channel.name === supportbot.SuggestionChannel
+      ) ||
+      interaction.guild.channels.cache.find(
+        (channel) => channel.id === supportbot.SuggestionChannel
+      );
 
     const NoChannel = new Discord.MessageEmbed()
       .setTitle("Missing Channel!")
       .setDescription(`${supportbot.InvalidChannel}`)
-      .setColor(supportbot.WarningColour);
+      .setColor(supportbot.ErrorColour);
 
     if (!suggestChannel) return interaction.reply({ embeds: [NoChannel] });
 
@@ -45,7 +49,11 @@ module.exports = new Command({
       .setFooter(supportbot.EmbedFooter, interaction.user.displayAvatarURL())
       .setColor(supportbot.EmbedColour);
 
-    suggestChannel.reply({ embeds: [SuggestEmbed] });
+    const suggestionMsg = await suggestChannel.send({ embeds: [SuggestEmbed] });
+    if (supportbot.SuggestionUpvote && supportbot.SuggestionDownvote) {
+      suggestionMsg.react(supportbot.SuggestionUpvote);
+      suggestionMsg.react(supportbot.SuggestionDownvote);
+    }
 
     const Submitted = new Discord.MessageEmbed()
       .setTitle("Suggestion Submitted!")
@@ -53,7 +61,7 @@ module.exports = new Command({
         `:white_check_mark: You have successfully submitted a suggestion.`
       )
       .addField("Sent to:", `<#${suggestChannel.id}>`)
-      .setColor(supportbot.WarningColour);
+      .setColor(supportbot.SuccessColour);
 
     return interaction.reply({ embeds: [Submitted] });
   },
