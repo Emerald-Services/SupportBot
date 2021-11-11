@@ -18,7 +18,6 @@ SupportBot_Version: "7.3"
 
 Name: "SupportBot"
 # No Prefix, as everything uses the new Slash (/) Commands feature!
-Token: "BOT_TOKEN"
 
 # -------------------------
 #  Activity Configuration
