@@ -2,7 +2,7 @@
 
 ## What is SupportBot?
 
-SupportBot is an open-sourced support system for discord. It's completely free to use with high amounts of customisation to match your own brand.
+SupportBot is an open-sourced support system for discord. It's completely free to use with high amounts of customization to match your own brand.
 
 ## Quick Links
 
