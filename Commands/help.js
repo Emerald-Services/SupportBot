@@ -40,67 +40,65 @@ module.exports = new Command({
         (adminRole) => adminRole.id === supportbot.Admin
       );
 
-    if (supportbot.HelpMenu) {
-      let botCommands = "";
-      botCommands += `**/${cmdconfig.HelpCommand}** ${cmdconfig.HelpCommandDesc}\n`;
-      botCommands += `**/${cmdconfig.InfoCommand}** ${cmdconfig.InfoCommandDesc}\n`;
-      botCommands += `**/${cmdconfig.PingCommand}** ${cmdconfig.PingCommandDesc}\n`;
+    let botCommands = "";
+    botCommands += `**/${cmdconfig.HelpCommand}** ${cmdconfig.HelpCommandDesc}\n`;
+    botCommands += `**/${cmdconfig.InfoCommand}** ${cmdconfig.InfoCommandDesc}\n`;
+    botCommands += `**/${cmdconfig.PingCommand}** ${cmdconfig.PingCommandDesc}\n`;
 
-      let ticketCommands = "";
-      ticketCommands += `**/${cmdconfig.OpenTicket}** ${cmdconfig.OpenTicketDesc}\n`;
-      ticketCommands += `**/${cmdconfig.CloseTicket}** ${cmdconfig.CloseTicketDesc}\n`;
+    let ticketCommands = "";
+    ticketCommands += `**/${cmdconfig.OpenTicket}** ${cmdconfig.OpenTicketDesc}\n`;
+    ticketCommands += `**/${cmdconfig.CloseTicket}** ${cmdconfig.CloseTicketDesc}\n`;
 
-      let staffCommands = "";
-      staffCommands += `**/${cmdconfig.TicketAdd}** ${cmdconfig.TicketAddDesc}\n`;
-      staffCommands += `**/${cmdconfig.TicketRemove}** ${cmdconfig.TicketRemoveDesc}\n`;
+    let staffCommands = "";
+    staffCommands += `**/${cmdconfig.TicketAdd}** ${cmdconfig.TicketAddDesc}\n`;
+    staffCommands += `**/${cmdconfig.TicketRemove}** ${cmdconfig.TicketRemoveDesc}\n`;
 
-      const HelpEmbed1 = new Discord.MessageEmbed()
-        .setTitle(supportbot.Name + " Commands")
-        .setThumbnail(interaction.user.displayAvatarURL())
+    const HelpEmbed1 = new Discord.MessageEmbed()
+      .setTitle(supportbot.Name + " Commands")
+      .setThumbnail(interaction.user.displayAvatarURL())
 
-        .addFields(
-          {
-            name: "🖥️ General Commands\n",
-            value: `${botCommands}\n`,
-            inline: false,
-          },
-          {
-            name: "🎫 Support Commands\n",
-            value: `${ticketCommands}\n`,
-            inline: false,
-          }
-        )
+      .addFields(
+        {
+          name: "🖥️ General Commands\n",
+          value: `${botCommands}\n`,
+          inline: false,
+        },
+        {
+          name: "🎫 Support Commands\n",
+          value: `${ticketCommands}\n`,
+          inline: false,
+        }
+      )
 
-        .setColor(supportbot.EmbedColour)
-        .setFooter(supportbot.EmbedFooter, interaction.user.displayAvatarURL());
+      .setColor(supportbot.EmbedColour)
+      .setFooter(supportbot.EmbedFooter, interaction.user.displayAvatarURL());
 
-      if (interaction.member.roles.cache.has(SupportStaff.id)) {
+    if (interaction.member.roles.cache.has(SupportStaff.id)) {
+      HelpEmbed1.addFields({
+        name: "🔐 Staff Commands\n",
+        value: `${staffCommands}\n`,
+        inline: false,
+      });
+    } else {
+      if (interaction.member.roles.cache.has(AdminStaff.id)) {
         HelpEmbed1.addFields({
           name: "🔐 Staff Commands\n",
           value: `${staffCommands}\n`,
           inline: false,
         });
-      } else {
-        if (interaction.member.roles.cache.has(AdminStaff.id)) {
-          HelpEmbed1.addFields({
-            name: "🔐 Staff Commands\n",
-            value: `${staffCommands}\n`,
-            inline: false,
-          });
-        }
       }
+    }
 
-      if (supportbot.SendHelpPage === "dm") {
-        interaction.user.reply({
-          embeds: [HelpEmbed1],
-        });
-      }
+    if (supportbot.SendHelpPage === "dm") {
+      interaction.user.reply({
+        embeds: [HelpEmbed1],
+      });
+    }
 
-      if (supportbot.SendHelpPage === "channel") {
-        interaction.reply({
-          embeds: [HelpEmbed1],
-        });
-      }
+    if (supportbot.SendHelpPage === "channel") {
+      interaction.reply({
+        embeds: [HelpEmbed1],
+      });
     }
   },
 });
