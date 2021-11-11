@@ -12,7 +12,7 @@ const cmdconfig = yaml.load(fs.readFileSync("./Configs/commands.yml", "utf8"));
 
 const Event = require("../Structures/Event.js");
 
-module.exports = new Event("interactionCreate", (client, interaction) => {
+module.exports = new Event("interactionCreate", async (client, interaction) => {
   if (interaction.isCommand()) {
     const command = client.commands.find(
       (cmd) => cmd.name.toLowerCase() == interaction.commandName
@@ -129,7 +129,6 @@ module.exports = new Event("interactionCreate", (client, interaction) => {
     if (interaction.customId === "ticketlock") {
       if (interaction.channel.name.startsWith(`${supportbot.TicketPrefix}`)) {
         interaction.message.fetch();
-        interaction.deferUpdate();
         let Admin =
           interaction.guild.roles.cache.find(
             (AdminUser) => AdminUser.name === supportbot.Admin
@@ -137,6 +136,12 @@ module.exports = new Event("interactionCreate", (client, interaction) => {
           interaction.guild.roles.cache.find(
             (AdminUser) => AdminUser.id === supportbot.Admin
           );
+        if (!interaction.member.roles.cache.has(Admin.id)) {
+          return await interaction.reply({
+            content: "You don't have permission to do that.",
+            ephemeral: true,
+          });
+        }
         let all = interaction.channel.permissionOverwrites.cache;
 
         let parent =
@@ -175,7 +180,7 @@ module.exports = new Event("interactionCreate", (client, interaction) => {
           .setDescription(`Archived ${interaction.channel.name}`)
           .setColor(`${supportbot.SuccessColour}`);
 
-        interaction.channel.send({ embeds: [ArchiveEmbed] });
+        interaction.reply({ embeds: [ArchiveEmbed] });
         interaction.message.edit({ components: [row] });
       }
     }
