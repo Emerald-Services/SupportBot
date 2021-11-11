@@ -104,7 +104,8 @@ module.exports = new Event("ready", (client) => {
       let button = new Discord.MessageButton()
         .setLabel(panelconfig.ButtonLabel)
         .setCustomId("openticket")
-        .setStyle(panelconfig.ButtonColour);
+        .setStyle(panelconfig.ButtonColour)
+        .setEmoji(panelconfig.ButtonEmoji);
 
       let row = new Discord.MessageActionRow().addComponents(button);
 
