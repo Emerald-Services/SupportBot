@@ -19,6 +19,8 @@ SupportBot_Version: "7.4.0"
 Name: "SupportBot"
 # No Prefix, as everything uses the new Slash (/) Commands feature!
 Token: "BOT_TOKEN"
+# Guild ID Ex: 123456789123456789
+Guild: ""
 
 # -------------------------
 #  Activity Configuration
@@ -66,7 +68,6 @@ SendHelpPage: "channel" # Set to channel or dm
 
 AutoRole: true
 AutoRole_Role: "Member"
-LockdownRole: "@everyone"
 
 Staff: "Staff"
 Admin: "Admin"
@@ -131,8 +132,6 @@ RemovedUser: "👍 <@%user%> has been removed from this ticket"
 # SUCCESS - Green
 # Secondary - Grey
 
-TicketLockReaction: "🔒"
-TicketDeleteReaction: "⛔"
 LockTicketCategory: "Archive"
 
 TicketCloseEmoji: "❌"
