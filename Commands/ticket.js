@@ -36,10 +36,9 @@ module.exports = new Command({
 
     if (
       reactionUser.roles.cache.find(
-        (role) => role.name === supportbot.TicketBlackListRole
-      ) ||
-      reactionUser.roles.cache.find(
-        (role) => role.id === supportbot.TicketBlackListRole
+        (role) =>
+          role.name == supportbot.TicketBlackListRole ||
+          role.id == supportbot.TicketBlackListRole
       )
     ) {
       return interaction
@@ -70,46 +69,33 @@ module.exports = new Command({
     ) {
       return interaction.reply({ embeds: [TicketExists] });
     }
-    const Staff =
-      interaction.guild.roles.cache.find(
-        (SupportTeam) => SupportTeam.name === supportbot.Staff
-      ) ||
-      interaction.guild.roles.cache.find(
-        (SupportTeam) => SupportTeam.id === supportbot.Staff
-      );
-    const Admins =
-      interaction.guild.roles.cache.find(
-        (AdminUser) => AdminUser.name === supportbot.Admin
-      ) ||
-      interaction.guild.roles.cache.find(
-        (AdminUser) => AdminUser.id === supportbot.Admin
-      );
-    const DeptRole1 =
-      interaction.guild.roles.cache.find(
-        (DepartmentRole) =>
-          DepartmentRole.name === `${supportbot.DepartmentRole_1}`
-      ) ||
-      interaction.guild.roles.cache.find(
-        (DepartmentRole) =>
-          DepartmentRole.id === `${supportbot.DepartmentRole_1}`
-      );
-    const DeptRole2 =
-      interaction.guild.roles.cache.find(
-        (DepartmentRole) =>
-          DepartmentRole.name === `${supportbot.DepartmentRole_2}`
-      ) ||
-      interaction.guild.roles.cache.find(
-        (DepartmentRole) =>
-          DepartmentRole.id === `${supportbot.DepartmentRole_2}`
-      );
-    const DeptRole3 =
-      interaction.guild.roles.cache.find(
-        (DepartmentRole) =>
-          DepartmentRole.name === `${supportbot.DepartmentRole_3}`
-      ) ||
-      interaction.guild.roles.cache.find(
-        (DepartmentRole) =>
-          DepartmentRole.id === `${supportbot.DepartmentRole_3}`
+    const Staff = interaction.guild.roles.cache.find(
+      (SupportTeam) =>
+        SupportTeam.name === supportbot.Staff ||
+        SupportTeam.id === supportbot.Staff
+    );
+    const Admins = interaction.guild.roles.cache.find(
+      (AdminUser) =>
+        AdminUser.name === supportbot.Admin || AdminUser.id === supportbot.Admin
+    );
+    const DeptRole1 = interaction.guild.roles.cache.find(
+      (DepartmentRole) =>
+        DepartmentRole.name === supportbot.DepartmentRole_1 ||
+        DepartmentRole.id === supportbot.DepartmentRole_1
+    );
+    const DeptRole2 = interaction.guild.roles.cache.find(
+      (DepartmentRole) =>
+        DepartmentRole.name === supportbot.DepartmentRole_2 ||
+        DepartmentRole.id === supportbot.DepartmentRole_2
+    );
+    const DeptRole3 = interaction.guild.roles.cache.find(
+      (DepartmentRole) =>
+        DepartmentRole.name === supportbot.DepartmentRole_3 ||
+        DepartmentRole.id === supportbot.DepartmentRole_3
+    );
+    if (!Staff || !Admins || !DeptRole1 || !DeptRole2 || !DeptRole3)
+      return interaction.reply(
+        "Some roles seem to be missing!\nPlease check for errors when starting the bot."
       );
     const Author = interaction.user;
     const Everyone = interaction.guild.id;
@@ -158,13 +144,11 @@ module.exports = new Command({
       ticketChannel.permissionOverwrites.create(index, { VIEW_CHANNEL: false });
     });
 
-    let TicketCategory =
-      interaction.guild.channels.cache.find(
-        (category) => category.name === supportbot.TicketCategory
-      ) ||
-      interaction.guild.channels.cache.find(
-        (category) => category.id === supportbot.TicketCategory
-      );
+    let TicketCategory = interaction.guild.channels.cache.find(
+      (category) =>
+        category.name === supportbot.TicketCategory ||
+        category.id === supportbot.TicketCategory
+    );
     if (TicketCategory) {
       ticketChannel.setParent(TicketCategory.id);
     }

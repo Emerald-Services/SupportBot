@@ -32,19 +32,18 @@ module.exports = new Command({
   permission: "SEND_MESSAGES",
 
   async run(interaction) {
-    let SupportStaff =
-      interaction.guild.roles.cache.find(
-        (SupportTeam) => SupportTeam.name === supportbot.Staff
-      ) ||
-      interaction.guild.roles.cache.find(
-        (SupportTeam) => SupportTeam.id === supportbot.Staff
-      );
-    let Admins =
-      interaction.guild.roles.cache.find(
-        (AdminUser) => AdminUser.name === supportbot.Admin
-      ) ||
-      interaction.guild.roles.cache.find(
-        (AdminUser) => AdminUser.id === supportbot.Admin
+    let SupportStaff = interaction.guild.roles.cache.find(
+      (SupportTeam) =>
+        SupportTeam.name == supportbot.Staff ||
+        SupportTeam.id == supportbot.Staff
+    );
+    let Admins = interaction.guild.roles.cache.find(
+      (AdminUser) =>
+        AdminUser.name == supportbot.Admin || AdminUser.id == supportbot.Admin
+    );
+    if (!SupportStaff || !Admins)
+      return interaction.reply(
+        "Some roles seem to be missing!\nPlease check for errors when starting the bot."
       );
 
     const NoPerms = new Discord.MessageEmbed()

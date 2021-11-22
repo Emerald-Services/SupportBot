@@ -63,13 +63,11 @@ module.exports = new Command({
               }
             )
             .then((collected) => {
-              let logChannel =
-                interaction.guild.channels.cache.find(
-                  (channel) => channel.name === supportbot.TranscriptLog
-                ) ||
-                interaction.guild.channels.cache.find(
-                  (channel) => channel.id === supportbot.TranscriptLog
-                );
+              let logChannel = interaction.guild.channels.cache.find(
+                (channel) =>
+                  channel.name === supportbot.TranscriptLog ||
+                  channel.id === supportbot.TranscriptLog
+              );
               let user = interaction.user;
               let reason =
                 interaction.options.getString("reason") ||
@@ -149,13 +147,11 @@ module.exports = new Command({
     }
 
     if (!supportbot.CloseConfirmation) {
-      let logChannel =
-        interaction.guild.channels.cache.find(
-          (channel) => channel.name === supportbot.TranscriptLog
-        ) ||
-        interaction.guild.channels.cache.find(
-          (channel) => channel.id === supportbot.TranscriptLog
-        );
+      let logChannel = interaction.guild.channels.cache.find(
+        (channel) =>
+          channel.name === supportbot.TranscriptLog ||
+          channel.id === supportbot.TranscriptLog
+      );
       let user = interaction.user;
       let reason =
         (await interaction.options.getString("reason")) ||

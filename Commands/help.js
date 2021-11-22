@@ -25,21 +25,18 @@ module.exports = new Command({
   permission: "SEND_MESSAGES",
 
   async run(interaction) {
-    let SupportStaff =
-      interaction.guild.roles.cache.find(
-        (adminRole) => adminRole.name === supportbot.Staff
-      ) ||
-      interaction.guild.roles.cache.find(
-        (staffRole) => staffRole.id === supportbot.Staff
+    let SupportStaff = interaction.guild.roles.cache.find(
+      (adminRole) =>
+        adminRole.name === supportbot.Staff || staffRole.id === supportbot.Staff
+    );
+    let AdminStaff = interaction.guild.roles.cache.find(
+      (adminRole) =>
+        adminRole.name === supportbot.Admin || adminRole.id === supportbot.Admin
+    );
+    if (!SupportStaff || !Admins)
+      return interaction.reply(
+        "Some roles seem to be missing!\nPlease check for errors when starting the bot."
       );
-    let AdminStaff =
-      interaction.guild.roles.cache.find(
-        (adminRole) => adminRole.name === supportbot.Admin
-      ) ||
-      interaction.guild.roles.cache.find(
-        (adminRole) => adminRole.id === supportbot.Admin
-      );
-
     let botCommands = "";
     botCommands += `**/${cmdconfig.HelpCommand}** ${cmdconfig.HelpCommandDesc}\n`;
     botCommands += `**/${cmdconfig.InfoCommand}** ${cmdconfig.InfoCommandDesc}\n`;
