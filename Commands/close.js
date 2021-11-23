@@ -28,14 +28,17 @@ module.exports = new Command({
     let TicketData = await JSON.parse(
       fs.readFileSync("./Data/TicketData.json", "utf8")
     ).tickets.find((t) => t.id === interaction.channel.id);
-    let tUser = interaction.client.users.cache.get(TicketData.user);
-    if (!interaction.channel.name.startsWith(`${supportbot.TicketPrefix}`)) {
+    if (
+      !TicketData ||
+      !interaction.channel.name.startsWith(`${supportbot.TicketPrefix}`)
+    ) {
       const Exists = new Discord.MessageEmbed()
         .setTitle("No Ticket Found!")
         .setDescription(`${supportbot.NoValidTicket}`)
         .setColor(supportbot.WarningColour);
-      return interaction.reply({ embed: Exists });
+      return interaction.reply({ embeds: [Exists] });
     }
+    let tUser = interaction.client.users.cache.get(TicketData.user);
     let transcriptChannel = await interaction.guild.channels.cache.find(
       (channel) =>
         channel.name == supportbot.TranscriptLog ||
