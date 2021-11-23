@@ -11,13 +11,6 @@ const supportbot = yaml.load(
 const cmdconfig = yaml.load(fs.readFileSync("./Configs/commands.yml", "utf8"));
 
 const Command = require("../Structures/Command.js");
-const TicketNumberID = require("../Structures/TicketID.js");
-
-async function asyncForEach(array, callback) {
-  for (let index = 0; index < array.length; index++) {
-    await callback(array[index], index, array);
-  }
-}
 
 module.exports = new Command({
   name: cmdconfig.CloseTicket,
@@ -32,6 +25,10 @@ module.exports = new Command({
   permission: "SEND_MESSAGES",
 
   async run(interaction) {
+    let TicketData = await JSON.parse(
+      fs.readFileSync("./Data/TicketData.json", "utf8")
+    ).tickets.find((t) => t.id === interaction.channel.id);
+    let tUser = interaction.client.users.cache.get(TicketData.user);
     if (!interaction.channel.name.startsWith(`${supportbot.TicketPrefix}`)) {
       const Exists = new Discord.MessageEmbed()
         .setTitle("No Ticket Found!")
@@ -39,7 +36,21 @@ module.exports = new Command({
         .setColor(supportbot.WarningColour);
       return interaction.reply({ embed: Exists });
     }
+    let transcriptChannel = await interaction.guild.channels.cache.find(
+      (channel) =>
+        channel.name == supportbot.TranscriptLog ||
+        channel.id == supportbot.TranscriptLog
+    );
+    let logChannel = await interaction.guild.channels.cache.find(
+      (channel) =>
+        channel.name == supportbot.TicketLog ||
+        channel.id == supportbot.TicketLog
+    );
+    let reason =
+      (await interaction.options.getString("reason")) || "No Reason Provided.";
 
+    if (!transcriptChannel || !logChannel)
+      return interaction.reply("Some Channels seem to be missing!");
     if (supportbot.CloseConfirmation) {
       const CloseTicketRequest = new Discord.MessageEmbed()
         .setTitle(`**${supportbot.ClosingTicket}**`)
@@ -48,180 +59,96 @@ module.exports = new Command({
         )
         .setColor(supportbot.EmbedColour);
 
-      interaction
-        .reply(CloseTicketRequest)
-        .then((m) => {
-          interaction.channel
-            .awaitMessages(
-              (response) =>
-                response.content.toLowerCase() ===
-                supportbot.ClosingConfirmation_Word,
-              {
-                max: 1,
-                time: 20000,
-                errors: ["time"],
-              }
-            )
-            .then((collected) => {
-              let logChannel = interaction.guild.channels.cache.find(
-                (channel) =>
-                  channel.name === supportbot.TranscriptLog ||
-                  channel.id === supportbot.TranscriptLog
-              );
-              let user = interaction.user;
-              let reason =
-                interaction.options.getString("reason") ||
-                "No Reason Provided.";
-
-              let name = interaction.channel.name;
-              let ticketChannel = interaction.channel;
-
-              interaction
-                .reply(`**${supportbot.ClosingTicket}**`)
-
-                .then(() => {
-                  const logEmbed = new Discord.MessageEmbed()
-                    .setTitle(supportbot.TranscriptTitle)
-                    .setColor(supportbot.EmbedColour)
-                    .setFooter(supportbot.EmbedFooter)
-                    .addField("Closed By", interaction.user.tag)
-                    .addField("Reason", reason);
-
-                  interaction.channel.interactions
-                    .fetch({ limit: 100 })
-                    .then((msgs) => {
-                      let html = "";
-
-                      msgs = msgs.sort(
-                        (a, b) => a.createdTimestamp - b.createdTimestamp
-                      );
-                      html += `<style>* {background-color: #2c2f33;color: #fff;font-family: Arial, Helvetica, sans-serif;}</style>`;
-                      html += `<strong>Server Name:</strong> ${interaction.guild.name}<br>`;
-                      html += `<strong>Ticket:</strong> ${ticketChannel.name}<br>`;
-                      html += `<strong>Message:</strong> ${msgs.size} Messages<br><br><br>`;
-
-                      msgs.forEach((msg) => {
-                        if (msg.content) {
-                          html += `<strong>User:</strong> ${msg.author.tag}<br>`;
-                          html += `<strong>Message:</strong> ${msg.content}<br>`;
-                          html += `-----<br><br>`;
-                        }
-                      });
-
-                      logChannel.send({ embeds: [logEmbed] }).catch((err) => {
-                        interaction.reply(err);
-                      });
-
-                      let file = new Discord.MessageAttachment(
-                        Buffer.from(html),
-                        `${name}.html`
-                      );
-                      logChannel
-                        .send({ embeds: [logEmbed], files: [file] })
-                        .catch((err) => {
-                          interaction.reply(err);
-                        });
-
-                      interaction.channel.delete().catch((error) => {
-                        if (
-                          error.code !==
-                          Discord.Constants.APIErrors.UNKNOWN_CHANNEL
-                        ) {
-                          console.error(
-                            "Failed to delete the interaction:",
-                            error
-                          );
-                        }
-                      });
-                    });
-                });
-            });
-        })
-        .catch(() => {
-          interaction
-            .followUp({
-              content: "The request to close the ticket has timed out.",
-            })
-            .then((m2) => setTimeout(() => interaction.channel.delete(3000)));
-        });
-    }
-
-    if (!supportbot.CloseConfirmation) {
-      let logChannel = interaction.guild.channels.cache.find(
-        (channel) =>
-          channel.name === supportbot.TranscriptLog ||
-          channel.id === supportbot.TranscriptLog
+      await interaction.reply(CloseTicketRequest);
+      await interaction.channel.awaitMessages(
+        (r) =>
+          r.content.toLowerCase() === supportbot.ClosingConfirmation_Word &&
+          r.author.id === interaction.author.id,
+        {
+          max: 1,
+          time: 20000,
+          errors: ["time"],
+        }
       );
-      let user = interaction.user;
-      let reason =
-        (await interaction.options.getString("reason")) ||
-        "No Reason Provided.";
+    }
+    try {
+      await interaction.reply(`**${supportbot.ClosingTicket}**`);
+      const transcriptEmbed = new Discord.MessageEmbed()
+        .setTitle(supportbot.TranscriptTitle)
+        .setColor(supportbot.EmbedColour)
+        .setFooter(supportbot.EmbedFooter)
+        .addField(
+          "Ticket",
+          `${interaction.channel.name} (${interaction.channel.id})`
+        )
+        .addField(
+          "User",
+          `${tUser.username}#${tUser.discriminator} (${tUser.id})`
+        )
+        .addField("Closed By", interaction.user.tag)
+        .addField("Reason", reason);
+      const logEmbed = new Discord.MessageEmbed()
+        .setTitle(supportbot.TicketLog_Title)
+        .setColor(supportbot.EmbedColour)
+        .setFooter(supportbot.EmbedFooter)
+        .addField(
+          "Ticket",
+          `${interaction.channel.name} (${interaction.channel.id})`
+        )
+        .addField(
+          "User",
+          `${tUser.username}#${tUser.discriminator} (${tUser.id})`
+        )
+        .addField("Closed By", interaction.user.tag)
+        .addField("Reason", reason);
+      let msgs = await interaction.channel.messages.fetch();
+      let html = "";
 
-      let name = interaction.channel.name;
-      let ticketChannel = interaction.channel;
+      msgs = msgs.sort((a, b) => a.createdTimestamp - b.createdTimestamp);
+      html += `<style>* {background-color: #2c2f33;color: #fff;font-family: Arial, Helvetica, sans-serif;}</style>`;
+      html += `<strong>Server Name:</strong> ${interaction.guild.name}<br>`;
+      html += `<strong>Ticket:</strong> ${interaction.channel.name}<br>`;
+      html += `<strong>Message:</strong> ${msgs.size} Messages<br><br><br>`;
 
-      interaction
-        .reply(`**${supportbot.ClosingTicket}**`)
+      await msgs.forEach((msg) => {
+        if (msg.content) {
+          html += `<strong>User:</strong> ${msg.author.tag}<br>`;
+          html += `<strong>Message:</strong> ${msg.content}<br>`;
+          html += `-----<br><br>`;
+        }
+      });
 
-        .then(() => {
-          const logEmbed = new Discord.MessageEmbed()
-            .setTitle(supportbot.TranscriptTitle)
-            .setColor(supportbot.EmbedColour)
-            .setFooter(supportbot.EmbedFooter)
-            .addField("Closed By", interaction.user.tag)
-            .addField("Reason", reason);
+      await logChannel.send({ embeds: [logEmbed] }).catch((err) => {
+        console.error(err);
+      });
 
-          interaction.channel.interactions
-            .fetch({ limit: 100 })
-            .then((msgs) => {
-              let html = "";
-
-              msgs = msgs.sort(
-                (a, b) => a.createdTimestamp - b.createdTimestamp
-              );
-              html += `<style>* {background-color: #2c2f33;color: #fff;font-family: Arial, Helvetica, sans-serif;}</style>`;
-              html += `<strong>Server Name:</strong> ${interaction.guild.name}<br>`;
-              html += `<strong>Ticket:</strong> ${ticketChannel.name}<br>`;
-              html += `<strong>Message:</strong> ${msgs.size} Messages<br><br><br>`;
-
-              msgs.forEach((msg) => {
-                if (msg.content) {
-                  html += `<strong>User:</strong> ${msg.author.tag}<br>`;
-                  html += `<strong>Message:</strong> ${msg.content}<br>`;
-                  html += `-----<br><br>`;
-                }
-              });
-
-              logChannel.send({ embeds: [logEmbed] }).catch((err) => {
-                interaction.reply(err);
-              });
-
-              let file = new Discord.MessageAttachment(
-                Buffer.from(html),
-                `${name}.html`
-              );
-              logChannel
-                .send({ embeds: [logEmbed], files: [file] })
-                .catch((err) => {
-                  interaction.reply(err);
-                });
-
-              interaction.channel.delete().catch((error) => {
-                if (
-                  error.code !== Discord.Constants.APIErrors.UNKNOWN_CHANNEL
-                ) {
-                  console.error("Failed to delete the interaction:", error);
-                }
-              });
-            });
-        })
-        .catch(() => {
-          interaction
-            .followUp({
-              content: "The request to close the ticket has timed out.",
-            })
-            .then((m2) => setTimeout(() => interaction.channel.delete(3000)));
+      let file = new Discord.MessageAttachment(
+        Buffer.from(html),
+        `${interaction.channel.name}.html`
+      );
+      await transcriptChannel
+        .send({ embeds: [transcriptEmbed], files: [file] })
+        .catch(async (err) => {
+          await console.error(err);
         });
+      await tUser
+        .send({ embeds: [transcriptEmbed], files: [file] })
+        .catch(async (err) => {
+          await console.error(err);
+        });
+
+      await interaction.channel.delete().catch(async (error) => {
+        console.error(error);
+        if (error.code !== Discord.Constants.APIErrors.UNKNOWN_CHANNEL) {
+          console.error("Failed to delete the interaction:", error);
+        }
+      });
+    } catch (error) {
+      console.error(error);
+      await interaction.followUp({
+        content: "The request to close the ticket has timed out.",
+      });
+      setTimeout(() => interaction.channel.delete(3000));
     }
   },
 });
