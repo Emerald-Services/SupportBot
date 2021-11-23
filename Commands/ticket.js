@@ -51,7 +51,11 @@ module.exports = new Command({
     }
 
     // Ticket ID
-    let ticketNumberID = TicketNumberID.pad(interaction.guild.id);
+    let ticketNumberID = await TicketNumberID.pad();
+
+    let TicketData = await JSON.parse(
+      fs.readFileSync("./Data/TicketData.json", "utf8")
+    );
 
     // Ticket Subject
     const TicketSubject =
@@ -103,6 +107,20 @@ module.exports = new Command({
       `${supportbot.TicketPrefix}${ticketNumberID}`,
       {
         type: "GUILD_TEXT",
+      }
+    );
+    await TicketData.tickets.push({
+      id: ticketChannel.id,
+      name: ticketChannel.name,
+      user: Author.id,
+      number: ticketNumberID,
+      reason: TicketSubject,
+    });
+    fs.writeFileSync(
+      "./Data/TicketData.json",
+      JSON.stringify(TicketData, null, 4),
+      (err) => {
+        if (err) console.error(err);
       }
     );
 
