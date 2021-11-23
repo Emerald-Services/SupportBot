@@ -98,9 +98,11 @@ module.exports = new Command({
         DepartmentRole.id === supportbot.DepartmentRole_3
     );
     if (!Staff || !Admins || !DeptRole1 || !DeptRole2 || !DeptRole3)
-      return interaction.reply(
-        "Some roles seem to be missing!\nPlease check for errors when starting the bot."
-      );
+      return interaction.reply({
+        content:
+          "Some roles seem to be missing!\nPlease check for errors when starting the bot.",
+        ephemeral: true,
+      });
     const Author = interaction.user;
     const Everyone = interaction.guild.id;
     const ticketChannel = await interaction.guild.channels.create(
