@@ -92,7 +92,7 @@ TicketLog: "logs"
 TranscriptLog: "transcripts"
 
 TranscriptTitle: "Ticket Transcript"
-TicketLog_Title: "Ticket Log"
+TicketLog_Title: "Ticket Closed"
 TicketBlackListMessage: "You are not allowed to open a ticket"
 
 TicketSubject: "description"
