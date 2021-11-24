@@ -30,7 +30,7 @@ module.exports = new Command({
     ).tickets.find((t) => t.id === interaction.channel.id);
     if (
       !TicketData ||
-      !interaction.channel.name.startsWith(`${supportbot.TicketPrefix}`)
+      !interaction.channel.name.startsWith(supportbot.TicketPrefix)
     ) {
       const Exists = new Discord.MessageEmbed()
         .setTitle("No Ticket Found!")
@@ -50,7 +50,7 @@ module.exports = new Command({
         channel.id == supportbot.TicketLog
     );
     let reason =
-      (await interaction.options.getString("reason")) || "No Reason Provided.";
+      (await interaction.options?.getString("reason")) || "No Reason Provided.";
 
     if (!transcriptChannel || !logChannel)
       return interaction.reply("Some Channels seem to be missing!");
@@ -132,12 +132,12 @@ module.exports = new Command({
       await transcriptChannel
         .send({ embeds: [transcriptEmbed], files: [file] })
         .catch(async (err) => {
-          await console.error(err);
+          console.error(err);
         });
       await tUser
         .send({ embeds: [transcriptEmbed], files: [file] })
         .catch(async (err) => {
-          await console.error(err);
+          console.error(err);
         });
 
       await interaction.channel.delete().catch(async (error) => {
@@ -148,10 +148,12 @@ module.exports = new Command({
       });
     } catch (error) {
       console.error(error);
+      /*
       await interaction.followUp({
         content: "The request to close the ticket has timed out.",
       });
       setTimeout(() => interaction.channel.delete(3000));
+      */
     }
   },
 });
