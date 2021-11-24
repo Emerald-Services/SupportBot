@@ -17,7 +17,7 @@
   },
   "homepage": "https://github.com/Emerald-Services/SupportBot#readme",
   "dependencies": {
-    "discord.js": "^13.2.0",
+    "discord.js": "^13.3.1",
     "js-yaml": "^4.1.0"
   }
 }
