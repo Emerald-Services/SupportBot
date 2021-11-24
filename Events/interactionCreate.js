@@ -18,8 +18,7 @@ module.exports = new Event("interactionCreate", async (client, interaction) => {
       (cmd) => cmd.name.toLowerCase() == interaction.commandName
     );
 
-    if (interaction.user.bot || !interaction.isCommand() || !interaction.guild)
-      return;
+    if (interaction.user.bot || !interaction.guild) return;
 
     const NotValid = new Discord.MessageEmbed()
       .setDescription(`:x: \`Invalid Command\` `)
@@ -57,73 +56,12 @@ module.exports = new Event("interactionCreate", async (client, interaction) => {
     }
 
     if (interaction.customId === "ticketclose") {
-      if (interaction.channel.name.startsWith(`${supportbot.TicketPrefix}`)) {
-        interaction.message.fetch();
-        interaction.deferUpdate();
-        const DeleteTicketEmbed = new Discord.MessageEmbed()
-          .setDescription(supportbot.TicketDeleteMessage)
-          .setColor(supportbot.EmbedColour);
-        interaction.channel.send({ embeds: [DeleteTicketEmbed] });
-
-        let logChannel =
-          interaction.guild.channels.cache.find(
-            (channel) => channel.name === supportbot.TranscriptLog
-          ) ||
-          interaction.guild.channels.cache.find(
-            (channel) => channel.id === supportbot.TranscriptLog
-          );
-
-        let user = interaction.user;
-        let name = interaction.channel.name;
-        let ticketChannel = interaction.channel;
-        let reason = "No Reason Provided.";
-
-        interaction.channel
-          .send({ content: `**${supportbot.ClosingTicket}**` })
-          .then(() => {
-            const logEmbed = new Discord.MessageEmbed()
-              .setTitle(supportbot.TranscriptTitle)
-              .setColor(supportbot.EmbedColour)
-              .setFooter(supportbot.EmbedFooter)
-              .addField("Closed By", user.username)
-              .addField("Reason", reason);
-
-            interaction.channel.messages.fetch({ limit: 100 }).then((msgs) => {
-              let html = "";
-
-              msgs = msgs.sort(
-                (a, b) => a.createdTimestamp - b.createdTimestamp
-              );
-              html += `<style>* {background-color: #2c2f33;color: #fff;font-family: Arial, Helvetica, sans-serif;}</style>`;
-              html += `<strong>Server Name:</strong> ${interaction.guild.name}<br>`;
-              html += `<strong>Ticket:</strong> ${ticketChannel.name}<br>`;
-              html += `<strong>Message:</strong> ${msgs.size} Messages<br><br><br>`;
-
-              msgs.forEach((msg) => {
-                if (msg.content) {
-                  html += `<strong>User:</strong> ${msg.author.tag}<br>`;
-                  html += `<strong>Message:</strong> ${msg.content}<br>`;
-                  html += `-----<br><br>`;
-                }
-              });
-
-              const TranscriptSavedEmbed = new Discord.MessageEmbed()
-                .setDescription(supportbot.TranscriptSavedMessage)
-                .setColor(supportbot.SuccessColour);
-              interaction.channel.send({ embeds: [TranscriptSavedEmbed] });
-
-              let file = new Discord.MessageAttachment(
-                Buffer.from(html),
-                `${name}.html`
-              );
-              logChannel.send({ embeds: [logEmbed], files: [file] });
-
-              setTimeout(
-                () => interaction.channel.delete(),
-                supportbot.TicketDeleteTime
-              );
-            });
-          });
+      try {
+        const cmd = client.commands.get(cmdconfig.CloseTicket);
+        if (!cmd) return;
+        cmd.run(interaction);
+      } catch (error) {
+        console.error(error);
       }
     }
     if (interaction.customId === "ticketlock") {
