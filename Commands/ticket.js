@@ -236,19 +236,19 @@ module.exports = new Command({
       });
       const Department1Button = new Discord.MessageButton()
         .setCustomId("Department1")
-        .setLabel(`${supportbot.DepartmentTitle_1}`)
+        .setLabel(supportbot.DepartmentTitle_1)
         .setStyle(supportbot.TicketDept1Colour)
         .setEmoji(supportbot.TicketDept1Emoji);
 
       const Department2Button = new Discord.MessageButton()
         .setCustomId("Department2")
-        .setLabel(`${supportbot.DepartmentTitle_2}`)
+        .setLabel(supportbot.DepartmentTitle_2)
         .setStyle(supportbot.TicketDept2Colour)
         .setEmoji(supportbot.TicketDept2Emoji);
 
       const Department3Button = new Discord.MessageButton()
         .setCustomId("Department3")
-        .setLabel(`${supportbot.DepartmentTitle_3}`)
+        .setLabel(supportbot.DepartmentTitle_3)
         .setStyle(supportbot.TicketDept3Colour)
         .setEmoji(supportbot.TicketDept3Emoji);
 
