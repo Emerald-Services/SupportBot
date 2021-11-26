@@ -3,8 +3,7 @@ name: "❓Suggest an Idea?"
 about: Suggest an idea for SupportBot?
 title: "[SUGGESTION]"
 labels: Suggestion
-assignees: ''
-
+assignees: ""
 ---
 
 **Is your feature request related to a problem? Please describe.**
