@@ -70,20 +70,12 @@ module.exports = new Command({
       .setColor(supportbot.EmbedColour)
       .setFooter(supportbot.EmbedFooter, interaction.user.displayAvatarURL());
 
-    if (interaction.member.roles.cache.has(SupportStaff.id)) {
+    if (interaction.member.roles.cache.has(SupportStaff.id) || interaction.member.roles.cache.has(Admins.id)) {
       HelpEmbed1.addFields({
         name: "🔐 Staff Commands\n",
         value: `${staffCommands}\n`,
         inline: false,
       });
-    } else {
-      if (interaction.member.roles.cache.has(Admins.id)) {
-        HelpEmbed1.addFields({
-          name: "🔐 Staff Commands\n",
-          value: `${staffCommands}\n`,
-          inline: false,
-        });
-      }
     }
 
     if (supportbot.SendHelpPage === "dm") {
