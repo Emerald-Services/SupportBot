@@ -36,10 +36,9 @@ module.exports = new Command({
 
     if (
       reactionUser.roles.cache.find(
-        (role) => role.name === supportbot.TicketBlackListRole
-      ) ||
-      reactionUser.roles.cache.find(
-        (role) => role.id === supportbot.TicketBlackListRole
+        (role) =>
+          role.name == supportbot.TicketBlackListRole ||
+          role.id == supportbot.TicketBlackListRole
       )
     ) {
       return interaction
@@ -52,7 +51,11 @@ module.exports = new Command({
     }
 
     // Ticket ID
-    let ticketNumberID = TicketNumberID.pad(interaction.guild.id);
+    let ticketNumberID = await TicketNumberID.pad();
+
+    let TicketData = await JSON.parse(
+      fs.readFileSync("./Data/TicketData.json", "utf8")
+    );
 
     // Ticket Subject
     const TicketSubject =
@@ -70,53 +73,56 @@ module.exports = new Command({
     ) {
       return interaction.reply({ embeds: [TicketExists] });
     }
-    const Staff =
-      interaction.guild.roles.cache.find(
-        (SupportTeam) => SupportTeam.name === supportbot.Staff
-      ) ||
-      interaction.guild.roles.cache.find(
-        (SupportTeam) => SupportTeam.id === supportbot.Staff
-      );
-    const Admins =
-      interaction.guild.roles.cache.find(
-        (AdminUser) => AdminUser.name === supportbot.Admin
-      ) ||
-      interaction.guild.roles.cache.find(
-        (AdminUser) => AdminUser.id === supportbot.Admin
-      );
-    const DeptRole1 =
-      interaction.guild.roles.cache.find(
-        (DepartmentRole) =>
-          DepartmentRole.name === `${supportbot.DepartmentRole_1}`
-      ) ||
-      interaction.guild.roles.cache.find(
-        (DepartmentRole) =>
-          DepartmentRole.id === `${supportbot.DepartmentRole_1}`
-      );
-    const DeptRole2 =
-      interaction.guild.roles.cache.find(
-        (DepartmentRole) =>
-          DepartmentRole.name === `${supportbot.DepartmentRole_2}`
-      ) ||
-      interaction.guild.roles.cache.find(
-        (DepartmentRole) =>
-          DepartmentRole.id === `${supportbot.DepartmentRole_2}`
-      );
-    const DeptRole3 =
-      interaction.guild.roles.cache.find(
-        (DepartmentRole) =>
-          DepartmentRole.name === `${supportbot.DepartmentRole_3}`
-      ) ||
-      interaction.guild.roles.cache.find(
-        (DepartmentRole) =>
-          DepartmentRole.id === `${supportbot.DepartmentRole_3}`
-      );
+    const Staff = interaction.guild.roles.cache.find(
+      (SupportTeam) =>
+        SupportTeam.name === supportbot.Staff ||
+        SupportTeam.id === supportbot.Staff
+    );
+    const Admins = interaction.guild.roles.cache.find(
+      (AdminUser) =>
+        AdminUser.name === supportbot.Admin || AdminUser.id === supportbot.Admin
+    );
+    const DeptRole1 = interaction.guild.roles.cache.find(
+      (DepartmentRole) =>
+        DepartmentRole.name === supportbot.DepartmentRole_1 ||
+        DepartmentRole.id === supportbot.DepartmentRole_1
+    );
+    const DeptRole2 = interaction.guild.roles.cache.find(
+      (DepartmentRole) =>
+        DepartmentRole.name === supportbot.DepartmentRole_2 ||
+        DepartmentRole.id === supportbot.DepartmentRole_2
+    );
+    const DeptRole3 = interaction.guild.roles.cache.find(
+      (DepartmentRole) =>
+        DepartmentRole.name === supportbot.DepartmentRole_3 ||
+        DepartmentRole.id === supportbot.DepartmentRole_3
+    );
+    if (!Staff || !Admins || !DeptRole1 || !DeptRole2 || !DeptRole3)
+      return interaction.reply({
+        content:
+          "Some roles seem to be missing!\nPlease check for errors when starting the bot.",
+        ephemeral: true,
+      });
     const Author = interaction.user;
     const Everyone = interaction.guild.id;
     const ticketChannel = await interaction.guild.channels.create(
       `${supportbot.TicketPrefix}${ticketNumberID}`,
       {
         type: "GUILD_TEXT",
+      }
+    );
+    await TicketData.tickets.push({
+      id: ticketChannel.id,
+      name: ticketChannel.name,
+      user: Author.id,
+      number: ticketNumberID,
+      reason: TicketSubject,
+    });
+    fs.writeFileSync(
+      "./Data/TicketData.json",
+      JSON.stringify(TicketData, null, 4),
+      (err) => {
+        if (err) console.error(err);
       }
     );
 
@@ -158,13 +164,11 @@ module.exports = new Command({
       ticketChannel.permissionOverwrites.create(index, { VIEW_CHANNEL: false });
     });
 
-    let TicketCategory =
-      interaction.guild.channels.cache.find(
-        (category) => category.name === supportbot.TicketCategory
-      ) ||
-      interaction.guild.channels.cache.find(
-        (category) => category.id === supportbot.TicketCategory
-      );
+    let TicketCategory = interaction.guild.channels.cache.find(
+      (category) =>
+        category.name === supportbot.TicketCategory ||
+        category.id === supportbot.TicketCategory
+    );
     if (TicketCategory) {
       ticketChannel.setParent(TicketCategory.id);
     }
@@ -232,19 +236,19 @@ module.exports = new Command({
       });
       const Department1Button = new Discord.MessageButton()
         .setCustomId("Department1")
-        .setLabel(`${supportbot.DepartmentTitle_1}`)
+        .setLabel(supportbot.DepartmentTitle_1)
         .setStyle(supportbot.TicketDept1Colour)
         .setEmoji(supportbot.TicketDept1Emoji);
 
       const Department2Button = new Discord.MessageButton()
         .setCustomId("Department2")
-        .setLabel(`${supportbot.DepartmentTitle_2}`)
+        .setLabel(supportbot.DepartmentTitle_2)
         .setStyle(supportbot.TicketDept2Colour)
         .setEmoji(supportbot.TicketDept2Emoji);
 
       const Department3Button = new Discord.MessageButton()
         .setCustomId("Department3")
-        .setLabel(`${supportbot.DepartmentTitle_3}`)
+        .setLabel(supportbot.DepartmentTitle_3)
         .setStyle(supportbot.TicketDept3Colour)
         .setEmoji(supportbot.TicketDept3Emoji);
 

@@ -25,13 +25,11 @@ module.exports = new Command({
   permission: "SEND_MESSAGES",
 
   async run(interaction) {
-    const suggestChannel =
-      interaction.guild.channels.cache.find(
-        (channel) => channel.name === supportbot.SuggestionChannel
-      ) ||
-      interaction.guild.channels.cache.find(
-        (channel) => channel.id === supportbot.SuggestionChannel
-      );
+    const suggestChannel = interaction.guild.channels.cache.find(
+      (channel) =>
+        channel.name === supportbot.SuggestionChannel ||
+        channel.id === supportbot.SuggestionChannel
+    );
 
     const NoChannel = new Discord.MessageEmbed()
       .setTitle("Missing Channel!")

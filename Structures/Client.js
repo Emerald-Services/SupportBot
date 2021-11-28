@@ -76,10 +76,9 @@ class Client extends Discord.Client {
 
     this.on("ready", async () => {
       const allCommands = slashCommands.concat(slashCommands1);
-      await this.application?.commands.set(allCommands);
-
+      await this.application?.commands.set(allCommands, supportbot.Guild);
       console.log("   ");
-      console.log(`\u001b[34;1m`, "▬▬▬▬▬▬▬ Slash Command ▬▬▬▬▬▬▬"),
+      console.log(`\u001b[34;1m`, "▬▬▬▬▬▬▬ Slash Commands ▬▬▬▬▬▬▬"),
         console.log("   ");
 
       slashCommands.forEach((cmd) =>

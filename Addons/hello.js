@@ -10,8 +10,8 @@ const supportbot = yaml.load(
 );
 const cmdconfig = yaml.load(fs.readFileSync("./Configs/commands.yml", "utf8"));
 
-// Your Addon Config file! Saved in /Addons/Settings/YourAddonConfig.yml
-//  const exampleaddon = yaml.load(fs.readFileSync('./Addons/Settings/YourAddonConfig.yml', 'utf8'));
+// Your Addon Config file! Saved in /Addons/Configs/YourAddonConfig.yml
+//  const exampleaddon = yaml.load(fs.readFileSync('./Addons/Configs/YourAddonConfig.yml', 'utf8'));
 
 const Command = require("../Structures/Command.js");
 
