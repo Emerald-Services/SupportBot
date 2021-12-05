@@ -127,10 +127,10 @@ RemovedUser: "👍 <@%user%> has been removed from this ticket"
 #      --- Start ---
 
 # Discord Button Colour Selection
-# PRIMARY - Blurple
+# PRIMARY - Blue
+# SECONDARY - Grey
 # DANGER - Red
 # SUCCESS - Green
-# Secondary - Grey
 
 LockTicketCategory: "Archive"
 
