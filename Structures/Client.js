@@ -116,8 +116,14 @@ class Client extends Discord.Client {
 
     console.log(`\u001b[34;1m`, "▬▬▬▬▬▬▬ Events ▬▬▬▬▬▬▬");
     console.log("   ");
-
-    this.login(token);
+    if (process.title != "npm test") {
+      this.login(token);
+    } else {
+      console.log(
+        `\u001b[31;1m`,
+        "RUNNING IN TEST MODE, IF NOT INTENDED, PLEASE USE npm start"
+      );
+    }
   }
 }
 
