@@ -71,7 +71,7 @@ module.exports = new Command({
         ticketChannel.name === `${supportbot.TicketPrefix}${ticketNumberID}`;
       })
     ) {
-      return interaction.reply({ embeds: [TicketExists] });
+      return await interaction.reply({ embeds: [TicketExists] });
     }
     const Staff = interaction.guild.roles.cache.find(
       (SupportTeam) =>
@@ -140,7 +140,7 @@ module.exports = new Command({
             .replace(/%ticketusername%/g, interaction.user.username)
         )
         .setColor(supportbot.EmbedColour);
-      interaction.reply({ embeds: [CreatedTicket], ephemeral: true });
+      await interaction.reply({ embeds: [CreatedTicket], ephemeral: true });
     } else {
       const CreatedTicket = new Discord.MessageEmbed()
         .setDescription(
@@ -152,16 +152,20 @@ module.exports = new Command({
             .replace(/%ticketusername%/g, interaction.user.username)
         )
         .setColor(supportbot.EmbedColour);
-      interaction.reply({ embeds: [CreatedTicket], ephemeral: true });
+      await interaction.reply({ embeds: [CreatedTicket], ephemeral: true });
     }
     let AllowArr = [Staff, Staff, Admins, Author];
-    await asyncForEach(AllowArr, (index) => {
-      ticketChannel.permissionOverwrites.create(index, { VIEW_CHANNEL: true });
+    await asyncForEach(AllowArr, async (index) => {
+      await ticketChannel.permissionOverwrites.create(index, {
+        VIEW_CHANNEL: true,
+      });
     });
 
     let DenyArr = [Everyone];
-    await asyncForEach(DenyArr, (index) => {
-      ticketChannel.permissionOverwrites.create(index, { VIEW_CHANNEL: false });
+    await asyncForEach(DenyArr, async (index) => {
+      await ticketChannel.permissionOverwrites.create(index, {
+        VIEW_CHANNEL: false,
+      });
     });
 
     let TicketCategory = interaction.guild.channels.cache.find(
@@ -170,11 +174,11 @@ module.exports = new Command({
         category.id === supportbot.TicketCategory
     );
     if (TicketCategory) {
-      ticketChannel.setParent(TicketCategory.id);
+      await ticketChannel.setParent(TicketCategory.id);
     }
 
     if (supportbot.AllowTicketMentions) {
-      ticketChannel.send({ content: `${interaction.user}` });
+      await ticketChannel.send({ content: `${interaction.user}` });
     }
 
     const TicketMessage = new Discord.MessageEmbed()
@@ -198,7 +202,7 @@ module.exports = new Command({
 
     if (supportbot.TicketSubject === "description") {
       if (TicketSubject != "No Reason Provided.") {
-        ticketChannel.setTopic(
+        await ticketChannel.setTopic(
           `Reason: ${TicketSubject}  -  User ID: ${interaction.user.id}  -  Ticket: ${ticketChannel.name}`
         );
       }
@@ -263,104 +267,109 @@ module.exports = new Command({
         components: [row],
       });
 
-      const filter = (i) => {
-        i.deferUpdate();
-        return i.user.id === interaction.user.id;
-      };
-      const collector = m.createMessageComponentCollector({
+      const filter = (i) => i.user.id === interaction.user.id;
+      const collector = await m.awaitMessageComponent({
         filter,
         max: 1,
         componentType: "BUTTON",
         time: 60000,
       });
+      await collector.deferUpdate();
 
-      collector.on("collect", async (i) => {
-        if (i.customId === "Department1") {
-          ticketChannel.permissionOverwrites.edit(DeptRole1, {
-            VIEW_CHANNEL: true,
-            READ_MESSAGE_HISTORY: true,
-            SEND_MESSAGES: true,
+      if (collector.customId === "Department1") {
+        await ticketChannel.permissionOverwrites.edit(DeptRole1, {
+          VIEW_CHANNEL: true,
+          READ_MESSAGE_HISTORY: true,
+          SEND_MESSAGES: true,
+        });
+
+        if (!supportbot.AllowStaff) {
+          await ticketChannel.permissionOverwrites.edit(Staff, {
+            VIEW_CHANNEL: false,
+            READ_MESSAGE_HISTORY: false,
+            SEND_MESSAGES: false,
           });
-
-          if (!supportbot.AllowStaff) {
-            ticketChannel.permissionOverwrites.edit(Staff, {
-              VIEW_CHANNEL: false,
-              READ_MESSAGE_HISTORY: false,
-              SEND_MESSAGES: false,
-            });
-          }
-
-          const Department1 = new Discord.MessageEmbed()
-            .setDescription(
-              `> Thank for reaching out to the **${supportbot.DepartmentTitle_1} Department**. Please provide us information regarding your query.`
-            )
-            .setColor(supportbot.EmbedColour);
-          ticketChannel.send({ embeds: [Department1] });
-
-          if (supportbot.AllowTicketMentions) {
-            ticketChannel.send({ content: `@here` });
-          }
         }
-        i.message.edit({ embeds: [TicketMessage], components: [row2] });
 
-        if (i.customId === "Department2") {
-          ticketChannel.permissionOverwrites.edit(DeptRole2, {
-            VIEW_CHANNEL: true,
-            READ_MESSAGE_HISTORY: true,
-            SEND_MESSAGES: true,
-          });
+        const Department1 = new Discord.MessageEmbed()
+          .setDescription(
+            `> Thank for reaching out to the **${supportbot.DepartmentTitle_1} Department**. Please provide us information regarding your query.`
+          )
+          .setColor(supportbot.EmbedColour);
+        await ticketChannel.send({ embeds: [Department1] });
 
-          if (!supportbot.AllowStaff) {
-            ticketChannel.permissionOverwrites.edit(Staff, {
-              VIEW_CHANNEL: false,
-              READ_MESSAGE_HISTORY: false,
-              SEND_MESSAGES: false,
-            });
-          }
-
-          const Department2 = new Discord.MessageEmbed()
-            .setDescription(
-              `> Thank for reaching out to the **${supportbot.DepartmentTitle_2} Department**. Please provide us information regarding your query.`
-            )
-            .setColor(supportbot.EmbedColour);
-          ticketChannel.send({ embeds: [Department2] });
-
-          if (supportbot.AllowTicketMentions) {
-            ticketChannel.send({ content: `@here` });
-          }
-
-          i.message.edit({ embeds: [TicketMessage], components: [row2] });
+        if (supportbot.AllowTicketMentions) {
+          await ticketChannel.send({ content: `@here` });
         }
-        if (i.customId === "Department3") {
-          ticketChannel.permissionOverwrites.edit(DeptRole3, {
-            VIEW_CHANNEL: true,
-            READ_MESSAGE_HISTORY: true,
-            SEND_MESSAGES: true,
-          });
-
-          if (!supportbot.AllowStaff) {
-            ticketChannel.permissionOverwrites.edit(Staff, {
-              VIEW_CHANNEL: false,
-              READ_MESSAGE_HISTORY: false,
-              SEND_MESSAGES: false,
-            });
-          }
-
-          const Department3 = new Discord.MessageEmbed()
-            .setDescription(
-              `> Thank for reaching out to the **${supportbot.DepartmentTitle_3} Department**. Please provide us information regarding your query.`
-            )
-            .setColor(supportbot.EmbedColour);
-          ticketChannel.send({ embeds: [Department3] });
-
-          if (supportbot.AllowTicketMentions) {
-            ticketChannel.send({ content: `@here` });
-          }
-          i.message.edit({ embeds: [TicketMessage], components: [row2] });
-        }
+      }
+      await collector.message.edit({
+        embeds: [TicketMessage],
+        components: [row2],
       });
+
+      if (collector.customId === "Department2") {
+        await ticketChannel.permissionOverwrites.edit(DeptRole2, {
+          VIEW_CHANNEL: true,
+          READ_MESSAGE_HISTORY: true,
+          SEND_MESSAGES: true,
+        });
+
+        if (!supportbot.AllowStaff) {
+          await ticketChannel.permissionOverwrites.edit(Staff, {
+            VIEW_CHANNEL: false,
+            READ_MESSAGE_HISTORY: false,
+            SEND_MESSAGES: false,
+          });
+        }
+
+        const Department2 = new Discord.MessageEmbed()
+          .setDescription(
+            `> Thank for reaching out to the **${supportbot.DepartmentTitle_2} Department**. Please provide us information regarding your query.`
+          )
+          .setColor(supportbot.EmbedColour);
+        await ticketChannel.send({ embeds: [Department2] });
+
+        if (supportbot.AllowTicketMentions) {
+          await ticketChannel.send({ content: `@here` });
+        }
+
+        await collector.message.edit({
+          embeds: [TicketMessage],
+          components: [row2],
+        });
+      }
+      if (collector.customId === "Department3") {
+        await ticketChannel.permissionOverwrites.edit(DeptRole3, {
+          VIEW_CHANNEL: true,
+          READ_MESSAGE_HISTORY: true,
+          SEND_MESSAGES: true,
+        });
+
+        if (!supportbot.AllowStaff) {
+          await ticketChannel.permissionOverwrites.edit(Staff, {
+            VIEW_CHANNEL: false,
+            READ_MESSAGE_HISTORY: false,
+            SEND_MESSAGES: false,
+          });
+        }
+
+        const Department3 = new Discord.MessageEmbed()
+          .setDescription(
+            `> Thank for reaching out to the **${supportbot.DepartmentTitle_3} Department**. Please provide us information regarding your query.`
+          )
+          .setColor(supportbot.EmbedColour);
+        await ticketChannel.send({ embeds: [Department3] });
+
+        if (supportbot.AllowTicketMentions) {
+          await ticketChannel.send({ content: `@here` });
+        }
+        await collector.message.edit({
+          embeds: [TicketMessage],
+          components: [row2],
+        });
+      }
     } else {
-      ticketChannel.send({ embeds: [TicketMessage], components: [row2] });
+      await ticketChannel.send({ embeds: [TicketMessage], components: [row2] });
     }
   },
 });

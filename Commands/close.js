@@ -25,6 +25,7 @@ module.exports = new Command({
   permission: "SEND_MESSAGES",
 
   async run(interaction) {
+    await interaction.deferReply();
     let TicketData = await JSON.parse(
       fs.readFileSync("./Data/TicketData.json", "utf8")
     ).tickets.find((t) => t.id === interaction.channel.id);
@@ -36,7 +37,7 @@ module.exports = new Command({
         .setTitle("No Ticket Found!")
         .setDescription(`${supportbot.NoValidTicket}`)
         .setColor(supportbot.WarningColour);
-      return interaction.reply({ embeds: [Exists] });
+      return interaction.followUp({ embeds: [Exists] });
     }
     let tUser = interaction.client.users.cache.get(TicketData.user);
     let transcriptChannel = await interaction.guild.channels.cache.find(
@@ -53,7 +54,7 @@ module.exports = new Command({
       (await interaction.options?.getString("reason")) || "No Reason Provided.";
 
     if (!transcriptChannel || !logChannel)
-      return interaction.reply("Some Channels seem to be missing!");
+      return interaction.followUp("Some Channels seem to be missing!");
     if (supportbot.CloseConfirmation) {
       const CloseTicketRequest = new Discord.MessageEmbed()
         .setTitle(`**${supportbot.ClosingTicket}**`)
@@ -61,21 +62,19 @@ module.exports = new Command({
           `Please confirm by repeating the following word.. \`${supportbot.ClosingConfirmation_Word}\` `
         )
         .setColor(supportbot.EmbedColour);
-
-      await interaction.reply({ embeds: [CloseTicketRequest] });
-      await interaction.channel.awaitMessages(
-        (r) =>
-          r.content.toLowerCase() === supportbot.ClosingConfirmation_Word &&
-          r.author.id === interaction.author.id,
-        {
-          max: 1,
-          time: 20000,
-          errors: ["time"],
-        }
-      );
+      await interaction.followUp({ embeds: [CloseTicketRequest] });
+      let filter = (m) =>
+        m.content.toLowerCase() == supportbot.ClosingConfirmation_Word &&
+        m.author.id == interaction.user.id;
+      await interaction.channel.awaitMessages({
+        filter,
+        max: 1,
+        time: 20000,
+        errors: ["time"],
+      });
     }
     try {
-      await interaction.reply(`**${supportbot.ClosingTicket}**`);
+      await interaction.followUp(`**${supportbot.ClosingTicket}**`);
       const transcriptEmbed = new Discord.MessageEmbed()
         .setTitle(supportbot.TranscriptTitle)
         .setColor(supportbot.EmbedColour)
