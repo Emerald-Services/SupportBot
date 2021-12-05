@@ -116,8 +116,7 @@ class Client extends Discord.Client {
 
     console.log(`\u001b[34;1m`, "▬▬▬▬▬▬▬ Events ▬▬▬▬▬▬▬");
     console.log("   ");
-    console.log(process.title);
-    if (process.title != "npm test") {
+    if (process.argv[0] != "test") {
       this.login(token);
     } else {
       console.log(
