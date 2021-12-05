@@ -62,7 +62,7 @@ module.exports = new Command({
         )
         .setColor(supportbot.EmbedColour);
 
-      await interaction.reply(CloseTicketRequest);
+      await interaction.reply({embeds: [CloseTicketRequest});
       await interaction.channel.awaitMessages(
         (r) =>
           r.content.toLowerCase() === supportbot.ClosingConfirmation_Word &&
