@@ -26,20 +26,19 @@ module.exports = new Command({
 
   async run(interaction) {
     let SupportStaff = interaction.guild.roles.cache.find(
-
       (SupportTeam) =>
-        SupportTeam.name === supportbot.Staff || SupportTeam.id === supportbot.Staff
+        SupportTeam.name === supportbot.Staff ||
+        SupportTeam.id === supportbot.Staff
     );
     let Admins = interaction.guild.roles.cache.find(
       (AdminUser) =>
         AdminUser.name === supportbot.Admin || AdminUser.id === supportbot.Admin
-
     );
     if (!SupportStaff || !Admins)
       return interaction.reply(
         "Some roles seem to be missing!\nPlease check for errors when starting the bot."
       );
-    
+
     let botCommands = "";
     botCommands += `**/${cmdconfig.HelpCommand}** ${cmdconfig.HelpCommandDesc}\n`;
     botCommands += `**/${cmdconfig.InfoCommand}** ${cmdconfig.InfoCommandDesc}\n`;
@@ -73,7 +72,10 @@ module.exports = new Command({
       .setColor(supportbot.EmbedColour)
       .setFooter(supportbot.EmbedFooter, interaction.user.displayAvatarURL());
 
-    if (interaction.member.roles.cache.has(SupportStaff.id) || interaction.member.roles.cache.has(Admins.id)) {
+    if (
+      interaction.member.roles.cache.has(SupportStaff.id) ||
+      interaction.member.roles.cache.has(Admins.id)
+    ) {
       HelpEmbed1.addFields({
         name: "🔐 Staff Commands\n",
         value: `${staffCommands}\n`,
