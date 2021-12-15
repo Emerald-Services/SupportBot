@@ -25,10 +25,10 @@ module.exports = new Command({
   permission: "SEND_MESSAGES",
 
   async run(interaction) {
-    const suggestChannel = interaction.guild.channels.cache.find(
-      (channel) =>
-        channel.name === supportbot.SuggestionChannel ||
-        channel.id === supportbot.SuggestionChannel
+    const { getRole, getChannel, getCategory } = interaction.client;
+    const suggestChannel = await getChannel(
+      supportbot.SuggestionChannel,
+      interaction.guild
     );
 
     const NoChannel = new Discord.MessageEmbed()

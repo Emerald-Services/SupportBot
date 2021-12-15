@@ -32,16 +32,10 @@ module.exports = new Command({
   permission: "SEND_MESSAGES",
 
   async run(interaction) {
-    let SupportStaff = interaction.guild.roles.cache.find(
-      (SupportTeam) =>
-        SupportTeam.name == supportbot.Staff ||
-        SupportTeam.id == supportbot.Staff
-    );
-    let Admins = interaction.guild.roles.cache.find(
-      (AdminUser) =>
-        AdminUser.name == supportbot.Admin || AdminUser.id == supportbot.Admin
-    );
-    if (!SupportStaff || !Admins)
+    const { getRole, getChannel, getCategory } = interaction.client;
+    let Staff = await getRole(supportbot.Staff, interaction.guild);
+    let Admin = await getRole(supportbot.Admin, interaction.guild);
+    if (!Staff || !Admin)
       return interaction.reply(
         "Some roles seem to be missing!\nPlease check for errors when starting the bot."
       );
@@ -54,8 +48,8 @@ module.exports = new Command({
       .setColor(supportbot.WarningColour);
 
     if (
-      !interaction.member.roles.cache.has(SupportStaff.id) ||
-      !interaction.member.roles.cache.has(Admins.id)
+      !interaction.member.roles.cache.has(Staff.id) ||
+      !interaction.member.roles.cache.has(Admin.id)
     )
       return interaction.reply({ embeds: [NoPerms] });
     let TicketData = await JSON.parse(

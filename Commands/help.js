@@ -25,16 +25,10 @@ module.exports = new Command({
   permission: "SEND_MESSAGES",
 
   async run(interaction) {
-    let SupportStaff = interaction.guild.roles.cache.find(
-      (SupportTeam) =>
-        SupportTeam.name === supportbot.Staff ||
-        SupportTeam.id === supportbot.Staff
-    );
-    let Admins = interaction.guild.roles.cache.find(
-      (AdminUser) =>
-        AdminUser.name === supportbot.Admin || AdminUser.id === supportbot.Admin
-    );
-    if (!SupportStaff || !Admins)
+    const { getRole, getChannel, getCategory } = interaction.client;
+    let SupportStaff = await getRole(supportbot.Staff, interaction.guild);
+    let Admin = await getRole(supportbot.Admin, interaction.guild);
+    if (!SupportStaff || !Admin)
       return interaction.reply(
         "Some roles seem to be missing!\nPlease check for errors when starting the bot."
       );
@@ -74,7 +68,7 @@ module.exports = new Command({
 
     if (
       interaction.member.roles.cache.has(SupportStaff.id) ||
-      interaction.member.roles.cache.has(Admins.id)
+      interaction.member.roles.cache.has(Admin.id)
     ) {
       HelpEmbed1.addFields({
         name: "🔐 Staff Commands\n",

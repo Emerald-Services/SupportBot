@@ -18,12 +18,6 @@ const cmdconfig = yaml.load(fs.readFileSync("./Configs/commands.yml", "utf8"));
 const Command = require("../Structures/Command.js");
 const TicketNumberID = require("../Structures/TicketID.js");
 
-async function asyncForEach(array, callback) {
-  for (let index = 0; index < array.length; index++) {
-    await callback(array[index], index, array);
-  }
-}
-
 module.exports = new Command({
   name: cmdconfig.OpenTicket,
   description: cmdconfig.OpenTicketDesc,
@@ -37,19 +31,16 @@ module.exports = new Command({
   permission: "SEND_MESSAGES",
 
   async run(interaction) {
+    const { getRole, getChannel, getCategory } = interaction.client;
     let reactionUser = interaction.guild.members.cache.get(interaction.user.id);
 
     if (
-      reactionUser.roles.cache.find(
-        (role) =>
-          role.name == supportbot.TicketBlackListRole ||
-          role.id == supportbot.TicketBlackListRole
+      reactionUser.roles.cache.has(
+        getRole(supportbot.TicketBlackListRole, interaction.guild).id
       )
     ) {
       return interaction
-        .reply({
-          content: `<@${interaction.user.id}> ${supportbot.TicketBlackListMessage}`,
-        })
+        .reply(supportbot.TicketBlackListMessage)
         .then((msg) => {
           setTimeout(() => msg.delete(), 3500);
         });
@@ -78,41 +69,30 @@ module.exports = new Command({
     ) {
       return await interaction.reply({ embeds: [TicketExists] });
     }
-    const Staff = interaction.guild.roles.cache.find(
-      (SupportTeam) =>
-        SupportTeam.name === supportbot.Staff ||
-        SupportTeam.id === supportbot.Staff
+    const Staff = await getRole(supportbot.Staff, interaction.guild);
+    const Admin = await getRole(supportbot.Admin, interaction.guild);
+    const DeptRole1 = await getRole(
+      supportbot.DepartmentRole_1,
+      interaction.guild
     );
-    const Admins = interaction.guild.roles.cache.find(
-      (AdminUser) =>
-        AdminUser.name === supportbot.Admin || AdminUser.id === supportbot.Admin
+    const DeptRole2 = await getRole(
+      supportbot.DepartmentRole_2,
+      interaction.guild
     );
-    const DeptRole1 = interaction.guild.roles.cache.find(
-      (DepartmentRole) =>
-        DepartmentRole.name === supportbot.DepartmentRole_1 ||
-        DepartmentRole.id === supportbot.DepartmentRole_1
+    const DeptRole3 = await getRole(
+      supportbot.DepartmentRole_3,
+      interaction.guild
     );
-    const DeptRole2 = interaction.guild.roles.cache.find(
-      (DepartmentRole) =>
-        DepartmentRole.name === supportbot.DepartmentRole_2 ||
-        DepartmentRole.id === supportbot.DepartmentRole_2
-    );
-    const DeptRole3 = interaction.guild.roles.cache.find(
-      (DepartmentRole) =>
-        DepartmentRole.name === supportbot.DepartmentRole_3 ||
-        DepartmentRole.id === supportbot.DepartmentRole_3
-    );
-    if (!Staff || !Admins || !DeptRole1 || !DeptRole2 || !DeptRole3)
+    if (!Staff || !Admin || !DeptRole1 || !DeptRole2 || !DeptRole3)
       return interaction.reply({
         content:
           "Some roles seem to be missing!\nPlease check for errors when starting the bot.",
         ephemeral: true,
       });
     const Author = interaction.user;
-    let TicketCategory = interaction.guild.channels.cache.find(
-      (category) =>
-        category.name === supportbot.TicketCategory ||
-        category.id === supportbot.TicketCategory
+    let TicketCategory = await getCategory(
+      supportbot.TicketCategory,
+      interaction.guild
     );
     const ticketChannel = await interaction.guild.channels.create(
       `${supportbot.TicketPrefix}${ticketNumberID}`,
@@ -121,7 +101,7 @@ module.exports = new Command({
         parent: TicketCategory.id,
         permissionOverwrites: [
           {
-            id: Admins.id,
+            id: Admin.id,
             allow: [Permissions.FLAGS.VIEW_CHANNEL],
           },
           {
@@ -170,7 +150,7 @@ module.exports = new Command({
     await interaction.reply({ embeds: [CreatedTicket], ephemeral: true });
 
     if (supportbot.AllowTicketMentions) {
-      await ticketChannel.send({ content: `${interaction.user}` });
+      await ticketChannel.send(`${interaction.user}`);
     }
 
     const TicketMessage = new MessageEmbed()
@@ -290,7 +270,7 @@ module.exports = new Command({
         });
 
         if (supportbot.AllowTicketMentions) {
-          await ticketChannel.send({ content: "@here" });
+          await ticketChannel.send("@here");
         }
         await collector.message.edit({
           embeds: [TicketMessage],

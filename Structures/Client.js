@@ -19,6 +19,25 @@ class Client extends Discord.Client {
 
     this.commands = new Discord.Collection();
   }
+  async getChannel(channel, guild) {
+    return guild.channels.cache.find(
+      (c) =>
+        (c.type === "GUILD_TEXT" || c.type === "GUILD_NEWS") &&
+        (c.id === channel || c.name.toLowerCase() === channel.toLowerCase())
+    );
+  }
+  async getRole(role, guild) {
+    return guild.roles.cache.find(
+      (r) => r.id === role || r.name.toLowerCase() === role.toLowerCase()
+    );
+  }
+  async getCategory(category, guild) {
+    return guild.channels.cache.find(
+      (c) =>
+        c.type === "GUILD_CATEGORY" &&
+        (c.id === category || c.name.toLowerCase() === category.toLowerCase())
+    );
+  }
 
   start(token) {
     const commandFiles = fs
@@ -73,7 +92,6 @@ class Client extends Discord.Client {
     }));
 
     this.removeAllListeners();
-
     this.on("ready", async () => {
       const allCommands = slashCommands.concat(slashCommands1);
       await this.application?.commands.set(allCommands, supportbot.Guild);

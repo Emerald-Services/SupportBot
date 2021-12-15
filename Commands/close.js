@@ -25,6 +25,7 @@ module.exports = new Command({
   permission: "SEND_MESSAGES",
 
   async run(interaction) {
+    const { getRole, getChannel, getCategory } = interaction.client;
     await interaction.deferReply();
     let TicketData = await JSON.parse(
       fs.readFileSync("./Data/TicketData.json", "utf8")
@@ -37,16 +38,11 @@ module.exports = new Command({
       return interaction.followUp({ embeds: [Exists] });
     }
     let tUser = interaction.client.users.cache.get(TicketData.user);
-    let transcriptChannel = await interaction.guild.channels.cache.find(
-      (channel) =>
-        channel.name == supportbot.TranscriptLog ||
-        channel.id == supportbot.TranscriptLog
+    let transcriptChannel = await getChannel(
+      supportbot.TranscriptLog,
+      interaction.guild
     );
-    let logChannel = await interaction.guild.channels.cache.find(
-      (channel) =>
-        channel.name == supportbot.TicketLog ||
-        channel.id == supportbot.TicketLog
-    );
+    let logChannel = await getChannel(supportbot.TicketLog, interaction.guild);
     let reason =
       (await interaction.options?.getString("reason")) || "No Reason Provided.";
 
@@ -135,11 +131,13 @@ module.exports = new Command({
         .catch(async (err) => {
           console.error(err);
         });
-      TicketData.subUsers.forEach(async (subUser) => {
-        interaction.client.users.cache
-          .get(subUser)
-          .send({ embeds: [transcriptEmbed], files: [file] });
-      });
+      if (TicketData.subUsers) {
+        TicketData.subUsers.forEach(async (subUser) => {
+          interaction.client.users.cache
+            .get(subUser)
+            .send({ embeds: [transcriptEmbed], files: [file] });
+        });
+      }
       await interaction.channel.delete().catch(async (error) => {
         console.error(error);
         if (error.code !== Discord.Constants.APIErrors.UNKNOWN_CHANNEL) {

@@ -15,6 +15,7 @@ const panelconfig = yaml.load(
 const Event = require("../Structures/Event.js");
 
 module.exports = new Event("ready", async (client) => {
+  const { getRole, getChannel, getCategory } = client;
   client.user.setActivity(supportbot.BotActivity, {
     type: supportbot.ActivityType,
     url: supportbot.StreamingURL,
@@ -92,20 +93,22 @@ module.exports = new Event("ready", async (client) => {
     supportbot.TranscriptLog,
     panelconfig.Channel,
   ];
-  const missingR = [];
-  const missingC = [];
+  const categories = [supportbot.TicketCategory];
 
+  const missingC = [];
+  const missingR = [];
+  const missingCat = [];
   for (let c of channels) {
-    const find = await client.channels.cache.find(
-      (channel) => channel.name === c || channel.id === c
-    );
+    const find = await getChannel(c, client.guilds.cache.first());
     if (!find) missingC.push(c);
   }
   for (let r of roles) {
-    const find = await client.guilds.cache
-      .first()
-      .roles.cache.find((role) => role.name === r || role.id === r);
+    const find = await getRole(r, client.guilds.cache.first());
     if (!find) missingR.push(r);
+  }
+  for (let cat of categories) {
+    const find = await getCategory(cat, client.guilds.cache.first());
+    if (!find) missingCat.push(cat);
   }
 
   if (missingR.length > 0) {
@@ -121,6 +124,14 @@ module.exports = new Event("ready", async (client) => {
     console.log(
       "\u001b[33m",
       `[WARN] The following Channels could not be found! Please check your configs!\n${missingC.join(
+        ", "
+      )}`
+    );
+  }
+  if (missingCat.length > 0) {
+    console.log(
+      "\u001b[33m",
+      `[WARN] The following Categories could not be found! Please check your configs!\n${missingCat.join(
         ", "
       )}`
     );
