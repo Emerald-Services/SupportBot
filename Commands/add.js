@@ -54,41 +54,51 @@ module.exports = new Command({
       .setColor(supportbot.WarningColour);
 
     if (
-      interaction.member.roles.cache.has(SupportStaff.id) ||
-      interaction.member.roles.cache.has(Admins.id)
-    ) {
-      if (!interaction.channel.name.startsWith(`${supportbot.TicketPrefix}`)) {
-        const Exists = new Discord.MessageEmbed()
-          .setTitle("No Ticket Found!")
-          .setDescription(`${supportbot.NoValidTicket}`)
-          .setColor(supportbot.WarningColour);
-        return interaction.reply({ embeds: [Exists] });
-      }
-
-      let uMember = interaction.options.getUser("user");
-      const UserNotExist = new Discord.MessageEmbed()
-        .setTitle("User Not Found!")
-        .setDescription(
-          `${supportbot.UserNotFound}\n\nTry Again:\`/${cmdconfig.TicketAdd} <user#0000>\``
-        )
-        .setColor(supportbot.ErrorColour);
-
-      if (!uMember) return interaction.reply({ embeds: [UserNotExist] });
-
-      interaction.channel.permissionOverwrites.edit(uMember, {
-        VIEW_CHANNEL: true,
-        READ_MESSAGE_HISTORY: true,
-        SEND_MESSAGES: true,
-      });
-
-      const Complete = new Discord.MessageEmbed()
-        .setTitle("User Added!")
-        .setDescription(supportbot.AddedUser.replace(/%user%/g, uMember.id))
-        .setTimestamp()
-        .setColor(supportbot.EmbedColour);
-      interaction.reply({ embeds: [Complete] });
-    } else {
+      !interaction.member.roles.cache.has(SupportStaff.id) ||
+      !interaction.member.roles.cache.has(Admins.id)
+    )
       return interaction.reply({ embeds: [NoPerms] });
+
+    let TicketData = await JSON.parse(
+      fs.readFileSync("./Data/TicketData.json", "utf8")
+    );
+    let ticket = await TicketData.tickets.findIndex(
+      (t) => t.id == interaction.channel.id
+    );
+    if (ticket == -1) {
+      const Exists = new Discord.MessageEmbed()
+        .setTitle("No Ticket Found!")
+        .setDescription(`${supportbot.NoValidTicket}`)
+        .setColor(supportbot.WarningColour);
+      return interaction.reply({ embeds: [Exists] });
     }
+
+    let uMember = interaction.options.getUser("user");
+    const UserNotExist = new Discord.MessageEmbed()
+      .setTitle("User Not Found!")
+      .setDescription(
+        `${supportbot.UserNotFound}\n\nTry Again:\`/${cmdconfig.TicketAdd} <user#0000>\``
+      )
+      .setColor(supportbot.ErrorColour);
+
+    if (!uMember) return interaction.reply({ embeds: [UserNotExist] });
+
+    interaction.channel.permissionOverwrites.edit(uMember.id, {
+      VIEW_CHANNEL: true,
+    });
+    const Complete = new Discord.MessageEmbed()
+      .setTitle("User Added!")
+      .setDescription(supportbot.AddedUser.replace(/%user%/g, uMember.id))
+      .setTimestamp()
+      .setColor(supportbot.EmbedColour);
+    interaction.reply({ embeds: [Complete] });
+    TicketData.tickets[ticket].subUsers.push(uMember.id);
+    fs.writeFileSync(
+      "./Data/TicketData.json",
+      JSON.stringify(TicketData, null, 4),
+      (err) => {
+        if (err) console.error(err);
+      }
+    );
   },
 });
