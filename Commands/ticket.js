@@ -246,9 +246,9 @@ module.exports = new Command({
           components: [row],
         });
 
-        const filter = (i) => i.user.id === interaction.user.id;
         let collector;
         try {
+          const filter = (i) => i.user.id === interaction.user.id;
           collector = await m.awaitMessageComponent({
             filter,
             max: 1,
@@ -256,7 +256,7 @@ module.exports = new Command({
             time: supportbot.Timeout * 60000,
           });
         } catch (e) {
-          if (e.code == "INTERACTION_COLLECTOR_ERROR")
+          if (e.code == "INTERACTION_COLLECTOR_ERROR") {
             try {
               TicketData = await JSON.parse(
                 fs.readFileSync("./Data/TicketData.json", "utf8")
@@ -276,7 +276,8 @@ module.exports = new Command({
                 "Your ticket has timed out. Please open a new one, and select a department."
               );
             } catch (e) {}
-          return await ticketChannel.delete();
+            return await ticketChannel.delete();
+          }
         }
         let role;
         let title;
