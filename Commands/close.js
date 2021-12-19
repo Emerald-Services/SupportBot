@@ -15,14 +15,14 @@ const Command = require("../Structures/Command.js");
 module.exports = new Command({
   name: cmdconfig.CloseTicket,
   description: cmdconfig.CloseTicketDesc,
-  slashCommandOptions: [
+  options: [
     {
       name: "reason",
       description: "Ticket Close Reason",
       type: "STRING",
     },
   ],
-  permission: "SEND_MESSAGES",
+  permissions: ["SEND_MESSAGES"],
 
   async run(interaction) {
     const { getRole, getChannel, getCategory } = interaction.client;

@@ -15,7 +15,7 @@ const Command = require("../Structures/Command.js");
 module.exports = new Command({
   name: cmdconfig.EmbedCommand,
   description: cmdconfig.EmbedCommandDesc,
-  slashCommandOptions: [
+  options: [
     {
       name: "title",
       description: "Embed Title",
@@ -28,7 +28,7 @@ module.exports = new Command({
       type: "STRING",
     },
   ],
-  permission: "SEND_MESSAGES",
+  permissions: ["SEND_MESSAGES"],
 
   async run(interaction) {
     const { getRole, getChannel, getCategory } = interaction.client;

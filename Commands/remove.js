@@ -21,7 +21,7 @@ async function asyncForEach(array, callback) {
 module.exports = new Command({
   name: cmdconfig.TicketRemove,
   description: cmdconfig.TicketRemoveDesc,
-  slashCommandOptions: [
+  options: [
     {
       name: "user",
       description: "User to remove",
@@ -29,7 +29,7 @@ module.exports = new Command({
       required: true,
     },
   ],
-  permission: "SEND_MESSAGES",
+  permissions: ["SEND_MESSAGES"],
 
   async run(interaction) {
     const { getRole, getChannel, getCategory } = interaction.client;

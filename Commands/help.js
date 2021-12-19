@@ -21,8 +21,8 @@ async function asyncForEach(array, callback) {
 module.exports = new Command({
   name: cmdconfig.HelpCommand,
   description: cmdconfig.HelpCommandDesc,
-  slashCommandOptions: [],
-  permission: "SEND_MESSAGES",
+  options: [],
+  permissions: ["SEND_MESSAGES"],
 
   async run(interaction) {
     const { getRole, getChannel, getCategory } = interaction.client;

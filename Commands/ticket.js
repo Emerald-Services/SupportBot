@@ -21,14 +21,14 @@ const TicketNumberID = require("../Structures/TicketID.js");
 module.exports = new Command({
   name: cmdconfig.OpenTicket,
   description: cmdconfig.OpenTicketDesc,
-  slashCommandOptions: [
+  options: [
     {
       name: "reason",
       description: "Ticket Reason",
       type: "STRING",
     },
   ],
-  permission: "SEND_MESSAGES",
+  permissions: ["SEND_MESSAGES"],
 
   async run(interaction) {
     const { getRole, getChannel, getCategory } = interaction.client;

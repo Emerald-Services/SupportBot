@@ -15,14 +15,14 @@ const Command = require("../Structures/Command.js");
 module.exports = new Command({
   name: cmdconfig.SuggestCommand,
   description: cmdconfig.SuggestCommandDesc,
-  slashCommandOptions: [
+  options: [
     {
       name: "suggestion",
       description: "Create a Suggestion",
       type: "STRING",
     },
   ],
-  permission: "SEND_MESSAGES",
+  permissions: ["SEND_MESSAGES"],
 
   async run(interaction) {
     const { getRole, getChannel, getCategory } = interaction.client;

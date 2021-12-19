@@ -15,7 +15,7 @@ const Command = require("../Structures/Command.js");
 module.exports = new Command({
   name: cmdconfig.TicketAdd,
   description: cmdconfig.TicketAddDesc,
-  slashCommandOptions: [
+  options: [
     {
       name: "user",
       description: "User to add",
@@ -23,7 +23,7 @@ module.exports = new Command({
       required: true,
     },
   ],
-  permission: "SEND_MESSAGES",
+  permissions: ["SEND_MESSAGES"],
 
   async run(interaction) {
     const { getRole, getChannel, getCategory } = interaction.client;
