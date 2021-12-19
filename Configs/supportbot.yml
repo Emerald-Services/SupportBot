@@ -179,6 +179,7 @@ DepartmentRole_3: "Admin"
 # --- Closing Config ---
 #    --- Start ---
 
+StaffOnly: true
 ClosingTicket: ":warning: You have requested to close your support ticket."
 ClosingConfirmation_Word: "confirm"
 CloseConfirmation: false

@@ -26,6 +26,26 @@ module.exports = new Command({
 
   async run(interaction) {
     const { getRole, getChannel, getCategory } = interaction.client;
+    if (supportbot.StaffOnly) {
+      let SupportStaff = await getRole(supportbot.Staff, interaction.guild);
+      let Admin = await getRole(supportbot.Admin, interaction.guild);
+      if (!SupportStaff || !Admin)
+        return interaction.reply(
+          "Some roles seem to be missing!\nPlease check for errors when starting the bot."
+        );
+      const NoPerms = new Discord.MessageEmbed()
+        .setTitle("Invalid Permissions!")
+        .setDescription(
+          `${supportbot.IncorrectPerms}\n\nRole Required: \`${supportbot.Staff}\` or \`${supportbot.Admin}\``
+        )
+        .setColor(supportbot.WarningColour);
+
+      if (
+        !interaction.member.roles.cache.has(SupportStaff.id) &&
+        !interaction.member.roles.cache.has(Admin.id)
+      )
+        return interaction.reply({ embeds: [NoPerms] });
+    }
     await interaction.deferReply();
     let TicketData = await JSON.parse(
       fs.readFileSync("./Data/TicketData.json", "utf8")
