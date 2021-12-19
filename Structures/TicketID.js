@@ -3,16 +3,6 @@
 
 const fs = require("fs");
 
-const Discord = require("discord.js");
-const Command = require("./Command.js");
-const Client = require("./Client.js");
-const Event = require("./Event.js");
-
-const yaml = require("js-yaml");
-const supportbot = yaml.load(
-  fs.readFileSync("./Configs/supportbot.yml", "utf8")
-);
-
 class TicketNumberID {
   static async pad() {
     let n = this.get() + "";
