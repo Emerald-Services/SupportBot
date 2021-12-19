@@ -137,8 +137,9 @@ module.exports = new Event("ready", async (client) => {
     );
   }
   if (panelconfig.TicketPanel) {
-    let chan1 = client.channels.cache.find(
-      (channel) => channel.name === panelconfig.Channel
+    let chan1 = await client.getChannel(
+      panelconfig.Channel,
+      client.guilds.cache.first()
     );
 
     if (!chan1) {
