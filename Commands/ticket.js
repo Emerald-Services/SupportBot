@@ -121,7 +121,6 @@ module.exports = new Command({
           {
             id: Author.id,
             allow: [Permissions.FLAGS.VIEW_CHANNEL],
-            deny: [Permissions.FLAGS.SEND_MESSAGES],
           },
           {
             id: interaction.guild.id,
@@ -133,6 +132,11 @@ module.exports = new Command({
     if (supportbot.AllowStaff) {
       ticketChannel.permissionOverwrites.edit(Staff.id, {
         VIEW_CHANNEL: true,
+      });
+    }
+    if (supportbot.TicketDepartments) {
+      ticketChannel.permissionOverwrites.edit(interaction.user.id, {
+        SEND_MESSAGES: false,
       });
     }
     await TicketData.tickets.push({
