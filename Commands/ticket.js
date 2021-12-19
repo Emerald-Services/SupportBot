@@ -31,11 +31,29 @@ module.exports = new Command({
   permissions: ["SEND_MESSAGES"],
 
   async run(interaction) {
+    let TicketData = await JSON.parse(
+      fs.readFileSync("./Data/TicketData.json", "utf8")
+    );
     const { getRole, getChannel, getCategory } = interaction.client;
-    let reactionUser = interaction.guild.members.cache.get(interaction.user.id);
+    let User = interaction.guild.members.cache.get(interaction.user.id);
 
     if (
-      reactionUser.roles.cache.has(
+      supportbot.MaxAllowedTickets &&
+      TicketData.tickets.filter((t) => t.user == interaction.user.id && t.open)
+        .length >= supportbot.MaxAllowedTickets
+    ) {
+      return interaction.reply({
+        embeds: [
+          {
+            title: "Too Many Tickets!",
+            description: `You can't have more than ${supportbot.MaxAllowedTickets} open tickets!`,
+            color: supportbot.WarningColour,
+          },
+        ],
+      });
+    }
+    if (
+      User.roles.cache.has(
         getRole(supportbot.TicketBlackListRole, interaction.guild).id
       )
     ) {
@@ -48,10 +66,6 @@ module.exports = new Command({
 
     // Ticket ID
     let ticketNumberID = await TicketNumberID.pad();
-
-    let TicketData = await JSON.parse(
-      fs.readFileSync("./Data/TicketData.json", "utf8")
-    );
 
     // Ticket Subject
     const TicketSubject =
@@ -127,6 +141,7 @@ module.exports = new Command({
       user: Author.id,
       number: ticketNumberID,
       reason: TicketSubject,
+      open: true,
       subUsers: [],
     });
     fs.writeFileSync(
@@ -232,12 +247,34 @@ module.exports = new Command({
         });
 
         const filter = (i) => i.user.id === interaction.user.id;
-        const collector = await m.awaitMessageComponent({
-          filter,
-          max: 1,
-          componentType: "BUTTON",
-          time: 60000,
-        });
+        let collector;
+        try {
+          collector = await m.awaitMessageComponent({
+            filter,
+            max: 1,
+            componentType: "BUTTON",
+            time: supportbot.Timeout * 60000,
+          });
+        } catch (e) {
+          if (e.code == "INTERACTION_COLLECTOR_ERROR")
+            try {
+              let ticket = await TicketData.tickets.findIndex(
+                (t) => t.id == ticketChannel.id
+              );
+              TicketData.tickets[ticket].open = false;
+              fs.writeFileSync(
+                "./Data/TicketData.json",
+                JSON.stringify(TicketData, null, 4),
+                (err) => {
+                  if (err) console.error(err);
+                }
+              );
+              interaction.user.send(
+                "Your ticket has timed out. Please open a new one, and select a department."
+              );
+            } catch (e) {}
+          return await ticketChannel.delete();
+        }
         let role;
         let title;
         if (collector.customId === "Department1") {

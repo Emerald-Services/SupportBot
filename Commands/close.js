@@ -47,9 +47,12 @@ module.exports = new Command({
         return interaction.reply({ embeds: [NoPerms] });
     }
     await interaction.deferReply();
-    let TicketData = await JSON.parse(
+    let tickets = await JSON.parse(
       fs.readFileSync("./Data/TicketData.json", "utf8")
     ).tickets.find((t) => t.id === interaction.channel.id);
+    let TicketData = await tickets.tickets.findIndex(
+      (t) => t.id == ticketChannel.id
+    );
     if (!TicketData) {
       const Exists = new Discord.MessageEmbed()
         .setTitle("No Ticket Found!")
@@ -87,6 +90,14 @@ module.exports = new Command({
       });
     }
     try {
+      tickets.tickets[TicketData].open = false;
+      fs.writeFileSync(
+        "./Data/TicketData.json",
+        JSON.stringify(tickets, null, 4),
+        (err) => {
+          if (err) console.error(err);
+        }
+      );
       await interaction.followUp(`**${supportbot.ClosingTicket}**`);
       const transcriptEmbed = new Discord.MessageEmbed()
         .setTitle(supportbot.TranscriptTitle)
