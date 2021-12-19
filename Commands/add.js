@@ -12,16 +12,10 @@ const cmdconfig = yaml.load(fs.readFileSync("./Configs/commands.yml", "utf8"));
 
 const Command = require("../Structures/Command.js");
 
-async function asyncForEach(array, callback) {
-  for (let index = 0; index < array.length; index++) {
-    await callback(array[index], index, array);
-  }
-}
-
 module.exports = new Command({
   name: cmdconfig.TicketAdd,
   description: cmdconfig.TicketAddDesc,
-  slashCommandOptions: [
+  options: [
     {
       name: "user",
       description: "User to add",
@@ -29,22 +23,15 @@ module.exports = new Command({
       required: true,
     },
   ],
-  permission: "SEND_MESSAGES",
+  permissions: ["SEND_MESSAGES"],
 
   async run(interaction) {
-    let SupportStaff =
-      interaction.guild.roles.cache.find(
-        (SupportTeam) => SupportTeam.name === supportbot.Staff
-      ) ||
-      interaction.guild.roles.cache.find(
-        (SupportTeam) => SupportTeam.id === supportbot.Staff
-      );
-    let Admins =
-      interaction.guild.roles.cache.find(
-        (AdminUser) => AdminUser.name === supportbot.Admin
-      ) ||
-      interaction.guild.roles.cache.find(
-        (AdminUser) => AdminUser.id === supportbot.Admin
+    const { getRole, getChannel, getCategory } = interaction.client;
+    let SupportStaff = await getRole(supportbot.Staff, interaction.guild);
+    let Admin = await getRole(supportbot.Admin, interaction.guild);
+    if (!SupportStaff || !Admin)
+      return interaction.reply(
+        "Some roles seem to be missing!\nPlease check for errors when starting the bot."
       );
 
     const NoPerms = new Discord.MessageEmbed()
@@ -55,41 +42,51 @@ module.exports = new Command({
       .setColor(supportbot.WarningColour);
 
     if (
-      interaction.member.roles.cache.has(SupportStaff.id) ||
-      interaction.member.roles.cache.has(Admins.id)
-    ) {
-      if (!interaction.channel.name.startsWith(`${supportbot.TicketPrefix}`)) {
-        const Exists = new Discord.MessageEmbed()
-          .setTitle("No Ticket Found!")
-          .setDescription(`${supportbot.NoValidTicket}`)
-          .setColor(supportbot.WarningColour);
-        return interaction.reply({ embeds: [Exists] });
-      }
-
-      let uMember = interaction.options.getUser("user");
-      const UserNotExist = new Discord.MessageEmbed()
-        .setTitle("User Not Found!")
-        .setDescription(
-          `${supportbot.UserNotFound}\n\nTry Again:\`/${cmdconfig.TicketAdd} <user#0000>\``
-        )
-        .setColor(supportbot.ErrorColour);
-
-      if (!uMember) return interaction.reply({ embeds: [UserNotExist] });
-
-      interaction.channel.permissionOverwrites.edit(uMember, {
-        VIEW_CHANNEL: true,
-        READ_MESSAGE_HISTORY: true,
-        SEND_MESSAGES: true,
-      });
-
-      const Complete = new Discord.MessageEmbed()
-        .setTitle("User Added!")
-        .setDescription(supportbot.AddedUser.replace(/%user%/g, uMember.id))
-        .setTimestamp()
-        .setColor(supportbot.EmbedColour);
-      interaction.reply({ embeds: [Complete] });
-    } else {
+      !interaction.member.roles.cache.has(SupportStaff.id) &&
+      !interaction.member.roles.cache.has(Admin.id)
+    )
       return interaction.reply({ embeds: [NoPerms] });
+
+    let TicketData = await JSON.parse(
+      fs.readFileSync("./Data/TicketData.json", "utf8")
+    );
+    let ticket = await TicketData.tickets.findIndex(
+      (t) => t.id == interaction.channel.id
+    );
+    if (ticket == -1) {
+      const Exists = new Discord.MessageEmbed()
+        .setTitle("No Ticket Found!")
+        .setDescription(`${supportbot.NoValidTicket}`)
+        .setColor(supportbot.WarningColour);
+      return interaction.reply({ embeds: [Exists] });
     }
+
+    let uMember = interaction.options.getUser("user");
+    const UserNotExist = new Discord.MessageEmbed()
+      .setTitle("User Not Found!")
+      .setDescription(
+        `${supportbot.UserNotFound}\n\nTry Again:\`/${cmdconfig.TicketAdd} <user#0000>\``
+      )
+      .setColor(supportbot.ErrorColour);
+
+    if (!uMember) return interaction.reply({ embeds: [UserNotExist] });
+
+    interaction.channel.permissionOverwrites.edit(uMember.id, {
+      VIEW_CHANNEL: true,
+    });
+    const Complete = new Discord.MessageEmbed()
+      .setTitle("User Added!")
+      .setDescription(supportbot.AddedUser.replace(/%user%/g, uMember.id))
+      .setTimestamp()
+      .setColor(supportbot.EmbedColour);
+    interaction.reply({ embeds: [Complete] });
+    TicketData.tickets[ticket].subUsers.push(uMember.id);
+    fs.writeFileSync(
+      "./Data/TicketData.json",
+      JSON.stringify(TicketData, null, 4),
+      (err) => {
+        if (err) console.error(err);
+      }
+    );
   },
 });

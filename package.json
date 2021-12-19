@@ -1,10 +1,11 @@
 {
   "name": "supportbot",
-  "version": "7.3.0",
+  "version": "7.4.0",
   "description": "SupportBot is an open-sourced support system for discord. It's completely free to use with high amounts of customization to match your own brand.",
   "main": "index.js",
   "scripts": {
-    "start": "npm i && node index.js"
+    "start": "npm i && node index.js",
+    "test": "node index.js test"
   },
   "repository": {
     "type": "git",
@@ -17,7 +18,7 @@
   },
   "homepage": "https://github.com/Emerald-Services/SupportBot#readme",
   "dependencies": {
-    "discord.js": "^13.2.0",
+    "discord.js": "^13.3.1",
     "js-yaml": "^4.1.0"
   }
 }

@@ -1,9 +1,5 @@
 // SupportBot | Emerald Services
-// Command Structure
-
-const fs = require("fs");
-
-const yaml = require("js-yaml");
+// Addon Structure
 
 class Command {
   constructor(options) {
@@ -15,5 +11,11 @@ class Command {
     this.defaultPermission = true;
   }
 }
+class Event {
+  constructor(event, run) {
+    this.event = event;
+    this.run = run;
+  }
+}
 
-module.exports = Command;
+module.exports = { Command, Event };

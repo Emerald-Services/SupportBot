@@ -10,15 +10,16 @@
 #           Discord Support: https://emeraldsrv.dev/discord
 #           Community Resources: https://emeraldsrv.dev/resources
 
-SupportBot_Version: "7.3.1"
+SupportBot_Version: "7.4.0"
 
 # -------------------------
 #   General Configuration
 # -------------------------
 
 Name: "SupportBot"
-# No Prefix, as everything uses the new Slash (/) Commands feature!
 Token: "BOT_TOKEN"
+# Guild ID Ex: 123456789123456789
+Guild: ""
 
 # -------------------------
 #  Activity Configuration
@@ -58,7 +59,6 @@ InfoColour: "#f74343"
 #  Help Configuration
 # -------------------------
 
-HelpMenu: true # Do not change!
 SendHelpPage: "channel" # Set to channel or dm
 
 # -------------------------
@@ -67,7 +67,6 @@ SendHelpPage: "channel" # Set to channel or dm
 
 AutoRole: true
 AutoRole_Role: "Member"
-LockdownRole: "@everyone"
 
 Staff: "Staff"
 Admin: "Admin"
@@ -92,8 +91,10 @@ TicketLog: "logs"
 TranscriptLog: "transcripts"
 
 TranscriptTitle: "Ticket Transcript"
-TicketLog_Title: "Ticket Log"
+TicketLog_Title: "Ticket Closed"
 TicketBlackListMessage: "You are not allowed to open a ticket"
+
+MaxAllowedTickets: 2
 
 TicketSubject: "description"
 # "description" will displays the ticket reason within the channel description
@@ -127,13 +128,11 @@ RemovedUser: "👍 <@%user%> has been removed from this ticket"
 #      --- Start ---
 
 # Discord Button Colour Selection
-# PRIMARY - Blurple
+# PRIMARY - Blue
+# SECONDARY - Grey
 # DANGER - Red
 # SUCCESS - Green
-# Secondary - Grey
 
-TicketLockReaction: "🔒"
-TicketDeleteReaction: "⛔"
 LockTicketCategory: "Archive"
 
 TicketCloseEmoji: "❌"
@@ -155,13 +154,13 @@ TicketDept3Emoji: "3️⃣"
 TranscriptSavedMessage: "📝 **Transcript Saved!**"
 TicketLockMessage: "❌ **Ticket Locked!**"
 TicketDeleteMessage: "⚠ **Ticket Deleting!**" # Tickets deleting after 5 seconds by default.
-TicketDeleteTime: 5000 # Time must be set in milliseconds.
 
 # --- Departments Config ---
 #     --- Start ---
 
 TicketDepartments: true
-
+# Delete the ticket if no department selected. TIME IN MINUTES
+Timeout: 5
 AllowStaff: true
 # If set to false users with the "Staff" role will not be able to view tickets
 # without a valid department role set below.
@@ -181,6 +180,7 @@ DepartmentRole_3: "Admin"
 # --- Closing Config ---
 #    --- Start ---
 
+StaffOnly: true
 ClosingTicket: ":warning: You have requested to close your support ticket."
 ClosingConfirmation_Word: "confirm"
 CloseConfirmation: false

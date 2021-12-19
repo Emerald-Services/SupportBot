@@ -15,8 +15,8 @@ const Command = require("../Structures/Command.js");
 module.exports = new Command({
   name: cmdconfig.PingCommand,
   description: cmdconfig.PingCommandDesc,
-  slashCommandOptions: [],
-  permission: "SEND_MESSAGES",
+  options: [],
+  permissions: ["SEND_MESSAGES"],
 
   async run(interaction) {
     const PingEmbed = new Discord.MessageEmbed()

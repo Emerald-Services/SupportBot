@@ -14,7 +14,8 @@ const panelconfig = yaml.load(
 
 const Event = require("../Structures/Event.js");
 
-module.exports = new Event("ready", (client) => {
+module.exports = new Event("ready", async (client) => {
+  const { getRole, getChannel, getCategory } = client;
   client.user.setActivity(supportbot.BotActivity, {
     type: supportbot.ActivityType,
     url: supportbot.StreamingURL,
@@ -65,7 +66,76 @@ module.exports = new Event("ready", (client) => {
   console.log(`\u001b[37m`, `SupportBot proudly created by Emerald Services`);
   console.log(`    `);
   console.log(`\u001b[31m`, `――――――――――――――――――――――――――――――――――――――――――――`);
+  if (
+    !supportbot.Guild ||
+    (await client.guilds.cache.size) !== 1 ||
+    (await client.guilds.cache.first().id) !== supportbot.Guild
+  ) {
+    console.log(
+      `\u001b[31m`,
+      `${client.user.username} is not in the correct server set in your config. Please join the server and restart the bot.`
+    );
+    console.log(`\u001b[31m`, `${client.user.username} will now exit.`);
+    return process.exit(1);
+  }
+  const roles = [
+    supportbot.Admin,
+    supportbot.Staff,
+    supportbot.TicketBlackListRole,
+    supportbot.DepartmentRole_1,
+    supportbot.DepartmentRole_2,
+    supportbot.DepartmentRole_3,
+  ];
+  if (supportbot.AutoRole) roles.push(supportbot.AutoRole_Role);
+  const channels = [
+    supportbot.SuggestionChannel,
+    supportbot.TicketLog,
+    supportbot.TranscriptLog,
+    panelconfig.Channel,
+  ];
+  const categories = [supportbot.TicketCategory];
 
+  const missingC = [];
+  const missingR = [];
+  const missingCat = [];
+  for (let c of channels) {
+    const find = await getChannel(c, client.guilds.cache.first());
+    if (!find) missingC.push(c);
+  }
+  for (let r of roles) {
+    const find = await getRole(r, client.guilds.cache.first());
+    if (!find) missingR.push(r);
+  }
+  for (let cat of categories) {
+    const find = await getCategory(cat, client.guilds.cache.first());
+    if (!find) missingCat.push(cat);
+  }
+
+  if (missingR.length > 0) {
+    console.log(
+      "\u001b[33m",
+      `[WARN] The following Roles could not be found! Please check your configs!\n${missingR.join(
+        ", "
+      )}`
+    );
+  }
+
+  if (missingC.length > 0) {
+    console.log(
+      "\u001b[33m",
+      `[WARN] The following Channels could not be found! Please check your configs!\n${missingC.join(
+        ", "
+      )}`
+    );
+  }
+  if (missingCat.length > 0) {
+    console.log(
+      "\u001b[33m",
+      `[WARN] The following Categories could not be found! Please check your configs!\n${missingCat.join(
+        ", "
+      )}`
+    );
+  }
   if (panelconfig.TicketPanel) {
     let chan1 = client.channels.cache.find(
       (channel) => channel.name === panelconfig.Channel
@@ -104,7 +174,8 @@ module.exports = new Event("ready", (client) => {
       let button = new Discord.MessageButton()
         .setLabel(panelconfig.ButtonLabel)
         .setCustomId("openticket")
-        .setStyle(panelconfig.ButtonColour);
+        .setStyle(panelconfig.ButtonColour)
+        .setEmoji(panelconfig.ButtonEmoji);
 
       let row = new Discord.MessageActionRow().addComponents(button);
 

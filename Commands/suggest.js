@@ -15,23 +15,21 @@ const Command = require("../Structures/Command.js");
 module.exports = new Command({
   name: cmdconfig.SuggestCommand,
   description: cmdconfig.SuggestCommandDesc,
-  slashCommandOptions: [
+  options: [
     {
       name: "suggestion",
       description: "Create a Suggestion",
       type: "STRING",
     },
   ],
-  permission: "SEND_MESSAGES",
+  permissions: ["SEND_MESSAGES"],
 
   async run(interaction) {
-    const suggestChannel =
-      interaction.guild.channels.cache.find(
-        (channel) => channel.name === supportbot.SuggestionChannel
-      ) ||
-      interaction.guild.channels.cache.find(
-        (channel) => channel.id === supportbot.SuggestionChannel
-      );
+    const { getRole, getChannel, getCategory } = interaction.client;
+    const suggestChannel = await getChannel(
+      supportbot.SuggestionChannel,
+      interaction.guild
+    );
 
     const NoChannel = new Discord.MessageEmbed()
       .setTitle("Missing Channel!")

@@ -4,8 +4,6 @@
 const fs = require("fs");
 
 const Discord = require("discord.js");
-const Command = require("./Command.js");
-const Event = require("./Event.js");
 const intents = new Discord.Intents(32767);
 
 const yaml = require("js-yaml");
@@ -19,6 +17,25 @@ class Client extends Discord.Client {
 
     this.commands = new Discord.Collection();
   }
+  async getChannel(channel, guild) {
+    return guild.channels.cache.find(
+      (c) =>
+        (c.type === "GUILD_TEXT" || c.type === "GUILD_NEWS") &&
+        (c.id === channel || c.name.toLowerCase() === channel.toLowerCase())
+    );
+  }
+  async getRole(role, guild) {
+    return guild.roles.cache.find(
+      (r) => r.id === role || r.name.toLowerCase() === role.toLowerCase()
+    );
+  }
+  async getCategory(category, guild) {
+    return guild.channels.cache.find(
+      (c) =>
+        c.type === "GUILD_CATEGORY" &&
+        (c.id === category || c.name.toLowerCase() === category.toLowerCase())
+    );
+  }
 
   start(token) {
     const commandFiles = fs
@@ -29,16 +46,26 @@ class Client extends Discord.Client {
       .readdirSync("./Addons")
       .filter((file) => file.endsWith(".js"));
 
-    const addons = addonFiles.map((file) => require(`../Addons/${file}`));
+    const addons = addonFiles.map((file) => {
+      let addon = require(`../Addons/${file}`);
+      addon.name = file.split(".")[0];
+      return addon;
+    });
 
     const commands = commandFiles.map((file) => require(`../Commands/${file}`));
 
+    // Commands
     console.log(`\u001b[34;1m`, "▬▬▬▬▬▬▬ Commands ▬▬▬▬▬▬▬");
 
     commands.forEach((cmd) => {
       console.log(`\u001b[31;1m`, `${cmd.name}`, `\u001b[32;1m`, "Loaded");
       this.commands.set(cmd.name, cmd);
     });
+
+    console.log(`\u001b[34;1m`, "▬▬▬▬▬▬▬ Commands ▬▬▬▬▬▬▬");
+    // Addons
+    console.log("   ");
+    console.log(`\u001b[34;1m`, "▬▬▬▬▬▬▬ Addons ▬▬▬▬▬▬▬");
 
     addons.forEach((addon) => {
       console.log(
@@ -49,57 +76,23 @@ class Client extends Discord.Client {
         `\u001b[32;1m`,
         "Loaded"
       );
-      this.commands.set(addon.name, addon);
+      addon.commands.forEach((command) => {
+        this.commands.set(command.name, command);
+      });
+      addon.events.forEach((event) => {
+        this.on(event.event, (...args) => event.run(this, ...args));
+      });
     });
 
-    console.log(`\u001b[34;1m`, "▬▬▬▬▬▬▬ Commands ▬▬▬▬▬▬▬");
+    console.log(`\u001b[34;1m`, "▬▬▬▬▬▬▬ Addons ▬▬▬▬▬▬▬");
 
     // Slash Commands
 
-    const slashCommands = commands.map((cmd) => ({
-      name: cmd.name.toLowerCase(),
-      description: cmd.description,
-      permissions: [],
-      options: cmd.slashCommandOptions,
-      defaultPermission: true,
-    }));
-
-    const slashCommands1 = addons.map((addon) => ({
-      name: addon.name.toLowerCase(),
-      description: addon.description,
-      permissions: [],
-      options: addon.slashCommandOptions,
-      defaultPermission: true,
-    }));
-
-    this.removeAllListeners();
-
-    this.on("ready", async () => {
-      const allCommands = slashCommands.concat(slashCommands1);
-      await this.application?.commands.set(allCommands);
-
-      console.log("   ");
-      console.log(`\u001b[34;1m`, "▬▬▬▬▬▬▬ Slash Command ▬▬▬▬▬▬▬"),
-        console.log("   ");
-
-      slashCommands.forEach((cmd) =>
-        console.log(
-          `\u001b[31;1m`,
-          `${cmd.name}`,
-          `\u001b[32;1m`,
-          `| Slash Command Registered`
-        )
-      );
-
-      slashCommands1.forEach((addon) =>
-        console.log(
-          `\u001b[33m`,
-          `[ADDON]`,
-          `\u001b[31;1m`,
-          `${addon.name}`,
-          `\u001b[32;1m`,
-          `| Slash Command Registered`
-        )
+    this.once("ready", async () => {
+      await this.application?.commands.set(this.commands, supportbot.Guild);
+      console.log(
+        `\u001b[32;1m`,
+        `Slash Commands Registered for ${this.guilds.cache.first().name}`
       );
     });
 
@@ -111,14 +104,18 @@ class Client extends Discord.Client {
       .forEach((file) => {
         const event = require(`../Events/${file}`);
         console.log(`\u001b[31;1m`, `${event.event}`, `\u001b[32;1m`, "Loaded");
-
-        this.on(event.event, event.run.bind(null, this));
+        this.on(event.event, (...args) => event.run(this, ...args));
       });
 
     console.log(`\u001b[34;1m`, "▬▬▬▬▬▬▬ Events ▬▬▬▬▬▬▬");
-    console.log("   ");
-
-    this.login(token);
+    if (process.argv[2] != "test") {
+      this.login(token);
+    } else {
+      console.log(
+        `\u001b[31;1m`,
+        "RUNNING IN TEST MODE, IF NOT INTENDED, PLEASE USE npm start"
+      );
+    }
   }
 }
 

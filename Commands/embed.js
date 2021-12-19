@@ -15,7 +15,7 @@ const Command = require("../Structures/Command.js");
 module.exports = new Command({
   name: cmdconfig.EmbedCommand,
   description: cmdconfig.EmbedCommandDesc,
-  slashCommandOptions: [
+  options: [
     {
       name: "title",
       description: "Embed Title",
@@ -28,24 +28,17 @@ module.exports = new Command({
       type: "STRING",
     },
   ],
-  permission: "SEND_MESSAGES",
+  permissions: ["SEND_MESSAGES"],
 
   async run(interaction) {
-    let SupportStaff =
-      interaction.guild.roles.cache.find(
-        (SupportTeam) => SupportTeam.name === supportbot.Staff
-      ) ||
-      interaction.guild.roles.cache.find(
-        (SupportTeam) => SupportTeam.id === supportbot.Staff
-      );
-    let Admins =
-      interaction.guild.roles.cache.find(
-        (AdminUser) => AdminUser.name === supportbot.Admin
-      ) ||
-      interaction.guild.roles.cache.find(
-        (AdminUser) => AdminUser.id === supportbot.Admin
-      );
+    const { getRole, getChannel, getCategory } = interaction.client;
+    let SupportStaff = await getRole(supportbot.Staff, interaction.guild);
+    let Admin = await getRole(supportbot.Admin, interaction.guild);
 
+    if (!SupportStaff || !Admin)
+      return interaction.reply(
+        "Some roles seem to be missing!\nPlease check for errors when starting the bot."
+      );
     const NoPerms = new Discord.MessageEmbed()
       .setTitle("Invalid Permissions!")
       .setDescription(
@@ -55,7 +48,7 @@ module.exports = new Command({
 
     if (
       interaction.member.roles.cache.has(SupportStaff.id) ||
-      interaction.member.roles.cache.has(Admins.id)
+      interaction.member.roles.cache.has(Admin.id)
     ) {
       const EmbedTitle = interaction.options.getString("title");
       const EmbedSubject = interaction.options.getString("message");
