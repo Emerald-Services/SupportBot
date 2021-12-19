@@ -48,7 +48,7 @@ module.exports = new Command({
       .setColor(supportbot.WarningColour);
 
     if (
-      !interaction.member.roles.cache.has(Staff.id) ||
+      !interaction.member.roles.cache.has(Staff.id) &&
       !interaction.member.roles.cache.has(Admin.id)
     )
       return interaction.reply({ embeds: [NoPerms] });
