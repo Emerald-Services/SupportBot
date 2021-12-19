@@ -50,6 +50,7 @@ module.exports = new Command({
             color: supportbot.WarningColour,
           },
         ],
+        ephemeral: true,
       });
     }
     if (
@@ -57,11 +58,10 @@ module.exports = new Command({
         getRole(supportbot.TicketBlackListRole, interaction.guild).id
       )
     ) {
-      return interaction
-        .reply(supportbot.TicketBlackListMessage)
-        .then((msg) => {
-          setTimeout(() => msg.delete(), 3500);
-        });
+      return interaction.reply({
+        content: supportbot.TicketBlackListMessage,
+        ephemeral: true,
+      });
     }
 
     // Ticket ID
