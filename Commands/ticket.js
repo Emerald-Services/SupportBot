@@ -246,9 +246,9 @@ module.exports = new Command({
           components: [row],
         });
 
-        const filter = (i) => i.user.id === interaction.user.id;
         let collector;
         try {
+          const filter = (i) => i.user.id === interaction.user.id;
           collector = await m.awaitMessageComponent({
             filter,
             max: 1,
