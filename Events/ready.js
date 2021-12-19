@@ -186,6 +186,7 @@ module.exports = new Event("ready", async (client) => {
         })
         .then((r) => {
           let data = {
+            id: panelid.id,
             TicketPanelID: `${r.id}`,
           };
           fs.writeFileSync(
