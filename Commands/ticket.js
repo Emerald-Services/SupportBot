@@ -258,6 +258,9 @@ module.exports = new Command({
         } catch (e) {
           if (e.code == "INTERACTION_COLLECTOR_ERROR")
             try {
+              TicketData = await JSON.parse(
+                fs.readFileSync("./Data/TicketData.json", "utf8")
+              );
               let ticket = await TicketData.tickets.findIndex(
                 (t) => t.id == ticketChannel.id
               );

@@ -49,18 +49,19 @@ module.exports = new Command({
     await interaction.deferReply();
     let tickets = await JSON.parse(
       fs.readFileSync("./Data/TicketData.json", "utf8")
-    ).tickets.find((t) => t.id === interaction.channel.id);
-    let TicketData = await tickets.tickets.findIndex(
-      (t) => t.id == ticketChannel.id
     );
-    if (!TicketData) {
+    let TicketData = await tickets.tickets.findIndex(
+      (t) => t.id == interaction.channel.id
+    );
+    let ticket = tickets.tickets[TicketData];
+    if (TicketData == -1) {
       const Exists = new Discord.MessageEmbed()
         .setTitle("No Ticket Found!")
         .setDescription(`${supportbot.NoValidTicket}`)
         .setColor(supportbot.WarningColour);
       return interaction.followUp({ embeds: [Exists] });
     }
-    let tUser = interaction.client.users.cache.get(TicketData.user);
+    let tUser = interaction.client.users.cache.get(ticket.user);
     let transcriptChannel = await getChannel(
       supportbot.TranscriptLog,
       interaction.guild
@@ -107,10 +108,7 @@ module.exports = new Command({
           "Ticket",
           `${interaction.channel.name} (${interaction.channel.id})`
         )
-        .addField(
-          "User",
-          `${tUser.username}#${tUser.discriminator} (${tUser.id})`
-        )
+        .addField("User", `${tUser}#${tUser.discriminator} (${tUser.id})`)
         .addField("Closed By", interaction.user.tag)
         .addField("Reason", reason);
       const logEmbed = new Discord.MessageEmbed()
@@ -162,8 +160,8 @@ module.exports = new Command({
         .catch(async (err) => {
           console.error(err);
         });
-      if (TicketData.subUsers) {
-        TicketData.subUsers.forEach(async (subUser) => {
+      if (ticket.subUsers) {
+        ticket.subUsers.forEach(async (subUser) => {
           interaction.client.users.cache
             .get(subUser)
             .send({ embeds: [transcriptEmbed], files: [file] });
