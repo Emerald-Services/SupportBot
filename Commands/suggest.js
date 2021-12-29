@@ -20,6 +20,7 @@ module.exports = new Command({
       name: "suggestion",
       description: "Create a Suggestion",
       type: "STRING",
+      required: true,
     },
   ],
   permissions: ["SEND_MESSAGES"],
