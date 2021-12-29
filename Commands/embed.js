@@ -20,12 +20,14 @@ module.exports = new Command({
       name: "title",
       description: "Embed Title",
       type: "STRING",
+      required: true,
     },
 
     {
       name: "message",
       description: "Embed Message",
       type: "STRING",
+      required: true,
     },
   ],
   permissions: ["SEND_MESSAGES"],
