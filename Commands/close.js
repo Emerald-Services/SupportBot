@@ -125,7 +125,7 @@ module.exports = new Command({
         )
         .addField("Closed By", interaction.user.tag)
         .addField("Reason", reason);
-      let msgs = await interaction.channel.messages.fetch();
+      let msgs = await interaction.channel.messages.fetch({ limit: 100 });
       let html = "";
 
       msgs = msgs.sort((a, b) => a.createdTimestamp - b.createdTimestamp);
