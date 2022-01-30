@@ -25,7 +25,7 @@ module.exports = new Command({
   permissions: ["SEND_MESSAGES"],
 
   async run(interaction) {
-    const { getRole, getChannel} = interaction.client;
+    const { getRole, getChannel } = interaction.client;
     if (supportbot.StaffOnly) {
       let SupportStaff = await getRole(supportbot.Staff, interaction.guild);
       let Admin = await getRole(supportbot.Admin, interaction.guild);
@@ -163,8 +163,8 @@ module.exports = new Command({
       if (ticket.subUsers) {
         ticket.subUsers.forEach(async (subUser) => {
           await interaction.client.users.cache
-              .get(subUser)
-              .send({embeds: [transcriptEmbed], files: [file]});
+            .get(subUser)
+            .send({ embeds: [transcriptEmbed], files: [file] });
         });
       }
       await interaction.channel.delete().catch(async (error) => {

@@ -26,7 +26,7 @@ module.exports = new Command({
   permissions: ["SEND_MESSAGES"],
 
   async run(interaction) {
-    const { getChannel} = interaction.client;
+    const { getChannel } = interaction.client;
     const suggestChannel = await getChannel(
       supportbot.SuggestionChannel,
       interaction.guild

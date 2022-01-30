@@ -26,7 +26,7 @@ module.exports = new Command({
   permissions: ["SEND_MESSAGES"],
 
   async run(interaction) {
-    const { getRole} = interaction.client;
+    const { getRole } = interaction.client;
     let Staff = await getRole(supportbot.Staff, interaction.guild);
     let Admin = await getRole(supportbot.Admin, interaction.guild);
     if (!Staff || !Admin)
@@ -71,7 +71,7 @@ module.exports = new Command({
     if (!uMember) return interaction.reply({ embeds: [UserNotExist] });
 
     await interaction.channel.permissionOverwrites.edit(uMember.id, {
-        VIEW_CHANNEL: false,
+      VIEW_CHANNEL: false,
     });
 
     const Complete = new Discord.MessageEmbed()

@@ -1,10 +1,6 @@
 // SupportBot | Emerald Services
 // Command Structure
 
-const fs = require("fs");
-
-const yaml = require("js-yaml");
-
 class Command {
   constructor(options) {
     this.name = options.name;
@@ -15,5 +11,4 @@ class Command {
     this.defaultPermission = true;
   }
 }
-
 module.exports = Command;
