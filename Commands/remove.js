@@ -12,12 +12,6 @@ const cmdconfig = yaml.load(fs.readFileSync("./Configs/commands.yml", "utf8"));
 
 const Command = require("../Structures/Command.js");
 
-async function asyncForEach(array, callback) {
-  for (let index = 0; index < array.length; index++) {
-    await callback(array[index], index, array);
-  }
-}
-
 module.exports = new Command({
   name: cmdconfig.TicketRemove,
   description: cmdconfig.TicketRemoveDesc,
@@ -32,7 +26,7 @@ module.exports = new Command({
   permissions: ["SEND_MESSAGES"],
 
   async run(interaction) {
-    const { getRole, getChannel, getCategory } = interaction.client;
+    const { getRole} = interaction.client;
     let Staff = await getRole(supportbot.Staff, interaction.guild);
     let Admin = await getRole(supportbot.Admin, interaction.guild);
     if (!Staff || !Admin)
@@ -56,9 +50,9 @@ module.exports = new Command({
       fs.readFileSync("./Data/TicketData.json", "utf8")
     );
     let ticket = await TicketData.tickets.findIndex(
-      (t) => t.id == interaction.channel.id
+      (t) => t.id === interaction.channel.id
     );
-    if (ticket == -1) {
+    if (ticket === -1) {
       const Exists = new Discord.MessageEmbed()
         .setTitle("No Ticket Found!")
         .setDescription(`${supportbot.NoValidTicket}`)
@@ -76,8 +70,8 @@ module.exports = new Command({
 
     if (!uMember) return interaction.reply({ embeds: [UserNotExist] });
 
-    interaction.channel.permissionOverwrites.edit(uMember.id, {
-      VIEW_CHANNEL: false,
+    await interaction.channel.permissionOverwrites.edit(uMember.id, {
+        VIEW_CHANNEL: false,
     });
 
     const Complete = new Discord.MessageEmbed()
@@ -88,7 +82,7 @@ module.exports = new Command({
     interaction.reply({ embeds: [Complete] });
     TicketData.tickets[ticket].subUsers = TicketData.tickets[
       ticket
-    ].subUsers.filter((u) => u != uMember.id);
+    ].subUsers.filter((u) => u !== uMember.id);
     fs.writeFileSync(
       "./Data/TicketData.json",
       JSON.stringify(TicketData, null, 4),

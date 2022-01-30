@@ -25,7 +25,7 @@ ButtonEmoji: "📩"
 ButtonLabel: "Open Ticket"
 ButtonColour: "SUCCESS"
 # Colour Options:
-#   -> PRIMARY - Blurple
+#   -> PRIMARY - Purple
 #   -> SECONDARY - Grey
 #   -> SUCCESS - Green
 #   -> DANGER - Red

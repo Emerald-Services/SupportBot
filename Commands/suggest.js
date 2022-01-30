@@ -26,7 +26,7 @@ module.exports = new Command({
   permissions: ["SEND_MESSAGES"],
 
   async run(interaction) {
-    const { getRole, getChannel, getCategory } = interaction.client;
+    const { getChannel} = interaction.client;
     const suggestChannel = await getChannel(
       supportbot.SuggestionChannel,
       interaction.guild
@@ -50,8 +50,8 @@ module.exports = new Command({
 
     const suggestionMsg = await suggestChannel.send({ embeds: [SuggestEmbed] });
     if (supportbot.SuggestionUpvote && supportbot.SuggestionDownvote) {
-      suggestionMsg.react(supportbot.SuggestionUpvote);
-      suggestionMsg.react(supportbot.SuggestionDownvote);
+      await suggestionMsg.react(supportbot.SuggestionUpvote);
+      await suggestionMsg.react(supportbot.SuggestionDownvote);
     }
 
     const Submitted = new Discord.MessageEmbed()

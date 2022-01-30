@@ -33,7 +33,7 @@ module.exports = new Command({
   permissions: ["SEND_MESSAGES"],
 
   async run(interaction) {
-    const { getRole, getChannel, getCategory } = interaction.client;
+    const { getRole} = interaction.client;
     let SupportStaff = await getRole(supportbot.Staff, interaction.guild);
     let Admin = await getRole(supportbot.Admin, interaction.guild);
 
