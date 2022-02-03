@@ -25,7 +25,7 @@ module.exports = new Command({
   permissions: ["SEND_MESSAGES"],
 
   async run(interaction) {
-    const { getRole, getChannel, getCategory } = interaction.client;
+    const { getRole, getChannel } = interaction.client;
     if (supportbot.StaffOnly) {
       let SupportStaff = await getRole(supportbot.Staff, interaction.guild);
       let Admin = await getRole(supportbot.Admin, interaction.guild);
@@ -51,10 +51,10 @@ module.exports = new Command({
       fs.readFileSync("./Data/TicketData.json", "utf8")
     );
     let TicketData = await tickets.tickets.findIndex(
-      (t) => t.id == interaction.channel.id
+      (t) => t.id === interaction.channel.id
     );
     let ticket = tickets.tickets[TicketData];
-    if (TicketData == -1) {
+    if (TicketData === -1) {
       const Exists = new Discord.MessageEmbed()
         .setTitle("No Ticket Found!")
         .setDescription(`${supportbot.NoValidTicket}`)
@@ -81,8 +81,8 @@ module.exports = new Command({
         .setColor(supportbot.EmbedColour);
       await interaction.followUp({ embeds: [CloseTicketRequest] });
       let filter = (m) =>
-        m.content.toLowerCase() == supportbot.ClosingConfirmation_Word &&
-        m.author.id == interaction.user.id;
+        m.content.toLowerCase() === supportbot.ClosingConfirmation_Word &&
+        m.author.id === interaction.user.id;
       await interaction.channel.awaitMessages({
         filter,
         max: 1,
@@ -125,7 +125,7 @@ module.exports = new Command({
         )
         .addField("Closed By", interaction.user.tag)
         .addField("Reason", reason);
-      let msgs = await interaction.channel.messages.fetch();
+      let msgs = await interaction.channel.messages.fetch({ limit: 100 });
       let html = "";
 
       msgs = msgs.sort((a, b) => a.createdTimestamp - b.createdTimestamp);
@@ -162,7 +162,7 @@ module.exports = new Command({
         });
       if (ticket.subUsers) {
         ticket.subUsers.forEach(async (subUser) => {
-          interaction.client.users.cache
+          await interaction.client.users.cache
             .get(subUser)
             .send({ embeds: [transcriptEmbed], files: [file] });
         });

@@ -26,7 +26,7 @@ module.exports = new Command({
   permissions: ["SEND_MESSAGES"],
 
   async run(interaction) {
-    const { getRole, getChannel, getCategory } = interaction.client;
+    const { getRole } = interaction.client;
     let SupportStaff = await getRole(supportbot.Staff, interaction.guild);
     let Admin = await getRole(supportbot.Admin, interaction.guild);
     if (!SupportStaff || !Admin)
@@ -51,9 +51,9 @@ module.exports = new Command({
       fs.readFileSync("./Data/TicketData.json", "utf8")
     );
     let ticket = await TicketData.tickets.findIndex(
-      (t) => t.id == interaction.channel.id
+      (t) => t.id === interaction.channel.id
     );
-    if (ticket == -1) {
+    if (ticket === -1) {
       const Exists = new Discord.MessageEmbed()
         .setTitle("No Ticket Found!")
         .setDescription(`${supportbot.NoValidTicket}`)
@@ -71,7 +71,7 @@ module.exports = new Command({
 
     if (!uMember) return interaction.reply({ embeds: [UserNotExist] });
 
-    interaction.channel.permissionOverwrites.edit(uMember.id, {
+    await interaction.channel.permissionOverwrites.edit(uMember.id, {
       VIEW_CHANNEL: true,
     });
     const Complete = new Discord.MessageEmbed()

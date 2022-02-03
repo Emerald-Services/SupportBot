@@ -39,6 +39,12 @@ module.exports = new Event("ready", async (client) => {
     `Connected to Discord`
   );
   console.log(
+      `\u001b[33m`,
+      `Invite to your server:`,
+      `\u001b[36m`,
+      `https://discord.com/api/oauth2/authorize?client_id=` + client.user.id + `&permissions=8&scope=bot%20applications.commands`
+  );
+  console.log(
     `\u001b[33m`,
     `Resources:`,
     `\u001b[36m`,
@@ -48,7 +54,7 @@ module.exports = new Event("ready", async (client) => {
     `\u001b[33m`,
     `Documentation:`,
     `\u001b[36m`,
-    `https://supportbot.emeraldsrv.dev`
+    `https://emeraldsrv.dev/wiki/supportbot`
   );
   console.log(
     `\u001b[33m`,
@@ -137,8 +143,9 @@ module.exports = new Event("ready", async (client) => {
     );
   }
   if (panelconfig.TicketPanel) {
-    let chan1 = client.channels.cache.find(
-      (channel) => channel.name === panelconfig.Channel
+    let chan1 = await client.getChannel(
+      panelconfig.Channel,
+      client.guilds.cache.first()
     );
 
     if (!chan1) {

@@ -37,7 +37,7 @@ class Client extends Discord.Client {
     );
   }
 
-  start(token) {
+  async start(token) {
     const commandFiles = fs
       .readdirSync("./Commands")
       .filter((file) => file.endsWith(".js"));
@@ -108,8 +108,8 @@ class Client extends Discord.Client {
       });
 
     console.log(`\u001b[34;1m`, "▬▬▬▬▬▬▬ Events ▬▬▬▬▬▬▬");
-    if (process.argv[2] != "test") {
-      this.login(token);
+    if (process.argv[2] !== "test") {
+      await this.login(token);
     } else {
       console.log(
         `\u001b[31;1m`,

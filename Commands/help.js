@@ -12,12 +12,6 @@ const cmdconfig = yaml.load(fs.readFileSync("./Configs/commands.yml", "utf8"));
 
 const Command = require("../Structures/Command.js");
 
-async function asyncForEach(array, callback) {
-  for (let index = 0; index < array.length; index++) {
-    await callback(array[index], index, array);
-  }
-}
-
 module.exports = new Command({
   name: cmdconfig.HelpCommand,
   description: cmdconfig.HelpCommandDesc,
@@ -25,7 +19,7 @@ module.exports = new Command({
   permissions: ["SEND_MESSAGES"],
 
   async run(interaction) {
-    const { getRole, getChannel, getCategory } = interaction.client;
+    const { getRole } = interaction.client;
     let SupportStaff = await getRole(supportbot.Staff, interaction.guild);
     let Admin = await getRole(supportbot.Admin, interaction.guild);
     if (!SupportStaff || !Admin)

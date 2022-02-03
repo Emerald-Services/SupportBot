@@ -12,7 +12,6 @@
 
 const fs = require("fs");
 
-const Discord = require("discord.js");
 const yaml = require("js-yaml");
 const supportbot = yaml.load(
   fs.readFileSync("./Configs/supportbot.yml", "utf8")

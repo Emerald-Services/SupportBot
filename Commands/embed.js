@@ -20,18 +20,20 @@ module.exports = new Command({
       name: "title",
       description: "Embed Title",
       type: "STRING",
+      required: true,
     },
 
     {
       name: "message",
       description: "Embed Message",
       type: "STRING",
+      required: true,
     },
   ],
   permissions: ["SEND_MESSAGES"],
 
   async run(interaction) {
-    const { getRole, getChannel, getCategory } = interaction.client;
+    const { getRole } = interaction.client;
     let SupportStaff = await getRole(supportbot.Staff, interaction.guild);
     let Admin = await getRole(supportbot.Admin, interaction.guild);
 
