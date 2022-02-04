@@ -74,7 +74,7 @@ module.exports = new Event("ready", async (client) => {
   console.log(`\u001b[31m`, `――――――――――――――――――――――――――――――――――――――――――――`);
   if (
     !supportbot.Guild ||
-    (await client.guilds.cache.size) !== 1 ||
+    client.guilds.cache.size !== 1 ||
     (await client.guilds.cache.first().id) !== supportbot.Guild
   ) {
     console.log(
@@ -203,7 +203,7 @@ module.exports = new Event("ready", async (client) => {
           );
         })
         .catch((e) => {
-          console.log("Raw" + e);
+          console.log("Raw: " + e);
         });
     });
   }

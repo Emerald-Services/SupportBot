@@ -34,12 +34,12 @@ module.exports = new Command({
     let TicketData = await JSON.parse(
       fs.readFileSync("./Data/TicketData.json", "utf8")
     );
-    const { getRole, getChannel, getCategory } = interaction.client;
+    const { getRole, getCategory } = interaction.client;
     let User = interaction.guild.members.cache.get(interaction.user.id);
 
     if (
       supportbot.MaxAllowedTickets &&
-      TicketData.tickets.filter((t) => t.user == interaction.user.id && t.open)
+      TicketData.tickets.filter((t) => t.user === interaction.user.id && t.open)
         .length >= supportbot.MaxAllowedTickets
     ) {
       return interaction.reply({
@@ -77,11 +77,15 @@ module.exports = new Command({
       .setColor(supportbot.WarningColour);
 
     if (
-      await interaction.guild.channels.cache.find((ticketChannel) => {
-        ticketChannel.name === `${supportbot.TicketPrefix}${ticketNumberID}`;
-      })
+      await interaction.guild.channels.cache.find(
+        (ticketChannel) =>
+          ticketChannel.name === `${supportbot.TicketPrefix}${ticketNumberID}`
+      )
     ) {
-      return await interaction.reply({ embeds: [TicketExists] });
+      return await interaction.reply({
+        embeds: [TicketExists],
+        ephemeral: true,
+      });
     }
     const Staff = await getRole(supportbot.Staff, interaction.guild);
     const Admin = await getRole(supportbot.Admin, interaction.guild);
@@ -186,13 +190,13 @@ module.exports = new Command({
       .setColor(supportbot.EmbedColour);
 
     if (supportbot.TicketSubject === "embed") {
-      if (TicketSubject != "No Reason Provided.") {
+      if (TicketSubject !== "No Reason Provided.") {
         TicketMessage.addFields({ name: "Reason", value: TicketSubject });
       }
     }
 
     if (supportbot.TicketSubject === "description") {
-      if (TicketSubject != "No Reason Provided.") {
+      if (TicketSubject !== "No Reason Provided.") {
         await ticketChannel.setTopic(
           `Reason: ${TicketSubject}  -  User ID: ${interaction.user.id}  -  Ticket: ${ticketChannel.name}`
         );
@@ -260,7 +264,7 @@ module.exports = new Command({
             time: supportbot.Timeout * 60000,
           });
         } catch (e) {
-          if (e.code == "INTERACTION_COLLECTOR_ERROR") {
+          if (e.code === "INTERACTION_COLLECTOR_ERROR") {
             try {
               TicketData = await JSON.parse(
                 fs.readFileSync("./Data/TicketData.json", "utf8")
@@ -298,10 +302,10 @@ module.exports = new Command({
           title = supportbot.DepartmentTitle_3;
         }
 
-        ticketChannel.permissionOverwrites.edit(role.id, {
+        await ticketChannel.permissionOverwrites.edit(role.id, {
           VIEW_CHANNEL: true,
         });
-        ticketChannel.permissionOverwrites.edit(Author.id, {
+        await ticketChannel.permissionOverwrites.edit(Author.id, {
           SEND_MESSAGES: true,
         });
 
