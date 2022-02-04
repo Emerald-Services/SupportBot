@@ -270,7 +270,7 @@ module.exports = new Command({
                 fs.readFileSync("./Data/TicketData.json", "utf8")
               );
               let ticket = await TicketData.tickets.findIndex(
-                (t) => t.id == ticketChannel.id
+                (t) => t.id === ticketChannel.id
               );
               TicketData.tickets[ticket].open = false;
               fs.writeFileSync(
