@@ -97,12 +97,12 @@ TicketBlackListMessage: "You are not allowed to open a ticket"
 MaxAllowedTickets: 2
 
 TicketSubject: "description"
-# "description" will displays the ticket reason within the channel description
-# "embed" will displays the ticket reason within the ticket embed
+# "description" will display the ticket reason within the channel description
+# "embed" will display the ticket reason within the ticket embed
 
 AllowTicketMentions: true
 # Set to true to allow the ticket to mention the author and the support team.
-# Set to false to dis-allow mentions within tickets.
+# Set false to dis-allow mentions within tickets.
 
 # --- Creation Config ---
 #      --- Start ---
