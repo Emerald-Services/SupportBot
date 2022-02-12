@@ -72,7 +72,7 @@ module.exports = new Command({
     }
 
     if (supportbot.SendHelpPage === "dm") {
-      interaction.user.reply({
+      interaction.user.send({
         embeds: [HelpEmbed1],
       });
     }
