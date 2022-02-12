@@ -67,7 +67,7 @@ module.exports = new Event("interactionCreate", async (client, interaction) => {
       }
     }
     if (interaction.customId === "ticketlock") {
-      if (interaction.channel.name.startsWith(`${supportbot.TicketPrefix}`)) {
+      if (interaction.channel.name.startsWith(supportbot.TicketPrefix)) {
         interaction.message.fetch();
         let Admin =
           interaction.guild.roles.cache.find(
@@ -86,10 +86,10 @@ module.exports = new Event("interactionCreate", async (client, interaction) => {
 
         let parent =
           interaction.guild.channels.cache.find(
-            (c) => c.name === `${supportbot.LockTicketCategory}`
+            (c) => c.name === supportbot.LockTicketCategory
           ) ||
           interaction.guild.channels.cache.find(
-            (c) => c.id === `${supportbot.LockTicketCategory}`
+            (c) => c.id === supportbot.LockTicketCategory
           );
         if (parent) {
           await interaction.channel.setParent(parent.id);
@@ -121,7 +121,7 @@ module.exports = new Event("interactionCreate", async (client, interaction) => {
         const ArchiveEmbed = new Discord.MessageEmbed()
           .setTitle("Archived")
           .setDescription(`Archived ${interaction.channel.name}`)
-          .setColor(`${supportbot.SuccessColour}`);
+          .setColor(supportbot.SuccessColour);
 
         interaction.reply({ embeds: [ArchiveEmbed] });
         interaction.message.edit({ components: [row] });

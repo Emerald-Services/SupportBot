@@ -34,7 +34,7 @@ module.exports = new Command({
 
     const NoChannel = new Discord.MessageEmbed()
       .setTitle("Missing Channel!")
-      .setDescription(`${supportbot.InvalidChannel}`)
+      .setDescription(supportbot.InvalidChannel)
       .setColor(supportbot.ErrorColour);
 
     if (!suggestChannel) return interaction.reply({ embeds: [NoChannel] });

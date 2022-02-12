@@ -164,7 +164,7 @@ module.exports = new Event("ready", async (client) => {
 
     chan1.messages.fetch(panelid.TicketPanelID).catch(async () => {
       let embed = new Discord.MessageEmbed()
-        .setTitle(`${panelconfig.PanelTitle}`)
+        .setTitle(panelconfig.PanelTitle)
         .setColor(supportbot.SuccessColour)
         .setFooter(supportbot.EmbedFooter);
 
@@ -205,7 +205,7 @@ module.exports = new Event("ready", async (client) => {
         .then((r) => {
           let data = {
             id: panelid.id,
-            TicketPanelID: `${r.id}`,
+            TicketPanelID: r.id,
           };
           fs.writeFileSync(
             "./Data/ticket-panel-id.json",

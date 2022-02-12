@@ -80,7 +80,7 @@ module.exports = new Command({
 
     const TicketExists = new MessageEmbed()
       .setTitle("Ticket Exists!")
-      .setDescription(`${supportbot.TicketExists}`);
+      .setDescription(supportbot.TicketExists);
 
     if (
       await interaction.guild.channels.cache.find(
