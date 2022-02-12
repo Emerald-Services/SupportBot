@@ -39,10 +39,12 @@ module.exports = new Event("ready", async (client) => {
     `Connected to Discord`
   );
   console.log(
-      `\u001b[33m`,
-      `Invite to your server:`,
-      `\u001b[36m`,
-      `https://discord.com/api/oauth2/authorize?client_id=` + client.user.id + `&permissions=8&scope=bot%20applications.commands`
+    `\u001b[33m`,
+    `Invite to your server:`,
+    `\u001b[36m`,
+    `https://discord.com/api/oauth2/authorize?client_id=` +
+      client.user.id +
+      `&permissions=8&scope=bot%20applications.commands`
   );
   console.log(
     `\u001b[33m`,
@@ -88,10 +90,10 @@ module.exports = new Event("ready", async (client) => {
     supportbot.Admin,
     supportbot.Staff,
     supportbot.TicketBlackListRole,
-    supportbot.DepartmentRole_1,
-    supportbot.DepartmentRole_2,
-    supportbot.DepartmentRole_3,
   ];
+  if (supportbot.TicketDepartments) {
+    supportbot.Departments.forEach((department) => roles.push(department.role));
+  }
   if (supportbot.AutoRole) roles.push(supportbot.AutoRole_Role);
   const channels = [
     supportbot.SuggestionChannel,
@@ -160,7 +162,7 @@ module.exports = new Event("ready", async (client) => {
       fs.readFileSync("./Data/ticket-panel-id.json", "utf8")
     );
 
-    chan1.messages.fetch(panelid.TicketPanelID).catch(async (r) => {
+    chan1.messages.fetch(panelid.TicketPanelID).catch(async () => {
       let embed = new Discord.MessageEmbed()
         .setTitle(`${panelconfig.PanelTitle}`)
         .setColor(supportbot.SuccessColour)
@@ -177,13 +179,22 @@ module.exports = new Event("ready", async (client) => {
       if (panelconfig.TicketPanel_Image) {
         embed.setImage(panelconfig.PanelImage);
       }
-
-      let button = new Discord.MessageButton()
-        .setLabel(panelconfig.ButtonLabel)
-        .setCustomId("openticket")
-        .setStyle(panelconfig.ButtonColour)
-        .setEmoji(panelconfig.ButtonEmoji);
-
+      let button;
+      if (supportbot.TicketDepartments) {
+        button = supportbot.Departments.map((x) =>
+          new Discord.MessageButton()
+            .setCustomId("department-" + supportbot.Departments.indexOf(x))
+            .setLabel(x.title)
+            .setStyle(x.color)
+            .setEmoji(x.emoji)
+        );
+      } else {
+        button = new Discord.MessageButton()
+          .setLabel(panelconfig.ButtonLabel)
+          .setCustomId("openticket")
+          .setStyle(panelconfig.ButtonColour)
+          .setEmoji(panelconfig.ButtonEmoji);
+      }
       let row = new Discord.MessageActionRow().addComponents(button);
 
       await chan1
