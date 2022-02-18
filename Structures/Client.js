@@ -89,7 +89,7 @@ class Client extends Discord.Client {
     // Slash Commands
 
     this.once("ready", async () => {
-      await this.application?.commands.set(this.commands, supportbot.Guild);
+      await this.guilds.cache.first()?.commands.set(this.commands);
       console.log(
         `\u001b[32;1m`,
         `Slash Commands Registered for ${this.guilds.cache.first().name}`

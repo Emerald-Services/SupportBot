@@ -74,14 +74,10 @@ module.exports = new Event("ready", async (client) => {
   console.log(`\u001b[37m`, `SupportBot proudly created by Emerald Services`);
   console.log(`    `);
   console.log(`\u001b[31m`, `――――――――――――――――――――――――――――――――――――――――――――`);
-  if (
-    !supportbot.Guild ||
-    client.guilds.cache.size !== 1 ||
-    (await client.guilds.cache.first().id) !== supportbot.Guild
-  ) {
+  if (client.guilds.cache.size !== 1) {
     console.log(
       `\u001b[31m`,
-      `${client.user.username} is not in the correct server set in your config. Please join the server and restart the bot.`
+      `${client.user.username} must be in only 1 server. Please join this server, leave any others, and restart the bot.`
     );
     console.log(`\u001b[31m`, `${client.user.username} will now exit.`);
     return process.exit(1);
