@@ -108,7 +108,12 @@ module.exports = new Command({
           "Ticket",
           `${interaction.channel.name} (${interaction.channel.id})`
         )
-        .addField("User", `${tUser}#${tUser.discriminator} (${tUser.id})`)
+        .addField(
+          "User",
+          `${tUser?.username || "N/A"}#${tUser?.discriminator || "N/A"} (${
+            tUser?.id || ticket.user
+          })`
+        )
         .addField("Closed By", interaction.user.tag)
         .addField("Reason", reason);
       const logEmbed = new Discord.MessageEmbed()
@@ -121,7 +126,9 @@ module.exports = new Command({
         )
         .addField(
           "User",
-          `${tUser.username}#${tUser.discriminator} (${tUser.id})`
+          `${tUser?.username || "N/A"}#${tUser?.discriminator || "N/A"} (${
+            tUser?.id || ticket.user
+          })`
         )
         .addField("Closed By", interaction.user.tag)
         .addField("Reason", reason);
@@ -156,7 +163,7 @@ module.exports = new Command({
           console.error(err);
         });
       await tUser
-        .send({ embeds: [transcriptEmbed], files: [file] })
+        ?.send({ embeds: [transcriptEmbed], files: [file] })
         .catch(async (err) => {
           console.error(err);
         });
@@ -164,7 +171,7 @@ module.exports = new Command({
         ticket.subUsers.forEach(async (subUser) => {
           await interaction.client.users.cache
             .get(subUser)
-            .send({ embeds: [transcriptEmbed], files: [file] });
+            ?.send({ embeds: [transcriptEmbed], files: [file] });
         });
       }
       await interaction.channel.delete().catch(async (error) => {

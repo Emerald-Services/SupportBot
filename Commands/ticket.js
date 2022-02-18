@@ -101,7 +101,6 @@ module.exports = new Command({
           "Some roles seem to be missing!\nPlease check for errors when starting the bot.",
         ephemeral: true,
       });
-    const Author = interaction.user;
     let TicketCategory = await getCategory(
       supportbot.Departments[department].category || supportbot.TicketCategory,
       interaction.guild
@@ -117,7 +116,7 @@ module.exports = new Command({
             allow: [Permissions.FLAGS.VIEW_CHANNEL],
           },
           {
-            id: Author.id,
+            id: interaction.user.id,
             allow: [Permissions.FLAGS.VIEW_CHANNEL],
           },
           {
@@ -140,7 +139,7 @@ module.exports = new Command({
     await TicketData.tickets.push({
       id: ticketChannel.id,
       name: ticketChannel.name,
-      user: Author.id,
+      user: interaction.user.id,
       number: ticketNumberID,
       reason: TicketSubject,
       open: true,
@@ -271,7 +270,7 @@ module.exports = new Command({
         await ticketChannel.permissionOverwrites.edit(role.id, {
           VIEW_CHANNEL: true,
         });
-        await ticketChannel.permissionOverwrites.edit(Author.id, {
+        await ticketChannel.permissionOverwrites.edit(interaction.user.id, {
           SEND_MESSAGES: true,
         });
 
