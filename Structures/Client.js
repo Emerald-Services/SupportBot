@@ -76,10 +76,10 @@ class Client extends Discord.Client {
         `\u001b[32;1m`,
         "Loaded"
       );
-      addon.commands.forEach((command) => {
+      addon.commands?.forEach((command) => {
         this.commands.set(command.name, command);
       });
-      addon.events.forEach((event) => {
+      addon.events?.forEach((event) => {
         this.on(event.event, (...args) => event.run(this, ...args));
       });
     });
