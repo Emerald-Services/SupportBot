@@ -58,7 +58,10 @@ module.exports = new Command({
       )
 
       .setColor(supportbot.EmbedColour)
-      .setFooter(supportbot.EmbedFooter, interaction.user.displayAvatarURL());
+      .setFooter({
+        text: supportbot.EmbedFooter,
+        iconURL: interaction.user.displayAvatarURL(),
+      });
 
     if (
       interaction.member.roles.cache.has(SupportStaff.id) ||

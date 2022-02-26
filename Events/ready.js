@@ -162,7 +162,10 @@ module.exports = new Event("ready", async (client) => {
       let embed = new Discord.MessageEmbed()
         .setTitle(panelconfig.PanelTitle)
         .setColor(supportbot.SuccessColour)
-        .setFooter(supportbot.EmbedFooter);
+        .setFooter({
+          text: supportbot.EmbedFooter,
+          iconURL: interaction.user.displayAvatarURL(),
+        });
 
       if (panelconfig.TicketPanel_Description) {
         embed.setDescription(panelconfig.PanelMessage);

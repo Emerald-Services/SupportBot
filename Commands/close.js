@@ -103,7 +103,10 @@ module.exports = new Command({
       const transcriptEmbed = new Discord.MessageEmbed()
         .setTitle(supportbot.TranscriptTitle)
         .setColor(supportbot.EmbedColour)
-        .setFooter(supportbot.EmbedFooter)
+        .setFooter({
+          text: supportbot.EmbedFooter,
+          iconURL: interaction.user.displayAvatarURL(),
+        })
         .addField(
           "Ticket",
           `${interaction.channel.name} (${interaction.channel.id})`
@@ -119,7 +122,10 @@ module.exports = new Command({
       const logEmbed = new Discord.MessageEmbed()
         .setTitle(supportbot.TicketLog_Title)
         .setColor(supportbot.EmbedColour)
-        .setFooter(supportbot.EmbedFooter)
+        .setFooter({
+          text: supportbot.EmbedFooter,
+          iconURL: interaction.user.displayAvatarURL(),
+        })
         .addField(
           "Ticket",
           `${interaction.channel.name} (${interaction.channel.id})`
