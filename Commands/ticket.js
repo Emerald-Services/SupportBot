@@ -310,7 +310,7 @@ module.exports = new Command({
             supportbot.TicketCategory,
           interaction.guild
         );
-        await ticketChannel.setParent(TicketCat.id);
+        await ticketChannel.setParent(TicketCat.id, { lockPermissions: false });
         await ticketChannel.send({
           embeds: [
             {
