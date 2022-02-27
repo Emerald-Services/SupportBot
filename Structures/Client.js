@@ -76,10 +76,10 @@ class Client extends Discord.Client {
         `\u001b[32;1m`,
         "Loaded"
       );
-      addon.commands.forEach((command) => {
+      addon.commands?.forEach((command) => {
         this.commands.set(command.name, command);
       });
-      addon.events.forEach((event) => {
+      addon.events?.forEach((event) => {
         this.on(event.event, (...args) => event.run(this, ...args));
       });
     });
@@ -89,7 +89,7 @@ class Client extends Discord.Client {
     // Slash Commands
 
     this.once("ready", async () => {
-      await this.application?.commands.set(this.commands, supportbot.Guild);
+      await this.guilds.cache.first()?.commands.set(this.commands);
       console.log(
         `\u001b[32;1m`,
         `Slash Commands Registered for ${this.guilds.cache.first().name}`

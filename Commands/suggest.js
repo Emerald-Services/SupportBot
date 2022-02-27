@@ -34,7 +34,7 @@ module.exports = new Command({
 
     const NoChannel = new Discord.MessageEmbed()
       .setTitle("Missing Channel!")
-      .setDescription(`${supportbot.InvalidChannel}`)
+      .setDescription(supportbot.InvalidChannel)
       .setColor(supportbot.ErrorColour);
 
     if (!suggestChannel) return interaction.reply({ embeds: [NoChannel] });
@@ -45,7 +45,10 @@ module.exports = new Command({
       .addField("Suggestion", suggestion, true)
       .addField("From", `<@${interaction.user.id}>`)
       .setThumbnail(interaction.user.displayAvatarURL())
-      .setFooter(supportbot.EmbedFooter, interaction.user.displayAvatarURL())
+      .setFooter({
+        text: supportbot.EmbedFooter,
+        iconURL: interaction.user.displayAvatarURL(),
+      })
       .setColor(supportbot.EmbedColour);
 
     const suggestionMsg = await suggestChannel.send({ embeds: [SuggestEmbed] });

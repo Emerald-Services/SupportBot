@@ -10,7 +10,7 @@
 #           Discord Support: https://emeraldsrv.dev/discord
 #           Community Resources: https://emeraldsrv.dev/resources
 
-SupportBot_Version: "7.4.2"
+SupportBot_Version: "7.5"
 
 # -------------------------
 #   General Configuration
@@ -18,8 +18,6 @@ SupportBot_Version: "7.4.2"
 
 Name: "SupportBot"
 Token: "BOT_TOKEN"
-# Guild ID Ex: 123456789123456789
-Guild: ""
 
 # -------------------------
 #  Activity Configuration
@@ -84,12 +82,13 @@ SuggestionDownvote: "❌"
 #  Tickets Configuration
 # -------------------------
 
-TicketCategory: "Tickets"
+TicketCategory: "Tickets" # Only for tickets without a category
 TicketPrefix: "ticket-" # The prefix for ticket channel names
 
-TicketLog: "logs"
+TicketLog: "ticket-logs"
 TranscriptLog: "transcripts"
 
+DMTranscripts: true
 TranscriptTitle: "Ticket Transcript"
 TicketLog_Title: "Ticket Closed"
 TicketBlackListMessage: "You are not allowed to open a ticket"
@@ -97,12 +96,12 @@ TicketBlackListMessage: "You are not allowed to open a ticket"
 MaxAllowedTickets: 2
 
 TicketSubject: "description"
-# "description" will displays the ticket reason within the channel description
-# "embed" will displays the ticket reason within the ticket embed
+# "description" will display the ticket reason within the channel description
+# "embed" will display the ticket reason within the ticket embed
 
 AllowTicketMentions: true
 # Set to true to allow the ticket to mention the author and the support team.
-# Set to false to dis-allow mentions within tickets.
+# Set false to dis-allow mentions within tickets.
 
 # --- Creation Config ---
 #      --- Start ---
@@ -143,14 +142,6 @@ TicketCloseColour: "DANGER"
 TicketDeleteColour: "DANGER"
 TicketLockColour: "PRIMARY"
 
-TicketDept1Colour: "PRIMARY"
-TicketDept2Colour: "PRIMARY"
-TicketDept3Colour: "PRIMARY"
-
-TicketDept1Emoji: "1️⃣"
-TicketDept2Emoji: "2️⃣"
-TicketDept3Emoji: "3️⃣"
-
 TranscriptSavedMessage: "📝 **Transcript Saved!**"
 TicketLockMessage: "❌ **Ticket Locked!**"
 TicketDeleteMessage: "⚠ **Ticket Deleting!**" # Tickets deleting after 5 seconds by default.
@@ -161,21 +152,27 @@ TicketDeleteMessage: "⚠ **Ticket Deleting!**" # Tickets deleting after 5 secon
 TicketDepartments: true
 # Delete the ticket if no department selected. TIME IN MINUTES
 Timeout: 5
-AllowStaff: true
-# If set to false users with the "Staff" role will not be able to view tickets
-# without a valid department role set below.
+# Set to true to allow all staff to access the ticket
+AllowAllStaff: false
 
-# Set to false to allow "Staff" to see tickets whether its a department for them or not.
-
-DepartmentTitle_1: "General Support"
-DepartmentTitle_2: "Billing Support"
-DepartmentTitle_3: "Admin Team"
-# Ticket department title, This is the title for a ticket department to help users know what is available.
-
-DepartmentRole_1: "Support"
-DepartmentRole_2: "Support"
-DepartmentRole_3: "Admin"
 # Ticket roles are the roles that will be able to gain access to tickets depending on what department has been chosen.
+
+Departments:
+  - title: "General Support"
+    role: "Support"
+    color: "PRIMARY"
+    emoji: "1️⃣"
+    category: "Tickets"
+  - title: "Billing Support"
+    role: "Support"
+    color: "PRIMARY"
+    emoji: "2️⃣"
+    category: "Billing"
+  - title: "Admin Team"
+    role: "Admin"
+    color: "PRIMARY"
+    emoji: "3️⃣"
+    category: "Tickets"
 
 # --- Closing Config ---
 #    --- Start ---

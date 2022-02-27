@@ -57,7 +57,7 @@ module.exports = new Command({
     if (TicketData === -1) {
       const Exists = new Discord.MessageEmbed()
         .setTitle("No Ticket Found!")
-        .setDescription(`${supportbot.NoValidTicket}`)
+        .setDescription(supportbot.NoValidTicket)
         .setColor(supportbot.WarningColour);
       return interaction.followUp({ embeds: [Exists] });
     }
@@ -103,25 +103,38 @@ module.exports = new Command({
       const transcriptEmbed = new Discord.MessageEmbed()
         .setTitle(supportbot.TranscriptTitle)
         .setColor(supportbot.EmbedColour)
-        .setFooter(supportbot.EmbedFooter)
-        .addField(
-          "Ticket",
-          `${interaction.channel.name} (${interaction.channel.id})`
-        )
-        .addField("User", `${tUser}#${tUser.discriminator} (${tUser.id})`)
-        .addField("Closed By", interaction.user.tag)
-        .addField("Reason", reason);
-      const logEmbed = new Discord.MessageEmbed()
-        .setTitle(supportbot.TicketLog_Title)
-        .setColor(supportbot.EmbedColour)
-        .setFooter(supportbot.EmbedFooter)
+        .setFooter({
+          text: supportbot.EmbedFooter,
+          iconURL: interaction.user.displayAvatarURL(),
+        })
         .addField(
           "Ticket",
           `${interaction.channel.name} (${interaction.channel.id})`
         )
         .addField(
           "User",
-          `${tUser.username}#${tUser.discriminator} (${tUser.id})`
+          `${tUser?.username || "N/A"}#${tUser?.discriminator || "N/A"} (${
+            tUser?.id || ticket.user
+          })`
+        )
+        .addField("Closed By", interaction.user.tag)
+        .addField("Reason", reason);
+      const logEmbed = new Discord.MessageEmbed()
+        .setTitle(supportbot.TicketLog_Title)
+        .setColor(supportbot.EmbedColour)
+        .setFooter({
+          text: supportbot.EmbedFooter,
+          iconURL: interaction.user.displayAvatarURL(),
+        })
+        .addField(
+          "Ticket",
+          `${interaction.channel.name} (${interaction.channel.id})`
+        )
+        .addField(
+          "User",
+          `${tUser?.username || "N/A"}#${tUser?.discriminator || "N/A"} (${
+            tUser?.id || ticket.user
+          })`
         )
         .addField("Closed By", interaction.user.tag)
         .addField("Reason", reason);
@@ -155,8 +168,11 @@ module.exports = new Command({
         .catch(async (err) => {
           console.error(err);
         });
-      await tUser
-        .send({ embeds: [transcriptEmbed], files: [file] })
+
+      if (supportbot.DMTranscripts) {
+
+        await tUser
+        ?.send({ embeds: [transcriptEmbed], files: [file] })
         .catch(async (err) => {
           console.error(err);
         });
@@ -164,9 +180,12 @@ module.exports = new Command({
         ticket.subUsers.forEach(async (subUser) => {
           await interaction.client.users.cache
             .get(subUser)
-            .send({ embeds: [transcriptEmbed], files: [file] });
+            ?.send({ embeds: [transcriptEmbed], files: [file] });
         });
       }
+
+      }
+
       await interaction.channel.delete().catch(async (error) => {
         console.error(error);
         if (error.code !== Discord.Constants.APIErrors.UNKNOWN_CHANNEL) {

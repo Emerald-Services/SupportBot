@@ -14,7 +14,7 @@ const panelconfig = yaml.load(
 
 const Event = require("../Structures/Event.js");
 
-module.exports = new Event("ready", async (client) => {
+module.exports = new Event("ready", async (client, interaction) => {
   const { getRole, getChannel, getCategory } = client;
   client.user.setActivity(supportbot.BotActivity, {
     type: supportbot.ActivityType,
@@ -39,10 +39,12 @@ module.exports = new Event("ready", async (client) => {
     `Connected to Discord`
   );
   console.log(
-      `\u001b[33m`,
-      `Invite to your server:`,
-      `\u001b[36m`,
-      `https://discord.com/api/oauth2/authorize?client_id=` + client.user.id + `&permissions=8&scope=bot%20applications.commands`
+    `\u001b[33m`,
+    `Invite to your server:`,
+    `\u001b[36m`,
+    `https://discord.com/api/oauth2/authorize?client_id=` +
+      client.user.id +
+      `&permissions=8&scope=bot%20applications.commands`
   );
   console.log(
     `\u001b[33m`,
@@ -72,14 +74,10 @@ module.exports = new Event("ready", async (client) => {
   console.log(`\u001b[37m`, `SupportBot proudly created by Emerald Services`);
   console.log(`    `);
   console.log(`\u001b[31m`, `――――――――――――――――――――――――――――――――――――――――――――`);
-  if (
-    !supportbot.Guild ||
-    (await client.guilds.cache.size) !== 1 ||
-    (await client.guilds.cache.first().id) !== supportbot.Guild
-  ) {
+  if (client.guilds.cache.size !== 1) {
     console.log(
       `\u001b[31m`,
-      `${client.user.username} is not in the correct server set in your config. Please join the server and restart the bot.`
+      `${client.user.username} must be in only 1 server. Please join this server, leave any others, and restart the bot.`
     );
     console.log(`\u001b[31m`, `${client.user.username} will now exit.`);
     return process.exit(1);
@@ -88,10 +86,10 @@ module.exports = new Event("ready", async (client) => {
     supportbot.Admin,
     supportbot.Staff,
     supportbot.TicketBlackListRole,
-    supportbot.DepartmentRole_1,
-    supportbot.DepartmentRole_2,
-    supportbot.DepartmentRole_3,
   ];
+  if (supportbot.TicketDepartments) {
+    supportbot.Departments.forEach((department) => roles.push(department.role));
+  }
   if (supportbot.AutoRole) roles.push(supportbot.AutoRole_Role);
   const channels = [
     supportbot.SuggestionChannel,
@@ -160,11 +158,14 @@ module.exports = new Event("ready", async (client) => {
       fs.readFileSync("./Data/ticket-panel-id.json", "utf8")
     );
 
-    chan1.messages.fetch(panelid.TicketPanelID).catch(async (r) => {
+    chan1.messages.fetch(panelid.TicketPanelID).catch(async () => {
       let embed = new Discord.MessageEmbed()
-        .setTitle(`${panelconfig.PanelTitle}`)
+        .setTitle(panelconfig.PanelTitle)
         .setColor(supportbot.SuccessColour)
-        .setFooter(supportbot.EmbedFooter);
+        .setFooter({
+          text: supportbot.EmbedFooter,
+          iconURL: interaction.user.displayAvatarURL(),
+        });
 
       if (panelconfig.TicketPanel_Description) {
         embed.setDescription(panelconfig.PanelMessage);
@@ -177,13 +178,22 @@ module.exports = new Event("ready", async (client) => {
       if (panelconfig.TicketPanel_Image) {
         embed.setImage(panelconfig.PanelImage);
       }
-
-      let button = new Discord.MessageButton()
-        .setLabel(panelconfig.ButtonLabel)
-        .setCustomId("openticket")
-        .setStyle(panelconfig.ButtonColour)
-        .setEmoji(panelconfig.ButtonEmoji);
-
+      let button;
+      if (supportbot.TicketDepartments) {
+        button = supportbot.Departments.map((x) =>
+          new Discord.MessageButton()
+            .setCustomId("department-" + supportbot.Departments.indexOf(x))
+            .setLabel(x.title)
+            .setStyle(x.color)
+            .setEmoji(x.emoji)
+        );
+      } else {
+        button = new Discord.MessageButton()
+          .setLabel(panelconfig.ButtonLabel)
+          .setCustomId("openticket")
+          .setStyle(panelconfig.ButtonColour)
+          .setEmoji(panelconfig.ButtonEmoji);
+      }
       let row = new Discord.MessageActionRow().addComponents(button);
 
       await chan1
@@ -194,7 +204,7 @@ module.exports = new Event("ready", async (client) => {
         .then((r) => {
           let data = {
             id: panelid.id,
-            TicketPanelID: `${r.id}`,
+            TicketPanelID: r.id,
           };
           fs.writeFileSync(
             "./Data/ticket-panel-id.json",
@@ -203,7 +213,7 @@ module.exports = new Event("ready", async (client) => {
           );
         })
         .catch((e) => {
-          console.log("Raw" + e);
+          console.log("Raw: " + e);
         });
     });
   }

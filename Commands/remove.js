@@ -55,7 +55,7 @@ module.exports = new Command({
     if (ticket === -1) {
       const Exists = new Discord.MessageEmbed()
         .setTitle("No Ticket Found!")
-        .setDescription(`${supportbot.NoValidTicket}`)
+        .setDescription(supportbot.NoValidTicket)
         .setColor(supportbot.WarningColour);
       return interaction.reply({ embeds: [Exists] });
     }
