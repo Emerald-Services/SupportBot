@@ -88,6 +88,7 @@ TicketPrefix: "ticket-" # The prefix for ticket channel names
 TicketLog: "logs"
 TranscriptLog: "transcripts"
 
+DMTranscripts: true
 TranscriptTitle: "Ticket Transcript"
 TicketLog_Title: "Ticket Closed"
 TicketBlackListMessage: "You are not allowed to open a ticket"
