@@ -10,7 +10,7 @@
 #           Discord Support: https://emeraldsrv.dev/discord
 #           Community Resources: https://emeraldsrv.dev/resources
 
-SupportBot_Version: "7.4.2"
+SupportBot_Version: "7.5"
 
 # -------------------------
 #   General Configuration
@@ -85,7 +85,7 @@ SuggestionDownvote: "❌"
 TicketCategory: "Tickets" # Only for tickets without a category
 TicketPrefix: "ticket-" # The prefix for ticket channel names
 
-TicketLog: "logs"
+TicketLog: "ticket-logs"
 TranscriptLog: "transcripts"
 
 DMTranscripts: true

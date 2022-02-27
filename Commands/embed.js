@@ -29,6 +29,41 @@ module.exports = new Command({
       type: "STRING",
       required: true,
     },
+
+    {
+      name: "color",
+      description: "Embed HEX Color",
+      type: "STRING",
+      required: false,
+    },
+
+    {
+      name: "fieldtitle",
+      description: "Add an additional Embed Field",
+      type: "STRING",
+      required: false,
+    },
+
+    {
+      name: "fieldcontent",
+      description: "Add an additional Embed Field",
+      type: "STRING",
+      required: false,
+    },
+
+    {
+      name: "thumbnail",
+      description: "Embed Thumbnail URL",
+      type: "STRING",
+      required: false,
+    },
+
+    {
+      name: "image",
+      description: "Embed Image URL",
+      type: "STRING",
+      required: false,
+    },
   ],
   permissions: ["SEND_MESSAGES"],
 
@@ -54,10 +89,19 @@ module.exports = new Command({
     ) {
       const EmbedTitle = interaction.options.getString("title");
       const EmbedSubject = interaction.options.getString("message");
+      const EmbedColour = interaction.options.getString("color");
+      const EmbedThumbnail = interaction.options.getString("thumbnail");
+      const EmbedImage = interaction.options.getString("image");
+      const EmbedFieldContent = interaction.options.getString("fieldcontent");
+      const EmbedFieldTitle = interaction.options.getString("fieldtitle");
 
       const EmbedMsg = new Discord.MessageEmbed()
         .setTitle(EmbedTitle)
-        .setDescription(EmbedSubject);
+        .setDescription(EmbedSubject)
+        .addField(EmbedFieldTitle, EmbedFieldContent)
+        .setColor(EmbedColour)
+        .setThumbnail(EmbedThumbnail)
+        .setImage(EmbedImage);
 
       interaction.reply({
         embeds: [EmbedMsg],

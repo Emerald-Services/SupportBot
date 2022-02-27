@@ -168,7 +168,10 @@ module.exports = new Command({
         .catch(async (err) => {
           console.error(err);
         });
-      await tUser
+
+      if (supportbot.DMTranscripts) {
+
+        await tUser
         ?.send({ embeds: [transcriptEmbed], files: [file] })
         .catch(async (err) => {
           console.error(err);
@@ -180,6 +183,9 @@ module.exports = new Command({
             ?.send({ embeds: [transcriptEmbed], files: [file] });
         });
       }
+
+      }
+
       await interaction.channel.delete().catch(async (error) => {
         console.error(error);
         if (error.code !== Discord.Constants.APIErrors.UNKNOWN_CHANNEL) {

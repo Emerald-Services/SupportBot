@@ -14,7 +14,7 @@ const panelconfig = yaml.load(
 
 const Event = require("../Structures/Event.js");
 
-module.exports = new Event("ready", async (client) => {
+module.exports = new Event("ready", async (client, interaction) => {
   const { getRole, getChannel, getCategory } = client;
   client.user.setActivity(supportbot.BotActivity, {
     type: supportbot.ActivityType,
