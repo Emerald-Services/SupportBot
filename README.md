@@ -9,5 +9,4 @@ SupportBot is an open-sourced support system for discord. It's completely free t
 **|** [Discord](https://emeraldsrv.dev/discord) **|**
 [Hosting](https://emeraldsrv.dev/hosting) **|**
 [Documentation](https://emeraldsrv.dev/wiki/supportbot) **|**
-[Download via Polymart](https://polymart.org/resource/supportbot-1-discord-ticket-bot.518) **|**
 [Download via MC-Market](https://www.mc-market.org/resources/8940/) **|**
