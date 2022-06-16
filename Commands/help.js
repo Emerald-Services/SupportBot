@@ -31,6 +31,8 @@ module.exports = new Command({
     botCommands += `**/${cmdconfig.HelpCommand}** ${cmdconfig.HelpCommandDesc}\n`;
     botCommands += `**/${cmdconfig.InfoCommand}** ${cmdconfig.InfoCommandDesc}\n`;
     botCommands += `**/${cmdconfig.PingCommand}** ${cmdconfig.PingCommandDesc}\n`;
+    botCommands += `**/${cmdconfig.UserInfoCommand}** ${cmdconfig.UserInfoCommandDesc}\n`;
+    botCommands += `**/${cmdconfig.SuggestCommand}** ${cmdconfig.SuggestCommandDesc}\n`;
 
     let ticketCommands = "";
     ticketCommands += `**/${cmdconfig.OpenTicket}** ${cmdconfig.OpenTicketDesc}\n`;
@@ -39,6 +41,8 @@ module.exports = new Command({
     let staffCommands = "";
     staffCommands += `**/${cmdconfig.TicketAdd}** ${cmdconfig.TicketAddDesc}\n`;
     staffCommands += `**/${cmdconfig.TicketRemove}** ${cmdconfig.TicketRemoveDesc}\n`;
+    staffCommands += `**/${cmdconfig.UserInfoCommand}** ${cmdconfig.UserInfoCommandDesc}\n`;
+    staffCommands += `**/${cmdconfig.TranslateCommand}** ${cmdconfig.TranslateCommandDesc}\n`;
 
     const HelpEmbed1 = new Discord.MessageEmbed()
       .setTitle(supportbot.Name + " Commands")
@@ -74,16 +78,9 @@ module.exports = new Command({
       });
     }
 
-    if (supportbot.SendHelpPage === "dm") {
-      interaction.user.send({
-        embeds: [HelpEmbed1],
-      });
-    }
-
-    if (supportbot.SendHelpPage === "channel") {
       interaction.reply({
+        ephemeral: true,
         embeds: [HelpEmbed1],
       });
-    }
   },
 });

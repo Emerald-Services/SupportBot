@@ -14,6 +14,7 @@
 #   Command Name Configuration
 # -------------------------------
 
+Blacklist: "blacklist"
 TicketAdd: "add"
 TicketRemove: "remove"
 OpenTicket: "ticket"
@@ -22,14 +23,18 @@ InfoCommand: "info"
 PingCommand: "ping"
 HelpCommand: "help"
 EmbedCommand: "embed"
-SuggestCommand: "suggest"
+SuggestCommand: "suggestion"
+TranslateCommand: "translate"
+UserInfoCommand: "userinfo"
 
 # ---------------------------------------
 #   Command Description Configuration
 # ---------------------------------------
 
+BlacklistDesc: "Blacklist a user from creating Tickets."
 TicketAddDesc: "Add a user to a support ticket."
 TicketRemoveDesc: "Remove a user from a support ticket."
+TranslateCommandDesc: "Translates the language provided, along with the abbreviation (2 char) long language code"
 OpenTicketDesc: "Open a new support ticket."
 CloseTicketDesc: "Close your support ticket."
 InfoCommandDesc: "Get information about the brand."
@@ -37,3 +42,4 @@ PingCommandDesc: "Pong!"
 HelpCommandDesc: "Get a list of all the commands."
 EmbedCommandDesc: "Send a message as an embed."
 SuggestCommandDesc: "Suggest a feature for the server."
+UserInfoCommandDesc: "Get info about a user."

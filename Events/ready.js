@@ -90,12 +90,15 @@ module.exports = new Event("ready", async (client, interaction) => {
   if (supportbot.TicketDepartments) {
     supportbot.Departments.forEach((department) => roles.push(department.role));
   }
-  if (supportbot.AutoRole) roles.push(supportbot.AutoRole_Role);
+  if (supportbot.AutoRole) roles.push(supportbot.JoinRole);
   const channels = [
     supportbot.SuggestionChannel,
     supportbot.TicketLog,
     supportbot.TranscriptLog,
     panelconfig.Channel,
+    supportbot.WelcomeChannel,
+    supportbot.LeaveChannel,
+    supportbot.TranslateLogChannel
   ];
   const categories = [supportbot.TicketCategory];
 

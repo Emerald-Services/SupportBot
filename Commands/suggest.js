@@ -65,6 +65,6 @@ module.exports = new Command({
       .addField("Sent to:", `<#${suggestChannel.id}>`)
       .setColor(supportbot.SuccessColour);
 
-    return interaction.reply({ embeds: [Submitted] });
+    return interaction.reply({ ephemeral: true, mbeds: [Submitted] });
   },
 });

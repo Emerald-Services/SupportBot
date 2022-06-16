@@ -10,14 +10,14 @@
 #           Discord Support: https://emeraldsrv.dev/discord
 #           Community Resources: https://emeraldsrv.dev/resources
 
-SupportBot_Version: "7.5"
+SupportBot_Version: "BETA 7.6"
 
 # -------------------------
 #   General Configuration
 # -------------------------
 
 Name: "SupportBot"
-Token: "BOT_TOKEN"
+Token: "TOKEN_HERE"
 
 # -------------------------
 #  Activity Configuration
@@ -54,21 +54,50 @@ InfoURL: "https://emeraldsrv.dev"
 InfoColour: "#f74343"
 
 # -------------------------
-#  Help Configuration
-# -------------------------
-
-SendHelpPage: "channel" # Set to channel or dm
-
-# -------------------------
 #  Role Configuration
 # -------------------------
 
 AutoRole: true
-AutoRole_Role: "Member"
+JoinRole: "Verified Member"
 
 Staff: "Staff"
 Admin: "Admin"
 TicketBlackListRole: "Blacklisted"
+
+# ----------------------------
+#  Join/Leave Configuration
+# ----------------------------
+
+WelcomeChannel: "join-leave-logs"
+WelcomeColour: "#f74343"
+WelcomeTitle: "User Joined!"
+WelcomeMessage: "%joined_user% has joined the server!"
+  # Available Placeholders:
+  # %joined_user% - Mentions the user who joined
+
+EmbedWelcomeImage: true
+EmbedWelcomeImageURL: "https://media.discordapp.net/attachments/958247876344025108/986777740738986094/unknown.png"
+
+EmbedWelcomeThumbnail: "BOT" 
+  # "USER" will display the user's profile picture.
+  # "BOT" will display the bot's profile picture.
+  # false to disable
+
+LeaveChannel: "join-leave-logs"
+LeaveColour: "#f74343"
+LeaveTitle: "User Left!"
+LeaveMessage: "%joined_user% has left the server!"
+  # Available Placeholders:
+  # %joined_user% - Mentions the user who joined
+
+EmbedLeaveImage: true
+EmbedLeaveImageURL: "https://cdn.discordapp.com/attachments/958247876344025108/986778170223120384/unknown.png"
+
+EmbedLeaveThumbnail: false 
+  # "USER" will display the user's profile picture.
+  # "BOT" will display the bot's profile picture.
+  # false to disable
+
 
 # ----------------------------
 #  Suggestions Configuration
@@ -79,14 +108,20 @@ SuggestionUpvote: "✅"
 SuggestionDownvote: "❌"
 
 # -------------------------
+#  Translate Configuration
+# -------------------------
+
+TranslateLogChannel: "translations-log"
+
+# -------------------------
 #  Tickets Configuration
 # -------------------------
 
 TicketCategory: "Tickets" # Only for tickets without a category
 TicketPrefix: "ticket-" # The prefix for ticket channel names
 
-TicketLog: "ticket-logs"
-TranscriptLog: "transcripts"
+TicketLog: "ticket-data"
+TranscriptLog: "ticket-data"
 
 DMTranscripts: true
 TranscriptTitle: "Ticket Transcript"
@@ -158,21 +193,32 @@ AllowAllStaff: false
 # Ticket roles are the roles that will be able to gain access to tickets depending on what department has been chosen.
 
 Departments:
-  - title: "General Support"
-    role: "Support"
-    color: "PRIMARY"
+  - title: "Support"
+    role: "Staff"
+    color: "SECONDARY"
     emoji: "1️⃣"
-    category: "Tickets"
+    category: "Billing Support"
   - title: "Billing Support"
-    role: "Support"
-    color: "PRIMARY"
+    role: "Staff"
+    color: "SECONDARY"
     emoji: "2️⃣"
-    category: "Billing"
+    category: "Admin Team"
   - title: "Admin Team"
     role: "Admin"
-    color: "PRIMARY"
+    color: "SECONDARY"
     emoji: "3️⃣"
-    category: "Tickets"
+    category: "Admin Support"
+#  - title: "Other"
+#    role: "Staff"
+#    color: "SECONDARY"
+#    emoji: "3️⃣"
+#    category: "Tickets"
+
+# Discord Button Colour Selection
+# PRIMARY - Blurple
+# SECONDARY - Grey
+# DANGER - Red
+# SUCCESS - Green
 
 # --- Closing Config ---
 #    --- Start ---
@@ -180,7 +226,7 @@ Departments:
 StaffOnly: true
 ClosingTicket: ":warning: You have requested to close your support ticket."
 ClosingConfirmation_Word: "confirm"
-CloseConfirmation: false
+CloseConfirmation: true
 
 # ---------------------------
 #  Error / Warning Messages
