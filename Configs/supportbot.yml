@@ -10,7 +10,7 @@
 #           Discord Support: https://emeraldsrv.dev/discord
 #           Community Resources: https://emeraldsrv.dev/resources
 
-SupportBot_Version: "BETA 7.6"
+SupportBot_Version: "7.6"
 
 # -------------------------
 #   General Configuration
@@ -68,6 +68,9 @@ TicketBlackListRole: "Blacklisted"
 #  Join/Leave Configuration
 # ----------------------------
 
+Welcome: true
+  # set to false to disable joining logs
+
 WelcomeChannel: "join-leave-logs"
 WelcomeColour: "#f74343"
 WelcomeTitle: "User Joined!"
@@ -82,6 +85,9 @@ EmbedWelcomeThumbnail: "BOT"
   # "USER" will display the user's profile picture.
   # "BOT" will display the bot's profile picture.
   # false to disable
+
+Leave: true
+  # set to false to disable leaving logs
 
 LeaveChannel: "join-leave-logs"
 LeaveColour: "#f74343"
