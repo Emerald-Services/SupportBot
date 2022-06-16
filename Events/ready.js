@@ -34,7 +34,7 @@ module.exports = new Event("ready", async (client, interaction) => {
   console.log(`    `);
   console.log(
     `\u001b[33m`,
-    `${supportbot.Name} v${supportbot.SupportBot_Version}`,
+    `${supportbot.Name} | v${supportbot.SupportBot_Version}`,
     `\u001b[36m`,
     `Connected to Discord`
   );
@@ -74,14 +74,10 @@ module.exports = new Event("ready", async (client, interaction) => {
   console.log(`\u001b[37m`, `SupportBot proudly created by Emerald Services`);
   console.log(`    `);
   console.log(`\u001b[31m`, `――――――――――――――――――――――――――――――――――――――――――――`);
-  if (client.guilds.cache.size !== 1) {
-    console.log(
-      `\u001b[31m`,
-      `${client.user.username} must be in only 1 server. Please join this server, leave any others, and restart the bot.`
-    );
-    console.log(`\u001b[31m`, `${client.user.username} will now exit.`);
-    return process.exit(1);
-  }
+
+
+
+
   const roles = [
     supportbot.Admin,
     supportbot.Staff,
@@ -90,12 +86,15 @@ module.exports = new Event("ready", async (client, interaction) => {
   if (supportbot.TicketDepartments) {
     supportbot.Departments.forEach((department) => roles.push(department.role));
   }
-  if (supportbot.AutoRole) roles.push(supportbot.AutoRole_Role);
+  if (supportbot.AutoRole) roles.push(supportbot.JoinRole);
   const channels = [
     supportbot.SuggestionChannel,
     supportbot.TicketLog,
     supportbot.TranscriptLog,
     panelconfig.Channel,
+    supportbot.WelcomeChannel,
+    supportbot.LeaveChannel,
+    supportbot.TranslateLogChannel
   ];
   const categories = [supportbot.TicketCategory];
 

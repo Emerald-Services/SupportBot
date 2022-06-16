@@ -57,7 +57,7 @@ module.exports = new Command({
         .setTitle("No Ticket Found!")
         .setDescription(supportbot.NoValidTicket)
         .setColor(supportbot.WarningColour);
-      return interaction.reply({ embeds: [Exists] });
+      return interaction.reply({ ephemeral: true, embeds: [Exists] });
     }
 
     let uMember = interaction.options.getUser("user");
@@ -68,7 +68,7 @@ module.exports = new Command({
       )
       .setColor(supportbot.ErrorColour);
 
-    if (!uMember) return interaction.reply({ embeds: [UserNotExist] });
+    if (!uMember) return interaction.reply({ ephemeral: true, embeds: [UserNotExist] });
 
     await interaction.channel.permissionOverwrites.edit(uMember.id, {
       VIEW_CHANNEL: false,

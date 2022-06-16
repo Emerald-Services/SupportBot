@@ -45,7 +45,7 @@ module.exports = new Command({
       !interaction.member.roles.cache.has(SupportStaff.id) &&
       !interaction.member.roles.cache.has(Admin.id)
     )
-      return interaction.reply({ embeds: [NoPerms] });
+      return interaction.reply({ ephemeral: true, embeds: [NoPerms] });
 
     let TicketData = await JSON.parse(
       fs.readFileSync("./Data/TicketData.json", "utf8")
@@ -58,7 +58,7 @@ module.exports = new Command({
         .setTitle("No Ticket Found!")
         .setDescription(supportbot.NoValidTicket)
         .setColor(supportbot.WarningColour);
-      return interaction.reply({ embeds: [Exists] });
+      return interaction.reply({ ephemeral: true, embeds: [Exists] });
     }
 
     let uMember = interaction.options.getUser("user");

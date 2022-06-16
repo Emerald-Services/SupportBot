@@ -18,7 +18,11 @@
   },
   "homepage": "https://github.com/Emerald-Services/SupportBot#readme",
   "dependencies": {
+    "@vitalets/google-translate-api": "^8.0.0",
     "discord.js": "^13.6.0",
-    "js-yaml": "^4.1.0"
+    "js-yaml": "^4.1.0",
+    "moment": "^2.29.3",
+    "translate": "^1.4.1",
+    "twitter": "^1.7.1"
   }
 }

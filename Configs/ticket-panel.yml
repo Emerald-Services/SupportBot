@@ -20,9 +20,9 @@ TicketPanel: true
 #   Ticket Panel Message Configuration
 # ----------------------------------------
 
-Channel: "create-ticket"
+Channel: "▣┃ticket-creation"
 ButtonEmoji: "📩"
-ButtonLabel: "Open Ticket"
+ButtonLabel: "Create Ticket"
 ButtonColour: "SUCCESS"
 # Colour Options:
 #   -> PRIMARY - Purple
@@ -33,8 +33,8 @@ ButtonColour: "SUCCESS"
 PanelTitle: "Need Help? Create a Support Ticket."
 
 TicketPanel_Description: true
-TicketPanel_Thumbnail: false
-TicketPanel_Image: false
+TicketPanel_Thumbnail: true
+TicketPanel_Image: true
 
 PanelMessage: "Click the button to open a new support ticket."
 PanelThumbnail: "https://i.imgur.com/ieeZejl.png"
