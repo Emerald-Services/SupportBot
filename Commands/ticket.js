@@ -311,14 +311,16 @@ module.exports = new Command({
           interaction.guild
         );
         await ticketChannel.setParent(TicketCat.id, { lockPermissions: false });
-        await ticketChannel.send({
-          embeds: [
-            {
-              description: `> Thank for reaching out to the **${title} Department**. Please provide us information regarding your query.`,
-              color: supportbot.EmbedColour,
-            },
-          ],
-        });
+        if (supportbot.AllowThanksForReachingOutMessage) {
+          await ticketChannel.send({
+            embeds: [
+              {
+                description: `> Thank for reaching out to the **${title} Department**. Please provide us information regarding your query.`,
+                color: supportbot.EmbedColour,
+              },
+            ],
+          });
+        }
       }
       if (supportbot.AllowTicketMentions) {
         await ticketChannel.send("@here");

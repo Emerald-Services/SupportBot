@@ -144,6 +144,14 @@ AllowTicketMentions: true
 # Set to true to allow the ticket to mention the author and the support team.
 # Set false to dis-allow mentions within tickets.
 
+AllowThanksForReachingOutMessage: true 
+# Set to true to allow the "Thanks for reaching out Message" to be sent when the ticket is created
+DisableSuggestionsChannel: false
+# Set to true to disable the requirement of the "SuggestionChannel"
+DisableTicketLogChannel: false
+# Set to true to disable the requirement of the "TicketLog"
+# Set to true to also disable the ticket logs to be sent in the "TicketLogs" channel
+
 # --- Creation Config ---
 #      --- Start ---
 
