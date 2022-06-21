@@ -10,14 +10,14 @@
 #           Discord Support: https://emeraldsrv.dev/discord
 #           Community Resources: https://emeraldsrv.dev/resources
 
-SupportBot_Version: "7.6"
+SupportBot_Version: "7.7 BETA-v2"
 
 # -------------------------
 #   General Configuration
 # -------------------------
 
 Name: "SupportBot"
-Token: "TOKEN_HERE"
+Token: "BOT_TOKEN_HERE"
 
 # -------------------------
 #  Activity Configuration
@@ -58,7 +58,7 @@ InfoColour: "#f74343"
 # -------------------------
 
 AutoRole: true
-JoinRole: "Verified Member"
+JoinRole: "Member"
 
 Staff: "Staff"
 Admin: "Admin"
@@ -109,9 +109,15 @@ EmbedLeaveThumbnail: false
 #  Suggestions Configuration
 # ----------------------------
 
+Suggestions: true
+# Set to true to disable the suggestiosn feature.
+
 SuggestionChannel: "suggestions"
 SuggestionUpvote: "✅"
 SuggestionDownvote: "❌"
+
+SuggestionThreads: true
+# set to false to disable threads being created from suggestions.
 
 # -------------------------
 #  Translate Configuration
@@ -146,8 +152,6 @@ AllowTicketMentions: true
 
 AllowThanksForReachingOutMessage: true 
 # Set to true to allow the "Thanks for reaching out Message" to be sent when the ticket is created
-DisableSuggestionsChannel: false
-# Set to true to disable the requirement of the "SuggestionChannel"
 DisableTicketLogChannel: false
 # Set to true to disable the requirement of the "TicketLog"
 # Set to true to also disable the ticket logs to be sent in the "TicketLogs" channel
@@ -212,11 +216,13 @@ Departments:
     color: "SECONDARY"
     emoji: "1️⃣"
     category: "Billing Support"
+
   - title: "Billing Support"
     role: "Staff"
     color: "SECONDARY"
     emoji: "2️⃣"
     category: "Admin Team"
+
   - title: "Admin Team"
     role: "Admin"
     color: "SECONDARY"

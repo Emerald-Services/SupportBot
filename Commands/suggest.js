@@ -55,6 +55,16 @@ module.exports = new Command({
     if (supportbot.SuggestionUpvote && supportbot.SuggestionDownvote) {
       await suggestionMsg.react(supportbot.SuggestionUpvote);
       await suggestionMsg.react(supportbot.SuggestionDownvote);
+
+      if (supportbot.SuggestionThreads) {
+        await suggestionMsg.startThread({
+              name: `Suggestion-releated Thread`,
+              autoArchiveDuration: 60,
+              type: 'GUILD_PUBLIC_THREAD',
+              reason: 'Suggestion-releated thread',
+          })
+    
+        }
     }
 
     const Submitted = new Discord.MessageEmbed()
@@ -65,6 +75,10 @@ module.exports = new Command({
       .addField("Sent to:", `<#${suggestChannel.id}>`)
       .setColor(supportbot.SuccessColour);
 
-    return interaction.reply({ ephemeral: true, mbeds: [Submitted] });
+    return interaction.reply({ 
+      ephemeral: true, 
+      embeds: [Submitted] 
+    })
+    
   },
 });

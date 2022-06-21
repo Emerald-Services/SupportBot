@@ -39,9 +39,11 @@ class Client extends Discord.Client {
 
   async start(token) {
     var tempCommandFiles = fs.readdirSync("./Commands").filter((file) => file.endsWith(".js"));
-    if (supportbot.DisableSuggestionsChannel) {
+
+    if (supportbot.Suggestions) {
       tempCommandFiles = tempCommandFiles.filter(item => item !== "suggest.js");
     }
+    
     const commandFiles = tempCommandFiles;
 
     const addonFiles = fs
