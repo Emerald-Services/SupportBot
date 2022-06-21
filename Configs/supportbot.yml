@@ -109,15 +109,15 @@ EmbedLeaveThumbnail: false
 #  Suggestions Configuration
 # ----------------------------
 
-Suggestions: true
-# Set to true to disable the suggestiosn feature.
-
 SuggestionChannel: "suggestions"
 SuggestionUpvote: "✅"
 SuggestionDownvote: "❌"
 
 SuggestionThreads: true
 # set to false to disable threads being created from suggestions.
+
+DisableSuggestions: false
+# Set to true to disable the suggestiosn feature.
 
 # -------------------------
 #  Translate Configuration
