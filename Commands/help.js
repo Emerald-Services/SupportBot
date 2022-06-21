@@ -33,7 +33,7 @@ module.exports = new Command({
     botCommands += `**/${cmdconfig.PingCommand}** ${cmdconfig.PingCommandDesc}\n`;
     botCommands += `**/${cmdconfig.UserInfoCommand}** ${cmdconfig.UserInfoCommandDesc}\n`;
 
-    if (supportbot.Suggestions === false) {
+    if (supportbot.DisableSuggestions === false) {
       botCommands += `**/${cmdconfig.SuggestCommand}** ${cmdconfig.SuggestCommandDesc}\n`;
     }
 
