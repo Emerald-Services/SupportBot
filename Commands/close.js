@@ -154,11 +154,11 @@ module.exports = new Command({
           html += `-----<br><br>`;
         }
       });
-
-      await logChannel.send({ embeds: [logEmbed] }).catch((err) => {
-        console.error(err);
-      });
-
+      if (!(supportbot.DisableTicketLogChannel)) {
+        await logChannel.send({ embeds: [logEmbed] }).catch((err) => {
+          console.error(err);
+        });
+      }
       let file = new Discord.MessageAttachment(
         Buffer.from(html),
         `${interaction.channel.name}.html`

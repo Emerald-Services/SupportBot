@@ -102,6 +102,9 @@ module.exports = new Event("ready", async (client, interaction) => {
   const missingR = [];
   const missingCat = [];
   for (let c of channels) {
+    if ((c === supportbot.SuggestionChannel && supportbot.DisableSuggestionsChannel) || c === supportbot.TicketLog && supportbot.DisableTicketLogChannel) {
+      continue;
+    }
     const find = await getChannel(c, client.guilds.cache.first());
     if (!find) missingC.push(c);
   }

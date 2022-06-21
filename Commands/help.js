@@ -32,7 +32,10 @@ module.exports = new Command({
     botCommands += `**/${cmdconfig.InfoCommand}** ${cmdconfig.InfoCommandDesc}\n`;
     botCommands += `**/${cmdconfig.PingCommand}** ${cmdconfig.PingCommandDesc}\n`;
     botCommands += `**/${cmdconfig.UserInfoCommand}** ${cmdconfig.UserInfoCommandDesc}\n`;
-    botCommands += `**/${cmdconfig.SuggestCommand}** ${cmdconfig.SuggestCommandDesc}\n`;
+
+    if (supportbot.Suggestions === false) {
+      botCommands += `**/${cmdconfig.SuggestCommand}** ${cmdconfig.SuggestCommandDesc}\n`;
+    }
 
     let ticketCommands = "";
     ticketCommands += `**/${cmdconfig.OpenTicket}** ${cmdconfig.OpenTicketDesc}\n`;
