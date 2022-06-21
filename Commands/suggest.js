@@ -1,5 +1,5 @@
 // SupportBot | Emerald Services
-// Ping Command
+// Suggest Command
 
 const fs = require("fs");
 
