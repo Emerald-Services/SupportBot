@@ -43,16 +43,6 @@ SuccessColour: "#04b545"
 WarningColour: "#fca117"
 
 # -------------------------
-#  Information Configuration
-# -------------------------
-
-InfoTitle: "Information"
-
-InfoButtonText: "Visit Site"
-InfoURL: "https://emeraldsrv.dev"
-InfoColour: "#f74343"
-
-# -------------------------
 #  Role Configuration
 # -------------------------
 
@@ -103,6 +93,15 @@ EmbedLeaveThumbnail: false
   # "BOT" will display the bot's profile picture.
   # false to disable
 
+# -------------------------
+#  Information Configuration
+# -------------------------
+
+InfoTitle: "Information"
+
+InfoButtonText: "Visit Site"
+InfoURL: "https://emeraldsrv.dev"
+InfoColour: "#f74343"
 
 # ----------------------------
 #  Suggestions Configuration
@@ -128,7 +127,6 @@ TranslateLogChannel: "translations-log"
 #  Tickets Configuration
 # -------------------------
 
-TicketCategory: "Tickets" # Only for tickets without a category
 TicketPrefix: "ticket-" # The prefix for ticket channel names
 
 TicketLog: "ticket-data"
@@ -198,11 +196,13 @@ TranscriptSavedMessage: "📝 **Transcript Saved!**"
 TicketLockMessage: "❌ **Ticket Locked!**"
 TicketDeleteMessage: "⚠ **Ticket Deleting!**" # Tickets deleting after 5 seconds by default.
 
-# --- Departments Config ---
-#     --- Start ---
+# -------------------------
+#   Tickets Categories
+# -------------------------
 
+# THIS IS REQUIRED TO BE ENABLED!
 TicketDepartments: true
-# Delete the ticket if no department selected. TIME IN MINUTES
+
 Timeout: 5
 # Set to true to allow all staff to access the ticket
 AllowAllStaff: false
@@ -214,19 +214,20 @@ Departments:
     role: "Staff"
     color: "SECONDARY"
     emoji: "1️⃣"
-    category: "Billing Support"
+    category: "Tickets"
 
   - title: "Billing Support"
     role: "Staff"
     color: "SECONDARY"
     emoji: "2️⃣"
-    category: "Admin Team"
+    category: "Billing Support"
 
   - title: "Admin Team"
     role: "Admin"
     color: "SECONDARY"
     emoji: "3️⃣"
     category: "Admin Support"
+
 #  - title: "Other"
 #    role: "Staff"
 #    color: "SECONDARY"

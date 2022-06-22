@@ -102,7 +102,7 @@ module.exports = new Command({
         ephemeral: true,
       });
     let TicketCategory = await getCategory(
-      supportbot.Departments[department].category || supportbot.TicketCategory,
+      supportbot.Departments[department].category,
       interaction.guild
     );
     const ticketChannel = await interaction.guild.channels.create(
@@ -306,8 +306,7 @@ module.exports = new Command({
           VIEW_CHANNEL: true,
         });
         let TicketCat = await getCategory(
-          supportbot.Departments[department].category ||
-            supportbot.TicketCategory,
+          supportbot.Departments[department].category,
           interaction.guild
         );
         await ticketChannel.setParent(TicketCat.id, { lockPermissions: false });

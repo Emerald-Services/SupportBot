@@ -23,7 +23,7 @@ InfoCommand: "info"
 PingCommand: "ping"
 HelpCommand: "help"
 EmbedCommand: "embed"
-SuggestCommand: "suggestion"
+SuggestCommand: "suggest"
 TranslateCommand: "translate"
 UserInfoCommand: "userinfo"
 

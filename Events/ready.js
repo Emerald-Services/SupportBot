@@ -96,7 +96,7 @@ module.exports = new Event("ready", async (client, interaction) => {
     supportbot.LeaveChannel,
     supportbot.TranslateLogChannel
   ];
-  const categories = [supportbot.TicketCategory];
+  //const categories = [supportbot.TicketCategory];
 
   const missingC = [];
   const missingR = [];
@@ -112,10 +112,10 @@ module.exports = new Event("ready", async (client, interaction) => {
     const find = await getRole(r, client.guilds.cache.first());
     if (!find) missingR.push(r);
   }
-  for (let cat of categories) {
-    const find = await getCategory(cat, client.guilds.cache.first());
-    if (!find) missingCat.push(cat);
-  }
+ // for (let cat of categories) {
+ //   const find = await getCategory(cat, client.guilds.cache.first());
+ //   if (!find) missingCat.push(cat);
+ // }
 
   if (missingR.length > 0) {
     console.log(
