@@ -21,14 +21,6 @@ TicketPanel: true
 # ----------------------------------------
 
 Channel: "ticket-creation"
-ButtonEmoji: "📩"
-ButtonLabel: "Create Ticket"
-ButtonColour: "SUCCESS"
-# Colour Options:
-#   -> PRIMARY - Purple
-#   -> SECONDARY - Grey
-#   -> SUCCESS - Green
-#   -> DANGER - Red
 
 PanelTitle: "Need Help? Create a Support Ticket."
 

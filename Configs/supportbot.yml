@@ -10,20 +10,20 @@
 #           Discord Support: https://emeraldsrv.dev/discord
 #           Community Resources: https://emeraldsrv.dev/resources
 
-SupportBot_Version: "7.7 BETA-v2"
+SupportBot_Version: "v7.7"
 
 # -------------------------
 #   General Configuration
 # -------------------------
 
 Name: "SupportBot"
-Token: "BOT_TOKEN_HERE"
+Token: "BOT_TOKEN: HTTPS://DISCORD.COM/DEVELOPERS"
 
 # -------------------------
 #  Activity Configuration
 # -------------------------
 
-BotActivity: "Need Help? /ticket"
+BotActivity: "Here to help!"
 
 StreamingURL: "https://www.twitch.tv/YOUR_TWITCH_NAME"
 # Set The ActivityType to "STREAMING" for a streaming status!
@@ -36,7 +36,7 @@ ActivityType: "PLAYING"
 # -------------------------
 
 EmbedColour: "#f74343"
-EmbedFooter: "SupportBot | An Advanced Ticket System"
+EmbedFooter: "SupportBot | Developed by Emerald Services"
 
 ErrorColour: "#d12519"
 SuccessColour: "#04b545"
@@ -115,7 +115,7 @@ SuggestionThreads: true
 # set to false to disable threads being created from suggestions.
 
 DisableSuggestions: false
-# Set to true to disable the suggestiosn feature.
+# Set to true to disable the suggestions feature.
 
 # -------------------------
 #  Translate Configuration
@@ -136,6 +136,8 @@ DMTranscripts: true
 TranscriptTitle: "Ticket Transcript"
 TicketLog_Title: "Ticket Closed"
 TicketBlackListMessage: "You are not allowed to open a ticket"
+TicketRoleMention: "@here"
+# To ping a role: <@ROLE_ID>
 
 MaxAllowedTickets: 2
 
@@ -173,37 +175,12 @@ TicketCreatedAlert: ":ticket: Your support ticket has been created: <#%ticketid%
 AddedUser: "👍 <@%user%> has been added to this ticket"
 RemovedUser: "👍 <@%user%> has been removed from this ticket"
 
-# --- Buttons Config ---
-#      --- Start ---
-
-# Discord Button Colour Selection
-# PRIMARY - Blue
-# SECONDARY - Grey
-# DANGER - Red
-# SUCCESS - Green
-
-LockTicketCategory: "Archive"
-
-TicketCloseEmoji: "❌"
-TicketDeleteEmoji: "⛔"
-TicketLockEmoji: "🔒"
-
-TicketCloseColour: "DANGER"
-TicketDeleteColour: "DANGER"
-TicketLockColour: "PRIMARY"
-
-TranscriptSavedMessage: "📝 **Transcript Saved!**"
-TicketLockMessage: "❌ **Ticket Locked!**"
-TicketDeleteMessage: "⚠ **Ticket Deleting!**" # Tickets deleting after 5 seconds by default.
-
 # -------------------------
 #   Tickets Categories
 # -------------------------
 
-# THIS IS REQUIRED TO BE ENABLED!
-TicketDepartments: true
-
 Timeout: 5
+
 # Set to true to allow all staff to access the ticket
 AllowAllStaff: false
 
@@ -220,13 +197,13 @@ Departments:
     role: "Staff"
     color: "SECONDARY"
     emoji: "2️⃣"
-    category: "Billing Support"
+    category: "Tickets"
 
   - title: "Admin Team"
     role: "Admin"
     color: "SECONDARY"
     emoji: "3️⃣"
-    category: "Admin Support"
+    category: "Tickets"
 
 #  - title: "Other"
 #    role: "Staff"
@@ -239,6 +216,29 @@ Departments:
 # SECONDARY - Grey
 # DANGER - Red
 # SUCCESS - Green
+
+# --- Buttons Config ---
+#      --- Start ---
+
+LockTicketCategory: "Archive"
+
+TicketCloseEmoji: "❌"
+TicketDeleteEmoji: "⛔"
+TicketLockEmoji: "🔒"
+
+TicketCloseColour: "DANGER"
+TicketDeleteColour: "DANGER"
+TicketLockColour: "PRIMARY"
+
+# Discord Button Colour Selection
+# PRIMARY - Blue
+# SECONDARY - Grey
+# DANGER - Red
+# SUCCESS - Green
+
+TranscriptSavedMessage: "📝 **Transcript Saved!**"
+TicketLockMessage: "❌ **Ticket Locked!**"
+TicketDeleteMessage: "⚠ **Ticket Deleting!**" # Tickets deleting after 5 seconds by default.
 
 # --- Closing Config ---
 #    --- Start ---

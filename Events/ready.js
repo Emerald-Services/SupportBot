@@ -83,9 +83,9 @@ module.exports = new Event("ready", async (client, interaction) => {
     supportbot.Staff,
     supportbot.TicketBlackListRole,
   ];
-  if (supportbot.TicketDepartments) {
+
     supportbot.Departments.forEach((department) => roles.push(department.role));
-  }
+
   if (supportbot.AutoRole) roles.push(supportbot.JoinRole);
   const channels = [
     supportbot.SuggestionChannel,
@@ -181,7 +181,7 @@ module.exports = new Event("ready", async (client, interaction) => {
         embed.setImage(panelconfig.PanelImage);
       }
       let button;
-      if (supportbot.TicketDepartments) {
+
         button = supportbot.Departments.map((x) =>
           new Discord.MessageButton()
             .setCustomId("department-" + supportbot.Departments.indexOf(x))
@@ -189,13 +189,7 @@ module.exports = new Event("ready", async (client, interaction) => {
             .setStyle(x.color)
             .setEmoji(x.emoji)
         );
-      } else {
-        button = new Discord.MessageButton()
-          .setLabel(panelconfig.ButtonLabel)
-          .setCustomId("openticket")
-          .setStyle(panelconfig.ButtonColour)
-          .setEmoji(panelconfig.ButtonEmoji);
-      }
+
       let row = new Discord.MessageActionRow().addComponents(button);
 
       await chan1

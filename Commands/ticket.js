@@ -131,7 +131,7 @@ module.exports = new Command({
         VIEW_CHANNEL: true,
       });
     }
-    if (supportbot.TicketDepartments && !department) {
+    if (!department) {
       await ticketChannel.permissionOverwrites.edit(interaction.user.id, {
         SEND_MESSAGES: false,
       });
@@ -196,7 +196,7 @@ module.exports = new Command({
       }
     }
 
-    if (supportbot.TicketDepartments && !department) {
+    if (!department) {
       TicketMessage.addFields({
         name: "Departments",
         value: ` **${supportbot.Departments.map((X) => X.title).join("\n")}**`,
@@ -215,7 +215,7 @@ module.exports = new Command({
       .setEmoji(supportbot.TicketLockEmoji);
 
     const row2 = new MessageActionRow().addComponents(CloseButton, LockButton);
-    if (supportbot.TicketDepartments && !department) {
+    if (!department) {
       try {
         let buttons = await supportbot.Departments.map((x) =>
           new MessageButton()
@@ -322,7 +322,7 @@ module.exports = new Command({
         }
       }
       if (supportbot.AllowTicketMentions) {
-        await ticketChannel.send("@here");
+        await ticketChannel.send(supportbot.TicketRoleMention);
       }
     }
   },
