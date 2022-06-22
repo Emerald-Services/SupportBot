@@ -20,7 +20,7 @@ TicketPanel: true
 #   Ticket Panel Message Configuration
 # ----------------------------------------
 
-Channel: "▣┃ticket-creation"
+Channel: "ticket-creation"
 ButtonEmoji: "📩"
 ButtonLabel: "Create Ticket"
 ButtonColour: "SUCCESS"

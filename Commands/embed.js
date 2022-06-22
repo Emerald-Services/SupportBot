@@ -22,42 +22,36 @@ module.exports = new Command({
       type: "STRING",
       required: true,
     },
-
     {
       name: "message",
       description: "Embed Message",
       type: "STRING",
       required: true,
     },
-
     {
       name: "color",
       description: "Embed HEX Color",
       type: "STRING",
       required: false,
     },
-
     {
       name: "fieldtitle",
       description: "Add an additional Embed Field",
       type: "STRING",
       required: false,
     },
-
     {
       name: "fieldcontent",
       description: "Add an additional Embed Field",
       type: "STRING",
       required: false,
     },
-
     {
       name: "thumbnail",
       description: "Embed Thumbnail URL",
       type: "STRING",
       required: false,
     },
-
     {
       name: "image",
       description: "Embed Image URL",
@@ -98,10 +92,10 @@ module.exports = new Command({
       const EmbedMsg = new Discord.MessageEmbed()
         .setTitle(EmbedTitle)
         .setDescription(EmbedSubject)
-        .addField(EmbedFieldTitle, EmbedFieldContent)
         .setColor(EmbedColour)
         .setThumbnail(EmbedThumbnail)
-        .setImage(EmbedImage);
+        .setImage(EmbedImage)
+        if (EmbedFieldTitle && EmbedFieldContent) { EmbedMsg.addField(EmbedFieldTitle, EmbedFieldContent) };
 
       interaction.reply({
         embeds: [EmbedMsg],

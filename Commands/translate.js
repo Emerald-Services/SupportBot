@@ -1,5 +1,5 @@
 // SupportBot | Emerald Services
-// Ticket Add Command
+// Translate Command
 
 const fs = require("fs");
 
