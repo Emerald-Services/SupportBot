@@ -92,10 +92,10 @@ module.exports = new Command({
       const EmbedMsg = new Discord.MessageEmbed()
         .setTitle(EmbedTitle)
         .setDescription(EmbedSubject)
-        if (EmbedFieldTitle && EmbedFieldContent) EmbedMsg.addField(EmbedFieldTitle, EmbedFieldContent)
         .setColor(EmbedColour)
         .setThumbnail(EmbedThumbnail)
-        .setImage(EmbedImage);
+        .setImage(EmbedImage)
+        if (EmbedFieldTitle && EmbedFieldContent) { EmbedMsg.addField(EmbedFieldTitle, EmbedFieldContent) };
 
       interaction.reply({
         embeds: [EmbedMsg],
