@@ -68,8 +68,16 @@ module.exports = new Command({
       return interaction.reply({
         content: supportbot.TicketBlackListMessage,
         ephemeral: true,
-      });
-    }
+      })
+    } else if (User.roles.cache.has(
+        getRole(supportbot.TicketMutedRole, interaction.guild).id
+      )
+    ) {
+      return interaction.reply({
+        content: supportbot.TicketMutedMessage,
+        ephemeral: true,
+      })
+    };
 
     // Ticket ID
     let ticketNumberID = await TicketNumberID.pad();

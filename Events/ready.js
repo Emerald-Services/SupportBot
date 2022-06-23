@@ -82,6 +82,7 @@ module.exports = new Event("ready", async (client, interaction) => {
     supportbot.Admin,
     supportbot.Staff,
     supportbot.TicketBlackListRole,
+    supportbot?.TicketMutedRole
   ];
 
     supportbot.Departments.forEach((department) => roles.push(department.role));

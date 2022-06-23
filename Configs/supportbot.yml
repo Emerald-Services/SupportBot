@@ -52,6 +52,7 @@ JoinRole: "Member"
 Staff: "Staff"
 Admin: "Admin"
 TicketBlackListRole: "Blacklisted"
+TicketMutedRole: "Muted"
 
 # ----------------------------
 #  Join/Leave Configuration
@@ -136,6 +137,7 @@ DMTranscripts: true
 TranscriptTitle: "Ticket Transcript"
 TicketLog_Title: "Ticket Closed"
 TicketBlackListMessage: "You are not allowed to open a ticket"
+TicketMutedMessage: "You are muted and therefore not allowed to open any tickets"
 TicketRoleMention: "@here"
 # To ping a role: <@ROLE_ID>
 
