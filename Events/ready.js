@@ -81,7 +81,7 @@ module.exports = new Event("ready", async (client, interaction) => {
   const roles = [
     supportbot.Admin,
     supportbot.Staff,
-    supportbot.TicketBlackListRole,
+    supportbot?.TicketBlackListRole,
     supportbot?.TicketMutedRole
   ];
 
