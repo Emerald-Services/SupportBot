@@ -1,12 +1,1 @@
-![imgur](https://i.imgur.com/TQj40Mt.png)
-
-## What is SupportBot?
-
-SupportBot is an open-sourced support system for discord. It's completely free to use with high amounts of customization to match your own brand.
-
-## Quick Links
-
-**|** [Discord](https://emeraldsrv.dev/discord) **|**
-[Hosting](https://emeraldsrv.dev/hosting) **|**
-[Documentation](https://emeraldsrv.dev/wiki/supportbot) **|**
-[Download via MC-Market](https://www.mc-market.org/resources/8940/) **|**
+![SupportBot Contributors Image](https://contrib.rocks/image?repo=1tzEmerald/Sypher)
