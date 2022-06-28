@@ -21,16 +21,17 @@ module.exports = new Event("ready", async (client, interaction) => {
     url: supportbot.StreamingURL,
   });
 
-  console.log(`\u001b[32m`, `┏━━━┓╋╋╋╋╋╋╋╋╋╋╋╋╋┏┓┏━━┓╋╋╋┏┓`);
-  console.log(`\u001b[32m`, `┃┏━┓┃╋╋╋╋╋╋╋╋╋╋╋╋┏┛┗┫┏┓┃╋╋┏┛┗┓`);
-  console.log(`\u001b[32m`, `┃┗━━┳┓┏┳━━┳━━┳━━┳┻┓┏┫┗┛┗┳━┻┓┏┛`);
-  console.log(`\u001b[32m`, `┗━━┓┃┃┃┃┏┓┃┏┓┃┏┓┃┏┫┃┃┏━┓┃┏┓┃┃`);
-  console.log(`\u001b[32m`, `┃┗━┛┃┗┛┃┗┛┃┗┛┃┗┛┃┃┃┗┫┗━┛┃┗┛┃┗┓`);
-  console.log(`\u001b[32m`, `┗━━━┻━━┫┏━┫┏━┻━━┻┛┗━┻━━━┻━━┻━┛`);
-  console.log(`\u001b[32m`, `┗╋╋╋╋╋╋╋┃┃╋┃┃`);
-  console.log(`\u001b[32m`, `╋╋╋╋╋╋╋┗┛╋┗┛`);
+  console.log(`\u001b[107m`, `――――――――――――――――――――――――――――――――――――――――――――`);
+  console.log(`\u001b[91m`, `┏━━━┓╋╋╋╋╋╋╋╋╋╋╋╋╋┏┓┏━━┓╋╋╋┏┓`);
+  console.log(`\u001b[91m`, `┃┏━┓┃╋╋╋╋╋╋╋╋╋╋╋╋┏┛┗┫┏┓┃╋╋┏┛┗┓`);
+  console.log(`\u001b[91m`, `┃┗━━┳┓┏┳━━┳━━┳━━┳┻┓┏┫┗┛┗┳━┻┓┏┛`);
+  console.log(`\u001b[91m`, `┗━━┓┃┃┃┃┏┓┃┏┓┃┏┓┃┏┫┃┃┏━┓┃┏┓┃┃`);
+  console.log(`\u001b[91m`, `┃┗━┛┃┗┛┃┗┛┃┗┛┃┗┛┃┃┃┗┫┗━┛┃┗┛┃┗┓`);
+  console.log(`\u001b[91m`, `┗━━━┻━━┫┏━┫┏━┻━━┻┛┗━┻━━━┻━━┻━┛`);
+  console.log(`\u001b[91m`, `┗╋╋╋╋╋╋╋┃┃╋┃┃`);
+  console.log(`\u001b[91m`, `╋╋╋╋╋╋╋┗┛╋┗┛`);
   console.log(`    `);
-  console.log(`\u001b[31m`, `――――――――――――――――――――――――――――――――――――――――――――`);
+  console.log(`\u001b[32m`, `――――――――――――――――――――――――――――――――――――――――――――`);
   console.log(`    `);
   console.log(
     `\u001b[33m`,
@@ -163,7 +164,7 @@ module.exports = new Event("ready", async (client, interaction) => {
     chan1.messages.fetch(panelid.TicketPanelID).catch(async () => {
       let embed = new Discord.MessageEmbed()
         .setTitle(panelconfig.PanelTitle)
-        .setColor(supportbot.SuccessColour)
+        .setColor(panelconfig.PanelColour)
         .setFooter({
           text: supportbot.EmbedFooter,
           iconURL: interaction.user.displayAvatarURL(),

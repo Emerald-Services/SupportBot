@@ -17,7 +17,7 @@ SupportBot_Version: "v7.7"
 # -------------------------
 
 Name: "SupportBot"
-Token: "BOT_TOKEN: HTTPS://DISCORD.COM/DEVELOPERS"
+Token: "BOT_TOKEN HTTPS://DISCORD.COM/DEVELOPERS"
 
 # -------------------------
 #  Activity Configuration
