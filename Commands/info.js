@@ -29,7 +29,6 @@ module.exports = new Command({
     const InfoEmbed = new Discord.MessageEmbed()
       .setURL(supportbot.InfoURL)
       .setTitle(supportbot.InfoTitle)
-      .setDescription(supportbot.AboutMe)
       .setColor(supportbot.InfoColour);
 
     interaction.reply({
