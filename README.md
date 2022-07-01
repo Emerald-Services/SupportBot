@@ -1,6 +1,6 @@
 <h1 align="center">
     <br>
-    <a href="https://github.com/Emerald-Services/SupportBot"><img src="https://i.imgur.com/tzi3d7Q.png">
+    <a href="https://github.com/Emerald-Services/SupportBot"><img src="https://i.imgur.com/tzi3d7Q.png"></a>
     <br>
     SupportBot
     <br>
@@ -27,6 +27,11 @@
 </div>
 
 <p align="center">
+  <a href="https://emeraldsrv.dev/">Website</a>
+  •
+  <a href="https://github.com/Emerald-Services/SupportBot/wiki">Wiki</a>
+  •
+<br>
   <a href="#about">About</a>
   •
   <a href="#support">Support</a>
@@ -56,7 +61,9 @@ Released under the [MIT](https://opensource.org/licenses/MIT) license.
 
 ## Third-Party
 
-[Syphers Addons](https://github.com/SypherRed/SB_Addons_Unofficial)
+- [Syphers Addons](https://github.com/SypherRed/SB_Addons_Unofficial)
+- [MC-Market](https://www.mc-market.org/supportbot)
+- [Polymart](https://polymart.org/resource/supportbot-1-discord-ticket-bot.518)
 
 
 ## Contributors
