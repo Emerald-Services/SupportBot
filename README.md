@@ -8,21 +8,21 @@
 
 <div align="center">
 
-    <a href="https://opensource.org/licenses/MIT">
-        <img src="https://img.shields.io/badge/license-MIT-green?style=for-the-badge" alt="shield.png">
-    </a>
+<a href="https://opensource.org/licenses/MIT">
+    <img src="https://img.shields.io/badge/license-MIT-green?style=for-the-badge" alt="shield.png">
+</a>
 
 <a href="https://github.com/discordjs">
     <img src="https://img.shields.io/badge/discord.js-v13.6.x-blue.svg?style=for-the-badge&logo=javascript.svg" alt="shield.png">
 </a>
 
-    <a href="https://github.com/nodejs/node">
-        <img src="https://img.shields.io/badge/node.js-v16.14.x-green.svg?style=for-the-badge&logo=node" alt="shield.png">
-    </a>
+<a href="https://github.com/nodejs/node">
+    <img src="https://img.shields.io/badge/node.js-v16.14.x-green.svg?style=for-the-badge&logo=node" alt="shield.png">
+</a>
 
-    <a href="https://github.com/Emerald-Services/SupportBot/releases">
-        <img src="https://img.shields.io/github/downloads/Emerald-Services/SupportBot/total?style=for-the-badge" alt="shield.png">
-    </a>
+<a href="https://github.com/Emerald-Services/SupportBot/releases">
+    <img src="https://img.shields.io/github/downloads/Emerald-Services/SupportBot/total?style=for-the-badge" alt="shield.png">
+</a>
 
 </div>
 
