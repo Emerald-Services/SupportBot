@@ -30,7 +30,6 @@
   <a href="https://emeraldsrv.dev/">Website</a>
   •
   <a href="https://github.com/Emerald-Services/SupportBot/wiki">Wiki</a>
-  •
 <br>
   <a href="#about">About</a>
   •
