@@ -3,6 +3,8 @@
 
 ## About
 
+SupportBot is an opne-sourced discord bot built with Discord.JS. It's primarily focused to help servers organise and manage their support system in a unique way with full customisation to match your brand. 
+
 ## Support
 
 ## Downloads
