@@ -1,12 +1,15 @@
-![imgur](https://i.imgur.com/TQj40Mt.png)
+## SupportBot
+[![forthebadge made-with-nodejs](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&amp;logo=nodedotjs&amp;logoColor=white)]([https://www.python.org/](https://nodejs.org/en/)) [![forthebadge made-with-javascript](https://img.shields.io/badge/JavaScript-323330?style=for-the-badge&amp;logo=javascript&amp;logoColor=F7DF1E)]([https://javascript.com](https://javascript.com)) 
 
-## What is SupportBot?
+## About
 
-SupportBot is an open-sourced support system for discord. It's completely free to use with high amounts of customization to match your own brand.
+## Support
 
-## Quick Links
+## Downloads
 
-**|** [Discord](https://emeraldsrv.dev/discord) **|**
-[Hosting](https://emeraldsrv.dev/hosting) **|**
-[Documentation](https://emeraldsrv.dev/wiki/supportbot) **|**
-[Download via MC-Market](https://www.mc-market.org/resources/8940/) **|**
+## Third-Party
+
+## Contributors
+
+
+

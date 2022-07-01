@@ -23,6 +23,7 @@ TicketPanel: true
 Channel: "ticket-creation"
 
 PanelTitle: "Need Help? Create a Support Ticket."
+PanelColour: "#f74343"
 
 TicketPanel_Description: true
 TicketPanel_Thumbnail: true
