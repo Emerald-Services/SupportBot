@@ -48,7 +48,7 @@ SupportBot is an Open-Source discord bot built with [discord.js](https://github.
 
 ## Support
 
-<a href="https://discord.gg/n9zVYBCvxD">
+<a href="https://emeraldsrv.dev/discord">
     <img alt="Discord" src="https://img.shields.io/discord/597779408295821323?logo=discord&logoColor=white&style=for-the-badge">
 </a>
 
