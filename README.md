@@ -3,9 +3,10 @@
 
 ## About
 
-SupportBot is created by Emerald Development, an open-sourced discord bot built with Discord.JS. It's primarily focused to help servers organise and manage their support system in a unique way with full customisation to match your brand. 
+SupportBot is an open-sourced discord bot built with Discord.JS. It's primarily focused to help servers organise and manage their support system in a unique way with full customisation to match your brand. 
 
 ## Support
+
 
 
 
