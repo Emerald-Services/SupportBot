@@ -46,6 +46,7 @@
 
 SupportBot is an Open-Source discord bot built with [discord.js](https://github.com/discordjs/discord.js). It's primarily focused to help servers organise and manage their support system in a unique way with full customisation to match your brand.
 
+
 ## Support
 
 <a href="https://discord.gg/n9zVYBCvxD">
