@@ -15,11 +15,12 @@ const Command = require("../Structures/Command.js");
 module.exports = new Command({
   name: cmdconfig.CloseTicket,
   description: cmdconfig.CloseTicketDesc,
+  type: Discord.ApplicationCommandType.ChatInput,
   options: [
     {
       name: "reason",
       description: "Ticket Close Reason",
-      type: "STRING",
+      type: Discord.ApplicationCommandOptionType.String,
     },
   ],
   permissions: ["SEND_MESSAGES"],
@@ -33,7 +34,7 @@ module.exports = new Command({
         return interaction.reply(
           "Some roles seem to be missing!\nPlease check for errors when starting the bot."
         );
-      const NoPerms = new Discord.MessageEmbed()
+      const NoPerms = new Discord.EmbedBuilder()
         .setTitle("Invalid Permissions!")
         .setDescription(
           `${supportbot.IncorrectPerms}\n\nRole Required: \`${supportbot.Staff}\` or \`${supportbot.Admin}\``
@@ -55,7 +56,7 @@ module.exports = new Command({
     );
     let ticket = tickets.tickets[TicketData];
     if (TicketData === -1) {
-      const Exists = new Discord.MessageEmbed()
+      const Exists = new Discord.EmbedBuilder()
         .setTitle("No Ticket Found!")
         .setDescription(supportbot.NoValidTicket)
         .setColor(supportbot.WarningColour);
@@ -73,12 +74,12 @@ module.exports = new Command({
     if (!transcriptChannel || !logChannel)
       return interaction.followUp("Some Channels seem to be missing!");
     if (supportbot.CloseConfirmation) {
-      const CloseTicketRequest = new Discord.MessageEmbed()
+      const CloseTicketRequest = new Discord.EmbedBuilder()
         .setTitle(`**${supportbot.ClosingTicket}**`)
         .setDescription(
           `Please confirm by repeating the following word.. \`${supportbot.ClosingConfirmation_Word}\` `
         )
-        .setColor(supportbot.EmbedColour);
+        .setColor(supportbot.GeneralColour);
       await interaction.followUp({ embeds: [CloseTicketRequest] });
       let filter = (m) =>
         m.content.toLowerCase() === supportbot.ClosingConfirmation_Word &&
@@ -100,9 +101,9 @@ module.exports = new Command({
         }
       );
       await interaction.followUp(`**${supportbot.ClosingTicket}**`);
-      const transcriptEmbed = new Discord.MessageEmbed()
+      const transcriptEmbed = new Discord.EmbedBuilder()
         .setTitle(supportbot.TranscriptTitle)
-        .setColor(supportbot.EmbedColour)
+        .setColor(supportbot.GeneralColour)
         .setFooter({
           text: supportbot.EmbedFooter,
           iconURL: interaction.user.displayAvatarURL(),
@@ -119,9 +120,9 @@ module.exports = new Command({
         )
         .addField("Closed By", interaction.user.tag)
         .addField("Reason", reason);
-      const logEmbed = new Discord.MessageEmbed()
+      const logEmbed = new Discord.EmbedBuilder()
         .setTitle(supportbot.TicketLog_Title)
-        .setColor(supportbot.EmbedColour)
+        .setColor(supportbot.GeneralColour)
         .setFooter({
           text: supportbot.EmbedFooter,
           iconURL: interaction.user.displayAvatarURL(),

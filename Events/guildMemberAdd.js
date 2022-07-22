@@ -12,7 +12,7 @@ module.exports = new Event("guildMemberAdd", async (client, member, interaction,
     if (supportbot.Welcome) {
         const WelcomeChannel = member.guild.channels.cache.find(channel => channel.name === supportbot.WelcomeChannel)
 
-        const WelcomeEmbed = new Discord.MessageEmbed()
+        const WelcomeEmbed = new Discord.EmbedBuilder()
             .setColor(supportbot.WelcomeColour)
             .setTitle(supportbot.WelcomeTitle)
             .setDescription(supportbot.WelcomeMessage.replace(/%joined_user%/g, member.user))

@@ -8,7 +8,11 @@ const {
   Permissions,
   MessageButton,
   MessageActionRow,
+  ApplicationCommandOptionType,
+  ApplicationCommandType,
+  ButtonStyle
 } = require("discord.js");
+
 const yaml = require("js-yaml");
 const supportbot = yaml.load(
   fs.readFileSync("./Configs/supportbot.yml", "utf8")
@@ -21,12 +25,14 @@ const TicketNumberID = require("../Structures/TicketID.js");
 module.exports = new Command({
   name: cmdconfig.OpenTicket,
   description: cmdconfig.OpenTicketDesc,
+  type: ApplicationCommandType.ChatInput,
   options: [
     {
       name: "reason",
       description: "Ticket Reason",
-      type: "STRING",
+      type: ApplicationCommandOptionType.String,
     },
+    
   ],
   permissions: ["SEND_MESSAGES"],
 
@@ -164,7 +170,7 @@ module.exports = new Command({
           .replace(/%ticketid%/g, ticketChannel.id)
           .replace(/%ticketusername%/g, interaction.user.username)
       )
-      .setColor(supportbot.EmbedColour);
+      .setColor(supportbot.GeneralColour);
     await interaction.reply({ embeds: [CreatedTicket], ephemeral: true });
 
     if (supportbot.AllowTicketMentions) {
@@ -182,7 +188,7 @@ module.exports = new Command({
           .replace(/%ticketid%/g, ticketChannel.id)
           .replace(/%ticketusername%/g, interaction.user.username)
       )
-      .setColor(supportbot.EmbedColour);
+      .setColor(supportbot.GeneralColour);
 
     if (supportbot.TicketSubject === "embed") {
       if (TicketSubject !== "No Reason Provided.") {
@@ -280,7 +286,7 @@ module.exports = new Command({
           embeds: [
             {
               description: `> Thank for reaching out to the **${title} Department**. Please provide us information regarding your query.`,
-              color: supportbot.EmbedColour,
+              color: supportbot.GeneralColour,
             },
           ],
         });
@@ -317,7 +323,7 @@ module.exports = new Command({
             embeds: [
               {
                 description: `> Thank for reaching out to the **${title} Department**. Please provide us information regarding your query.`,
-                color: supportbot.EmbedColour,
+                color: supportbot.GeneralColour,
               },
             ],
           });

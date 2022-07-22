@@ -19,17 +19,18 @@ module.exports = new Command({
   permissions: ["SEND_MESSAGES"],
 
   async run(interaction) {
-    const InfoButton = new Discord.MessageButton()
+    const InfoButton = new Discord.ButtonBuilder()
       .setLabel(supportbot.InfoButtonText)
       .setURL(supportbot.InfoURL)
-      .setStyle("LINK");
+      .setStyle("Link");
 
-    const inforow = new Discord.MessageActionRow().addComponents(InfoButton);
+    const inforow = new Discord.ActionRowBuilder().addComponents(InfoButton);
 
-    const InfoEmbed = new Discord.MessageEmbed()
+    const InfoEmbed = new Discord.EmbedBuilder()
       .setURL(supportbot.InfoURL)
       .setTitle(supportbot.InfoTitle)
-      .setColor(supportbot.InfoColour);
+      .setDescription(supportbot.InfoDesc)
+      .setColor(supportbot.InfoColour)
 
     interaction.reply({
       embeds: [InfoEmbed],

@@ -4,7 +4,7 @@
 const fs = require("fs");
 
 const Discord = require("discord.js");
-const intents = new Discord.Intents(32767);
+const { GatewayIntentBits, Partials } = require('discord.js');
 
 const yaml = require("js-yaml");
 const supportbot = yaml.load(
@@ -13,7 +13,7 @@ const supportbot = yaml.load(
 
 class Client extends Discord.Client {
   constructor() {
-    super({ intents });
+    super({ intents: [GatewayIntentBits.Guilds], partials: [Partials.Channel] });
 
     this.commands = new Discord.Collection();
   }
@@ -62,7 +62,7 @@ class Client extends Discord.Client {
     console.log(`\u001b[34;1m`, "▬▬▬▬▬▬▬ Commands ▬▬▬▬▬▬▬");
 
     commands.forEach((cmd) => {
-      console.log(`\u001b[31;1m`, `${cmd.name}`, `\u001b[32;1m`, "Loaded");
+      console.log(`\u001b[32m`, `[CMD]`, `\u001b[37;1m`, `${cmd.name}`, `\u001b[32;1m`, "Loaded");
       this.commands.set(cmd.name, cmd);
     });
 
@@ -73,9 +73,9 @@ class Client extends Discord.Client {
 
     addons.forEach((addon) => {
       console.log(
-        `\u001b[33m`,
+        `\u001b[32m`,
         `[ADDON]`,
-        `\u001b[31;1m`,
+        `\u001b[37;1m`,
         `${addon.name}`,
         `\u001b[32;1m`,
         "Loaded"
@@ -95,7 +95,9 @@ class Client extends Discord.Client {
     this.once("ready", async () => {
       await this.guilds.cache.first()?.commands.set(this.commands);
       console.log(
-        `\u001b[32;1m`,
+        "\u001b[32m",
+        `[SUCCESS]`,
+        `\u001b[37;1m`,
         `Slash Commands Registered for ${this.guilds.cache.first().name}`
       );
     });
@@ -107,7 +109,7 @@ class Client extends Discord.Client {
       .filter((file) => file.endsWith(".js"))
       .forEach((file) => {
         const event = require(`../Events/${file}`);
-        console.log(`\u001b[31;1m`, `${event.event}`, `\u001b[32;1m`, "Loaded");
+        console.log(`\u001b[32m`, `[EVENT]`, `\u001b[37;1m`, `${event.event}`, `\u001b[32;1m`, "Loaded");
         this.on(event.event, (...args) => event.run(this, ...args));
       });
 

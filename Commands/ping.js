@@ -19,11 +19,11 @@ module.exports = new Command({
   permissions: ["SEND_MESSAGES"],
 
   async run(interaction) {
-    const PingEmbed = new Discord.MessageEmbed()
+    const PingEmbed = new Discord.EmbedBuilder()
       .setDescription(
         `:ping_pong: **Ping:** \`${interaction.client.ws.ping} ms\``
       )
-      .setColor(supportbot.EmbedColour);
+      .setColor(supportbot.GeneralColour);
 
     interaction.reply({
       embeds: [PingEmbed],

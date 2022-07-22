@@ -15,47 +15,55 @@ const Command = require("../Structures/Command.js");
 module.exports = new Command({
   name: cmdconfig.EmbedCommand,
   description: cmdconfig.EmbedCommandDesc,
+  type: Discord.ApplicationCommandType.ChatInput,
   options: [
     {
       name: "title",
       description: "Embed Title",
       type: "STRING",
+      type: Discord.ApplicationCommandOptionType.String,
       required: true,
     },
     {
       name: "message",
       description: "Embed Message",
       type: "STRING",
+      type: Discord.ApplicationCommandOptionType.String,
       required: true,
     },
     {
       name: "color",
       description: "Embed HEX Color",
       type: "STRING",
+      type: Discord.ApplicationCommandOptionType.String,
       required: false,
     },
     {
       name: "fieldtitle",
       description: "Add an additional Embed Field",
       type: "STRING",
+      type: Discord.ApplicationCommandOptionType.String,
       required: false,
     },
     {
       name: "fieldcontent",
       description: "Add an additional Embed Field",
       type: "STRING",
+      type: Discord.ApplicationCommandOptionType.String,
       required: false,
     },
     {
       name: "thumbnail",
       description: "Embed Thumbnail URL",
       type: "STRING",
+      type: Discord.ApplicationCommandOptionType.String,
       required: false,
     },
     {
       name: "image",
       description: "Embed Image URL",
       type: "STRING",
+      type: Discord.ApplicationCommandOptionType.String,
       required: false,
     },
   ],
@@ -70,7 +78,7 @@ module.exports = new Command({
       return interaction.reply(
         "Some roles seem to be missing!\nPlease check for errors when starting the bot."
       );
-    const NoPerms = new Discord.MessageEmbed()
+    const NoPerms = new Discord.EmbedBuilder()
       .setTitle("Invalid Permissions!")
       .setDescription(
         `${supportbot.IncorrectPerms}\n\nRole Required: \`${supportbot.Staff}\` or \`${supportbot.Admin}\``
@@ -83,16 +91,16 @@ module.exports = new Command({
     ) {
       const EmbedTitle = interaction.options.getString("title");
       const EmbedSubject = interaction.options.getString("message");
-      const EmbedColour = interaction.options.getString("color");
+      const GeneralColour = interaction.options.getString("color");
       const EmbedThumbnail = interaction.options.getString("thumbnail");
       const EmbedImage = interaction.options.getString("image");
       const EmbedFieldContent = interaction.options.getString("fieldcontent");
       const EmbedFieldTitle = interaction.options.getString("fieldtitle");
 
-      const EmbedMsg = new Discord.MessageEmbed()
+      const EmbedMsg = new Discord.EmbedBuilder()
         .setTitle(EmbedTitle)
         .setDescription(EmbedSubject)
-        .setColor(EmbedColour)
+        .setColor(GeneralColour)
         .setThumbnail(EmbedThumbnail)
         .setImage(EmbedImage)
         if (EmbedFieldTitle && EmbedFieldContent) { EmbedMsg.addField(EmbedFieldTitle, EmbedFieldContent) };

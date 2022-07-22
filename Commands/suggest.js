@@ -15,11 +15,13 @@ const Command = require("../Structures/Command.js");
 module.exports = new Command({
   name: cmdconfig.SuggestCommand,
   description: cmdconfig.SuggestCommandDesc,
+  type: Discord.ApplicationCommandType.ChatInput,
   options: [
     {
       name: "suggestion",
       description: "Create a Suggestion",
       type: "STRING",
+      type: Discord.ApplicationCommandOptionType.String,
       required: true,
     },
   ],
@@ -32,7 +34,7 @@ module.exports = new Command({
       interaction.guild
     );
 
-    const NoChannel = new Discord.MessageEmbed()
+    const NoChannel = new Discord.EmbedBuilder()
       .setTitle("Missing Channel!")
       .setDescription(supportbot.InvalidChannel)
       .setColor(supportbot.ErrorColour);
@@ -41,7 +43,7 @@ module.exports = new Command({
 
     let suggestion = interaction.options.getString("suggestion");
 
-    const SuggestEmbed = new Discord.MessageEmbed()
+    const SuggestEmbed = new Discord.EmbedBuilder()
       .addField("Suggestion", suggestion, true)
       .addField("From", `<@${interaction.user.id}>`)
       .setThumbnail(interaction.user.displayAvatarURL())
@@ -49,7 +51,7 @@ module.exports = new Command({
         text: supportbot.EmbedFooter,
         iconURL: interaction.user.displayAvatarURL(),
       })
-      .setColor(supportbot.EmbedColour);
+      .setColor(supportbot.GeneralColour);
 
     const suggestionMsg = await suggestChannel.send({ embeds: [SuggestEmbed] });
     if (supportbot.SuggestionUpvote && supportbot.SuggestionDownvote) {
@@ -67,7 +69,7 @@ module.exports = new Command({
         }
     }
 
-    const Submitted = new Discord.MessageEmbed()
+    const Submitted = new Discord.EmbedBuilder()
       .setTitle("Suggestion Submitted!")
       .setDescription(
         `:white_check_mark: You have successfully submitted a suggestion.`

@@ -18,15 +18,16 @@ const translate = require("@vitalets/google-translate-api");
 module.exports = new Command({
   name: cmdconfig.TranslateCommand, // Name of command
   description: cmdconfig.TranslateCommandDesc, // Description of command
+  type: Discord.ApplicationCommandType.ChatInput,
   options: [
     {
-      type: "STRING",
+      type: Discord.ApplicationCommandOptionType.String,
       name: "language",
       description: "A 2 letter language code",
       required: true,
     },
     {
-      type: "STRING",
+      type: Discord.ApplicationCommandOptionType.String,
       name: "text",
       description: "The text to translate",
       required: true,
@@ -44,7 +45,7 @@ module.exports = new Command({
           "Some roles seem to be missing!\nPlease check the error logs."
         );
 
-    const NoPerms = new Discord.MessageEmbed()
+    const NoPerms = new Discord.EmbedBuilder()
       .setTitle("Invalid Permissions!")
       .setDescription(
         `${supportbot.IncorrectPerms}\n\nRole Required: \`${supportbot.Staff}\` or \`${supportbot.Admin}\``
@@ -72,7 +73,7 @@ module.exports = new Command({
       if (err && err.code == 400) {
         await interaction.reply({
           embeds: [
-            new Discord.MessageEmbed()
+            new Discord.EmbedBuilder()
               .setColor(supportbot.WarningColour)
               .setTitle("Valid Language Codes")
               .setURL(url)
@@ -87,7 +88,7 @@ module.exports = new Command({
     if (!result) return;
 
     // Embed containing language code, original text and translated text
-    let transembed = new Discord.MessageEmbed()
+    let transembed = new Discord.EmbedBuilder()
       .setAuthor({ name: interaction.user.tag, iconURL: interaction.user.displayAvatarURL({ dynamic: true }) })
       .setColor(supportbot.SuccessColour)
       .setDescription(`**Translation to ${lang}**`)

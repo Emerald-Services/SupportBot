@@ -15,11 +15,13 @@ const Command = require("../Structures/Command.js");
 module.exports = new Command({
   name: cmdconfig.TicketRemove,
   description: cmdconfig.TicketRemoveDesc,
+  type: Discord.ApplicationCommandType.ChatInput,
   options: [
     {
       name: "user",
       description: "User to remove",
       type: "USER",
+      type: Discord.ApplicationCommandOptionType.User,
       required: true,
     },
   ],
@@ -34,7 +36,7 @@ module.exports = new Command({
         "Some roles seem to be missing!\nPlease check for errors when starting the bot."
       );
 
-    const NoPerms = new Discord.MessageEmbed()
+    const NoPerms = new Discord.EmbedBuilder()
       .setTitle("Invalid Permissions!")
       .setDescription(
         `${supportbot.IncorrectPerms}\n\nRole Required: \`${supportbot.Staff}\` or \`${supportbot.Admin}\``
@@ -53,7 +55,7 @@ module.exports = new Command({
       (t) => t.id === interaction.channel.id
     );
     if (ticket === -1) {
-      const Exists = new Discord.MessageEmbed()
+      const Exists = new Discord.EmbedBuilder()
         .setTitle("No Ticket Found!")
         .setDescription(supportbot.NoValidTicket)
         .setColor(supportbot.WarningColour);
@@ -61,7 +63,7 @@ module.exports = new Command({
     }
 
     let uMember = interaction.options.getUser("user");
-    const UserNotExist = new Discord.MessageEmbed()
+    const UserNotExist = new Discord.EmbedBuilder()
       .setTitle("User Not Found!")
       .setDescription(
         `${supportbot.UserNotFound}\n\nTry Again:\`/${cmdconfig.TicketRemove} <user#0000>\``
@@ -74,11 +76,11 @@ module.exports = new Command({
       VIEW_CHANNEL: false,
     });
 
-    const Complete = new Discord.MessageEmbed()
+    const Complete = new Discord.EmbedBuilder()
       .setTitle("User Removed!")
       .setDescription(supportbot.RemovedUser.replace(/%user%/g, uMember.id))
       .setTimestamp()
-      .setColor(supportbot.EmbedColour);
+      .setColor(supportbot.GeneralColour);
     interaction.reply({ embeds: [Complete] });
     TicketData.tickets[ticket].subUsers = TicketData.tickets[
       ticket

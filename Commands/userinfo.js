@@ -18,9 +18,10 @@ const Command = require("../Structures/Command.js");
 module.exports =   new Command({
     name: cmdconfig.UserInfoCommand, // Name of command
     description: cmdconfig.UserInfoCommandDesc, // Description of command
+    type: Discord.ApplicationCommandType.ChatInput,
     options: [
       {
-        type: "USER",
+        type: Discord.ApplicationCommandOptionType.User,
         name: "user",
         description: "The user you want to get info about.",
         required: true,
@@ -37,7 +38,7 @@ module.exports =   new Command({
                 "Some roles seem to be missing!\nPlease check the error logs."
             );
 
-        const NoPerms = new Discord.MessageEmbed()
+        const NoPerms = new Discord.EmbedBuilder()
             .setTitle("Invalid Permissions!")
             .setDescription(
             `${supportbot.IncorrectPerms}\n\nRole Required: \`${supportbot.Staff}\` or \`${supportbot.Admin}\``
@@ -53,7 +54,7 @@ module.exports =   new Command({
         let user = await interaction.options.getUser("user") || interaction.author; // Grab the mentioned user
         let member = await interaction.guild.members.cache.get(user.id) // Check for user and his ID
 
-        const UserNotExist = new Discord.MessageEmbed()
+        const UserNotExist = new Discord.EmbedBuilder()
           .setTitle("User Not Found!")
           .setDescription(
             `${supportbot.UserNotFound}\n\nTry Again:\`/${cmdconfig.UserInfoCommand} <@!User_ID> or @User\``
@@ -90,7 +91,7 @@ module.exports =   new Command({
         const userFlags = user.flags.toArray();
 
          // Embed containing the userinfo
-        let userembed = new Discord.MessageEmbed()
+        let userembed = new Discord.EmbedBuilder()
           .setTitle(`User Info for User: ${user.tag}`)
           .setThumbnail(member.displayAvatarURL({ dynamic: true, size: 512 }))
           .setColor(member.roles.highest.hexColor)

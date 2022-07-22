@@ -15,6 +15,7 @@ const Command = require("../Structures/Command.js");
 module.exports = new Command({
   name: cmdconfig.HelpCommand,
   description: cmdconfig.HelpCommandDesc,
+  type: Discord.ApplicationCommandType.ChatInput,
   options: [],
   permissions: ["SEND_MESSAGES"],
 
@@ -47,10 +48,10 @@ module.exports = new Command({
     staffCommands += `**/${cmdconfig.UserInfoCommand}** ${cmdconfig.UserInfoCommandDesc}\n`;
     staffCommands += `**/${cmdconfig.TranslateCommand}** ${cmdconfig.TranslateCommandDesc}\n`;
 
-    const HelpEmbed1 = new Discord.MessageEmbed()
-      .setTitle(supportbot.Name + " Commands")
+    const HelpEmbed1 = new Discord.EmbedBuilder()
+      .setTitle(supportbot.General.Name + " Commands")
       .setThumbnail(interaction.user.displayAvatarURL())
-
+      .setColor(supportbot.GeneralColour)
       .addFields(
         {
           name: "🖥️ General Commands\n",
@@ -64,7 +65,7 @@ module.exports = new Command({
         }
       )
 
-      .setColor(supportbot.EmbedColour)
+      .setColor(supportbot.GeneralColour)
       .setFooter({
         text: supportbot.EmbedFooter,
         iconURL: interaction.user.displayAvatarURL(),

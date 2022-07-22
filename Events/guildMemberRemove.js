@@ -12,7 +12,7 @@ module.exports = new Event("guildMemberRemove", async (client, member, interacti
     if (supportbot.Leave) {
         const LeaveChannel = member.guild.channels.cache.find(channel => channel.name === supportbot.LeaveChannel)
 
-        const LeaveEmbed = new Discord.MessageEmbed()
+        const LeaveEmbed = new Discord.EmbedBuilder()
             .setColor(supportbot.LeaveColour)
             .setTitle(supportbot.LeaveTitle)
             .setDescription(supportbot.LeaveMessage.replace(/%joined_user%/g, member.user))

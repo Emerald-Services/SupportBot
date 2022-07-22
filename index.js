@@ -20,4 +20,4 @@ const supportbot = yaml.load(
 const Client = require("./Structures/Client.js");
 const client = new Client({});
 
-client.start(supportbot.Token);
+client.start(supportbot.General.Token);

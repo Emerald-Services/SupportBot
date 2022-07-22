@@ -13,14 +13,14 @@ const cmdconfig = yaml.load(fs.readFileSync("./Configs/commands.yml", "utf8"));
 const Event = require("../Structures/Event.js");
 
 module.exports = new Event("interactionCreate", async (client, interaction) => {
-  if (interaction.isCommand()) {
+  if (interaction.type == Discord.InteractionType.ApplicationCommand) {
     const command = client.commands.find(
       (cmd) => cmd.name.toLowerCase() === interaction.commandName
     );
 
     if (interaction.user.bot || !interaction.guild) return;
 
-    const NotValid = new Discord.MessageEmbed()
+    const NotValid = new Discord.EmbedBuilder()
       .setDescription(`:x: \`Invalid Command\` `)
       .setColor(supportbot.ErrorColour);
 
@@ -31,9 +31,9 @@ module.exports = new Event("interactionCreate", async (client, interaction) => {
 
     const permission = interaction.member.permissions.has(command.permissions);
 
-    const ValidPerms = new Discord.MessageEmbed()
+    const ValidPerms = new Discord.EmbedBuilder()
       .setDescription(
-        ":x: `Invalid Permissions` Do you have the correct permissions to execute this command?"
+        "> :x: `Invalid Permissions` Do you have the correct permissions to execute this command?"
       )
       .setColor(supportbot.ErrorColour);
 
@@ -109,16 +109,16 @@ module.exports = new Event("interactionCreate", async (client, interaction) => {
           }
         );
 
-        const ticketDeleteButton = new Discord.MessageButton()
+        const ticketDeleteButton = new Discord.ButtonBuilder()
           .setCustomId("ticketclose")
           .setLabel("Close")
           .setStyle(supportbot.TicketDeleteColour)
           .setEmoji(supportbot.TicketDeleteEmoji);
 
-        const row = new Discord.MessageActionRow().addComponents(
+        const row = new Discord.ActionRowBuilder().addComponents(
           ticketDeleteButton
         );
-        const ArchiveEmbed = new Discord.MessageEmbed()
+        const ArchiveEmbed = new Discord.EmbedBuilder()
           .setTitle("Archived")
           .setDescription(`Archived ${interaction.channel.name}`)
           .setColor(supportbot.SuccessColour);
