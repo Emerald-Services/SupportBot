@@ -16,8 +16,8 @@ const Command = require("../Structures/Command.js");
 const translate = require("@vitalets/google-translate-api");
 
 module.exports = new Command({
-  name: cmdconfig.TranslateCommand, // Name of command
-  description: cmdconfig.TranslateCommandDesc, // Description of command
+  name: cmdconfig.Translate.Command,
+  description: cmdconfig.Translate.Description,
   type: Discord.ApplicationCommandType.ChatInput,
   options: [
     {
@@ -33,9 +33,18 @@ module.exports = new Command({
       required: true,
     }, // The input text for the translation
   ],
-  permissions: ["SEND_MESSAGES"], // The permission the user/role at least requires
+  permissions: cmdconfig.Translate.Permission, // The permission the user/role at least requires
 
   async run(interaction) {
+    let disableCommand = true;
+
+    if (cmdconfig.Translate.Enabled === false) {
+      if (interaction.type === Discord.InteractionType.ApplicationCommand && disableCommand)
+      return interaction.reply({
+        content: ":x: This command is `disabled`",
+        ephemeral: true,
+      });
+    }
 
     const { getRole } = interaction.client;
     let SupportStaff = await getRole(supportbot.Staff, interaction.guild);

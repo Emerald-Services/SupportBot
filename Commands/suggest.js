@@ -13,8 +13,8 @@ const cmdconfig = yaml.load(fs.readFileSync("./Configs/commands.yml", "utf8"));
 const Command = require("../Structures/Command.js");
 
 module.exports = new Command({
-  name: cmdconfig.SuggestCommand,
-  description: cmdconfig.SuggestCommandDesc,
+  name: cmdconfig.Suggestion.Command,
+  description: cmdconfig.Suggestion.Description,
   type: Discord.ApplicationCommandType.ChatInput,
   options: [
     {
@@ -25,9 +25,19 @@ module.exports = new Command({
       required: true,
     },
   ],
-  permissions: ["SEND_MESSAGES"],
+  permissions: cmdconfig.Suggestion.Permission,
 
   async run(interaction) {
+    let disableCommand = true;
+
+    if (cmdconfig.Suggestion.Enabled === false) {
+      if (interaction.type === Discord.InteractionType.ApplicationCommand && disableCommand)
+      return interaction.reply({
+        content: ":x: This command is `disabled`",
+        ephemeral: true,
+      });
+    }
+
     const { getChannel } = interaction.client;
     const suggestChannel = await getChannel(
       supportbot.SuggestionChannel,

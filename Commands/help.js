@@ -13,13 +13,23 @@ const cmdconfig = yaml.load(fs.readFileSync("./Configs/commands.yml", "utf8"));
 const Command = require("../Structures/Command.js");
 
 module.exports = new Command({
-  name: cmdconfig.HelpCommand,
-  description: cmdconfig.HelpCommandDesc,
+  name: cmdconfig.Help.Command,
+  description: cmdconfig.Help.Description,
   type: Discord.ApplicationCommandType.ChatInput,
   options: [],
-  permissions: ["SEND_MESSAGES"],
+  permissions: cmdconfig.Help.Permission,
 
   async run(interaction) {
+    let disableCommand = true;
+
+    if (cmdconfig.Help.Enabled === false) {
+      if (interaction.type === Discord.InteractionType.ApplicationCommand && disableCommand)
+      return interaction.reply({
+        content: ":x: This command is `disabled`",
+        ephemeral: true,
+      });
+    }
+
     const { getRole } = interaction.client;
     let SupportStaff = await getRole(supportbot.Staff, interaction.guild);
     let Admin = await getRole(supportbot.Admin, interaction.guild);
@@ -29,24 +39,23 @@ module.exports = new Command({
       );
 
     let botCommands = "";
-    botCommands += `**/${cmdconfig.HelpCommand}** ${cmdconfig.HelpCommandDesc}\n`;
-    botCommands += `**/${cmdconfig.InfoCommand}** ${cmdconfig.InfoCommandDesc}\n`;
-    botCommands += `**/${cmdconfig.PingCommand}** ${cmdconfig.PingCommandDesc}\n`;
-    botCommands += `**/${cmdconfig.UserInfoCommand}** ${cmdconfig.UserInfoCommandDesc}\n`;
+      botCommands += ` \`${cmdconfig.Help.Command}\` `;
+      botCommands += `\`${cmdconfig.Ping.Command}\` `;
+      botCommands += `\`${cmdconfig.Info.Command}\` `;
 
     if (supportbot.DisableSuggestions === false) {
-      botCommands += `**/${cmdconfig.SuggestCommand}** ${cmdconfig.SuggestCommandDesc}\n`;
+      botCommands += `\`${cmdconfig.Suggestion.Command}\` `;
     }
 
     let ticketCommands = "";
-    ticketCommands += `**/${cmdconfig.OpenTicket}** ${cmdconfig.OpenTicketDesc}\n`;
-    ticketCommands += `**/${cmdconfig.CloseTicket}** ${cmdconfig.CloseTicketDesc}\n`;
+    ticketCommands += ` \`${cmdconfig.OpenTicket.Command}\` `;
+    ticketCommands += `\`${cmdconfig.CloseTicket.Command}\` `;
 
     let staffCommands = "";
-    staffCommands += `**/${cmdconfig.TicketAdd}** ${cmdconfig.TicketAddDesc}\n`;
-    staffCommands += `**/${cmdconfig.TicketRemove}** ${cmdconfig.TicketRemoveDesc}\n`;
-    staffCommands += `**/${cmdconfig.UserInfoCommand}** ${cmdconfig.UserInfoCommandDesc}\n`;
-    staffCommands += `**/${cmdconfig.TranslateCommand}** ${cmdconfig.TranslateCommandDesc}\n`;
+    staffCommands += ` \`${cmdconfig.TicketAdd.Command}\` `;
+    staffCommands += `\`${cmdconfig.TicketRemove.Command}\` `;
+    staffCommands += `\`${cmdconfig.UserInfo.Command}\` `;
+    staffCommands += `\`${cmdconfig.Translate.Command}\` `;
 
     const HelpEmbed1 = new Discord.EmbedBuilder()
       .setTitle(supportbot.General.Name + " Commands")

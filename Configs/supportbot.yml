@@ -11,7 +11,7 @@
 #           Official Documentation: https://emeraldsrv.dev/wiki
 #           Third-Party Documentation: https://emeraldsrv.dev/third-party
 
-SupportBot_Version: "v8.0 DEV-v1.0"
+SupportBot_Version: "v8.0 DEV-v1.1"
 
 # -------------------------
 #   General Configuration
@@ -19,18 +19,18 @@ SupportBot_Version: "v8.0 DEV-v1.0"
 
 General:
   Name: "SupportBot"
-  Token: "BOT_TOKEN"
+  Token: ""
 
 # -------------------------
 #  Activity Configuration
 # -------------------------
 
-Status: "SupportBot v8"
-Type: "Watching"
-# The Type can either be Playing, Watching, Listenin or Streaming.
-
-StreamingURL: "https://www.twitch.tv/YOUR_TWITCH_NAME"
-# Set The Type to "Streaming" for a streaming status!
+Activity:
+  Status: "SupportBot v8"
+  Type: "Watching"
+  # The Type can either be Playing, Watching, Listenin or Streaming.
+  StreamingURL: "https://www.twitch.tv/YOUR_TWITCH_NAME"
+  # Set The Type to "Streaming" for a streaming status!
 
 # -------------------------
 #  Embed Configuration

@@ -16,9 +16,9 @@ const Event = require("../Structures/Event.js");
 
 module.exports = new Event("ready", async (client, interaction) => {
   const { getRole, getChannel, getCategory } = client;
-  client.user.setActivity(supportbot.Activity, {
-    type: supportbot.Type,
-    url: supportbot.StreamingURL,
+  client.user.setActivity(supportbot.Activity.Status, {
+    type: supportbot.Activity.Type,
+    url: supportbot.Activity.StreamingURL,
   });
 
   console.log(`\u001b[32m`, `――――――――――――――――――――――――――――――――――――――――――――`);
@@ -90,8 +90,8 @@ module.exports = new Event("ready", async (client, interaction) => {
   const roles = [
     supportbot.Admin,
     supportbot.Staff,
-    supportbot?.TicketBlackListRole,
-    supportbot?.TicketMutedRole
+    supportbot.TicketBlackListRole,
+    supportbot.TicketMutedRole
   ];
 
     supportbot.Departments.forEach((department) => roles.push(department.role));
@@ -111,6 +111,7 @@ module.exports = new Event("ready", async (client, interaction) => {
   const missingC = [];
   const missingR = [];
   const missingCat = [];
+  
   for (let c of channels) {
     if ((c === supportbot.SuggestionChannel && supportbot.DisableSuggestionsChannel) || c === supportbot.TicketLog && supportbot.DisableTicketLogChannel) {
       continue;

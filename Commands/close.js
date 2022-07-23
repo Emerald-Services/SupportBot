@@ -13,8 +13,8 @@ const cmdconfig = yaml.load(fs.readFileSync("./Configs/commands.yml", "utf8"));
 const Command = require("../Structures/Command.js");
 
 module.exports = new Command({
-  name: cmdconfig.CloseTicket,
-  description: cmdconfig.CloseTicketDesc,
+  name: cmdconfig.CloseTicket.Command,
+  description: cmdconfig.CloseTicket.Description,
   type: Discord.ApplicationCommandType.ChatInput,
   options: [
     {
@@ -23,9 +23,19 @@ module.exports = new Command({
       type: Discord.ApplicationCommandOptionType.String,
     },
   ],
-  permissions: ["SEND_MESSAGES"],
+  permissions: cmdconfig.CloseTicket.Permission,
 
   async run(interaction) {
+    let disableCommand = true;
+
+    if (cmdconfig.CloseTicket.Enabled === false) {
+      if (interaction.type === Discord.InteractionType.ApplicationCommand && disableCommand)
+      return interaction.reply({
+        content: ":x: This command is `disabled`",
+        ephemeral: true,
+      });
+    }
+
     const { getRole, getChannel } = interaction.client;
     if (supportbot.StaffOnly) {
       let SupportStaff = await getRole(supportbot.Staff, interaction.guild);

@@ -49,7 +49,7 @@ module.exports = new Event("interactionCreate", async (client, interaction) => {
       interaction.customId.includes("department-")
     ) {
       try {
-        const cmd = client.commands.get(cmdconfig.OpenTicket);
+        const cmd = client.commands.get(cmdconfig.OpenTicket.Command);
         if (!cmd) return;
         cmd.run(interaction);
       } catch (error) {
@@ -59,7 +59,7 @@ module.exports = new Event("interactionCreate", async (client, interaction) => {
 
     if (interaction.customId === "ticketclose") {
       try {
-        const cmd = client.commands.get(cmdconfig.CloseTicket);
+        const cmd = client.commands.get(cmdconfig.CloseTicket.Command);
         if (!cmd) return;
         cmd.run(interaction);
       } catch (error) {

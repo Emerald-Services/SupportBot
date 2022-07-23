@@ -13,8 +13,8 @@ const cmdconfig = yaml.load(fs.readFileSync("./Configs/commands.yml", "utf8"));
 const Command = require("../Structures/Command.js");
 
 module.exports = new Command({
-  name: cmdconfig.TicketRemove,
-  description: cmdconfig.TicketRemoveDesc,
+  name: cmdconfig.TicketRemove.Command,
+  description: cmdconfig.TicketRemove.Description,
   type: Discord.ApplicationCommandType.ChatInput,
   options: [
     {
@@ -25,9 +25,19 @@ module.exports = new Command({
       required: true,
     },
   ],
-  permissions: ["SEND_MESSAGES"],
+  permissions: cmdconfig.TicketRemove.Permission,
 
   async run(interaction) {
+    let disableCommand = true;
+
+    if (cmdconfig.TicketRemove.Enabled === false) {
+      if (interaction.type === Discord.InteractionType.ApplicationCommand && disableCommand)
+      return interaction.reply({
+        content: ":x: This command is `disabled`",
+        ephemeral: true,
+      });
+    }
+
     const { getRole } = interaction.client;
     let Staff = await getRole(supportbot.Staff, interaction.guild);
     let Admin = await getRole(supportbot.Admin, interaction.guild);

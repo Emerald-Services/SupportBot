@@ -13,28 +13,37 @@ const cmdconfig = yaml.load(fs.readFileSync("./Configs/commands.yml", "utf8"));
 const Command = require("../Structures/Command.js");
 
 module.exports = new Command({
-  name: cmdconfig.InfoCommand,
-  description: cmdconfig.InfoCommandDesc,
+  name: cmdconfig.Info.Command,
+  description: cmdconfig.Info.Description,
   options: [],
-  permissions: ["SEND_MESSAGES"],
+  permissions: cmdconfig.Info.Permission,
 
   async run(interaction) {
-    const InfoButton = new Discord.ButtonBuilder()
-      .setLabel(supportbot.InfoButtonText)
-      .setURL(supportbot.InfoURL)
-      .setStyle("Link");
+    if (cmdconfig.Info.Enabled === false) {
+      if (interaction.type === Discord.InteractionType.ApplicationCommand && disableCommand)
+      return interaction.reply({
+        content: ":x: This command is `disabled`",
+        ephemeral: true,
+      });
+    }
 
-    const inforow = new Discord.ActionRowBuilder().addComponents(InfoButton);
+  const InfoButton = new Discord.ButtonBuilder()
+    .setLabel(supportbot.InfoButtonText)
+    .setURL(supportbot.InfoURL)
+    .setStyle("Link");
 
-    const InfoEmbed = new Discord.EmbedBuilder()
-      .setURL(supportbot.InfoURL)
-      .setTitle(supportbot.InfoTitle)
-      .setDescription(supportbot.InfoDesc)
-      .setColor(supportbot.InfoColour)
+  const inforow = new Discord.ActionRowBuilder().addComponents(InfoButton);
 
-    interaction.reply({
-      embeds: [InfoEmbed],
-      components: [inforow],
-    });
+  const InfoEmbed = new Discord.EmbedBuilder()
+    .setURL(supportbot.InfoURL)
+    .setTitle(supportbot.InfoTitle)
+    .setDescription(supportbot.InfoDesc)
+    .setColor(supportbot.InfoColour)
+
+  interaction.reply({
+    embeds: [InfoEmbed],
+    components: [inforow],
+  });
+
   },
 });

@@ -4,13 +4,14 @@
 const fs = require("fs");
 
 const {
-  MessageEmbed,
+  EmbedBuilder,
   Permissions,
   MessageButton,
   MessageActionRow,
   ApplicationCommandOptionType,
   ApplicationCommandType,
-  ButtonStyle
+  ButtonStyle,
+  InteractionType
 } = require("discord.js");
 
 const yaml = require("js-yaml");
@@ -23,8 +24,8 @@ const Command = require("../Structures/Command.js");
 const TicketNumberID = require("../Structures/TicketID.js");
 
 module.exports = new Command({
-  name: cmdconfig.OpenTicket,
-  description: cmdconfig.OpenTicketDesc,
+  name: cmdconfig.OpenTicket.Command,
+  description: cmdconfig.OpenTicket.Description,
   type: ApplicationCommandType.ChatInput,
   options: [
     {
@@ -34,15 +35,19 @@ module.exports = new Command({
     },
     
   ],
-  permissions: ["SEND_MESSAGES"],
+  permissions: cmdconfig.OpenTicket.Permission,
 
   async run(interaction) {
     let disableCommand = true;
-    if (interaction.isCommand() && disableCommand)
+
+    if (cmdconfig.OpenTicket.Enabled === false) {
+      if (interaction.type === InteractionType.ApplicationCommand && disableCommand)
       return interaction.reply({
-        content: "This command is disabled",
+        content: ":x: This command is `disabled`",
         ephemeral: true,
       });
+    }
+
     let department = interaction.customId?.split("-")[1] || null;
     let TicketData = await JSON.parse(
       fs.readFileSync("./Data/TicketData.json", "utf8")
@@ -86,7 +91,7 @@ module.exports = new Command({
     const TicketSubject =
       interaction.options?.getString("reason") || supportbot.NoTicketSubject;
 
-    const TicketExists = new MessageEmbed()
+    const TicketExists = new EmbedBuilder()
       .setTitle("Ticket Exists!")
       .setDescription(supportbot.TicketExists);
 
@@ -161,7 +166,7 @@ module.exports = new Command({
       }
     );
 
-    const CreatedTicket = new MessageEmbed()
+    const CreatedTicket = new EmbedBuilder()
       .setDescription(
         supportbot.TicketCreatedAlert.replace(
           /%ticketauthor%/g,
@@ -177,7 +182,7 @@ module.exports = new Command({
       await ticketChannel.send(`${interaction.user}`);
     }
 
-    const TicketMessage = new MessageEmbed()
+    const TicketMessage = new EmbedBuilder()
       .setTitle(
         supportbot.Ticket_Title.replace(/%ticketauthor%/g, interaction.user.id)
           .replace(/%ticketid%/g, ticketChannel.id)

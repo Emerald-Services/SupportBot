@@ -16,8 +16,8 @@ const cmdconfig = yaml.load(
 const Command = require("../Structures/Command.js");
 
 module.exports =   new Command({
-    name: cmdconfig.UserInfoCommand, // Name of command
-    description: cmdconfig.UserInfoCommandDesc, // Description of command
+    name: cmdconfig.UserInfo.Command,
+    description: cmdconfig.UserInfo.Description, 
     type: Discord.ApplicationCommandType.ChatInput,
     options: [
       {
@@ -27,9 +27,19 @@ module.exports =   new Command({
         required: true,
       }, // The user input
     ],
-    permissions: ["SEND_MESSAGES"], // The permission the user/role at least requires
+    permissions: cmdconfig.UserInfo.Permission,
 
     async run(interaction) {
+      let disableCommand = true;
+
+      if (cmdconfig.UserInfo.Enabled === false) {
+        if (interaction.type === Discord.InteractionType.ApplicationCommand && disableCommand)
+        return interaction.reply({
+          content: ":x: This command is `disabled`",
+          ephemeral: true,
+        });
+      }
+
         const { getRole } = interaction.client;
         let SupportStaff = await getRole(supportbot.Staff, interaction.guild);
         let Admin = await getRole(supportbot.Admin, interaction.guild);
