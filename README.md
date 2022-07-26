@@ -37,7 +37,7 @@
   •
   <a href="#license">License</a>
   •
-  <a href="#third-party">Third-Party</a>
+  <a href="https://github.com/Emerald-Services/SupportBot/wiki/Third-Party-Developer">Third-Party</a>
   •
   <a href="#contributors">Contributors</a>
 </p>
