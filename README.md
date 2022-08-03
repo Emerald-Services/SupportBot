@@ -61,7 +61,7 @@ Released under the [MIT](https://opensource.org/licenses/MIT) license.
 ## Third-Party
 
 - [Syphers Addons](https://github.com/SypherRed/SB_Addons_Unofficial)
-- [MC-Market](https://www.mc-market.org/supportbot)
+- [BuiltByBit](https://builtbybit.com/supportbot)
 - [Polymart](https://polymart.org/resource/supportbot-1-discord-ticket-bot.518)
 
 
