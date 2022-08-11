@@ -60,7 +60,7 @@ module.exports = new Command({
     const HelpEmbed1 = new Discord.EmbedBuilder()
       .setTitle(supportbot.General.Name + " Commands")
       .setThumbnail(interaction.user.displayAvatarURL())
-      .setColor(supportbot.GeneralColour)
+      .setColor(supportbot.Embed.Colours.General)
       .addFields(
         {
           name: "🖥️ General Commands\n",
@@ -74,9 +74,9 @@ module.exports = new Command({
         }
       )
 
-      .setColor(supportbot.GeneralColour)
+      .setColor(supportbot.Embed.Colours.General)
       .setFooter({
-        text: supportbot.EmbedFooter,
+        text: supportbot.Embed.Footer,
         iconURL: interaction.user.displayAvatarURL(),
       });
 

@@ -16,66 +16,67 @@
 Help:
   Command: "help"
   Description: "Get a list of all the commands."
-  Permission: ["SEND_MESSAGES"]
+  Permission: ["SendMessages"]
   Enabled: true
 
 Info:
   Command: "info"
   Description: "Get information about the **ServerName**."
-  Permission: ["SEND_MESSAGES"]
+  Permission: ["SendMessages"]
   Enabled: true
 
 TicketAdd:
   Command: "add"
   Description: "Add a user to a ticket."
-  Permission: ["SEND_MESSAGES"]
+  Permission: ["SendMessages"]
   Enabled: false
 
 TicketRemove:
   Command: "remove"
   Description: "Remove a user from a ticket."
-  Permission: ["SEND_MESSAGES"]
+  Permission: ["SendMessages"]
   Enabled: true
 
 OpenTicket:
   Command: "ticket"
   Description: "Create a support ticket."
-  Permission: ["SEND_MESSAGES"]
+  Permission: ["SendMessages"]
   Enabled: true
 
 CloseTicket:
   Command: "close"
   Description: "Close a support ticket"
-  Permission: ["SEND_MESSAGES"]
+  Permission: ["SendMessages"]
+  Enabled: true
 
 Suggestion:
   Command: "suggest"
   Description: "Create a suggestion."
-  Permission: ["SEND_MESSAGES"]
+  Permission: ["SendMessages"]
   Enabled: true
 
 Embed:
   Command: "embed"
   Description: "Build a discord embed."
-  Permission: ["SEND_MESSAGES"]
+  Permission: ["SendMessages"]
   Enabled: true
 
 Translate:
   Command: "translate"
   Description: "Translate something to english"
-  Permission: ["SEND_MESSAGES"]
-  Enabled: true
+  Permission: ["SendMessages"]
+  Enabled: false
 
 UserInfo:
   Command: "userinfo"
   Description: "Get info about a user."
-  Permission: ["SEND_MESSAGES"]
+  Permission: ["SendMessages"]
   Enabled: true
 
 Ping:
   Command: "ping"
   Description: "Pong."
-  Permission: ["SEND_MESSAGES"]
+  Permission: ["SendMessages"]
   Enabled: true
 
 # ---------------------------------------

@@ -11,6 +11,7 @@ const supportbot = yaml.load(
 const cmdconfig = yaml.load(fs.readFileSync("./Configs/commands.yml", "utf8"));
 
 const Command = require("../Structures/Command.js");
+const { channel } = require("diagnostics_channel");
 
 module.exports = new Command({
   name: cmdconfig.Suggestion.Command,
@@ -20,7 +21,6 @@ module.exports = new Command({
     {
       name: "suggestion",
       description: "Create a Suggestion",
-      type: "STRING",
       type: Discord.ApplicationCommandOptionType.String,
       required: true,
     },
@@ -30,15 +30,8 @@ module.exports = new Command({
   async run(interaction) {
     let disableCommand = true;
 
-    if (cmdconfig.Suggestion.Enabled === false) {
-      if (interaction.type === Discord.InteractionType.ApplicationCommand && disableCommand)
-      return interaction.reply({
-        content: ":x: This command is `disabled`",
-        ephemeral: true,
-      });
-    }
-
     const { getChannel } = interaction.client;
+
     const suggestChannel = await getChannel(
       supportbot.SuggestionChannel,
       interaction.guild
@@ -54,8 +47,11 @@ module.exports = new Command({
     let suggestion = interaction.options.getString("suggestion");
 
     const SuggestEmbed = new Discord.EmbedBuilder()
-      .addField("Suggestion", suggestion, true)
-      .addField("From", `<@${interaction.user.id}>`)
+      .addFields(
+        { name: "Suggestion", value: suggestion, inline: true},
+        { name: "From", value: `<@${interaction.user.id}>`},
+      )
+
       .setThumbnail(interaction.user.displayAvatarURL())
       .setFooter({
         text: supportbot.EmbedFooter,
@@ -64,6 +60,7 @@ module.exports = new Command({
       .setColor(supportbot.GeneralColour);
 
     const suggestionMsg = await suggestChannel.send({ embeds: [SuggestEmbed] });
+
     if (supportbot.SuggestionUpvote && supportbot.SuggestionDownvote) {
       await suggestionMsg.react(supportbot.SuggestionUpvote);
       await suggestionMsg.react(supportbot.SuggestionDownvote);
@@ -72,7 +69,7 @@ module.exports = new Command({
         await suggestionMsg.startThread({
               name: `Suggestion-releated Thread`,
               autoArchiveDuration: 60,
-              type: 'GUILD_PUBLIC_THREAD',
+              type: Discord.ChannelType.GuildPublicThread,
               reason: 'Suggestion-releated thread',
           })
     
@@ -81,10 +78,10 @@ module.exports = new Command({
 
     const Submitted = new Discord.EmbedBuilder()
       .setTitle("Suggestion Submitted!")
-      .setDescription(
-        `:white_check_mark: You have successfully submitted a suggestion.`
+      .setDescription(`:white_check_mark: You have successfully submitted a suggestion.`)
+      .addFields(
+        { name: "Sent to:", value: `<#${suggestChannel.id}>`},
       )
-      .addField("Sent to:", `<#${suggestChannel.id}>`)
       .setColor(supportbot.SuccessColour);
 
     return interaction.reply({ 

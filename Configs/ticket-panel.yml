@@ -20,7 +20,7 @@ TicketPanel: true
 #   Ticket Panel Message Configuration
 # ----------------------------------------
 
-Channel: "ticket-creation"
+Channel: "create-ticket"
 
 PanelTitle: "Need Help? Create a Support Ticket."
 PanelColour: "#f74343"

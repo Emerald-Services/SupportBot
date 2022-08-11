@@ -1,0 +1,181 @@
+#      ___                            _    ___        _
+#    / __> _ _  ___  ___  ___  _ _ _| |_ | . > ___ _| |_
+#     \__ \| | || . \| . \/ . \| '_> | |  | . \/ . \ | |
+#     <___/`___||  _/|  _/\___/|_|   |_|  |___/\___/ |_|
+#                |_|  |_|
+#
+#           SupportBot created by Emerald Development
+#           Installed with MIT License
+#
+#           Discord Support: https://dsc.gg/emerald-dev
+#           Official Documentation: https://emeraldsrv.dev/wiki
+#           Third-Party Documentation: https://emeraldsrv.dev/third-party
+
+SupportBot_Version: "v8.0 DEV-v1.2"
+
+# -------------------------
+#   General
+# -------------------------
+
+General:
+  Name: "SupportBot"
+  Token: "BOT TOKEN"
+
+# -------------------------
+#  Activity
+# -------------------------
+
+Activity:
+  Status: "SupportBot v8"
+  Type: "Watching"
+  # The Type can either be Playing, Watching, Listenin or Streaming.
+  StreamingURL: "https://www.twitch.tv/YOUR_TWITCH_NAME"
+  # Set The Type to "Streaming" for a streaming status!
+
+# -------------------------
+#  Embeds
+# -------------------------
+
+Embed:
+  Colours:
+    General: "#f74343"
+    Success: "#04b545"
+    Error: "#d12519"
+    Warn: "#fca117"
+
+  Footer: "SupportBot | Developed by Emerald Development"
+
+# -------------------------
+#  Roles
+# -------------------------
+
+Roles:
+  AutoRole:
+    Enabled: true
+    Roles: "Member"
+
+  StaffMember:
+    Staff: "Staff"
+    Admin: "Admin"
+
+  ModRoles:
+    Muted: "Muted"
+    Blacklisted: "Blacklisted"
+
+# ----------------------------
+#  System Messages
+# ----------------------------
+
+Welcome: 
+  Enabled: true
+  Channel: "welcome"
+
+Leave: 
+  Enabled: true
+  Channel: "leave"
+
+# ----------------------------
+#  Suggestions
+# ----------------------------
+
+Suggestions:
+  Channel: "suggestions"
+  UpvoteEmoji: "✅"
+  DownvoteEmoji: "❌"
+
+    Threads:
+      Enabled: true
+      Title: "Suggestion-releated Thread"
+
+# -------------------------
+#  Tickets
+# -------------------------
+
+Ticket:
+  Channel: "ticket-" # The prefix for ticket channel names
+  TicketsPerUser: 2
+  RoleMention: "@here"
+  AllowMentions: true
+  DMTranscripts: true
+  # Set to true to allow the ticket to mention the author and the support team.
+  # Set false to dis-allow mentions within tickets.
+  TicketSubject: "description"
+  # "description" will display the ticket reason within the channel description
+  # "embed" will display the ticket reason within the ticket embed
+  AllowThanksForReachingOutMessage: true 
+  # Set to true to allow the "Thanks for reaching out Message" to be sent when the ticket is created
+  Timeout: 5
+  AllowAllStaff: false
+  # Set to true to allow all staff to access the ticket
+  LockTicketCategory: "Archive"
+
+  Log:
+    TicketLog: "ticket-data"
+    TicketLog_Title: "Ticket Closed"
+    DisableTicketLogChannel: false
+
+    TranscriptLog: "ticket-data"
+    TranscriptTitle: "Ticket Transcript"
+
+  Close:
+    StaffOnly: true
+    # Set to false is anyone is able to close a ticket.
+    CloseConfirmation: true
+    Confirmation_Word: "confirm"
+
+# -------------------------
+#   Departments
+# -------------------------
+
+Departments:
+  - title: "Support"
+    role: "SupportBot Staff"
+    color: "Secondary"
+    emoji: "1️⃣"
+    category: "Tickets"
+
+  - title: "Billing Support"
+    role: "SupportBot Staff"
+    color: "Secondary"
+    emoji: "2️⃣"
+    category: "Tickets"
+
+  - title: "Admin Team"
+    role: "SupportBot Admin"
+    color: "Secondary"
+    emoji: "3️⃣"
+    category: "Tickets"
+
+#  - title: "Other"
+#    role: "Staff"
+#    color: "Secondary"
+#    emoji: "3️⃣"
+#    category: "Tickets"
+
+# -------------------------
+#  Buttons
+# -------------------------
+
+Buttons:
+  Tickets:
+    CloseEmoji: "❌"
+    CloseStyle: "Danger"
+
+    DeleteEmoji: "⛔"
+    DeleteStyle: "Danger"
+
+    LockEmoji: "🔒"
+    LockStyle: "Primary"
+
+# Available Button Styles
+# Primary - Blurple
+# Secondary- Grey
+# Danger - Red
+# Success - Green
+
+# -------------------------
+#  Misc
+# -------------------------
+
+Translate:
+  Log: "translations-log"

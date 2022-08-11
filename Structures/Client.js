@@ -7,8 +7,13 @@ const Discord = require("discord.js");
 const { GatewayIntentBits, Partials } = require('discord.js');
 
 const yaml = require("js-yaml");
+
 const supportbot = yaml.load(
   fs.readFileSync("./Configs/supportbot.yml", "utf8")
+);
+
+const cmdconfig = yaml.load(
+  fs.readFileSync("./Configs/commands.yml", "utf8")
 );
 
 class Client extends Discord.Client {
@@ -20,7 +25,7 @@ class Client extends Discord.Client {
   async getChannel(channel, guild) {
     return guild.channels.cache.find(
       (c) =>
-        (c.type === "GUILD_TEXT" || c.type === "GUILD_NEWS") &&
+        (c.type === Discord.ChannelType.GuildText || c.type === Discord.ChannelType.GuildNews) &&
         (c.id === channel || c.name.toLowerCase() === channel.toLowerCase())
     );
   }
@@ -32,7 +37,7 @@ class Client extends Discord.Client {
   async getCategory(category, guild) {
     return guild.channels.cache.find(
       (c) =>
-        c.type === "GUILD_CATEGORY" &&
+        c.type === Discord.ChannelType.GuildCategory &&
         (c.id === category || c.name.toLowerCase() === category.toLowerCase())
     );
   }
@@ -40,10 +45,50 @@ class Client extends Discord.Client {
   async start(token) {
     var tempCommandFiles = fs.readdirSync("./Commands").filter((file) => file.endsWith(".js"));
 
-    if (supportbot.DisableSuggestions) {
+    if (cmdconfig.Suggestion.Enabled === false) {
       tempCommandFiles = tempCommandFiles.filter(item => item !== "suggest.js");
     }
-    
+
+    if (cmdconfig.Help.Enabled === false) {
+      tempCommandFiles = tempCommandFiles.filter(item => item !== "help.js");
+    }
+
+    if (cmdconfig.Info.Enabled === false) {
+      tempCommandFiles = tempCommandFiles.filter(item => item !== "info.js");
+    }
+
+    if (cmdconfig.TicketAdd.Enabled === false) {
+      tempCommandFiles = tempCommandFiles.filter(item => item !== "add.js");
+    }
+
+    if (cmdconfig.TicketRemove.Enabled === false) {
+      tempCommandFiles = tempCommandFiles.filter(item => item !== "remove.js");
+    }
+
+    if (cmdconfig.OpenTicket.Enabled === false) {
+      tempCommandFiles = tempCommandFiles.filter(item => item !== "ticket.js");
+    }
+
+    if (cmdconfig.CloseTicket.Enabled === false) {
+      tempCommandFiles = tempCommandFiles.filter(item => item !== "close.js");
+    }
+
+    if (cmdconfig.Embed.Enabled === false) {
+      tempCommandFiles = tempCommandFiles.filter(item => item !== "embed.js");
+    }
+
+    if (cmdconfig.Translate.Enabled === false) {
+      tempCommandFiles = tempCommandFiles.filter(item => item !== "translate.js");
+    }
+
+    if (cmdconfig.UserInfo.Enabled === false) {
+      tempCommandFiles = tempCommandFiles.filter(item => item !== "userinfo.js");
+    }
+
+    if (cmdconfig.Ping.Enabled === false) {
+      tempCommandFiles = tempCommandFiles.filter(item => item !== "Ping.js");
+    }
+
     const commandFiles = tempCommandFiles;
 
     const addonFiles = fs

@@ -1,0 +1,83 @@
+#      ___                            _    ___        _
+#    / __> _ _  ___  ___  ___  _ _ _| |_ | . > ___ _| |_
+#     \__ \| | || . \| . \/ . \| '_> | |  | . \/ . \ | |
+#     <___/`___||  _/|  _/\___/|_|   |_|  |___/\___/ |_|
+#                |_|  |_|
+#
+#           SupportBot created by Emerald Services
+#           Installed with MIT License
+#
+#           Discord Support: https://dsc.gg/emerald-dev
+#           Official Documentation: https://emeraldsrv.dev/wiki
+#           Third-Party Documentation: https://emeraldsrv.dev/third-party
+#
+#           Messages Configuration
+
+Info:
+  Title: "About Us"
+  Description: "SupportBot is an open-sourced support system for discord. It's completely free to use with high amounts of customization to match your own brand."
+  Button: "Visit Site"
+  URL: "https://emeraldsrv.dev"
+  Colour: "#f74343"
+
+Welcome:
+  Embed:
+    Colour: "#f74343"
+    Title: "Welcome to ServerName"
+    Message: "> :smile: %joined_user% has just landed!"
+    Thumbnail: "BOT"
+
+    ImageEnabled: false
+    ImageURL: "https://animagelink.png/"
+
+Leave:
+  Embed:
+    Colour: "#f74343"
+    Title: "Goodbye!"
+    Message: "> :slight_frown: %joined_user% has recently dropped out!"
+    Thumbnail: "BOT"
+
+    ImageEnabled: false
+    ImageURL: "https://animagelink.png/"
+
+Ticket:
+
+#  Available Placeholders:
+
+#  %ticketusername% - User who created the ticket.
+#  <@%ticketauthor%> - Tags the user who created the ticket.
+#  <#%ticketid%> - Mentions the ticket channel.
+
+  TicketTitle: "Server Support | %ticketusername%"
+  TicketMessage: "> Hello <@%ticketauthor%>, Thank you for creating a support ticket\nPlease wait patiently whilst a member of our team reaches out to you."
+  TicketThumbnail: "https://images.emojiterra.com/google/android-pie/512px/1f39f.png"
+  TicketCreatedAlert: "> :ticket: Ticked Created: <#%ticketid%>"
+
+#  Available Placeholders:
+
+#  <@%user%> - Tags the user who was added to the ticket.
+
+  AddedUser: "> 👍 <@%user%> has been `Added` to the ticket"
+  RemovedUser: "> 👍 <@%user%> has been `Removed` from this ticket"
+
+  Blacklisted: "> :x: You are not allowed to open a ticket"
+  Mutede: "> :x: You are `Muted` and therefore not allowed to open any tickets"
+  InvalidSubject: "> No Reason Provided!"
+
+  TranscriptSavedMessage: "📝 **Transcript Saved!**"
+  TicketLockMessage: "❌ **Ticket Locked!**"
+  TicketDeleteMessage: "⚠ **Ticket Deleting!**" 
+
+  ClosingText: "> :warning: You have requested to close your support ticket."
+
+Error:
+  IncorrectPerms: "> :x: **Err!** You do not have the correct permissions to use this command."
+  InvalidChannel: "> :x: **Err!** Channel not found. Please create it!"
+  UserNotFound: "> :x: **Err!** This user doesn't exist, Are they in this server?"
+  NoValidTicket: "> :warning: You cannot execute this command here."
+  TicketExists: "> :warning: This ticket cannot be opened, It already exists!"
+
+
+
+
+  

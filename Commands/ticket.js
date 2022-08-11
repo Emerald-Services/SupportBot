@@ -11,7 +11,10 @@ const {
   ApplicationCommandOptionType,
   ApplicationCommandType,
   ButtonStyle,
-  InteractionType
+  InteractionType,
+  DiscordAPIError,
+  ChannelType,
+  InteractionCollector
 } = require("discord.js");
 
 const yaml = require("js-yaml");
@@ -40,13 +43,7 @@ module.exports = new Command({
   async run(interaction) {
     let disableCommand = true;
 
-    if (cmdconfig.OpenTicket.Enabled === false) {
-      if (interaction.type === InteractionType.ApplicationCommand && disableCommand)
-      return interaction.reply({
-        content: ":x: This command is `disabled`",
-        ephemeral: true,
-      });
-    }
+
 
     let department = interaction.customId?.split("-")[1] || null;
     let TicketData = await JSON.parse(
@@ -54,6 +51,8 @@ module.exports = new Command({
     );
     const { getRole, getCategory } = interaction.client;
     let User = interaction.guild.members.cache.get(interaction.user.id);
+
+
 
     if (
       supportbot.MaxAllowedTickets &&
@@ -77,6 +76,7 @@ module.exports = new Command({
         ephemeral: true,
       })
     };
+
     if (User.roles.cache.has(supportbot.TicketMutedRole)) {
       return interaction.reply({
         content: supportbot.TicketMutedMessage,
@@ -89,7 +89,7 @@ module.exports = new Command({
 
     // Ticket Subject
     const TicketSubject =
-      interaction.options?.getString("reason") || supportbot.NoTicketSubject;
+      interaction.options?.getString("reason") || supportbot.Tickets.Messages.InvalidSubject;
 
     const TicketExists = new EmbedBuilder()
       .setTitle("Ticket Exists!")
@@ -121,32 +121,32 @@ module.exports = new Command({
     const ticketChannel = await interaction.guild.channels.create(
       `${supportbot.TicketPrefix}${ticketNumberID}`,
       {
-        type: "GUILD_TEXT",
+        type: ChannelType.GuildText,
         parent: TicketCategory.id,
         permissionOverwrites: [
           {
             id: Admin.id,
-            allow: [Permissions.FLAGS.VIEW_CHANNEL],
+            allow: [PermissionsBitField.Flags.ViewChannel],
           },
           {
             id: interaction.user.id,
-            allow: [Permissions.FLAGS.VIEW_CHANNEL],
+            allow: [PermissionsBitField.Flags.ViewChannel],
           },
           {
             id: interaction.guild.id,
-            deny: [Permissions.FLAGS.VIEW_CHANNEL],
+            deny: [PermissionsBitField.Flags.ViewChannel],
           },
         ],
       }
     );
     if (supportbot.AllowAllStaff) {
       await ticketChannel.permissionOverwrites.edit(Staff.id, {
-        VIEW_CHANNEL: true,
+        ViewChannel: true,
       });
     }
     if (!department) {
       await ticketChannel.permissionOverwrites.edit(interaction.user.id, {
-        SEND_MESSAGES: false,
+        SendMessages: false,
       });
     }
     await TicketData.tickets.push({
@@ -281,10 +281,10 @@ module.exports = new Command({
         let title = supportbot.Departments[num].title;
 
         await ticketChannel.permissionOverwrites.edit(role.id, {
-          VIEW_CHANNEL: true,
+          ViewChannel: true,
         });
         await ticketChannel.permissionOverwrites.edit(interaction.user.id, {
-          SEND_MESSAGES: true,
+          SendMessages: true,
         });
 
         await collector.reply({
@@ -316,7 +316,7 @@ module.exports = new Command({
         );
         let title = supportbot.Departments[department].title;
         await ticketChannel.permissionOverwrites.edit(role.id, {
-          VIEW_CHANNEL: true,
+          ViewChannel: true,
         });
         let TicketCat = await getCategory(
           supportbot.Departments[department].category,

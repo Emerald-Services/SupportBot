@@ -28,14 +28,6 @@ module.exports = new Command({
   async run(interaction) {
     let disableCommand = true;
 
-    if (cmdconfig.CloseTicket.Enabled === false) {
-      if (interaction.type === Discord.InteractionType.ApplicationCommand && disableCommand)
-      return interaction.reply({
-        content: ":x: This command is `disabled`",
-        ephemeral: true,
-      });
-    }
-
     const { getRole, getChannel } = interaction.client;
     if (supportbot.StaffOnly) {
       let SupportStaff = await getRole(supportbot.Staff, interaction.guild);

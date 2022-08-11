@@ -29,14 +29,6 @@ module.exports = new Command({
   async run(interaction) {
     let disableCommand = true;
 
-    if (cmdconfig.TicketAdd.Enabled === false) {
-      if (interaction.type === Discord.InteractionType.ApplicationCommand && disableCommand)
-      return interaction.reply({
-        content: ":x: This command is `disabled`",
-        ephemeral: true,
-      });
-    }
-
     const { getRole } = interaction.client;
     let SupportStaff = await getRole(supportbot.Staff, interaction.guild);
     let Admin = await getRole(supportbot.Admin, interaction.guild);

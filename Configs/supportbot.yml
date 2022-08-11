@@ -11,7 +11,7 @@
 #           Official Documentation: https://emeraldsrv.dev/wiki
 #           Third-Party Documentation: https://emeraldsrv.dev/third-party
 
-SupportBot_Version: "v8.0 DEV-v1.1"
+SupportBot_Version: "v8.0 DEV-v1.2"
 
 # -------------------------
 #   General Configuration
@@ -19,7 +19,7 @@ SupportBot_Version: "v8.0 DEV-v1.1"
 
 General:
   Name: "SupportBot"
-  Token: ""
+  Token: "BOT TOKEN"
 
 # -------------------------
 #  Activity Configuration
@@ -35,6 +35,15 @@ Activity:
 # -------------------------
 #  Embed Configuration
 # -------------------------
+
+Embed:
+  Colours:
+    General: "#f74343"
+    Success: "#04b545"
+    Error: "#d12519"
+    Warn: "#fca117"
+
+  Footer: "SupportBot | Developed by Emerald Development"
 
 GeneralColour: "#f74343"
 ErrorColour: "#d12519"
