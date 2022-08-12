@@ -91,16 +91,6 @@ class Client extends Discord.Client {
 
     const commandFiles = tempCommandFiles;
 
-    const addonFiles = fs
-      .readdirSync("./Addons")
-      .filter((file) => file.endsWith(".js"));
-
-    const addons = addonFiles.map((file) => {
-      let addon = require(`../Addons/${file}`);
-      addon.name = file.split(".")[0];
-      return addon;
-    });
-
     const commands = commandFiles.map((file) => require(`../Commands/${file}`));
 
     // Commands
@@ -112,19 +102,31 @@ class Client extends Discord.Client {
     });
 
     console.log(`\u001b[34;1m`, "▬▬▬▬▬▬▬ Commands ▬▬▬▬▬▬▬");
-    // Addons
-    console.log("   ");
-    console.log(`\u001b[34;1m`, "▬▬▬▬▬▬▬ Addons ▬▬▬▬▬▬▬");
 
-    addons.forEach((addon) => {
-      console.log(
-        `\u001b[32m`,
-        `[ADDON]`,
-        `\u001b[37;1m`,
-        `${addon.name}`,
-        `\u001b[32;1m`,
-        "Loaded"
-      );
+    if (supportbot.General.Addons.Enabled) {
+      const addonFiles = fs
+        .readdirSync("./Addons")
+        .filter((file) => file.endsWith(".js"));
+
+      const addons = addonFiles.map((file) => {
+        let addon = require(`../Addons/${file}`);
+        addon.name = file.split(".")[0];
+        return addon;
+      });
+
+      // Addons
+      console.log("   ");
+      console.log(`\u001b[34;1m`, "▬▬▬▬▬▬▬ Addons ▬▬▬▬▬▬▬");
+
+      addons.forEach((addon) => {
+        console.log(
+          `\u001b[32m`,
+          `[ADDON]`,
+          `\u001b[37;1m`,
+          `${addon.name}`,
+          `\u001b[32;1m`,
+          "Loaded"
+        );
       addon.commands?.forEach((command) => {
         this.commands.set(command.name, command);
       });
@@ -134,6 +136,8 @@ class Client extends Discord.Client {
     });
 
     console.log(`\u001b[34;1m`, "▬▬▬▬▬▬▬ Addons ▬▬▬▬▬▬▬");
+
+    } 
 
     // Slash Commands
 

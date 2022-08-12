@@ -5,10 +5,18 @@ const fs = require("fs");
 
 const Discord = require("discord.js");
 const yaml = require("js-yaml");
+
 const supportbot = yaml.load(
   fs.readFileSync("./Configs/supportbot.yml", "utf8")
 );
-const cmdconfig = yaml.load(fs.readFileSync("./Configs/commands.yml", "utf8"));
+
+const cmdconfig = yaml.load(
+  fs.readFileSync("./Configs/commands.yml", "utf8")
+);
+
+const msgconfig = yaml.load(
+  fs.readFileSync("./Configs/messages.yml", "utf8")
+);
 
 const Command = require("../Structures/Command.js");
 
@@ -19,26 +27,20 @@ module.exports = new Command({
   permissions: cmdconfig.Info.Permission,
 
   async run(interaction) {
-    if (cmdconfig.Info.Enabled === false) {
-      if (interaction.type === Discord.InteractionType.ApplicationCommand && disableCommand)
-      return interaction.reply({
-        content: ":x: This command is `disabled`",
-        ephemeral: true,
-      });
-    }
+    let disableCommand = true;
 
   const InfoButton = new Discord.ButtonBuilder()
-    .setLabel(supportbot.InfoButtonText)
-    .setURL(supportbot.InfoURL)
+    .setLabel(msgconfig.Info.Button)
+    .setURL(msgconfig.Info.URL)
     .setStyle("Link");
 
   const inforow = new Discord.ActionRowBuilder().addComponents(InfoButton);
 
   const InfoEmbed = new Discord.EmbedBuilder()
-    .setURL(supportbot.InfoURL)
-    .setTitle(supportbot.InfoTitle)
-    .setDescription(supportbot.InfoDesc)
-    .setColor(supportbot.InfoColour)
+    .setURL(msgconfig.Info.URL)
+    .setTitle(msgconfig.Info.Title)
+    .setDescription(msgconfig.Info.Description)
+    .setColor(msgconfig.Info.Colour)
 
   interaction.reply({
     embeds: [InfoEmbed],

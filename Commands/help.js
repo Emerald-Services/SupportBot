@@ -5,10 +5,14 @@ const fs = require("fs");
 
 const Discord = require("discord.js");
 const yaml = require("js-yaml");
+
 const supportbot = yaml.load(
   fs.readFileSync("./Configs/supportbot.yml", "utf8")
 );
-const cmdconfig = yaml.load(fs.readFileSync("./Configs/commands.yml", "utf8"));
+
+const cmdconfig = yaml.load(
+  fs.readFileSync("./Configs/commands.yml", "utf8")
+);
 
 const Command = require("../Structures/Command.js");
 
@@ -22,18 +26,11 @@ module.exports = new Command({
   async run(interaction) {
     let disableCommand = true;
 
-    if (cmdconfig.Help.Enabled === false) {
-      if (interaction.type === Discord.InteractionType.ApplicationCommand && disableCommand)
-      return interaction.reply({
-        content: ":x: This command is `disabled`",
-        ephemeral: true,
-      });
-    }
-
     const { getRole } = interaction.client;
-    let SupportStaff = await getRole(supportbot.Staff, interaction.guild);
-    let Admin = await getRole(supportbot.Admin, interaction.guild);
+    let SupportStaff = await getRole(supportbot.Roles.StaffMember.Staff, interaction.guild);
+    let Admin = await getRole(supportbot.Roles.StaffMember.Admin, interaction.guild);
     if (!SupportStaff || !Admin)
+    
       return interaction.reply(
         "Some roles seem to be missing!\nPlease check for errors when starting the bot."
       );
@@ -63,13 +60,13 @@ module.exports = new Command({
       .setColor(supportbot.Embed.Colours.General)
       .addFields(
         {
-          name: "🖥️ General Commands\n",
-          value: `${botCommands}\n`,
+          name: "🖥️ Commands\n",
+          value: `${botCommands} ${ticketCommands} ${staffCommands}\n`,
           inline: false,
         },
         {
-          name: "🎫 Support Commands\n",
-          value: `${ticketCommands}\n`,
+          name: "🖥️ Addons\n",
+          value: `\`hello\`\n`,
           inline: false,
         }
       )
@@ -79,17 +76,6 @@ module.exports = new Command({
         text: supportbot.Embed.Footer,
         iconURL: interaction.user.displayAvatarURL(),
       });
-
-    if (
-      interaction.member.roles.cache.has(SupportStaff.id) ||
-      interaction.member.roles.cache.has(Admin.id)
-    ) {
-      HelpEmbed1.addFields({
-        name: "🔐 Staff Commands\n",
-        value: `${staffCommands}\n`,
-        inline: false,
-      });
-    }
 
       interaction.reply({
         ephemeral: true,

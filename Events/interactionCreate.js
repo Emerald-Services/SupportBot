@@ -5,10 +5,18 @@ const fs = require("fs");
 
 const Discord = require("discord.js");
 const yaml = require("js-yaml");
+
 const supportbot = yaml.load(
   fs.readFileSync("./Configs/supportbot.yml", "utf8")
 );
-const cmdconfig = yaml.load(fs.readFileSync("./Configs/commands.yml", "utf8"));
+
+const cmdconfig = yaml.load(
+  fs.readFileSync("./Configs/commands.yml", "utf8")
+);
+
+const msgconfig = yaml.load(
+  fs.readFileSync("./Configs/messages.yml", "utf8")
+);
 
 const Event = require("../Structures/Event.js");
 
@@ -22,7 +30,7 @@ module.exports = new Event("interactionCreate", async (client, interaction) => {
 
     const NotValid = new Discord.EmbedBuilder()
       .setDescription(`:x: \`Invalid Command\` `)
-      .setColor(supportbot.ErrorColour);
+      .setColor(supportbot.Embed.Colours.Error);
 
     if (!command)
       return interaction.reply({
@@ -35,7 +43,7 @@ module.exports = new Event("interactionCreate", async (client, interaction) => {
       .setDescription(
         "> :x: `Invalid Permissions` Do you have the correct permissions to execute this command?"
       )
-      .setColor(supportbot.ErrorColour);
+      .setColor(supportbot.Embed.Colours.Error);
 
     if (!permission)
       return interaction.reply({
@@ -67,14 +75,14 @@ module.exports = new Event("interactionCreate", async (client, interaction) => {
       }
     }
     if (interaction.customId === "ticketlock") {
-      if (interaction.channel.name.startsWith(supportbot.TicketPrefix)) {
+      if (interaction.channel.name.startsWith(supportbot.Ticket.Channel)) {
         interaction.message.fetch();
         let Admin =
           interaction.guild.roles.cache.find(
-            (AdminUser) => AdminUser.name === supportbot.Admin
+            (AdminUser) => AdminUser.name === supportbot.Roles.StaffMember.Admin
           ) ||
           interaction.guild.roles.cache.find(
-            (AdminUser) => AdminUser.id === supportbot.Admin
+            (AdminUser) => AdminUser.id === supportbot.Roles.StaffMember.Admin
           );
         if (!interaction.member.roles.cache.has(Admin.id)) {
           return await interaction.reply({
@@ -86,10 +94,10 @@ module.exports = new Event("interactionCreate", async (client, interaction) => {
 
         let parent =
           interaction.guild.channels.cache.find(
-            (c) => c.name === supportbot.LockTicketCategory
+            (c) => c.name === supportbot.Ticket.LockTicketCategory
           ) ||
           interaction.guild.channels.cache.find(
-            (c) => c.id === supportbot.LockTicketCategory
+            (c) => c.id === supportbot.Ticket.LockTicketCategory
           );
         if (parent) {
           await interaction.channel.setParent(parent.id);
@@ -112,8 +120,8 @@ module.exports = new Event("interactionCreate", async (client, interaction) => {
         const ticketDeleteButton = new Discord.ButtonBuilder()
           .setCustomId("ticketclose")
           .setLabel("Close")
-          .setStyle(supportbot.TicketDeleteColour)
-          .setEmoji(supportbot.TicketDeleteEmoji);
+          .setStyle(supportbot.Buttons.Tickets.DeleteStyle)
+          .setEmoji(supportbot.Buttons.Tickets.DeleteEmoji);
 
         const row = new Discord.ActionRowBuilder().addComponents(
           ticketDeleteButton
@@ -121,7 +129,7 @@ module.exports = new Event("interactionCreate", async (client, interaction) => {
         const ArchiveEmbed = new Discord.EmbedBuilder()
           .setTitle("Archived")
           .setDescription(`Archived ${interaction.channel.name}`)
-          .setColor(supportbot.SuccessColour);
+          .setColor(supportbot.Embed.Colours.Success);
 
         interaction.reply({ embeds: [ArchiveEmbed] });
         interaction.message.edit({ components: [row] });

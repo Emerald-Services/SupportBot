@@ -5,10 +5,18 @@ const fs = require("fs");
 
 const Discord = require("discord.js");
 const yaml = require("js-yaml");
+
 const supportbot = yaml.load(
   fs.readFileSync("./Configs/supportbot.yml", "utf8")
 );
-const cmdconfig = yaml.load(fs.readFileSync("./Configs/commands.yml", "utf8"));
+
+const cmdconfig = yaml.load(
+  fs.readFileSync("./Configs/commands.yml", "utf8")
+);
+
+const msgconfig = yaml.load(
+  fs.readFileSync("./Configs/messages.yml", "utf8")
+);
 
 const Command = require("../Structures/Command.js");
 
@@ -30,9 +38,10 @@ module.exports = new Command({
     let disableCommand = true;
 
     const { getRole } = interaction.client;
-    let SupportStaff = await getRole(supportbot.Staff, interaction.guild);
-    let Admin = await getRole(supportbot.Admin, interaction.guild);
+    let SupportStaff = await getRole(supportbot.Roles.StaffMember.Staff, interaction.guild);
+    let Admin = await getRole(supportbot.Roles.StaffMember.Admin, interaction.guild);
     if (!SupportStaff || !Admin)
+    
       return interaction.reply(
         "Some roles seem to be missing!\nPlease check for errors when starting the bot."
       );
@@ -40,9 +49,9 @@ module.exports = new Command({
     const NoPerms = new Discord.EmbedBuilder()
       .setTitle("Invalid Permissions!")
       .setDescription(
-        `${supportbot.IncorrectPerms}\n\nRole Required: \`${supportbot.Staff}\` or \`${supportbot.Admin}\``
+        `${msgconfig.Error.IncorrectPerms}\n\nRole Required: \`${supportbot.Roles.StaffMember.Staff}\` or \`${supportbot.Roles.StaffMember.Admin}\``
       )
-      .setColor(supportbot.WarningColour);
+      .setColor(supportbot.Embed.Colours.Warn);
 
     if (
       !interaction.member.roles.cache.has(SupportStaff.id) &&
@@ -59,8 +68,8 @@ module.exports = new Command({
     if (ticket === -1) {
       const Exists = new Discord.EmbedBuilder()
         .setTitle("No Ticket Found!")
-        .setDescription(supportbot.NoValidTicket)
-        .setColor(supportbot.WarningColour);
+        .setDescription(msgconfig.Error.NoValidTicket)
+        .setColor(supportbot.Embed.Colours.Warn);
       return interaction.reply({ ephemeral: true, embeds: [Exists] });
     }
 
@@ -68,20 +77,20 @@ module.exports = new Command({
     const UserNotExist = new Discord.EmbedBuilder()
       .setTitle("User Not Found!")
       .setDescription(
-        `${supportbot.UserNotFound}\n\nTry Again:\`/${cmdconfig.TicketAdd} <user#0000>\``
+        `${msgconfig.Error.UserNotFound}\n\nTry Again:\`/${cmdconfig.TicketAdd} <user#0000>\``
       )
-      .setColor(supportbot.ErrorColour);
+      .setColor(supportbot.Embed.Colours.Error);
 
     if (!uMember) return interaction.reply({ embeds: [UserNotExist] });
 
     await interaction.channel.permissionOverwrites.edit(uMember.id, {
-      VIEW_CHANNEL: true,
+      ViewChannel: true,
     });
     const Complete = new Discord.EmbedBuilder()
       .setTitle("User Added!")
-      .setDescription(supportbot.AddedUser.replace(/%user%/g, uMember.id))
+      .setDescription(msgconfig.Ticket.AddedUser.replace(/%user%/g, uMember.id))
       .setTimestamp()
-      .setColor(supportbot.GeneralColour);
+      .setColor(supportbot.Embeds.Colours.General);
     interaction.reply({ embeds: [Complete] });
     TicketData.tickets[ticket].subUsers.push(uMember.id);
     fs.writeFileSync(

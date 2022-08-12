@@ -5,10 +5,18 @@ const fs = require("fs");
 
 const Discord = require("discord.js");
 const yaml = require("js-yaml");
+
 const supportbot = yaml.load(
   fs.readFileSync("./Configs/supportbot.yml", "utf8")
 );
-const cmdconfig = yaml.load(fs.readFileSync("./Configs/commands.yml", "utf8"));
+
+const cmdconfig = yaml.load(
+  fs.readFileSync("./Configs/commands.yml", "utf8")
+);
+
+const msgconfig = yaml.load(
+  fs.readFileSync("./Configs/messages.yml", "utf8")
+);
 
 const Command = require("../Structures/Command.js");
 
@@ -29,19 +37,21 @@ module.exports = new Command({
     let disableCommand = true;
 
     const { getRole, getChannel } = interaction.client;
-    if (supportbot.StaffOnly) {
-      let SupportStaff = await getRole(supportbot.Staff, interaction.guild);
-      let Admin = await getRole(supportbot.Admin, interaction.guild);
+    if (supportbot.Ticket.Close.StaffOnly) {
+      let SupportStaff = await getRole(supportbot.Roles.StaffMember.Staff, interaction.guild);
+      let Admin = await getRole(supportbot.Roles.StaffMember.Admin, interaction.guild);
       if (!SupportStaff || !Admin)
         return interaction.reply(
           "Some roles seem to be missing!\nPlease check for errors when starting the bot."
         );
-      const NoPerms = new Discord.EmbedBuilder()
-        .setTitle("Invalid Permissions!")
-        .setDescription(
-          `${supportbot.IncorrectPerms}\n\nRole Required: \`${supportbot.Staff}\` or \`${supportbot.Admin}\``
-        )
-        .setColor(supportbot.WarningColour);
+
+    const NoPerms = new Discord.EmbedBuilder()
+      .setTitle("Invalid Permissions!")
+      .setDescription(
+        `${supportbot.IncorrectPerms}\n\nRole Required: \`${supportbot.Roles.StaffMember.Staff}\` or \`${supportbot.Roles.StaffMember.Admin}\``
+      )
+      .setColor(supportbot.Embed.Colours.Warn);
+
 
       if (
         !interaction.member.roles.cache.has(SupportStaff.id) &&
@@ -60,31 +70,31 @@ module.exports = new Command({
     if (TicketData === -1) {
       const Exists = new Discord.EmbedBuilder()
         .setTitle("No Ticket Found!")
-        .setDescription(supportbot.NoValidTicket)
-        .setColor(supportbot.WarningColour);
+        .setDescription(msgconfig.Error.NoValidTicket)
+        .setColor(supportbot.Embed.Colours.Warn);
       return interaction.followUp({ embeds: [Exists] });
     }
     let tUser = interaction.client.users.cache.get(ticket.user);
     let transcriptChannel = await getChannel(
-      supportbot.TranscriptLog,
+      supportbot.Ticket.Log.TranscriptLog,
       interaction.guild
     );
-    let logChannel = await getChannel(supportbot.TicketLog, interaction.guild);
+    let logChannel = await getChannel(supportbot.Log.TicketLog, interaction.guild);
     let reason =
       (await interaction.options?.getString("reason")) || "No Reason Provided.";
 
     if (!transcriptChannel || !logChannel)
       return interaction.followUp("Some Channels seem to be missing!");
-    if (supportbot.CloseConfirmation) {
+    if (supportbot.Ticket.Close.CloseConfirmation) {
       const CloseTicketRequest = new Discord.EmbedBuilder()
         .setTitle(`**${supportbot.ClosingTicket}**`)
         .setDescription(
-          `Please confirm by repeating the following word.. \`${supportbot.ClosingConfirmation_Word}\` `
+          `Please confirm by repeating the following word.. \`${supportbot.Ticket.Close.ClosingConfirmation_Word}\` `
         )
-        .setColor(supportbot.GeneralColour);
+        .setColor(supportbot.Embed.Colours.General);
       await interaction.followUp({ embeds: [CloseTicketRequest] });
       let filter = (m) =>
-        m.content.toLowerCase() === supportbot.ClosingConfirmation_Word &&
+        m.content.toLowerCase() === supportbot.Ticket.Close.ClosingConfirmation_Word &&
         m.author.id === interaction.user.id;
       await interaction.channel.awaitMessages({
         filter,
@@ -102,12 +112,12 @@ module.exports = new Command({
           if (err) console.error(err);
         }
       );
-      await interaction.followUp(`**${supportbot.ClosingTicket}**`);
+      await interaction.followUp(`**${msgconfig.Ticket.ClosingTicket}**`);
       const transcriptEmbed = new Discord.EmbedBuilder()
-        .setTitle(supportbot.TranscriptTitle)
-        .setColor(supportbot.GeneralColour)
+        .setTitle(supportbot.Ticket.Log.TranscriptTitle)
+        .setColor(supportbot.Embed.Colours.General)
         .setFooter({
-          text: supportbot.EmbedFooter,
+          text: supportbot.Embed.Footer,
           iconURL: interaction.user.displayAvatarURL(),
         })
         .addField(
@@ -123,10 +133,10 @@ module.exports = new Command({
         .addField("Closed By", interaction.user.tag)
         .addField("Reason", reason);
       const logEmbed = new Discord.EmbedBuilder()
-        .setTitle(supportbot.TicketLog_Title)
-        .setColor(supportbot.GeneralColour)
+        .setTitle(supportbot.Ticket.Log.TicketLog_Title)
+        .setColor(supportbot.Embed.Colours.General)
         .setFooter({
-          text: supportbot.EmbedFooter,
+          text: supportbot.Embed.Footer,
           iconURL: interaction.user.displayAvatarURL(),
         })
         .addField(
@@ -157,7 +167,7 @@ module.exports = new Command({
           html += `-----<br><br>`;
         }
       });
-      if (!(supportbot.DisableTicketLogChannel)) {
+      if (!(supportbot.Ticket.Log.DisableTicketLogChannel)) {
         await logChannel.send({ embeds: [logEmbed] }).catch((err) => {
           console.error(err);
         });
@@ -172,7 +182,7 @@ module.exports = new Command({
           console.error(err);
         });
 
-      if (supportbot.DMTranscripts) {
+      if (supportbot.Ticket.DMTranscripts) {
 
         await tUser
         ?.send({ embeds: [transcriptEmbed], files: [file] })

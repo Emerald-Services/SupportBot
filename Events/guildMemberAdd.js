@@ -3,39 +3,48 @@ const Discord = require('discord.js');
 const fs = require("fs");
 const Event = require("../Structures/Event.js");
 const yaml = require("js-yaml");
+
 const supportbot = yaml.load(
-  fs.readFileSync("./Configs/supportbot.yml", "utf8")
+    fs.readFileSync("./Configs/supportbot.yml", "utf8")
+);
+  
+const cmdconfig = yaml.load(
+    fs.readFileSync("./Configs/commands.yml", "utf8")
+);
+  
+const msgconfig = yaml.load(
+    fs.readFileSync("./Configs/messages.yml", "utf8")
 );
 
 module.exports = new Event("guildMemberAdd", async (client, member, interaction, guild) => {
 
-    if (supportbot.Welcome) {
-        const WelcomeChannel = member.guild.channels.cache.find(channel => channel.name === supportbot.WelcomeChannel)
+    if (supportbot.Welcome.Enabled) {
+        const WelcomeChannel = member.guild.channels.cache.find(channel => channel.name === supportbot.Welcome.Channel)
 
         const WelcomeEmbed = new Discord.EmbedBuilder()
-            .setColor(supportbot.WelcomeColour)
-            .setTitle(supportbot.WelcomeTitle)
-            .setDescription(supportbot.WelcomeMessage.replace(/%joined_user%/g, member.user))
+            .setColor(msgconfig.Welcome.Embed.Colour)
+            .setTitle(msgconfig.Welcome.Embed.Title)
+            .setDescription(msgconfig.Welcome.Embed.Message.replace(/%joined_user%/g, member.user))
             .setTimestamp();
         
-            if (supportbot.EmbedWelcomeThumbnail === "BOT") {
+            if (msgconfig.Welcome.Embed.Thumbnail === "BOT") {
                 WelcomeEmbed.setThumbnail(client.user.displayAvatarURL())
             }
     
-            if (supportbot.EmbedWelcomeThumbnail === "USER") {
+            if (msgconfig.Welcome.Embed.Thumbnail === "USER") {
                 WelcomeEmbed.setThumbnail(member.user.displayAvatarURL())
             }
     
-            if (supportbot.EmbedWelcomeImage) {
-                WelcomeEmbed.setImage(supportbot.EmbedWelcomeImageURL)
+            if (msgconfig.Welcome.Embed.ImageEnabled) {
+                WelcomeEmbed.setImage(msgconfig.Welcome.Embed.ImageURL)
             }
     
             WelcomeChannel.send({
                 embeds: [WelcomeEmbed]
             })
     
-            if (supportbot.AutoRole) {
-                var role = member.guild.roles.cache.find(role => role.name === supportbot.JoinRole);
+            if (supportbot.Roles.AutoRole.Enabled) {
+                var role = member.guild.roles.cache.find(role => role.name === supportbot.Roles.AutoRole.Role);
                 member.roles.add(role);
             } 
     

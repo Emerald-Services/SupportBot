@@ -61,14 +61,14 @@ Ticket:
   RemovedUser: "> 👍 <@%user%> has been `Removed` from this ticket"
 
   Blacklisted: "> :x: You are not allowed to open a ticket"
-  Mutede: "> :x: You are `Muted` and therefore not allowed to open any tickets"
+  Muted: "> :x: You are `Muted` and therefore not allowed to open any tickets"
   InvalidSubject: "> No Reason Provided!"
 
   TranscriptSavedMessage: "📝 **Transcript Saved!**"
   TicketLockMessage: "❌ **Ticket Locked!**"
   TicketDeleteMessage: "⚠ **Ticket Deleting!**" 
 
-  ClosingText: "> :warning: You have requested to close your support ticket."
+  ClosingTicket: "> :warning: You have requested to close your support ticket."
 
 Error:
   IncorrectPerms: "> :x: **Err!** You do not have the correct permissions to use this command."

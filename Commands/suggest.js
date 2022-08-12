@@ -5,10 +5,18 @@ const fs = require("fs");
 
 const Discord = require("discord.js");
 const yaml = require("js-yaml");
+
 const supportbot = yaml.load(
   fs.readFileSync("./Configs/supportbot.yml", "utf8")
 );
-const cmdconfig = yaml.load(fs.readFileSync("./Configs/commands.yml", "utf8"));
+
+const cmdconfig = yaml.load(
+  fs.readFileSync("./Configs/commands.yml", "utf8")
+);
+
+const msgconfig = yaml.load(
+  fs.readFileSync("./Configs/messages.yml", "utf8")
+);
 
 const Command = require("../Structures/Command.js");
 const { channel } = require("diagnostics_channel");
@@ -33,14 +41,14 @@ module.exports = new Command({
     const { getChannel } = interaction.client;
 
     const suggestChannel = await getChannel(
-      supportbot.SuggestionChannel,
+      supportbot.Suggestions.Channel,
       interaction.guild
     );
 
     const NoChannel = new Discord.EmbedBuilder()
       .setTitle("Missing Channel!")
-      .setDescription(supportbot.InvalidChannel)
-      .setColor(supportbot.ErrorColour);
+      .setDescription(msgconfig.Error.InvalidChannel)
+      .setColor(supportbot.Embed.Colours.Error);
 
     if (!suggestChannel) return interaction.reply({ embeds: [NoChannel] });
 
@@ -54,23 +62,23 @@ module.exports = new Command({
 
       .setThumbnail(interaction.user.displayAvatarURL())
       .setFooter({
-        text: supportbot.EmbedFooter,
+        text: supportbot.Embed.Footer,
         iconURL: interaction.user.displayAvatarURL(),
       })
-      .setColor(supportbot.GeneralColour);
+      .setColor(supportbot.Embed.Colours.General);
 
     const suggestionMsg = await suggestChannel.send({ embeds: [SuggestEmbed] });
 
-    if (supportbot.SuggestionUpvote && supportbot.SuggestionDownvote) {
-      await suggestionMsg.react(supportbot.SuggestionUpvote);
-      await suggestionMsg.react(supportbot.SuggestionDownvote);
+    if (supportbot.Suggestions.UpvoteEmoji && supportbot.Suggestions.DownvoteEmoji) {
+      await suggestionMsg.react(supportbot.Suggestions.UpvoteEmoji);
+      await suggestionMsg.react(supportbot.Suggestions.DownvoteEmoji);
 
-      if (supportbot.SuggestionThreads) {
+      if (supportbot.Suggestions.Threads.Enabled) {
         await suggestionMsg.startThread({
-              name: `Suggestion-releated Thread`,
+              name: supportbot.Suggestions.Threads.Title,
               autoArchiveDuration: 60,
               type: Discord.ChannelType.GuildPublicThread,
-              reason: 'Suggestion-releated thread',
+              reason: supportbot.Suggestions.Threads.Reason,
           })
     
         }
@@ -82,7 +90,7 @@ module.exports = new Command({
       .addFields(
         { name: "Sent to:", value: `<#${suggestChannel.id}>`},
       )
-      .setColor(supportbot.SuccessColour);
+      .setColor(supportbot.Embed.Colours.Success);
 
     return interaction.reply({ 
       ephemeral: true, 

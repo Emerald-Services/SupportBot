@@ -5,11 +5,20 @@ const fs = require("fs");
 
 const Discord = require("discord.js");
 const yaml = require("js-yaml");
+
 const supportbot = yaml.load(
   fs.readFileSync("./Configs/supportbot.yml", "utf8")
 );
 const panelconfig = yaml.load(
   fs.readFileSync("./Configs/ticket-panel.yml", "utf8")
+);
+
+const cmdconfig = yaml.load(
+  fs.readFileSync("./Configs/commands.yml", "utf8")
+);
+
+const msgconfig = yaml.load(
+  fs.readFileSync("./Configs/messages.yml", "utf8")
 );
 
 const Event = require("../Structures/Event.js");
@@ -88,37 +97,39 @@ module.exports = new Event("ready", async (client, interaction) => {
   console.log(`\u001b[32m`, `――――――――――――――――――――――――――――――――――――――――――――`);
 
   const roles = [
-    supportbot.Admin,
-    supportbot.Staff,
-    supportbot.TicketBlackListRole,
-    supportbot.TicketMutedRole
+    supportbot.Roles.StaffMember.Admin,
+    supportbot.Roles.StaffMember.Staff,
+    supportbot.Roles.ModRoles.Blacklisted,
+    supportbot.Roles.ModRoles.Muted
   ];
 
     supportbot.Departments.forEach((department) => roles.push(department.role));
 
-  if (supportbot.AutoRole) roles.push(supportbot.JoinRole);
-  const channels = [
-    supportbot.SuggestionChannel,
-    supportbot.TicketLog,
-    supportbot.TranscriptLog,
-    panelconfig.Channel,
-    supportbot.WelcomeChannel,
-    supportbot.LeaveChannel,
-    supportbot.TranslateLogChannel
-  ];
+  if (supportbot.Roles.AutoRole.Role) roles.push(supportbot.Roles.AutoRole.Role);
+  
+  // const channels = [
+  //   supportbot.Suggestions.Channel,
+  //   supportbot.Ticket.Log.TicketLog,
+  //   supportbot.Ticket.Log.TranscriptLog,
+  //   panelconfig.Channel,
+  //   supportbot.Welcome.Channel,
+  //   supportbot.Leave.Channel,
+  //   supportbot.Translate.Log
+  // ];
   //const categories = [supportbot.TicketCategory];
 
   const missingC = [];
   const missingR = [];
   const missingCat = [];
   
-  for (let c of channels) {
-    if ((c === supportbot.SuggestionChannel && supportbot.DisableSuggestionsChannel) || c === supportbot.TicketLog && supportbot.DisableTicketLogChannel) {
-      continue;
-    }
-    const find = await getChannel(c, client.guilds.cache.first());
-    if (!find) missingC.push(c);
-  }
+  // for (let c of channels) {
+  //   if ((c === supportbot.Suggestion.Channel && cmdconfig.Suggestion.Enabled) || c === supportbot.Ticket.Log.TicketLog && supportbot.Ticket.Log.DisableTicketLogChannel) {
+  //     continue;
+  //   }
+  //   const find = await getChannel(c, client.guilds.cache.first());
+  //   if (!find) missingC.push(c);
+  // }
+  
   for (let r of roles) {
     const find = await getRole(r, client.guilds.cache.first());
     if (!find) missingR.push(r);
@@ -184,7 +195,7 @@ module.exports = new Event("ready", async (client, interaction) => {
         .setTitle(panelconfig.PanelTitle)
         .setColor(panelconfig.PanelColour)
         .setFooter({
-          text: supportbot.EmbedFooter,
+          text: supportbot.Embed.Footer,
           iconURL: interaction.user.displayAvatarURL(),
         });
 

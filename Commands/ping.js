@@ -21,19 +21,11 @@ module.exports = new Command({
   async run(interaction) {
     let disableCommand = true;
 
-    if (cmdconfig.Ping.Enabled === false) {
-      if (interaction.type === Discord.InteractionType.ApplicationCommand && disableCommand)
-      return interaction.reply({
-        content: ":x: This command is `disabled`",
-        ephemeral: true,
-      });
-    }
-
     const PingEmbed = new Discord.EmbedBuilder()
       .setDescription(
         `:ping_pong: **Ping:** \`${interaction.client.ws.ping} ms\``
       )
-      .setColor(supportbot.GeneralColour);
+      .setColor(supportbot.Embed.Colours.General);
 
     interaction.reply({
       embeds: [PingEmbed],

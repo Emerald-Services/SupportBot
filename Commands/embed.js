@@ -5,10 +5,18 @@ const fs = require("fs");
 
 const Discord = require("discord.js");
 const yaml = require("js-yaml");
+
 const supportbot = yaml.load(
   fs.readFileSync("./Configs/supportbot.yml", "utf8")
 );
-const cmdconfig = yaml.load(fs.readFileSync("./Configs/commands.yml", "utf8"));
+
+const cmdconfig = yaml.load(
+  fs.readFileSync("./Configs/commands.yml", "utf8")
+);
+
+const msgconfig = yaml.load(
+  fs.readFileSync("./Configs/messages.yml", "utf8")
+)
 
 const Command = require("../Structures/Command.js");
 
@@ -66,28 +74,21 @@ module.exports = new Command({
   async run(interaction) {
     let disableCommand = true;
 
-    if (cmdconfig.Embed.Enabled === false) {
-      if (interaction.type === Discord.InteractionType.ApplicationCommand && disableCommand)
-      return interaction.reply({
-        content: ":x: This command is `disabled`",
-        ephemeral: true,
-      });
-    }
-
     const { getRole } = interaction.client;
-    let SupportStaff = await getRole(supportbot.Staff, interaction.guild);
-    let Admin = await getRole(supportbot.Admin, interaction.guild);
+    let SupportStaff = await getRole(supportbot.Roles.StaffMember.Staff, interaction.guild);
+    let Admin = await getRole(supportbot.Roles.StaffMember.Admin, interaction.guild);
 
     if (!SupportStaff || !Admin)
       return interaction.reply(
         "Some roles seem to be missing!\nPlease check for errors when starting the bot."
       );
-    const NoPerms = new Discord.EmbedBuilder()
+
+      const NoPerms = new Discord.EmbedBuilder()
       .setTitle("Invalid Permissions!")
       .setDescription(
-        `${supportbot.IncorrectPerms}\n\nRole Required: \`${supportbot.Staff}\` or \`${supportbot.Admin}\``
+        `${msgconfig.Error.IncorrectPerms}\n\nRole Required: \`${supportbot.Roles.StaffMember.Staff}\` or \`${supportbot.Roles.StaffMember.Admin}\``
       )
-      .setColor(supportbot.WarningColour);
+      .setColor(supportbot.Embed.Colours.Warn);
 
     if (
       interaction.member.roles.cache.has(SupportStaff.id) ||
