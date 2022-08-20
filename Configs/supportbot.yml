@@ -98,7 +98,7 @@ EmbedLeaveThumbnail: false
 # -------------------------
 
 InfoTitle: "Information"
-
+AboutMe: "About Me Text"
 InfoButtonText: "Visit Site"
 InfoURL: "https://emeraldsrv.dev"
 InfoColour: "#f74343"
