@@ -100,6 +100,7 @@ EmbedLeaveThumbnail: false
 InfoTitle: "Information"
 
 InfoButtonText: "Visit Site"
+AboutMe: "I am SupportBot"
 InfoURL: "https://emeraldsrv.dev"
 InfoColour: "#f74343"
 
