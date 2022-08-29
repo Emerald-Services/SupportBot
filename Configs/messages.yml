@@ -52,6 +52,7 @@ Ticket:
   TicketMessage: "> Hello <@%ticketauthor%>, Thank you for creating a support ticket\nPlease wait patiently whilst a member of our team reaches out to you."
   TicketThumbnail: "https://images.emojiterra.com/google/android-pie/512px/1f39f.png"
   TicketCreatedAlert: "> :ticket: Ticked Created: <#%ticketid%>"
+  TicketExists: "> ❌ Ticket already exists"
 
 #  Available Placeholders:
 
