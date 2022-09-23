@@ -3,7 +3,11 @@
 
 const fs = require("fs");
 
-const Discord = require("discord.js");
+const {
+  MessageButton,
+  MessageActionRow,
+  MessageEmbed
+} = require("discord.js");
 const yaml = require("js-yaml");
 const supportbot = yaml.load(
   fs.readFileSync("./Configs/supportbot.yml", "utf8")
@@ -19,14 +23,14 @@ module.exports = new Command({
   permissions: ["SEND_MESSAGES"],
 
   async run(interaction) {
-    const InfoButton = new Discord.MessageButton()
+    const InfoButton = new MessageButton()
       .setLabel(supportbot.InfoButtonText)
       .setURL(supportbot.InfoURL)
       .setStyle("LINK");
 
-    const inforow = new Discord.MessageActionRow().addComponents(InfoButton);
+    const inforow = new MessageActionRow().addComponents(InfoButton);
 
-    const InfoEmbed = new Discord.MessageEmbed()
+    const InfoEmbed = new MessageEmbed()
       .setURL(supportbot.InfoURL)
       .setTitle(supportbot.InfoTitle)
       .setDescription(supportbot.AboutMe)
