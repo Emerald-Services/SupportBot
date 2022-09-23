@@ -3,7 +3,9 @@
 
 const fs = require("fs");
 
-const Discord = require("discord.js");
+const {
+  MessageEmbed
+} = require("discord.js");
 const yaml = require("js-yaml");
 const supportbot = yaml.load(
   fs.readFileSync("./Configs/supportbot.yml", "utf8")
@@ -32,7 +34,7 @@ module.exports = new Command({
       interaction.guild
     );
 
-    const NoChannel = new Discord.MessageEmbed()
+    const NoChannel = new MessageEmbed()
       .setTitle("Missing Channel!")
       .setDescription(supportbot.InvalidChannel)
       .setColor(supportbot.ErrorColour);
@@ -41,7 +43,7 @@ module.exports = new Command({
 
     let suggestion = interaction.options.getString("suggestion");
 
-    const SuggestEmbed = new Discord.MessageEmbed()
+    const SuggestEmbed = new MessageEmbed()
       .addField("Suggestion", suggestion, true)
       .addField("From", `<@${interaction.user.id}>`)
       .setThumbnail(interaction.user.displayAvatarURL())
@@ -67,7 +69,7 @@ module.exports = new Command({
         }
     }
 
-    const Submitted = new Discord.MessageEmbed()
+    const Submitted = new MessageEmbed()
       .setTitle("Suggestion Submitted!")
       .setDescription(
         `:white_check_mark: You have successfully submitted a suggestion.`
