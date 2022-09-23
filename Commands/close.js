@@ -107,18 +107,21 @@ module.exports = new Command({
           text: supportbot.EmbedFooter,
           iconURL: interaction.user.displayAvatarURL(),
         })
-        .addField(
-          "Ticket",
-          `${interaction.channel.name} (${interaction.channel.id})`
-        )
-        .addField(
-          "User",
-          `${tUser?.username || "N/A"}#${tUser?.discriminator || "N/A"} (${
-            tUser?.id || ticket.user
-          })`
-        )
-        .addField("Closed By", interaction.user.tag)
-        .addField("Reason", reason);
+        .addFields([
+          {
+            name: "Ticket",
+            value: `${interaction.channel.name} (${interaction.channel.id})`
+          }, {
+            name: "User",
+            value: `${tUser?.username || "N/A"}#${tUser?.discriminator || "N/A"} (${tUser?.id || ticket.user})`
+          }, {
+            name: "Closed By",
+            value: `${interaction.user.tag}`
+          }, {
+            name: "Reason",
+            value: `${reason}`
+          }
+        ]);
       const logEmbed = new Discord.MessageEmbed()
         .setTitle(supportbot.TicketLog_Title)
         .setColor(supportbot.EmbedColour)
@@ -126,18 +129,19 @@ module.exports = new Command({
           text: supportbot.EmbedFooter,
           iconURL: interaction.user.displayAvatarURL(),
         })
-        .addField(
-          "Ticket",
-          `${interaction.channel.name} (${interaction.channel.id})`
-        )
-        .addField(
-          "User",
-          `${tUser?.username || "N/A"}#${tUser?.discriminator || "N/A"} (${
-            tUser?.id || ticket.user
-          })`
-        )
-        .addField("Closed By", interaction.user.tag)
-        .addField("Reason", reason);
+        .addFields({
+          name: "Ticket",
+          value: `${interaction.channel.name} (${interaction.channel.id})`
+        }, {
+          name: "User",
+          value: `${tUser?.username || "N/A"}#${tUser?.discriminator || "N/A"} (${tUser?.id || ticket.user})`
+        }, {
+          name: "Closed By",
+          value: `${interaction.user.tag}`
+        }, {
+          name: "Reason",
+          value: `${reason}`
+        });
       let msgs = await interaction.channel.messages.fetch({ limit: 100 });
       let html = "";
 
