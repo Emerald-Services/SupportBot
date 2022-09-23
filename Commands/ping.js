@@ -3,7 +3,9 @@
 
 const fs = require("fs");
 
-const Discord = require("discord.js");
+const {
+  MessageEmbed
+} = require("discord.js");
 const yaml = require("js-yaml");
 const supportbot = yaml.load(
   fs.readFileSync("./Configs/supportbot.yml", "utf8")
@@ -19,7 +21,7 @@ module.exports = new Command({
   permissions: ["SEND_MESSAGES"],
 
   async run(interaction) {
-    const PingEmbed = new Discord.MessageEmbed()
+    const PingEmbed = new MessageEmbed()
       .setDescription(
         `:ping_pong: **Ping:** \`${interaction.client.ws.ping} ms\``
       )
