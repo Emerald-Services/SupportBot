@@ -3,7 +3,9 @@
 
 const fs = require("fs");
 
-const Discord = require("discord.js");
+const {
+  MessageEmbed
+} = require("discord.js");
 const yaml = require("js-yaml");
 const supportbot = yaml.load(
   fs.readFileSync("./Configs/supportbot.yml", "utf8")
@@ -34,7 +36,7 @@ module.exports = new Command({
         "Some roles seem to be missing!\nPlease check for errors when starting the bot."
       );
 
-    const NoPerms = new Discord.MessageEmbed()
+    const NoPerms = new MessageEmbed()
       .setTitle("Invalid Permissions!")
       .setDescription(
         `${supportbot.IncorrectPerms}\n\nRole Required: \`${supportbot.Staff}\` or \`${supportbot.Admin}\``
@@ -53,7 +55,7 @@ module.exports = new Command({
       (t) => t.id === interaction.channel.id
     );
     if (ticket === -1) {
-      const Exists = new Discord.MessageEmbed()
+      const Exists = new MessageEmbed()
         .setTitle("No Ticket Found!")
         .setDescription(supportbot.NoValidTicket)
         .setColor(supportbot.WarningColour);
@@ -61,7 +63,7 @@ module.exports = new Command({
     }
 
     let uMember = interaction.options.getUser("user");
-    const UserNotExist = new Discord.MessageEmbed()
+    const UserNotExist = new MessageEmbed()
       .setTitle("User Not Found!")
       .setDescription(
         `${supportbot.UserNotFound}\n\nTry Again:\`/${cmdconfig.TicketRemove} <user#0000>\``
@@ -74,7 +76,7 @@ module.exports = new Command({
       VIEW_CHANNEL: false,
     });
 
-    const Complete = new Discord.MessageEmbed()
+    const Complete = new MessageEmbed()
       .setTitle("User Removed!")
       .setDescription(supportbot.RemovedUser.replace(/%user%/g, uMember.id))
       .setTimestamp()
