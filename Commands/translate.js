@@ -3,7 +3,9 @@
 
 const fs = require("fs");
 
-const Discord = require("discord.js");
+const {
+  MessageEmbed
+} = require("discord.js");
 const yaml = require("js-yaml");
 const supportbot = yaml.load(
   fs.readFileSync("./Configs/supportbot.yml", "utf8")
@@ -35,7 +37,6 @@ module.exports = new Command({
   permissions: ["SEND_MESSAGES"], // The permission the user/role at least requires
 
   async run(interaction) {
-
     const { getRole } = interaction.client;
     let SupportStaff = await getRole(supportbot.Staff, interaction.guild);
     let Admin = await getRole(supportbot.Admin, interaction.guild);
@@ -44,7 +45,7 @@ module.exports = new Command({
           "Some roles seem to be missing!\nPlease check the error logs."
         );
 
-    const NoPerms = new Discord.MessageEmbed()
+    const NoPerms = new MessageEmbed()
       .setTitle("Invalid Permissions!")
       .setDescription(
         `${supportbot.IncorrectPerms}\n\nRole Required: \`${supportbot.Staff}\` or \`${supportbot.Admin}\``
@@ -87,7 +88,7 @@ module.exports = new Command({
     if (!result) return;
 
     // Embed containing language code, original text and translated text
-    let transembed = new Discord.MessageEmbed()
+    let transembed = new MessageEmbed()
       .setAuthor({ name: interaction.user.tag, iconURL: interaction.user.displayAvatarURL({ dynamic: true }) })
       .setColor(supportbot.SuccessColour)
       .setDescription(`**Translation to ${lang}**`)
@@ -103,6 +104,5 @@ module.exports = new Command({
 
     // Send embed [transembed] to logging channel
     await translatelog.send({ embeds: [transembed] });
-  },
-  
-})
+  }
+});
