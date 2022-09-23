@@ -3,7 +3,9 @@
 
 const fs = require("fs");
 
-const Discord = require("discord.js");
+const {
+  MessageEmbed
+} = require("discord.js");
 const yaml = require("js-yaml");
 const supportbot = yaml.load(
   fs.readFileSync("./Configs/supportbot.yml", "utf8")
@@ -70,7 +72,7 @@ module.exports = new Command({
       return interaction.reply(
         "Some roles seem to be missing!\nPlease check for errors when starting the bot."
       );
-    const NoPerms = new Discord.MessageEmbed()
+    const NoPerms = new MessageEmbed()
       .setTitle("Invalid Permissions!")
       .setDescription(
         `${supportbot.IncorrectPerms}\n\nRole Required: \`${supportbot.Staff}\` or \`${supportbot.Admin}\``
@@ -89,13 +91,20 @@ module.exports = new Command({
       const EmbedFieldContent = interaction.options.getString("fieldcontent");
       const EmbedFieldTitle = interaction.options.getString("fieldtitle");
 
-      const EmbedMsg = new Discord.MessageEmbed()
+      const EmbedMsg = new MessageEmbed()
         .setTitle(EmbedTitle)
         .setDescription(EmbedSubject)
         .setColor(EmbedColour)
         .setThumbnail(EmbedThumbnail)
         .setImage(EmbedImage)
-        if (EmbedFieldTitle && EmbedFieldContent) { EmbedMsg.addField(EmbedFieldTitle, EmbedFieldContent) };
+        if (EmbedFieldTitle && EmbedFieldContent) {
+          EmbedMsg.addFields([
+            {
+              name: `${EmbedFieldTitle}`,
+              value: `${EmbedFieldContent}`
+            }
+          ]);
+        }
 
       interaction.reply({
         embeds: [EmbedMsg],
