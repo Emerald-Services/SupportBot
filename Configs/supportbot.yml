@@ -138,6 +138,8 @@ TranscriptTitle: "Ticket Transcript"
 TicketLog_Title: "Ticket Closed"
 TicketBlackListMessage: "You are not allowed to open a ticket"
 TicketRoleMention: "@here"
+TicketClaimMessage: "Your ticket will be handled by" #Automaticly tags user to the end
+TicketClaimTitle: "Ticket Claimed"
 # To ping a role: <@ROLE_ID>
 
 MaxAllowedTickets: 2
@@ -226,10 +228,12 @@ LockTicketCategory: "Archive"
 TicketCloseEmoji: "❌"
 TicketDeleteEmoji: "⛔"
 TicketLockEmoji: "🔒"
+TicketClaimEmoji: "🧑‍💻"
 
 TicketCloseColour: "DANGER"
 TicketDeleteColour: "DANGER"
 TicketLockColour: "PRIMARY"
+TicketClaimColour: "SUCCESS"
 
 # Discord Button Colour Selection
 # PRIMARY - Blue
