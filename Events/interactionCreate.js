@@ -127,5 +127,32 @@ module.exports = new Event("interactionCreate", async (client, interaction) => {
         interaction.message.edit({ components: [row] });
       }
     }
+    if (interaction.customId === "ticketclaim") {
+      if (interaction.channel.name.startsWith(supportbot.TicketPrefix)) {
+        interaction.message.fetch();
+        let User = interaction.guild.members.cache.get(interaction.user.id);
+        let Admin =
+          interaction.guild.roles.cache.find(
+            (AdminUser) => AdminUser.name === supportbot.Admin
+          ) ||
+          interaction.guild.roles.cache.find(
+            (AdminUser) => AdminUser.id === supportbot.Admin
+          );
+        if (!interaction.member.roles.cache.has(Admin.id)) {
+          return await interaction.reply({
+            content: "You don't have permission to do that.",
+            ephemeral: true,
+          });
+        }
+        let all = interaction.channel.permissionOverwrites.cache;
+ 
+        const ArchiveEmbed = new Discord.MessageEmbed()
+          .setTitle(supportbot.TicketClaimTitle)
+          .setDescription(supportbot.TicketClaimMessage + " <@" + interaction.user.id + ">")
+          .setColor(supportbot.SuccessColour);
+
+        interaction.reply({ embeds: [ArchiveEmbed] });
+      }
+    }
   }
 });
