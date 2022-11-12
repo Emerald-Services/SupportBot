@@ -213,8 +213,13 @@ module.exports = new Command({
       .setLabel("Lock")
       .setStyle(supportbot.TicketLockColour)
       .setEmoji(supportbot.TicketLockEmoji);
+    const ClaimButton = new MessageButton()
+      .setCustomId("ticketclaim")
+      .setLabel("Claim")
+      .setStyle(supportbot.TicketClaimColour)
+      .setEmoji(supportbot.TicketClaimEmoji);
 
-    const row2 = new MessageActionRow().addComponents(CloseButton, LockButton);
+    const row2 = new MessageActionRow().addComponents(CloseButton, LockButton, ClaimButton);
     if (!department) {
       try {
         let buttons = await supportbot.Departments.map((x) =>
