@@ -11,6 +11,9 @@ const supportbot = yaml.load(
 const cmdconfig = yaml.load(fs.readFileSync("./Configs/commands.yml", "utf8"));
 
 const Event = require("../Structures/Event.js");
+const TicketNumberID = require("../Structures/TicketID.js");
+
+
 
 module.exports = new Event("interactionCreate", async (client, interaction) => {
   if (interaction.isCommand()) {
@@ -127,5 +130,41 @@ module.exports = new Event("interactionCreate", async (client, interaction) => {
         interaction.message.edit({ components: [row] });
       }
     }
-  }
-});
+    if (interaction.customId === "ticketclaim") {
+      if (interaction.channel.name.startsWith(supportbot.TicketPrefix)) {
+        const Staff = await interaction.client.getRole(supportbot.Staff, interaction.guild);
+        interaction.message.fetch();
+        let User = interaction.guild.members.cache.get(interaction.user.id);
+        let Admin =
+          interaction.guild.roles.cache.find(
+            (AdminUser) => AdminUser.name === supportbot.Admin
+          ) ||
+          interaction.guild.roles.cache.find(
+            (AdminUser) => AdminUser.id === supportbot.Admin
+          );
+        if (!interaction.member.roles.cache.has(Admin.id)) {
+          return await interaction.reply({
+            content: "You don't have permission to do that.",
+            ephemeral: true,
+          });
+        }
+        let all = interaction.channel.permissionOverwrites.cache;
+ 
+        const ArchiveEmbed = new Discord.MessageEmbed()
+          .setTitle(supportbot.TicketClaimTitle)
+          .setDescription(supportbot.TicketClaimMessage + " <@" + interaction.user.id + ">")
+          .setColor(supportbot.EmbedColour);
+
+        interaction.reply({ embeds: [ArchiveEmbed] });
+        await interaction.channel.permissionOverwrites.edit(Staff.id, {
+               VIEW_CHANNEL: true,
+               SEND_MESSAGES: false,
+           });   
+      }
+        await interaction.channel.permissionOverwrites.edit(interaction.user.id, {
+               VIEW_CHANNEL: true,
+               SEND_MESSAGES: true,
+           });   
+      }
+    }
+  });
