@@ -12,6 +12,7 @@ const cmdconfig = yaml.load(fs.readFileSync("./Configs/commands.yml", "utf8"));
 
 const Command = require("../Structures/Command.js");
 
+
 module.exports = new Command({
   name: cmdconfig.SuggestCommand,
   description: cmdconfig.SuggestCommandDesc,
@@ -38,6 +39,7 @@ module.exports = new Command({
       .setColor(supportbot.ErrorColour);
 
     if (!suggestChannel) return interaction.reply({ embeds: [NoChannel] });
+      else interaction.reply('Suggestion created successfully');
 
     let suggestion = interaction.options.getString("suggestion");
 
@@ -55,30 +57,16 @@ module.exports = new Command({
     if (supportbot.SuggestionUpvote && supportbot.SuggestionDownvote) {
       await suggestionMsg.react(supportbot.SuggestionUpvote);
       await suggestionMsg.react(supportbot.SuggestionDownvote);
-
-      if (supportbot.SuggestionThreads) {
-        await suggestionMsg.startThread({
-              name: `Suggestion-releated Thread`,
-              autoArchiveDuration: 60,
-              type: 'GUILD_PUBLIC_THREAD',
-              reason: 'Suggestion-releated thread',
-          })
-    
-        }
+    }
+    if (supportbot.SuggestionUpvote && supportbot.SuggestionDownvote) {
+      await suggestionMsg.react(supportbot.SuggestionUpvote);
+      await suggestionMsg.react(supportbot.SuggestionDownvote);
     }
 
-    const Submitted = new Discord.MessageEmbed()
-      .setTitle("Suggestion Submitted!")
-      .setDescription(
-        `:white_check_mark: You have successfully submitted a suggestion.`
-      )
-      .addField("Sent to:", `<#${suggestChannel.id}>`)
-      .setColor(supportbot.SuccessColour);
-
-    return interaction.reply({ 
-      ephemeral: true, 
-      embeds: [Submitted] 
-    })
-    
+    suggestionMsg.startThread({
+        name: `Discuss the suggestion above.`,
+        autoArchiveDuration: 60,
+        type: 'GUILD_PUBLIC_THREAD'
+    });
   },
 });
