@@ -21,7 +21,7 @@ module.exports = new Event("ready", async (client, interaction) => {
     url: supportbot.StreamingURL,
   });
 
-  console.log(`\u001b[107m`, `――――――――――――――――――――――――――――――――――――――――――――`);
+  console.log(`\u001b[36m`, `――――――――――――――――――――――――――――――――――――――――――――`);
   console.log(`\u001b[91m`, `┏━━━┓╋╋╋╋╋╋╋╋╋╋╋╋╋┏┓┏━━┓╋╋╋┏┓`);
   console.log(`\u001b[91m`, `┃┏━┓┃╋╋╋╋╋╋╋╋╋╋╋╋┏┛┗┫┏┓┃╋╋┏┛┗┓`);
   console.log(`\u001b[91m`, `┃┗━━┳┓┏┳━━┳━━┳━━┳┻┓┏┫┗┛┗┳━┻┓┏┛`);
@@ -31,7 +31,7 @@ module.exports = new Event("ready", async (client, interaction) => {
   console.log(`\u001b[91m`, `┗╋╋╋╋╋╋╋┃┃╋┃┃`);
   console.log(`\u001b[91m`, `╋╋╋╋╋╋╋┗┛╋┗┛`);
   console.log(`    `);
-  console.log(`\u001b[32m`, `――――――――――――――――――――――――――――――――――――――――――――`);
+  console.log(`\u001b[36m`, `――――――――――――――――――――――――――――――――――――――――――――`);
   console.log(`    `);
   console.log(
     `\u001b[33m`,
