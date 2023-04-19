@@ -1,6 +1,6 @@
 {
   "name": "supportbot",
-  "version": "7.7b",
+  "version": "7.7.2",
   "description": "SupportBot is an open-sourced support system for discord. It's completely free to use with high amounts of customization to match your own brand.",
   "main": "index.js",
   "scripts": {

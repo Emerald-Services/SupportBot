@@ -35,7 +35,7 @@ module.exports = new Event("ready", async (client, interaction) => {
   console.log(`    `);
   console.log(
     `\u001b[33m`,
-    `${supportbot.Name} | v${supportbot.SupportBot_Version}`,
+    `${supportbot.Name} | ${supportbot.SupportBot_Version}`,
     `\u001b[36m`,
     `Connected to Discord`
   );
