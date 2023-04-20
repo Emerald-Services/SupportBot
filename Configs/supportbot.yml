@@ -47,10 +47,10 @@ WarningColour: "#fca117"
 # -------------------------
 
 AutoRole: true
-JoinRole: "Member"
+JoinRole: "SupportBot Member"
 
-Staff: "Staff"
-Admin: "Admin"
+Staff: "SupportBot Staff"
+Admin: "SupportBot Admin"
 TicketBlackListRole: "Blacklisted"
 
 # ----------------------------
@@ -140,6 +140,8 @@ TicketBlackListMessage: "You are not allowed to open a ticket"
 TicketRoleMention: "@here"
 TicketClaimMessage: "Your ticket will be handled by" #Automaticly tags user to the end
 TicketClaimTitle: "Ticket Claimed"
+TicketUnclaimMessage: "Your ticket is now unclaimed by" #Automaticly tags user to the end
+TicketUnclaimTitle: "Ticket Unclaimed"
 # To ping a role: <@ROLE_ID>
 
 MaxAllowedTickets: 2
@@ -191,19 +193,19 @@ AllowAllStaff: false
 
 Departments:
   - title: "Support"
-    role: "Staff"
+    role: "SupportBot Staff"
     color: "SECONDARY"
     emoji: "1️⃣"
     category: "Tickets"
 
   - title: "Billing Support"
-    role: "Staff"
+    role: "SupportBot Staff"
     color: "SECONDARY"
     emoji: "2️⃣"
     category: "Tickets"
 
   - title: "Admin Team"
-    role: "Admin"
+    role: "SupportBot Admin"
     color: "SECONDARY"
     emoji: "3️⃣"
     category: "Tickets"
@@ -224,16 +226,21 @@ Departments:
 #      --- Start ---
 
 LockTicketCategory: "Archive"
+UnlockTicketCategory: "Tickets" #This moves the ticket back to the main category.
 
 TicketCloseEmoji: "❌"
 TicketDeleteEmoji: "⛔"
 TicketLockEmoji: "🔒"
 TicketClaimEmoji: "🧑‍💻"
+TicketUnlockEmoji: "🔓"
+TicketUnclaimEmoji: "🧑‍💻"
 
 TicketCloseColour: "DANGER"
 TicketDeleteColour: "DANGER"
 TicketLockColour: "PRIMARY"
 TicketClaimColour: "SUCCESS"
+TicketUnclaimColour: "DANGER"
+TicketUnlockColour: "SUCCES"
 
 # Discord Button Colour Selection
 # PRIMARY - Blue
