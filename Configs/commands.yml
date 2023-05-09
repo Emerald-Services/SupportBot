@@ -26,6 +26,7 @@ EmbedCommand: "embed"
 SuggestCommand: "suggest"
 TranslateCommand: "translate"
 UserInfoCommand: "userinfo"
+ServerInfoCommand: "serverinfo"
 
 # ---------------------------------------
 #   Command Description Configuration
@@ -43,3 +44,4 @@ HelpCommandDesc: "Get a list of all the commands."
 EmbedCommandDesc: "Send a message as an embed."
 SuggestCommandDesc: "Suggest a feature for the server."
 UserInfoCommandDesc: "Get info about a user."
+ServerInfoCommandDesc: "Get info about the server."
