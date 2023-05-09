@@ -27,6 +27,7 @@ SuggestCommand: "suggest"
 TranslateCommand: "translate"
 UserInfoCommand: "userinfo"
 ServerInfoCommand: "serverinfo"
+InviteListCommand: "invitelist"
 
 # ---------------------------------------
 #   Command Description Configuration
@@ -45,3 +46,4 @@ EmbedCommandDesc: "Send a message as an embed."
 SuggestCommandDesc: "Suggest a feature for the server."
 UserInfoCommandDesc: "Get info about a user."
 ServerInfoCommandDesc: "Get info about the server."
+InviteListCommandDesc: "Get a list of all the invites in the server."
