@@ -240,7 +240,7 @@ TicketDeleteColour: "DANGER"
 TicketLockColour: "PRIMARY"
 TicketClaimColour: "SUCCESS"
 TicketUnclaimColour: "DANGER"
-TicketUnlockColour: "SUCCES"
+TicketUnlockColour: "SUCCESS"
 
 # Discord Button Colour Selection
 # PRIMARY - Blue
