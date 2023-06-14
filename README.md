@@ -60,6 +60,7 @@ Released under the [MIT](https://opensource.org/licenses/MIT) license.
 
 ## Third-Party
 
+- [Official addons repository](https://github.com/Emerald-Services/Addons/)
 - [Syphers Addons](https://github.com/SypherRed/SB_Addons_Unofficial)
 - [BuiltByBit](https://builtbybit.com/supportbot)
 - [Polymart](https://polymart.org/resource/supportbot-1-discord-ticket-bot.518)
