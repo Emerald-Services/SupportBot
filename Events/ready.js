@@ -51,25 +51,25 @@ module.exports = new Event("ready", async (client, interaction) => {
     `\u001b[33m`,
     `Resources:`,
     `\u001b[36m`,
-    `https://emeraldsrv.dev/resources`
+    `https://emeraldsrv.com/resources`
   );
   console.log(
     `\u001b[33m`,
     `Documentation:`,
     `\u001b[36m`,
-    `https://emeraldsrv.dev/wiki/supportbot`
+    `https://emeraldsrv.com/wiki/supportbot`
   );
   console.log(
     `\u001b[33m`,
     `Discord:`,
     `\u001b[36m`,
-    `https://emeraldsrv.dev/discord`
+    `https://emeraldsrv.com/discord`
   );
   console.log(
     `\u001b[33m`,
     `Hosting:`,
     `\u001b[36m`,
-    `https://emeraldsrv.dev/hosting`
+    `https://emeraldsrv.com/hosting`
   );
   console.log(`    `);
   console.log(`\u001b[37m`, `SupportBot proudly created by Emerald Services`);
