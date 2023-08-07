@@ -27,7 +27,7 @@
 </div>
 
 <p align="center">
-  <a href="https://emeraldsrv.dev/">Website</a>
+  <a href="https://emeraldsrv.com/">Website</a>
   •
   <a href="https://github.com/Emerald-Services/SupportBot/wiki">Wiki</a>
 <br>
@@ -48,7 +48,7 @@ SupportBot is an Open-Source discord bot built with [discord.js](https://github.
 
 ## Support
 
-<a href="https://emeraldsrv.dev/discord">
+<a href="https://emeraldsrv.com/discord">
     <img alt="Discord" src="https://img.shields.io/discord/597779408295821323?logo=discord&logoColor=white&style=for-the-badge">
 </a>
 
