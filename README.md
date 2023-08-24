@@ -1,7 +1,5 @@
 <h1 align="center">
-    <br>
-    <a href="https://github.com/Emerald-Services/SupportBot"><img src="https://emeraldsrv.com/images/Supportbotmainpage.png"></a>
-    <br>
+
     SupportBot
     <br>
 </h1>
