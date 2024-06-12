@@ -7,8 +7,8 @@
 //           SupportBot created by Emerald Services
 //           Installed with MIT License
 //
-//           Discord Support: https://emeraldsrv.com/discord
-//           Community Resources: https://emeraldsrv.com/resources
+//           Discord Support: https://emeraldsrv.dev/discord
+//           Community Resources: https://emeraldsrv.dev/resources
 
 const fs = require("fs");
 
@@ -18,6 +18,27 @@ const supportbot = yaml.load(
 );
 
 const Client = require("./Structures/Client.js");
-const client = new Client({});
+const client = new Client({
+  intents: ['Guilds', 'GuildMembers', 'GuildMessages']
+});
 
-client.start(supportbot.Token);
+client.start(supportbot.General.Token);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

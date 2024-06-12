@@ -4,7 +4,11 @@
 const fs = require("fs");
 
 const Discord = require("discord.js");
+const { Client, GatewayIntentBits, ActivityType } = require('discord.js');
+const client = new Discord.Client({intents: 32767})
+
 const yaml = require("js-yaml");
+
 const supportbot = yaml.load(
   fs.readFileSync("./Configs/supportbot.yml", "utf8")
 );
@@ -12,103 +16,149 @@ const panelconfig = yaml.load(
   fs.readFileSync("./Configs/ticket-panel.yml", "utf8")
 );
 
+const cmdconfig = yaml.load(
+  fs.readFileSync("./Configs/commands.yml", "utf8")
+);
+
+const msgconfig = yaml.load(
+  fs.readFileSync("./Configs/messages.yml", "utf8")
+);
+
 const Event = require("../Structures/Event.js");
+
+let chan1 = client.channels.cache.get(panelconfig.Channel);
 
 module.exports = new Event("ready", async (client, interaction) => {
   const { getRole, getChannel, getCategory } = client;
-  client.user.setActivity(supportbot.BotActivity, {
-    type: supportbot.ActivityType,
-    url: supportbot.StreamingURL,
-  });
 
-  console.log(`\u001b[36m`, `――――――――――――――――――――――――――――――――――――――――――――`);
-  console.log(`\u001b[91m`, `┏━━━┓╋╋╋╋╋╋╋╋╋╋╋╋╋┏┓┏━━┓╋╋╋┏┓`);
-  console.log(`\u001b[91m`, `┃┏━┓┃╋╋╋╋╋╋╋╋╋╋╋╋┏┛┗┫┏┓┃╋╋┏┛┗┓`);
-  console.log(`\u001b[91m`, `┃┗━━┳┓┏┳━━┳━━┳━━┳┻┓┏┫┗┛┗┳━┻┓┏┛`);
-  console.log(`\u001b[91m`, `┗━━┓┃┃┃┃┏┓┃┏┓┃┏┓┃┏┫┃┃┏━┓┃┏┓┃┃`);
-  console.log(`\u001b[91m`, `┃┗━┛┃┗┛┃┗┛┃┗┛┃┗┛┃┃┃┗┫┗━┛┃┗┛┃┗┓`);
-  console.log(`\u001b[91m`, `┗━━━┻━━┫┏━┫┏━┻━━┻┛┗━┻━━━┻━━┻━┛`);
-  console.log(`\u001b[91m`, `┗╋╋╋╋╋╋╋┃┃╋┃┃`);
-  console.log(`\u001b[91m`, `╋╋╋╋╋╋╋┗┛╋┗┛`);
+  if (supportbot.Activity.Type === "Playing", "playing") {
+    client.user.setPresence({
+      activities: [{ name: supportbot.Activity.Status, type: Discord.ActivityType.Playing }],
+      status: supportbot.Activity.Type,
+    });
+  }
+
+  if (supportbot.Activity.Type === "Watching", "watching") {
+    client.user.setPresence({
+      activities: [{ name: supportbot.Activity.Status, type: Discord.ActivityType.Watching }],
+      status: supportbot.Activity.Type,
+    });
+  }
+  
+  if (supportbot.Activity.Type === "Listening", "listening") {
+    client.user.setPresence({
+      activities: [{ name: supportbot.Activity.Status, type: Discord.ActivityType.Listening }],
+      status: supportbot.Activity.Type,
+    });
+  }
+
+  if (supportbot.Activity.Type === "Competing", "competing") {
+    client.user.setPresence({
+      activities: [{ name: supportbot.Activity.Status, type: Discord.ActivityType.Competing }],
+      status: supportbot.Activity.Type,
+    });
+  }
+
+  console.log(`\u001b[32m`, `――――――――――――――――――――――――――――――――――――――――――――`);
   console.log(`    `);
-  console.log(`\u001b[36m`, `――――――――――――――――――――――――――――――――――――――――――――`);
+  console.log(`\u001b[31m`, `┏━━━┓╋╋╋╋╋╋╋╋╋╋╋╋╋┏┓┏━━┓╋╋╋┏┓`);
+  console.log(`\u001b[31m`, `┃┏━┓┃╋╋╋╋╋╋╋╋╋╋╋╋┏┛┗┫┏┓┃╋╋┏┛┗┓`);
+  console.log(`\u001b[31m`, `┃┗━━┳┓┏┳━━┳━━┳━━┳┻┓┏┫┗┛┗┳━┻┓┏┛`);
+  console.log(`\u001b[31m`, `┗━━┓┃┃┃┃┏┓┃┏┓┃┏┓┃┏┫┃┃┏━┓┃┏┓┃┃`);
+  console.log(`\u001b[31m`, `┃┗━┛┃┗┛┃┗┛┃┗┛┃┗┛┃┃┃┗┫┗━┛┃┗┛┃┗┓`);
+  console.log(`\u001b[31m`, `┗━━━┻━━┫┏━┫┏━┻━━┻┛┗━┻━━━┻━━┻━┛`);
+  console.log(`\u001b[31m`, `┗╋╋╋╋╋╋╋┃┃╋┃┃`);
+  console.log(`\u001b[31m`, `╋╋╋╋╋╋╋┗┛╋┗┛`);
+  console.log(`    `);
+  console.log(`\u001b[32m`, `――――――――――――――――――――――――――――――――――――――――――――`);
   console.log(`    `);
   console.log(
-    `\u001b[33m`,
-    `${supportbot.Name} | ${supportbot.SupportBot_Version}`,
-    `\u001b[36m`,
-    `Connected to Discord`
+    `\u001b[31m`,
+    `${supportbot.General.Name} | [${supportbot.SupportBot_Version}]`,
+    `\u001b[32m`,
+    `Connected to Discord`,
   );
+  
+  console.log(`\u001b[31m`, `SupportBot proudly created by Emerald Development`);
+
+  console.log(`    `);
+
   console.log(
-    `\u001b[33m`,
-    `Invite to your server:`,
+    `\u001b[31m`,
+    `Discord`,
+    `\u001b[32m`,
+    `https://dsc.gg/emerald-dev`,
+  );
+
+  console.log(
+    `\u001b[31m`,
+    `Website`,
+    `\u001b[32m`,
+    `https://emeraldsrv.com`,
+  );
+
+  console.log(
+    `\u001b[31m`,
+    `Marketplace`,
+    `\u001b[32m`,
+    `https://market.emeraldsrv.com`,
+  );
+
+  console.log(
+    `\u001b[31m`,
+    `Documentation`,
+    `\u001b[32m`,
+    `https://emeraldsrv.com/third-party`,
+  );
+
+  console.log(`    `);
+
+  console.log(
+    `\u001b[31m`,
+    `Invite URL:`,
     `\u001b[36m`,
     `https://discord.com/api/oauth2/authorize?client_id=` +
       client.user.id +
       `&permissions=8&scope=bot%20applications.commands`
   );
-  console.log(
-    `\u001b[33m`,
-    `Resources:`,
-    `\u001b[36m`,
-    `https://emeraldsrv.com/resources`
-  );
-  console.log(
-    `\u001b[33m`,
-    `Documentation:`,
-    `\u001b[36m`,
-    `https://emeraldsrv.com/wiki/supportbot`
-  );
-  console.log(
-    `\u001b[33m`,
-    `Discord:`,
-    `\u001b[36m`,
-    `https://emeraldsrv.com/discord`
-  );
-  console.log(
-    `\u001b[33m`,
-    `Hosting:`,
-    `\u001b[36m`,
-    `https://emeraldsrv.com/hosting`
-  );
+
   console.log(`    `);
-  console.log(`\u001b[37m`, `SupportBot proudly created by Emerald Services`);
-  console.log(`    `);
-  console.log(`\u001b[31m`, `――――――――――――――――――――――――――――――――――――――――――――`);
-
-
-
+  console.log(`\u001b[32m`, `――――――――――――――――――――――――――――――――――――――――――――`);
 
   const roles = [
-    supportbot.Admin,
-    supportbot.Staff,
-    supportbot.TicketBlackListRole,
+    supportbot.Roles.StaffMember.Admin,
+    supportbot.Roles.StaffMember.Staff,
+    supportbot.Roles.ModRoles.Blacklisted,
+    supportbot.Roles.ModRoles.Muted
   ];
 
     supportbot.Departments.forEach((department) => roles.push(department.role));
 
-  if (supportbot.AutoRole) roles.push(supportbot.JoinRole);
-  const channels = [
-    supportbot.SuggestionChannel,
-    supportbot.TicketLog,
-    supportbot.TranscriptLog,
-    panelconfig.Channel,
-    supportbot.WelcomeChannel,
-    supportbot.LeaveChannel,
-    supportbot.TranslateLogChannel
-  ];
+  if (supportbot.Roles.AutoRole.Role) roles.push(supportbot.Roles.AutoRole.Role);
+  
+   const channels = [
+     supportbot.Suggestions.Channel,
+     supportbot.Ticket.Log.TicketLog,
+     supportbot.Ticket.Log.TranscriptLog,
+     panelconfig.Channel,
+     supportbot.Welcome.Channel,
+     supportbot.Leave.Channel,
+     supportbot.Translate.Log
+   ];
   //const categories = [supportbot.TicketCategory];
+
+  if (!channels) {
+      console.log("\u001b[31m", `[MISSING CHANNEL]`, `\u001b[37;1m`, `${channels}`, "\u001b[31m", `channel not found. Please check your config file.`);
+      return;
+  }
+//  else {
+//      console.log(`\u001b[32m`, `[CHANNEL LOCATED]`, `\u001b[37;1m`, `${channels}`, `\u001b[32;1m`, `channel has been found.`);
+//  }
 
   const missingC = [];
   const missingR = [];
   const missingCat = [];
-  for (let c of channels) {
-    if ((c === supportbot.SuggestionChannel && supportbot.DisableSuggestionsChannel) || c === supportbot.TicketLog && supportbot.DisableTicketLogChannel) {
-      continue;
-    }
-    const find = await getChannel(c, client.guilds.cache.first());
-    if (!find) missingC.push(c);
-  }
+  
   for (let r of roles) {
     const find = await getRole(r, client.guilds.cache.first());
     if (!find) missingR.push(r);
@@ -120,98 +170,33 @@ module.exports = new Event("ready", async (client, interaction) => {
 
   if (missingR.length > 0) {
     console.log(
+      "\u001b[31m",
+      `[MISSING CONFIGURATION]`,
       "\u001b[33m",
-      `[WARN] The following Roles could not be found! Please check your configs!\n${missingR.join(
+      `The following Roles could not be found in your server.\n`, `\u001b[31m`, `[${missingR.join(
         ", "
-      )}`
+      )}]`, `\n  `,
     );
   }
 
   if (missingC.length > 0) {
     console.log(
+      "\u001b[31m",
+      `[MISSING CONFIGURATION]`,
       "\u001b[33m",
-      `[WARN] The following Channels could not be found! Please check your configs!\n${missingC.join(
+      `The following Channels could not be found in your server.\n`, `\u001b[31m`, `[${missingC.join(
         ", "
-      )}`
+      )}]`, `\n  `
     );
   }
   if (missingCat.length > 0) {
     console.log(
+      "\u001b[31m",
+      `[MISSING CONFIGURATION]`,
       "\u001b[33m",
-      `[WARN] The following Categories could not be found! Please check your configs!\n${missingCat.join(
+      `The following Categories could not be found in your server.\n`, `\u001b[31m`, `[${missingCat.join(
         ", "
-      )}`
+      )}]`, `\n  `,
     );
-  }
-  if (panelconfig.TicketPanel) {
-    let chan1 = await client.getChannel(
-      panelconfig.Channel,
-      client.guilds.cache.first()
-    );
-
-    if (!chan1) {
-      console.log(
-        "\u001b[33m",
-        "[WARN] Ticket reaction panel is not setup, You can do so via the configuration file!"
-      );
-      return false;
-    }
-
-    const panelid = JSON.parse(
-      fs.readFileSync("./Data/ticket-panel-id.json", "utf8")
-    );
-
-    chan1.messages.fetch(panelid.TicketPanelID).catch(async () => {
-      let embed = new Discord.MessageEmbed()
-        .setTitle(panelconfig.PanelTitle)
-        .setColor(panelconfig.PanelColour)
-        .setFooter({
-          text: supportbot.EmbedFooter,
-          iconURL: interaction.user.displayAvatarURL(),
-        });
-
-      if (panelconfig.TicketPanel_Description) {
-        embed.setDescription(panelconfig.PanelMessage);
-      }
-
-      if (panelconfig.TicketPanel_Thumbnail) {
-        embed.setThumbnail(panelconfig.PanelThumbnail);
-      }
-
-      if (panelconfig.TicketPanel_Image) {
-        embed.setImage(panelconfig.PanelImage);
-      }
-      let button;
-
-        button = supportbot.Departments.map((x) =>
-          new Discord.MessageButton()
-            .setCustomId("department-" + supportbot.Departments.indexOf(x))
-            .setLabel(x.title)
-            .setStyle(x.color)
-            .setEmoji(x.emoji)
-        );
-
-      let row = new Discord.MessageActionRow().addComponents(button);
-
-      await chan1
-        .send({
-          embeds: [embed],
-          components: [row],
-        })
-        .then((r) => {
-          let data = {
-            id: panelid.id,
-            TicketPanelID: r.id,
-          };
-          fs.writeFileSync(
-            "./Data/ticket-panel-id.json",
-            JSON.stringify(data),
-            "utf8"
-          );
-        })
-        .catch((e) => {
-          console.log("Raw: " + e);
-        });
-    });
   }
 });

@@ -6,43 +6,53 @@ const moment = require("moment");
 
 const Discord = require("discord.js");
 const yaml = require("js-yaml");
+
 const supportbot = yaml.load(
   fs.readFileSync("./Configs/supportbot.yml", "utf8")
 );
+
 const cmdconfig = yaml.load(
-    fs.readFileSync("./Configs/commands.yml", "utf8")
+  fs.readFileSync("./Configs/commands.yml", "utf8")
 );
+
+const msgconfig = yaml.load(
+  fs.readFileSync("./Configs/messages.yml", "utf8")
+)
 
 const Command = require("../Structures/Command.js");
 
 module.exports =   new Command({
-    name: cmdconfig.UserInfoCommand, // Name of command
-    description: cmdconfig.UserInfoCommandDesc, // Description of command
+    name: cmdconfig.UserInfo.Command,
+    description: cmdconfig.UserInfo.Description, 
+    type: Discord.ApplicationCommandType.ChatInput,
     options: [
       {
-        type: "USER",
+        type: Discord.ApplicationCommandOptionType.User,
         name: "user",
         description: "The user you want to get info about.",
         required: true,
       }, // The user input
     ],
-    permissions: ["SEND_MESSAGES"], // The permission the user/role at least requires
+    permissions: cmdconfig.UserInfo.Permission,
 
     async run(interaction) {
-        const { getRole } = interaction.client;
-        let SupportStaff = await getRole(supportbot.Staff, interaction.guild);
-        let Admin = await getRole(supportbot.Admin, interaction.guild);
-            if (!SupportStaff || !Admin)
-            return interaction.reply(
-                "Some roles seem to be missing!\nPlease check the error logs."
-            );
+      let disableCommand = true;
 
-        const NoPerms = new Discord.MessageEmbed()
-            .setTitle("Invalid Permissions!")
-            .setDescription(
-            `${supportbot.IncorrectPerms}\n\nRole Required: \`${supportbot.Staff}\` or \`${supportbot.Admin}\``
-            )
-            .setColor(supportbot.WarningColour);
+        const { getRole } = interaction.client;
+        let SupportStaff = await getRole(supportbot.Roles.StaffMember.Staff, interaction.guild);
+        let Admin = await getRole(supportbot.Roles.StaffMember.Admin, interaction.guild);
+        if (!SupportStaff || !Admin)
+        
+          return interaction.reply(
+            "Some roles seem to be missing!\nPlease check for errors when starting the bot."
+          );
+    
+          const NoPerms = new Discord.EmbedBuilder()
+          .setTitle("Invalid Permissions!")
+          .setDescription(
+            `${msgconfig.Error.IncorrectPerms}\n\nRole Required: \`${supportbot.Roles.StaffMember.Staff}\` or \`${supportbot.Roles.StaffMember.Admin}\``
+          )
+          .setColor(supportbot.Embed.Colours.Warn);
 
         if (
             !interaction.member.roles.cache.has(SupportStaff.id) &&
@@ -53,10 +63,10 @@ module.exports =   new Command({
         let user = await interaction.options.getUser("user") || interaction.author; // Grab the mentioned user
         let member = await interaction.guild.members.cache.get(user.id) // Check for user and his ID
 
-        const UserNotExist = new Discord.MessageEmbed()
+        const UserNotExist = new Discord.EmbedBuilder()
           .setTitle("User Not Found!")
           .setDescription(
-            `${supportbot.UserNotFound}\n\nTry Again:\`/${cmdconfig.UserInfoCommand} <@!User_ID> or @User\``
+            `${msgconfig.Error.UserNotFound}\n\nTry Again:\`/${cmdconfig.UserInfoCommand} <@!User_ID> or @User\``
           )
           .setColor(supportbot.ErrorColour);
         
@@ -90,7 +100,7 @@ module.exports =   new Command({
         const userFlags = user.flags.toArray();
 
          // Embed containing the userinfo
-        let userembed = new Discord.MessageEmbed()
+        let userembed = new Discord.EmbedBuilder()
           .setTitle(`User Info for User: ${user.tag}`)
           .setThumbnail(member.displayAvatarURL({ dynamic: true, size: 512 }))
           .setColor(member.roles.highest.hexColor)
@@ -110,7 +120,7 @@ module.exports =   new Command({
             { name: "Highest Role:", value: `${member.roles.highest.id === interaction.guild.id ? "None" : member.roles.highest.toString()}`, inline: true },
             { name: "Roles:", value: `${member.roles.cache.map(r => r).join(" ").replace("@everyone", " ") || "None"}`, inline: false },
           )
-          .setFooter({ text: supportbot.EmbedFooter })
+          .setFooter({ text: supportbot.Footer })
           .setTimestamp();
 
         // Send embed [userembed]

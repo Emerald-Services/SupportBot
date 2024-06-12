@@ -1,0 +1,40 @@
+# -------------------------
+#   SupportBot AI
+#
+# In order to use the SupportBot AI, You need to setup an OpenAI Account. 
+# this can be done at https://platform.openai.com/
+# -------------------------
+
+Enabled: true
+
+General:
+  Name: "SupportBot AI"
+  # What would you like to call your AI
+  Model: "gpt-4o"
+  # You can see a list of OpenAI Models here: https://platform.openai.com/docs/models
+
+  Tokens: 400
+  # Max tokens you can set is 400
+  # For more information about tokens, go to https://openai.com/api/pricing/
+
+  OpenAI_Key: "OPEN_AI_APIKEY_HERE"
+  # To create an OpenAI API key, go to https://platform.openai.com/api-keys
+
+
+  PastebinAPI_Key: "PASTEBIN_API_KEY"
+  # You can get your Pastebin API Key from https://pastebin.com
+  PastebinAPI_URL: "https://pastebin.com/api/api_post.php" 
+
+Channels:
+  AIChannel: "1250190338954498048"
+  # This is the channel where AI will respond in without needing to mention the bot.
+
+Embed:
+  Color: 0x0cc559  # 0x<hexcode>
+  Footer: "SupportBot | Developed by Emerald Development"
+
+Messages:
+  MessageTooLong: "The response was too long, so I've posted it here: {pastebin}"
+  ErrorResponse: "I didn't receive a proper response from OpenAI. Please try again later."
+  OpenAIError: "I'm having some trouble talking to SupportBot AI's Model, OpenAI. Please try again later."
+  AIDisabled: "I am disabled, You have enable me in `supportbot-ai.yml`"

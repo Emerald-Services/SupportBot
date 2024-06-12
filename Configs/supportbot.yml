@@ -4,268 +4,213 @@
 #     <___/`___||  _/|  _/\___/|_|   |_|  |___/\___/ |_|
 #                |_|  |_|
 #
-#           SupportBot created by Emerald Services
+#           SupportBot created by Emerald Development
 #           Installed with MIT License
 #
-#           Discord Support: https://emeraldsrv.com/discord
-#           Community Resources: https://emeraldsrv.com/resources
+#           Discord Support: https://dsc.gg/emerald-dev
+#           Official Documentation: https://github.com/Emerald-Services/SupportBot/wiki
+#           Third-Party Documentation: COMING SOON
 
-SupportBot_Version: "v7.7.3"
-
-# -------------------------
-#   General Configuration
-# -------------------------
-
-Name: "SupportBot"
-Token: "BOT_TOKEN HTTPS://DISCORD.COM/DEVELOPERS"
+SupportBot_Version: "v8.0"
+# Do not change the version number
 
 # -------------------------
-#  Activity Configuration
+#   General
 # -------------------------
 
-BotActivity: "Here to help!"
+General:
+  Name: "SupportBot"
+  Token: "BOT_TOKEN_HERE"
+  # To get your Discord Bot Token, Go to https://discord.com/developers/applications
 
-StreamingURL: "https://www.twitch.tv/YOUR_TWITCH_NAME"
-# Set The ActivityType to "STREAMING" for a streaming status!
-
-ActivityType: "PLAYING"
-# Activity status can either be PLAYING, WATCHING, LISTENING or STREAMING.
-
+  Addons:
+    Enabled: false
+    
 # -------------------------
-#  Embed Configuration
-# -------------------------
-
-EmbedColour: "#f74343"
-EmbedFooter: "SupportBot | Developed by Emerald Services"
-
-ErrorColour: "#d12519"
-SuccessColour: "#04b545"
-WarningColour: "#fca117"
-
-# -------------------------
-#  Role Configuration
+#  Activity
 # -------------------------
 
-AutoRole: true
-JoinRole: "SupportBot Member"
+Activity:
+  Status: "SupportBot v8"
+  Type: "Competing"
+  # The Type can either be Playing, Watching, Listening or Competing
+  StreamingURL: "https://www.twitch.tv/YOUR_TWITCH_NAME"
+  # Set The Type to "Streaming" for a streaming status!
 
-Staff: "SupportBot Staff"
-Admin: "SupportBot Admin"
-TicketBlackListRole: "Blacklisted"
+# -------------------------
+#  Embeds
+# -------------------------
+
+Embed:
+  Colours:
+    General: 0x0cc559 # 0x<hexcode>
+    Success: 0x04b545 # 0x<hexcode>
+    Error: 0xd13030 # 0x<hexcode>
+    Warn: 0xfca117 # 0x<hexcode>
+
+  Footer: "SupportBot | Developed by Emerald Development"
+
+# -------------------------
+#  Roles
+# -------------------------
+
+Roles:
+  AutoRole:
+    Enabled: true
+    Role: "Member"
+
+  StaffMember:
+    Staff: "Staff"
+    Admin: "Admin"
+
+  ModRoles:
+    Muted: "Muted"
+    Blacklisted: "Blacklisted"
 
 # ----------------------------
-#  Join/Leave Configuration
+#  System Messages
 # ----------------------------
 
-Welcome: true
-  # set to false to disable joining logs
+Welcome: 
+  Enabled: true
+  Channel: "🚨┃join-leave-logs"
 
-WelcomeChannel: "join-leave-logs"
-WelcomeColour: "#f74343"
-WelcomeTitle: "User Joined!"
-WelcomeMessage: "%joined_user% has joined the server!"
-  # Available Placeholders:
-  # %joined_user% - Mentions the user who joined
-
-EmbedWelcomeImage: true
-EmbedWelcomeImageURL: "https://media.discordapp.net/attachments/958247876344025108/986777740738986094/unknown.png"
-
-EmbedWelcomeThumbnail: "BOT" 
-  # "USER" will display the user's profile picture.
-  # "BOT" will display the bot's profile picture.
-  # false to disable
-
-Leave: true
-  # set to false to disable leaving logs
-
-LeaveChannel: "join-leave-logs"
-LeaveColour: "#f74343"
-LeaveTitle: "User Left!"
-LeaveMessage: "%joined_user% has left the server!"
-  # Available Placeholders:
-  # %joined_user% - Mentions the user who joined
-
-EmbedLeaveImage: true
-EmbedLeaveImageURL: "https://cdn.discordapp.com/attachments/958247876344025108/986778170223120384/unknown.png"
-
-EmbedLeaveThumbnail: false 
-  # "USER" will display the user's profile picture.
-  # "BOT" will display the bot's profile picture.
-  # false to disable
-
-# -------------------------
-#  Information Configuration
-# -------------------------
-
-InfoTitle: "Information"
-
-InfoButtonText: "Visit Site"
-AboutMe: "I am SupportBot"
-InfoURL: "https://emeraldsrv.com"
-InfoColour: "#f74343"
+Leave: 
+  Enabled: true
+  Channel: "🚨┃join-leave-logs"
 
 # ----------------------------
-#  Suggestions Configuration
+#  Suggestions
 # ----------------------------
 
-SuggestionChannel: "suggestions"
-SuggestionUpvote: "✅"
-SuggestionDownvote: "❌"
+Suggestions:
+  Channel: "📗┃suggestions"
+  UpvoteEmoji: "✅"
+  DownvoteEmoji: "❌"
 
-SuggestionThreads: true
-# set to false to disable threads being created from suggestions.
+  UpvoteTitle: "Yes"
+  DownvoteTitle: "No"
 
-DisableSuggestions: false
-# Set to true to disable the suggestions feature.
+  OwnSuggestion: true
+  # If false this will not allow the user to vote for a suggestion they created
+  # If true this will allow the user to vote for a suggestion they created
 
-# -------------------------
-#  Translate Configuration
-# -------------------------
+  ShowUsers: true
+  
+  Threads:
+    Enabled: true
+    Title: "Suggestion-releated Thread"
+    Reason: "A thread releted to this suggestion"
 
-TranslateLogChannel: "translations-log"
+  Buttons:
+    Upvote: "2"
+    Downvote: "2"
+    RemoveVote: "4"
+    RemoveVote_Title: "Remove Vote"
 
-# -------------------------
-#  Tickets Configuration
-# -------------------------
-
-TicketPrefix: "ticket-" # The prefix for ticket channel names
-
-TicketLog: "ticket-data"
-TranscriptLog: "ticket-data"
-
-DMTranscripts: true
-TranscriptTitle: "Ticket Transcript"
-TicketLog_Title: "Ticket Closed"
-TicketBlackListMessage: "You are not allowed to open a ticket"
-TicketRoleMention: "@here"
-TicketClaimMessage: "Your ticket will be handled by" #Automaticly tags user to the end
-TicketClaimTitle: "Ticket Claimed"
-TicketUnclaimMessage: "Your ticket is now unclaimed by" #Automaticly tags user to the end
-TicketUnclaimTitle: "Ticket Unclaimed"
-# To ping a role: <@ROLE_ID>
-
-MaxAllowedTickets: 2
-
-TicketSubject: "description"
-# "description" will display the ticket reason within the channel description
-# "embed" will display the ticket reason within the ticket embed
-
-AllowTicketMentions: true
-# Set to true to allow the ticket to mention the author and the support team.
-# Set false to dis-allow mentions within tickets.
-
-AllowThanksForReachingOutMessage: true 
-# Set to true to allow the "Thanks for reaching out Message" to be sent when the ticket is created
-DisableTicketLogChannel: false
-# Set to true to disable the requirement of the "TicketLog"
-# Set to true to also disable the ticket logs to be sent in the "TicketLogs" channel
-
-# --- Creation Config ---
-#      --- Start ---
-
-# Available Placeholders:
-
-# %ticketusername% - User who created the ticket.
-# <@%ticketauthor%> - Tags the user who created the ticket.
-# <#%ticketid%> - Mentions the ticket channel.
-
-Ticket_Title: "Server Support | %ticketusername%"
-TicketMessage: "Hello <@%ticketauthor%>, Thank you for creating a support ticket\nPlease wait patiently whilst a member of our team reaches out to you."
-
-Ticket_Thumbnail: "https://images.emojiterra.com/google/android-pie/512px/1f39f.png"
-NoTicketSubject: "No Reason Provided!"
-
-TicketCreatedAlert: ":ticket: Your support ticket has been created: <#%ticketid%>"
-
-AddedUser: "👍 <@%user%> has been added to this ticket"
-RemovedUser: "👍 <@%user%> has been removed from this ticket"
+    # Available Button Styles
+    # 1 - Blurple
+    # 2 - Grey
+    # 3 - Green
+    # 4 - Red
 
 # -------------------------
-#   Tickets Categories
+#  Tickets
 # -------------------------
 
-Timeout: 5
+Ticket:
+  TicketCategory: "📗┃tickets" #Where tickets normally go with the /ticket command
+  # This is the channel name for the ticket threads to be created, NOT A DISCORD CATEGORY!
 
-# Set to true to allow all staff to access the ticket
-AllowAllStaff: false
+  Channel: "ticket-" # The prefix for ticket channel names
+  TicketsPerUser: 100
+  DMTranscripts: true
+  TicketReason: true
+  # If ticket reason is set to false, It will not prompt to create a reason
+  TicketSubject: "description"
+  # "description" will display the ticket reason within the channel description
+  # "embed" will display the ticket reason within the ticket embed
+  Timeout: 5
+  # Set to true to allow all staff to access the ticket
 
-# Ticket roles are the roles that will be able to gain access to tickets depending on what department has been chosen.
+  Log:
+    TicketLog: "🚨┃ticket-data"
+    TicketLog_Title: "Ticket Closed"
+    DisableTicketLogChannel: false
+
+    TranscriptLog: "🚨┃ticket-data"
+    TranscriptTitle: "Ticket Transcript"
+
+  Close:
+    StaffOnly: true
+    # Set to false is anyone is able to close a ticket.
+    Confirmation_Button: "Confirm Close"
+    Title: "Are you sure you want to close this ticket?"
+
+  Invites:
+    StaffOnly: true
+
+  ClaimTickets:
+    Enabled: true
+    Channel: "0000000000000000000" 
+    # Channel name or Channel ID
+    
+    ButtonTitle: "Claim Ticket"
+    Button: "1"
+
+    # Available Button Styles
+    # 1 - Blurple
+    # 2 - Grey
+    # 3 - Green
+    # 4 - Red
+
+
+# -------------------------
+#   Departments - NOT IN THIS UPDATE
+# -------------------------
 
 Departments:
-  - title: "Support"
-    role: "SupportBot Staff"
-    color: "SECONDARY"
-    emoji: "1️⃣"
-    category: "Tickets"
+  - title: "Create Ticket"
+    role: "Staff"
+    color: "2"
+    emoji: "🎫"
+    category: "TICKETS"
 
-  - title: "Billing Support"
-    role: "SupportBot Staff"
-    color: "SECONDARY"
-    emoji: "2️⃣"
-    category: "Tickets"
+# -------------------------
+#  Buttons
+# -------------------------
+Buttons:
+  Tickets:
+    ClaimEmoji: "🧑‍💻"
+    ClaimStyle: "1"
 
-  - title: "Admin Team"
-    role: "SupportBot Admin"
-    color: "SECONDARY"
-    emoji: "3️⃣"
-    category: "Tickets"
+    # Available Button Styles
+    # 1 - Blurple
+    # 2 - Grey
+    # 3 - Green
+    # 4 - Red
 
-#  - title: "Other"
-#    role: "Staff"
-#    color: "SECONDARY"
-#    emoji: "3️⃣"
-#    category: "Tickets"
 
-# Discord Button Colour Selection
-# PRIMARY - Blurple
-# SECONDARY - Grey
-# DANGER - Red
-# SUCCESS - Green
+# -------------------------
+#  Select Menus
+# -------------------------
 
-# --- Buttons Config ---
-#      --- Start ---
+SelectMenus:
+  Tickets:
+    PanelEmoji: "⚙️"
+    CloseEmoji: "🗑️"
+    ArchiveEmoji: "♻️"
+    LockTicketEmoji: "🔒"
+    UnLockTicketEmoji: "🔓"
+    EnableInvitesEmoji: "🔒"
+    DisableInvitesEmoji: "🔓"
+    AddUserEmoji: "➕"
+    RemoveUserEmoji: "➖"
 
-LockTicketCategory: "Archive"
-UnlockTicketCategory: "Tickets" #This moves the ticket back to the main category.
 
-TicketCloseEmoji: "❌"
-TicketDeleteEmoji: "⛔"
-TicketLockEmoji: "🔒"
-TicketClaimEmoji: "🧑‍💻"
-TicketUnlockEmoji: "🔓"
-TicketUnclaimEmoji: "🧑‍💻"
+# -------------------------
+#  Misc
+# -------------------------
 
-TicketCloseColour: "DANGER"
-TicketDeleteColour: "DANGER"
-TicketLockColour: "PRIMARY"
-TicketClaimColour: "SUCCESS"
-TicketUnclaimColour: "DANGER"
-TicketUnlockColour: "SUCCESS"
-
-# Discord Button Colour Selection
-# PRIMARY - Blue
-# SECONDARY - Grey
-# DANGER - Red
-# SUCCESS - Green
-
-TranscriptSavedMessage: "📝 **Transcript Saved!**"
-TicketLockMessage: "❌ **Ticket Locked!**"
-TicketDeleteMessage: "⚠ **Ticket Deleting!**" # Tickets deleting after 5 seconds by default.
-
-# --- Closing Config ---
-#    --- Start ---
-
-StaffOnly: true
-ClosingTicket: ":warning: You have requested to close your support ticket."
-ClosingConfirmation_Word: "confirm"
-CloseConfirmation: true
-
-# ---------------------------
-#  Error / Warning Messages
-# ---------------------------
-
-IncorrectPerms: ":x: **Err!** You do not have the correct permissions to use this command."
-InvalidChannel: ":x: **Err!** Channel not found. Please create it!"
-UserNotFound: ":x: **Err!** This user doesn't exist, Are they in this server?"
-NoValidTicket: ":warning: You cannot execute this command here."
-TicketExists: ":warning: This ticket cannot be opened, It already exists!"
+Translate:
+  Log: "🚨┃logs"

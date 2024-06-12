@@ -7,27 +7,89 @@
 #           SupportBot created by Emerald Services
 #           Installed with MIT License
 #
-#           Discord Support: https://emeraldsrv.com/discord
-#           Community Resources: https://emeraldsrv.com/resources
+#           Discord Support: https://dsc.gg/emerald-dev
+#           Official Documentation: https://emeraldsrv.dev/wiki
+#           Third-Party Documentation: https://emeraldsrv.dev/third-party
+#
+#           Command Configuration
 
-# -------------------------------
-#   Command Name Configuration
-# -------------------------------
+Help:
+  Command: "help"
+  Description: "Get a list of all the commands."
+  Permission: ["SendMessages"]
+  Enabled: true
 
-Blacklist: "blacklist"
-TicketAdd: "add"
-TicketRemove: "remove"
-OpenTicket: "ticket"
-CloseTicket: "close"
-InfoCommand: "info"
-PingCommand: "ping"
-HelpCommand: "help"
-EmbedCommand: "embed"
-SuggestCommand: "suggest"
-TranslateCommand: "translate"
-UserInfoCommand: "userinfo"
-ServerInfoCommand: "serverinfo"
-InviteListCommand: "invitelist"
+EnableAI:
+  Command: "enableai"
+  Description: "Talk with SupportBot"
+  Permission: ["SendMessages"]
+  Enabled: true
+
+Info:
+  Command: "info"
+  Description: "Get information about the **ServerName**."
+  Permission: ["SendMessages"]
+  Enabled: true
+
+TicketPanel:
+  Command: "ticketpanel"
+  Description: "Create the ticket creation panel"
+  Permission: ["Administrator"]
+  Enabled: true  
+
+TicketStats:
+  Command: "ticketstats"
+  Description: "Shows staff members their ticket statistics"
+  Permission: ["SendMessages"]
+  # Command is automatically disabled when the TicketClaims is disabled.
+
+OpenTicket:
+  Command: "ticket"
+  Description: "Create a support ticket."
+  Permission: ["SendMessages"]
+  Enabled: true
+
+Add:
+  Command: "add"
+  Description: "Add a user to the ticket."
+  Permission: ["SendMessages"]
+  Enabled: true
+  
+CloseTicket:
+  Command: "close"
+  Description: "Close a support ticket"
+  Permission: ["SendMessages"]
+  Enabled: true
+
+Suggestion:
+  Command: "suggest"
+  Description: "Create a suggestion."
+  Permission: ["SendMessages"]
+  Enabled: true
+
+Embed:
+  Command: "embed"
+  Description: "Build a discord embed."
+  Permission: ["SendMessages"]
+  Enabled: true
+
+Translate:
+  Command: "translate"
+  Description: "Translate something to english"
+  Permission: ["SendMessages"]
+  Enabled: false
+
+UserInfo:
+  Command: "userinfo"
+  Description: "Get info about a user."
+  Permission: ["SendMessages"]
+  Enabled: true
+
+Ping:
+  Command: "ping"
+  Description: "Pong."
+  Permission: ["SendMessages"]
+  Enabled: true
 
 # ---------------------------------------
 #   Command Description Configuration
@@ -45,5 +107,3 @@ HelpCommandDesc: "Get a list of all the commands."
 EmbedCommandDesc: "Send a message as an embed."
 SuggestCommandDesc: "Suggest a feature for the server."
 UserInfoCommandDesc: "Get info about a user."
-ServerInfoCommandDesc: "Get info about the server."
-InviteListCommandDesc: "Get a list of all the invites in the server."

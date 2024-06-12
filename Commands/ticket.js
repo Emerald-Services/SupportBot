@@ -1,91 +1,84 @@
-// SupportBot | Emerald Services
-// Ticket Command
-
 const fs = require("fs");
-
 const {
-  MessageEmbed,
-  Permissions,
-  MessageButton,
-  MessageActionRow,
+  EmbedBuilder,
+  ApplicationCommandOptionType,
+  ApplicationCommandType,
+  ChannelType,
+  ActionRowBuilder,
+  ButtonBuilder,
+  StringSelectMenuBuilder,
+  StringSelectMenuOptionBuilder,
+  GuildMemberRoleManager,
 } = require("discord.js");
 const yaml = require("js-yaml");
-const supportbot = yaml.load(
-  fs.readFileSync("./Configs/supportbot.yml", "utf8")
-);
+
+const panelconfig = yaml.load(fs.readFileSync("./Configs/ticket-panel.yml", "utf8"));
+const supportbot = yaml.load(fs.readFileSync("./Configs/supportbot.yml", "utf8"));
 const cmdconfig = yaml.load(fs.readFileSync("./Configs/commands.yml", "utf8"));
+const msgconfig = yaml.load(fs.readFileSync("./Configs/messages.yml", "utf8"));
 
 const Command = require("../Structures/Command.js");
 const TicketNumberID = require("../Structures/TicketID.js");
 
 module.exports = new Command({
-  name: cmdconfig.OpenTicket,
-  description: cmdconfig.OpenTicketDesc,
+  name: cmdconfig.OpenTicket.Command,
+  description: cmdconfig.OpenTicket.Description,
+  type: ApplicationCommandType.ChatInput,
   options: [
     {
       name: "reason",
       description: "Ticket Reason",
-      type: "STRING",
+      type: ApplicationCommandOptionType.String,
     },
   ],
-  permissions: ["SEND_MESSAGES"],
+  permissions: cmdconfig.OpenTicket.Permission,
 
   async run(interaction) {
-    let disableCommand = true;
-    if (interaction.isCommand() && disableCommand)
-      return interaction.reply({
-        content: "This command is disabled",
-        ephemeral: true,
-      });
     let department = interaction.customId?.split("-")[1] || null;
-    let TicketData = await JSON.parse(
-      fs.readFileSync("./Data/TicketData.json", "utf8")
-    );
-    const { getRole, getCategory } = interaction.client;
+    let TicketData = JSON.parse(fs.readFileSync("./Data/TicketData.json", "utf8"));
+    const { getRole, getChannel } = interaction.client;
     let User = interaction.guild.members.cache.get(interaction.user.id);
 
     if (
-      supportbot.MaxAllowedTickets &&
-      TicketData.tickets.filter((t) => t.user === interaction.user.id && t.open)
-        .length >= supportbot.MaxAllowedTickets
+      supportbot.Ticket.TicketsPerUser &&
+      TicketData.tickets.filter((t) => t.user === interaction.user.id && t.open).length >= supportbot.Ticket.TicketsPerUser
     ) {
       return interaction.reply({
         embeds: [
           {
             title: "Too Many Tickets!",
-            description: `You can't have more than ${supportbot.MaxAllowedTickets} open tickets!`,
-            color: supportbot.WarningColour,
+            description: `You can't have more than ${supportbot.Ticket.TicketsPerUser} open tickets!`,
+            color: supportbot.Embed.Colours.Warn,
           },
         ],
         ephemeral: true,
       });
     }
-    if (
-      User.roles.cache.has(
-        getRole(supportbot.TicketBlackListRole, interaction.guild).id
-      )
-    ) {
+
+    if (User.roles.cache.has(supportbot.Roles.ModRoles.Blacklisted)) {
       return interaction.reply({
-        content: supportbot.TicketBlackListMessage,
+        content: msgconfig.Ticket.Blacklisted,
         ephemeral: true,
       });
     }
 
-    // Ticket ID
+    if (User.roles.cache.has(supportbot.Roles.ModRoles.Muted)) {
+      return interaction.reply({
+        content: msgconfig.Ticket.Muted,
+        ephemeral: true,
+      });
+    }
+
     let ticketNumberID = await TicketNumberID.pad();
+    const TicketSubject = interaction.options?.getString("reason") || msgconfig.Ticket.InvalidSubject;
 
-    // Ticket Subject
-    const TicketSubject =
-      interaction.options?.getString("reason") || supportbot.NoTicketSubject;
-
-    const TicketExists = new MessageEmbed()
+    const TicketExists = new EmbedBuilder()
       .setTitle("Ticket Exists!")
-      .setDescription(supportbot.TicketExists);
+      .setDescription(msgconfig.Ticket.TicketExists);
 
     if (
       await interaction.guild.channels.cache.find(
-        (ticketChannel) =>
-          ticketChannel.name === `${supportbot.TicketPrefix}${ticketNumberID}`
+        (ticketChannel) => ticketChannel.name === `${supportbot.Ticket.Channel}${ticketNumberID}`
       )
     ) {
       return await interaction.reply({
@@ -93,50 +86,80 @@ module.exports = new Command({
         ephemeral: true,
       });
     }
-    const Staff = await getRole(supportbot.Staff, interaction.guild);
-    const Admin = await getRole(supportbot.Admin, interaction.guild);
+
+    const Staff = await getRole(supportbot.Roles.StaffMember.Staff, interaction.guild);
+    const Admin = await getRole(supportbot.Roles.StaffMember.Admin, interaction.guild);
+
     if (!Staff || !Admin)
       return interaction.reply({
-        content:
-          "Some roles seem to be missing!\nPlease check for errors when starting the bot.",
+        content: "Some roles seem to be missing!\nPlease check for errors when starting the bot.",
         ephemeral: true,
       });
-    let TicketCategory = await getCategory(
-      supportbot.Departments[department].category,
-      interaction.guild
+
+    const TicketCategory = interaction.guild.channels.cache.find(
+      (c) => c.name === supportbot.Ticket.TicketCategory || c.id === supportbot.Ticket.TicketCategory
     );
-    const ticketChannel = await interaction.guild.channels.create(
-      `${supportbot.TicketPrefix}${ticketNumberID}`,
-      {
-        type: "GUILD_TEXT",
-        parent: TicketCategory.id,
-        permissionOverwrites: [
-          {
-            id: Admin.id,
-            allow: [Permissions.FLAGS.VIEW_CHANNEL],
-          },
-          {
-            id: interaction.user.id,
-            allow: [Permissions.FLAGS.VIEW_CHANNEL],
-          },
-          {
-            id: interaction.guild.id,
-            deny: [Permissions.FLAGS.VIEW_CHANNEL],
-          },
-        ],
-      }
-    );
-    if (supportbot.AllowAllStaff) {
-      await ticketChannel.permissionOverwrites.edit(Staff.id, {
-        VIEW_CHANNEL: true,
-      });
+
+    const channel = await getChannel(panelconfig.Channel, interaction.guild);
+    const ticketChannel = await channel.threads.create({
+      name: `${supportbot.Ticket.Channel}${ticketNumberID}`,
+      type: ChannelType.PrivateThread,
+      parent: TicketCategory,
+      autoArchiveDuration: 60,
+      reason: 'support ticket',
+    });
+
+    if (supportbot.Ticket.ClaimTickets.Enabled === false) {
+      const InvStaff = await ticketChannel.send(`<@&${Staff.id}> <@&${Admin.id}>`)
+
+      setTimeout(() => {
+        InvStaff.delete();
+      }, 2000)
     }
+
+    // TICKET CLAIMING SYSTEM [START]
+
+    if (supportbot.Ticket.ClaimTickets.Enabled) {
+      const InvStaff1 = await ticketChannel.send(`<@&${Admin.id}>`)
+
+      setTimeout(() => {
+        InvStaff1.delete();
+      }, 2000)
+     
+      const claimChannel = await getChannel(
+        supportbot.Ticket.ClaimTickets.Channel,
+        interaction.guild
+      );
+
+      const claimEmbed = new EmbedBuilder()
+      .setTitle(msgconfig.Ticket.ClaimTickets.ClaimTitle)
+      .setDescription(msgconfig.Ticket.ClaimTickets.ClaimMessage
+        .replace('%user%', interaction.user.id)
+      )
+      .setColor(supportbot.Embed.Colours.General);
+
+      const claimButton = new ButtonBuilder()
+      .setCustomId(`claimticket-${ticketChannel.id}`)
+      .setLabel(supportbot.Ticket.ClaimTickets.ButtonTitle)
+      .setStyle(supportbot.Ticket.ClaimTickets.Button);
+
+      const row = new ActionRowBuilder().addComponents(claimButton);
+
+      await claimChannel.send({ 
+        content: `<@&${Staff.id}>`,
+        embeds: [claimEmbed], 
+        components: [row] 
+      });
+
+    }     
+
+    // TICKET CLAIMING SYSTEM [END]    
+
     if (!department) {
-      await ticketChannel.permissionOverwrites.edit(interaction.user.id, {
-        SEND_MESSAGES: false,
-      });
+      await ticketChannel.members.add(interaction.user.id);
     }
-    await TicketData.tickets.push({
+
+    TicketData.tickets.push({
       id: ticketChannel.id,
       name: ticketChannel.name,
       user: interaction.user.id,
@@ -144,7 +167,10 @@ module.exports = new Command({
       reason: TicketSubject,
       open: true,
       subUsers: [],
+      createdAt: new Date().toISOString(),
+      claimedAt: null, // Will be updated when claimed
     });
+
     fs.writeFileSync(
       "./Data/TicketData.json",
       JSON.stringify(TicketData, null, 4),
@@ -153,106 +179,103 @@ module.exports = new Command({
       }
     );
 
-    const CreatedTicket = new MessageEmbed()
+    const CreatedTicket = new EmbedBuilder()
       .setDescription(
-        supportbot.TicketCreatedAlert.replace(
-          /%ticketauthor%/g,
-          interaction.user.id
-        )
+        msgconfig.Ticket.TicketCreatedAlert.replace(/%ticketauthor%/g, interaction.user.id)
           .replace(/%ticketid%/g, ticketChannel.id)
           .replace(/%ticketusername%/g, interaction.user.username)
       )
-      .setColor(supportbot.EmbedColour);
+      .setColor(supportbot.Embed.Colours.General);
     await interaction.reply({ embeds: [CreatedTicket], ephemeral: true });
 
-    if (supportbot.AllowTicketMentions) {
+    if (supportbot.Ticket.AllowMentions) {
       await ticketChannel.send(`${interaction.user}`);
     }
 
-    const TicketMessage = new MessageEmbed()
+    const TicketMessage = new EmbedBuilder()
+      .setAuthor({
+        name: msgconfig.Ticket.TicketAuthorTitle.replace(/%ticketauthor%/g, interaction.user.id)
+          .replace(/%ticketid%/g, ticketChannel.id)
+          .replace(/%ticketusername%/g, interaction.user.username),
+        iconURL: interaction.user.displayAvatarURL(),
+      })
       .setTitle(
-        supportbot.Ticket_Title.replace(/%ticketauthor%/g, interaction.user.id)
+        msgconfig.Ticket.TicketTitle.replace(/%ticketauthor%/g, interaction.user.id)
           .replace(/%ticketid%/g, ticketChannel.id)
           .replace(/%ticketusername%/g, interaction.user.username)
       )
       .setDescription(
-        supportbot.TicketMessage.replace(/%ticketauthor%/g, interaction.user.id)
+        msgconfig.Ticket.TicketMessage.replace(/%ticketauthor%/g, interaction.user.id)
           .replace(/%ticketid%/g, ticketChannel.id)
           .replace(/%ticketusername%/g, interaction.user.username)
       )
-      .setColor(supportbot.EmbedColour);
+      .setColor(supportbot.Embed.Colours.General);
 
-    if (supportbot.TicketSubject === "embed") {
-      if (TicketSubject !== "No Reason Provided.") {
-        TicketMessage.addFields({ name: "Reason", value: TicketSubject });
-      }
-    }
+    const SelectMenus = new StringSelectMenuBuilder()
+      .setCustomId("ticketcontrolpanel")
+      .setPlaceholder("Ticket Control Panel")
+      .addOptions(
+        new StringSelectMenuOptionBuilder()
+          .setLabel("Add User")
+          .setDescription("Add a user to the ticket.")
+          .setEmoji(supportbot.SelectMenus.Tickets.AddUserEmoji)
+          .setValue("ticketadduser"),
+        new StringSelectMenuOptionBuilder()
+          .setLabel("Remove User")
+          .setDescription("Remove a user from the ticket.")
+          .setEmoji(supportbot.SelectMenus.Tickets.RemoveUserEmoji)
+          .setValue("ticketremoveuser"),
+        new StringSelectMenuOptionBuilder()
+          .setLabel("Close")
+          .setDescription("Close the ticket.")
+          .setEmoji(supportbot.SelectMenus.Tickets.CloseEmoji)
+          .setValue("ticketclose"),
+        new StringSelectMenuOptionBuilder()
+          .setLabel("Enable Invites")
+          .setDescription("Enable invites.")
+          .setEmoji(supportbot.SelectMenus.Tickets.EnableInvitesEmoji)
+          .setValue("enableinvites"),
+        new StringSelectMenuOptionBuilder()
+          .setLabel("Disable Invites")
+          .setDescription("Disable invites.")
+          .setEmoji(supportbot.SelectMenus.Tickets.DisableInvitesEmoji)
+          .setValue("disableinvites"),
+      );
 
-    if (supportbot.TicketSubject === "description") {
-      if (TicketSubject !== "No Reason Provided.") {
-        await ticketChannel.setTopic(
-          `Reason: ${TicketSubject}  -  User ID: ${interaction.user.id}  -  Ticket: ${ticketChannel.name}`
-        );
-      }
-    }
+    const row2 = new ActionRowBuilder().addComponents(SelectMenus);
 
-    if (!department) {
-      TicketMessage.addFields({
-        name: "Departments",
-        value: ` **${supportbot.Departments.map((X) => X.title).join("\n")}**`,
-      });
-    }
-    const CloseButton = new MessageButton()
-      .setCustomId("ticketclose")
-      .setLabel("Close")
-      .setStyle(supportbot.TicketCloseColour)
-      .setEmoji(supportbot.TicketCloseEmoji);
-
-    const LockButton = new MessageButton()
-      .setCustomId("ticketlock")
-      .setLabel("Lock")
-      .setStyle(supportbot.TicketLockColour)
-      .setEmoji(supportbot.TicketLockEmoji);
-    const ClaimButton = new MessageButton()
-      .setCustomId("ticketclaim")
-      .setLabel("Claim")
-      .setStyle(supportbot.TicketClaimColour)
-      .setEmoji(supportbot.TicketClaimEmoji);
-
-    const row2 = new MessageActionRow().addComponents(CloseButton, LockButton, ClaimButton);
     if (!department) {
       try {
-        let buttons = await supportbot.Departments.map((x) =>
-          new MessageButton()
+        let buttons = supportbot.Departments.map((x) =>
+          new ButtonBuilder()
             .setCustomId("Department" + supportbot.Departments.indexOf(x))
             .setLabel(x.title)
             .setStyle(x.color)
             .setEmoji(x.emoji)
         );
-        const row = new MessageActionRow().addComponents(buttons);
+
+        if (supportbot.Ticket.AllowMentions) {
+          await ticketChannel.send("<@&" + supportbot.Ticket.RoleMention + ">");
+        }
+
+        const row = new ActionRowBuilder().addComponents(buttons);
         const m = await ticketChannel.send({
           embeds: [TicketMessage],
-          components: [row],
+          components: [row2],
         });
 
-        let collector;
         try {
           const filter = (i) => i.user.id === interaction.user.id;
-          collector = await m.awaitMessageComponent({
+          await m.awaitMessageComponent({
             filter,
             max: 1,
             componentType: "BUTTON",
-            time: supportbot.Timeout * 60000,
+            time: supportbot.Ticket.Timeout * 60000,
           });
         } catch (e) {
-          if (e.code === "INTERACTION_COLLECTOR_ERROR") {
+          if (e.code === "COLLECTOR_ERROR") {
             try {
-              TicketData = await JSON.parse(
-                fs.readFileSync("./Data/TicketData.json", "utf8")
-              );
-              let ticket = await TicketData.tickets.findIndex(
-                (t) => t.id === ticketChannel.id
-              );
+              let ticket = TicketData.tickets.findIndex((t) => t.id === ticketChannel.id);
               TicketData.tickets[ticket].open = false;
               fs.writeFileSync(
                 "./Data/TicketData.json",
@@ -264,71 +287,22 @@ module.exports = new Command({
               interaction.user.send(
                 "Your ticket has timed out. Please open a new one, and select a department."
               );
-            } catch (e) {}
+            } catch (error) {
+              console.error("An error occurred while handling collector:", error);
+            }
             return await ticketChannel.delete();
           }
         }
-        let num = collector.customId.split("Department")[1];
-        let role = getRole(supportbot.Departments[num].role, interaction.guild);
-        let title = supportbot.Departments[num].title;
-
-        await ticketChannel.permissionOverwrites.edit(role.id, {
-          VIEW_CHANNEL: true,
-        });
-        await ticketChannel.permissionOverwrites.edit(interaction.user.id, {
-          SEND_MESSAGES: true,
-        });
-
-        await collector.reply({
-          embeds: [
-            {
-              description: `> Thank for reaching out to the **${title} Department**. Please provide us information regarding your query.`,
-              color: supportbot.EmbedColour,
-            },
-          ],
-        });
-
-        if (supportbot.AllowTicketMentions) {
-          await ticketChannel.send("@here");
-        }
-        await collector.message.edit({
-          embeds: [TicketMessage],
-          components: [row2],
-        });
-      } catch (error) {}
+      } catch (error) {
+        console.error("Error sending message:", error);
+      }
     } else {
       await ticketChannel.send({
         embeds: [TicketMessage],
         components: [row2],
       });
-      if (department) {
-        let role = await getRole(
-          supportbot.Departments[department].role,
-          interaction.guild
-        );
-        let title = supportbot.Departments[department].title;
-        await ticketChannel.permissionOverwrites.edit(role.id, {
-          VIEW_CHANNEL: true,
-        });
-        let TicketCat = await getCategory(
-          supportbot.Departments[department].category,
-          interaction.guild
-        );
-        await ticketChannel.setParent(TicketCat.id, { lockPermissions: false });
-        if (supportbot.AllowThanksForReachingOutMessage) {
-          await ticketChannel.send({
-            embeds: [
-              {
-                description: `> Thank for reaching out to the **${title} Department**. Please provide us information regarding your query.`,
-                color: supportbot.EmbedColour,
-              },
-            ],
-          });
-        }
-      }
-      if (supportbot.AllowTicketMentions) {
-        await ticketChannel.send(supportbot.TicketRoleMention);
-      }
+
     }
+    
   },
 });
