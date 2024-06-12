@@ -106,7 +106,7 @@ class Client extends Discord.Client {
 
     commands.forEach((cmd) => {
       console.log(`\u001b[32m`, `[CMD]`, `\u001b[37;1m`, `${cmd.name}`, `\u001b[32;1m`, "Loaded");
-      this.guilds.cache.first()?.commands.set(this.commands);
+      this.commands.set(cmd.name, cmd);
     });
 
     console.log(`\u001b[34;1m`, "▬▬▬▬▬▬▬ Commands ▬▬▬▬▬▬▬");
