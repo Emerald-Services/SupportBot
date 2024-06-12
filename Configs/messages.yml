@@ -8,8 +8,8 @@
 #           Installed with MIT License
 #
 #           Discord Support: https://dsc.gg/emerald-dev
-#           Official Documentation: https://emeraldsrv.dev/wiki
-#           Third-Party Documentation: https://emeraldsrv.dev/third-party
+#           Official Documentation: https://emeraldsrv.com/wiki
+#           Third-Party Documentation: https://emeraldsrv.com/third-party
 #
 #           Messages Configuration
 
@@ -17,7 +17,7 @@ Info:
   Title: "About Us"
   Description: "SupportBot is an open-sourced support system for discord. It's completely free to use with high amounts of customization to match your own brand."
   Button: "Visit Site"
-  URL: "https://emeraldsrv.dev"
+  URL: "https://emeraldsrv.com"
   Colour: "#f74343"
 
 Welcome:
@@ -40,6 +40,12 @@ Leave:
     ImageEnabled: false
     ImageURL: "https://animagelink.png/"
 
+Suggestions:
+  Sent_Title: "Suggestion Sent!"
+  Sent: "> :white_check_mark: **You have successfully sent a suggestion.**"
+  NoSelfVote: "> :x: **You cannot vote on your own suggestion.**"
+  RemoveVoteButton: "Remove Vote"
+
 Ticket:
 
 #  Available Placeholders:
@@ -48,18 +54,27 @@ Ticket:
 #  <@%ticketauthor%> - Tags the user who created the ticket.
 #  <#%ticketid%> - Mentions the ticket channel.
 
-  TicketTitle: "Server Support | %ticketusername%"
+  TicketAuthorTitle: "%ticketusername%'s Ticket"
+  TicketTitle: "Support Ticket"
   TicketMessage: "> Hello <@%ticketauthor%>, Thank you for creating a support ticket\nPlease wait patiently whilst a member of our team reaches out to you."
   TicketThumbnail: "https://images.emojiterra.com/google/android-pie/512px/1f39f.png"
   TicketCreatedAlert: "> :ticket: Ticked Created: <#%ticketid%>"
   TicketExists: "> ❌ Ticket already exists"
+  TicketClaim: "> :white_check_mark: Ticket claimed by" #The user who claimed the ticket will be added to the end of this message
+  TicketUnclaim: "> :white_check_mark: Ticket unclaimed by" #The user who claimed the ticket will be added to the end of this message
+
+  DisableInvites: "> 🔒 Invites have been disabled for this ticket." 
+  EnableInvites: "> 🔓 Invites have been enabled for this ticket." 
 
 #  Available Placeholders:
 
 #  <@%user%> - Tags the user who was added to the ticket.
 
-  AddedUser: "> 👍 <@%user%> has been `Added` to the ticket"
-  RemovedUser: "> 👍 <@%user%> has been `Removed` from this ticket"
+  AddUserToTicket_Title: "➕ Add User!"
+  AddUserToTicket: "> To add a user to this ticket, Tag them."
+
+  RemovedUserFromTicket_Title: "➖ Removed User!"
+  RemovedUserFromTicket: "> <@%user%> has been `Removed` from this ticket"
 
   Blacklisted: "> :x: You are not allowed to open a ticket"
   Muted: "> :x: You are `Muted` and therefore not allowed to open any tickets"
@@ -70,9 +85,28 @@ Ticket:
   TicketDeleteMessage: "⚠ **Ticket Deleting!**" 
 
   ClosingTicket: "> :warning: You have requested to close your support ticket."
+  ConfirmClose: "> Please confirm closing the ticket by clicking the button below."
+  CloseTimeout: "> Ticket close confirmation timed out."
+
+  ClaimTickets:
+    ClaimTitle: "Incoming Support Request!"
+    ClaimMessage: "> A new ticket has been created by <@!%user%>. Click the button below to claim this ticket."
+    ClaimMessage_Edit: "> <#%channel%> was claimed by <@!%user%>."
+
+    ClaimedTitle: "Ticket Claimed!"
+    Claimed: "> You have successfully claimed this ticket. <#%channel%>"
+    NoPermsToClaimTitle: "Error, no permissions!"
+    NoPermsToClaim: "> :x: **Err!** You do not permissions to claim this ticket."
+
+TicketStats: 
+  OpenTickets: "✅ Open Tickets"
+  TotalTickets: "🎫 Total Tickets"
+  ResponseTime: "⏱️ Average Response Time"
+
+  Title: "Your Ticket Stats"
 
 Error:
-  IncorrectPerms: "> :x: **Err!** You do not have the correct permissions to use this command."
+  IncorrectPerms: "> :x: **Err!** You do not have the correct permissions to use this."
   InvalidChannel: "> :x: **Err!** Channel not found. Please create it!"
   UserNotFound: "> :x: **Err!** This user doesn't exist, Are they in this server?"
   NoValidTicket: "> :warning: You cannot execute this command here."

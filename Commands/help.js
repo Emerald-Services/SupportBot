@@ -2,7 +2,6 @@
 // Help Command
 
 const fs = require("fs");
-
 const Discord = require("discord.js");
 const yaml = require("js-yaml");
 
@@ -24,62 +23,51 @@ module.exports = new Command({
   permissions: cmdconfig.Help.Permission,
 
   async run(interaction) {
-    let disableCommand = true;
-
     const { getRole } = interaction.client;
     let SupportStaff = await getRole(supportbot.Roles.StaffMember.Staff, interaction.guild);
     let Admin = await getRole(supportbot.Roles.StaffMember.Admin, interaction.guild);
-    if (!SupportStaff || !Admin)
-    
+    if (!SupportStaff || !Admin) {
       return interaction.reply(
         "Some roles seem to be missing!\nPlease check for errors when starting the bot."
       );
-
-    let botCommands = "";
-      botCommands += ` \`${cmdconfig.Help.Command}\` `;
-      botCommands += `\`${cmdconfig.Ping.Command}\` `;
-      botCommands += `\`${cmdconfig.Info.Command}\` `;
-
-    if (supportbot.DisableSuggestions === false) {
-      botCommands += `\`${cmdconfig.Suggestion.Command}\` `;
     }
 
-    let ticketCommands = "";
-    ticketCommands += ` \`${cmdconfig.OpenTicket.Command}\` `;
-    ticketCommands += `\`${cmdconfig.CloseTicket.Command}\` `;
+    // Fetch all commands from the client's commands collection
+    let botCommands = "";
+    interaction.client.commands.forEach((command) => {
+      if (command.permissions) {
+        botCommands += `\`${command.name}\` `;
+      }
+    });
 
-    let staffCommands = "";
-    staffCommands += ` \`${cmdconfig.TicketAdd.Command}\` `;
-    staffCommands += `\`${cmdconfig.TicketRemove.Command}\` `;
-    staffCommands += `\`${cmdconfig.UserInfo.Command}\` `;
-    staffCommands += `\`${cmdconfig.Translate.Command}\` `;
-
+    // Create embed
     const HelpEmbed1 = new Discord.EmbedBuilder()
       .setTitle(supportbot.General.Name + " Commands")
       .setThumbnail(interaction.user.displayAvatarURL())
       .setColor(supportbot.Embed.Colours.General)
-      .addFields(
-        {
-          name: "🖥️ Commands\n",
-          value: `${botCommands} ${ticketCommands} ${staffCommands}\n`,
-          inline: false,
-        },
-        {
-          name: "🖥️ Addons\n",
-          value: `\`hello\`\n`,
-          inline: false,
-        }
-      )
-
-      .setColor(supportbot.Embed.Colours.General)
-      .setFooter({
-        text: supportbot.Embed.Footer,
-        iconURL: interaction.user.displayAvatarURL(),
+      .addFields({
+        name: "🖥️ Commands\n",
+        value: botCommands || "No commands available.",
+        inline: false,
       });
 
-      interaction.reply({
-        ephemeral: true,
-        embeds: [HelpEmbed1],
+    // Conditionally add Addons section
+    if (supportbot.General.Addons.Enabled) {
+      HelpEmbed1.addFields({
+        name: "🛠️ Addons\n",
+        value: "No addons available.",
+        inline: false,
       });
+    }
+
+    HelpEmbed1.setFooter({
+      text: supportbot.Embed.Footer,
+      iconURL: interaction.user.displayAvatarURL(),
+    });
+
+    interaction.reply({
+      ephemeral: true,
+      embeds: [HelpEmbed1],
+    });
   },
 });

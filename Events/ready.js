@@ -4,6 +4,9 @@
 const fs = require("fs");
 
 const Discord = require("discord.js");
+const { Client, GatewayIntentBits, ActivityType } = require('discord.js');
+const client = new Discord.Client({intents: 32767})
+
 const yaml = require("js-yaml");
 
 const supportbot = yaml.load(
@@ -23,12 +26,38 @@ const msgconfig = yaml.load(
 
 const Event = require("../Structures/Event.js");
 
+let chan1 = client.channels.cache.get(panelconfig.Channel);
+
 module.exports = new Event("ready", async (client, interaction) => {
   const { getRole, getChannel, getCategory } = client;
-  client.user.setActivity(supportbot.Activity.Status, {
-    type: supportbot.Activity.Type,
-    url: supportbot.Activity.StreamingURL,
-  });
+
+  if (supportbot.Activity.Type === "Playing", "playing") {
+    client.user.setPresence({
+      activities: [{ name: supportbot.Activity.Status, type: Discord.ActivityType.Playing }],
+      status: supportbot.Activity.Type,
+    });
+  }
+
+  if (supportbot.Activity.Type === "Watching", "watching") {
+    client.user.setPresence({
+      activities: [{ name: supportbot.Activity.Status, type: Discord.ActivityType.Watching }],
+      status: supportbot.Activity.Type,
+    });
+  }
+  
+  if (supportbot.Activity.Type === "Listening", "listening") {
+    client.user.setPresence({
+      activities: [{ name: supportbot.Activity.Status, type: Discord.ActivityType.Listening }],
+      status: supportbot.Activity.Type,
+    });
+  }
+
+  if (supportbot.Activity.Type === "Competing", "competing") {
+    client.user.setPresence({
+      activities: [{ name: supportbot.Activity.Status, type: Discord.ActivityType.Competing }],
+      status: supportbot.Activity.Type,
+    });
+  }
 
   console.log(`\u001b[32m`, `――――――――――――――――――――――――――――――――――――――――――――`);
   console.log(`    `);
@@ -63,23 +92,23 @@ module.exports = new Event("ready", async (client, interaction) => {
 
   console.log(
     `\u001b[31m`,
-    `Resources`,
+    `Website`,
     `\u001b[32m`,
-    `https://emeraldsrv.dev`,
+    `https://emeraldsrv.com`,
+  );
+
+  console.log(
+    `\u001b[31m`,
+    `Marketplace`,
+    `\u001b[32m`,
+    `https://market.emeraldsrv.com`,
   );
 
   console.log(
     `\u001b[31m`,
     `Documentation`,
     `\u001b[32m`,
-    `https://emeraldsrv.dev/wiki`,
-  );
-
-  console.log(
-    `\u001b[31m`,
-    `Third-Party Documentation`,
-    `\u001b[32m`,
-    `https://emeraldsrv.dev/third-party`,
+    `https://emeraldsrv.com/third-party`,
   );
 
   console.log(`    `);
@@ -107,28 +136,28 @@ module.exports = new Event("ready", async (client, interaction) => {
 
   if (supportbot.Roles.AutoRole.Role) roles.push(supportbot.Roles.AutoRole.Role);
   
-  // const channels = [
-  //   supportbot.Suggestions.Channel,
-  //   supportbot.Ticket.Log.TicketLog,
-  //   supportbot.Ticket.Log.TranscriptLog,
-  //   panelconfig.Channel,
-  //   supportbot.Welcome.Channel,
-  //   supportbot.Leave.Channel,
-  //   supportbot.Translate.Log
-  // ];
+   const channels = [
+     supportbot.Suggestions.Channel,
+     supportbot.Ticket.Log.TicketLog,
+     supportbot.Ticket.Log.TranscriptLog,
+     panelconfig.Channel,
+     supportbot.Welcome.Channel,
+     supportbot.Leave.Channel,
+     supportbot.Translate.Log
+   ];
   //const categories = [supportbot.TicketCategory];
+
+  if (!channels) {
+      console.log("\u001b[31m", `[MISSING CHANNEL]`, `\u001b[37;1m`, `${channels}`, "\u001b[31m", `channel not found. Please check your config file.`);
+      return;
+  }
+//  else {
+//      console.log(`\u001b[32m`, `[CHANNEL LOCATED]`, `\u001b[37;1m`, `${channels}`, `\u001b[32;1m`, `channel has been found.`);
+//  }
 
   const missingC = [];
   const missingR = [];
   const missingCat = [];
-  
-  // for (let c of channels) {
-  //   if ((c === supportbot.Suggestion.Channel && cmdconfig.Suggestion.Enabled) || c === supportbot.Ticket.Log.TicketLog && supportbot.Ticket.Log.DisableTicketLogChannel) {
-  //     continue;
-  //   }
-  //   const find = await getChannel(c, client.guilds.cache.first());
-  //   if (!find) missingC.push(c);
-  // }
   
   for (let r of roles) {
     const find = await getRole(r, client.guilds.cache.first());
@@ -169,78 +198,5 @@ module.exports = new Event("ready", async (client, interaction) => {
         ", "
       )}]`, `\n  `,
     );
-  }
-  if (panelconfig.TicketPanel) {
-    let chan1 = await client.getChannel(
-      panelconfig.Channel,
-      client.guilds.cache.first()
-    );
-
-    if (!chan1) {
-      console.log(
-        "\u001b[31m",
-        `[TICKET PANEL]`,
-        "\u001b[33m",
-        "Ticket Panel is not setup, You can set this in", `\u001b[31m`, '/Configs/Ticket-Panel.yml', `\n  `,
-      );
-      return false;
-    }
-
-    const panelid = JSON.parse(
-      fs.readFileSync("./Data/ticket-panel-id.json", "utf8")
-    );
-
-    chan1.messages.fetch(panelid.TicketPanelID).catch(async () => {
-      let embed = new Discord.EmbedBuilder()
-        .setTitle(panelconfig.PanelTitle)
-        .setColor(panelconfig.PanelColour)
-        .setFooter({
-          text: supportbot.Embed.Footer,
-          iconURL: interaction.user.displayAvatarURL(),
-        });
-
-      if (panelconfig.TicketPanel_Description) {
-        embed.setDescription(panelconfig.PanelMessage);
-      }
-
-      if (panelconfig.TicketPanel_Thumbnail) {
-        embed.setThumbnail(panelconfig.PanelThumbnail);
-      }
-
-      if (panelconfig.TicketPanel_Image) {
-        embed.setImage(panelconfig.PanelImage);
-      }
-      let button;
-
-        button = supportbot.Departments.map((x) =>
-          new Discord.ButtonBuilder()
-            .setCustomId("department-" + supportbot.Departments.indexOf(x))
-            .setLabel(x.title)
-            .setStyle(x.color)
-            .setEmoji(x.emoji)
-        );
-
-      let row = new Discord.ActionRowBuilder().addComponents(button);
-
-      await chan1
-        .send({
-          embeds: [embed],
-          components: [row],
-        })
-        .then((r) => {
-          let data = {
-            id: panelid.id,
-            TicketPanelID: r.id,
-          };
-          fs.writeFileSync(
-            "./Data/ticket-panel-id.json",
-            JSON.stringify(data),
-            "utf8"
-          );
-        })
-        .catch((e) => {
-          console.log("Raw: " + e);
-        });
-    });
   }
 });

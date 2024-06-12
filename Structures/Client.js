@@ -18,10 +18,18 @@ const cmdconfig = yaml.load(
 
 class Client extends Discord.Client {
   constructor() {
-    super({ intents: [GatewayIntentBits.Guilds], partials: [Partials.Channel] });
+    super({
+      intents: [
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMembers,
+        GatewayIntentBits.GuildMessages
+      ],
+      partials: [Partials.Channel]
+    });
 
     this.commands = new Discord.Collection();
   }
+  
   async getChannel(channel, guild) {
     return guild.channels.cache.find(
       (c) =>
@@ -57,14 +65,6 @@ class Client extends Discord.Client {
       tempCommandFiles = tempCommandFiles.filter(item => item !== "info.js");
     }
 
-    if (cmdconfig.TicketAdd.Enabled === false) {
-      tempCommandFiles = tempCommandFiles.filter(item => item !== "add.js");
-    }
-
-    if (cmdconfig.TicketRemove.Enabled === false) {
-      tempCommandFiles = tempCommandFiles.filter(item => item !== "remove.js");
-    }
-
     if (cmdconfig.OpenTicket.Enabled === false) {
       tempCommandFiles = tempCommandFiles.filter(item => item !== "ticket.js");
     }
@@ -87,6 +87,14 @@ class Client extends Discord.Client {
 
     if (cmdconfig.Ping.Enabled === false) {
       tempCommandFiles = tempCommandFiles.filter(item => item !== "Ping.js");
+    }
+
+    if (cmdconfig.Ping.Enabled === false) {
+      tempCommandFiles = tempCommandFiles.filter(item => item !== "Ping.js");
+    }
+
+    if (supportbot.Ticket.ClaimTickets.Enabled === false) {
+        tempCommandFiles = tempCommandFiles.filter(item => item !== "ticketstats.js");
     }
 
     const commandFiles = tempCommandFiles;

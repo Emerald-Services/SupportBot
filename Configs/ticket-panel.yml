@@ -14,21 +14,33 @@
 #   Ticket Panel Configuration
 # -------------------------------
 
-TicketPanel: true
+Panel: true
 
 # ----------------------------------------
-#   Ticket Panel Message Configuration
+#   Ticket Panel Message Configuration #2b2d31
 # ----------------------------------------
 
-Channel: "create-ticket"
+TicketCategory: "📗┃tickets"
+# This is the channel name for the ticket threads to be created, NOT A DISCORD CATEGORY!
 
-PanelTitle: "Need Help? Create a Support Ticket."
-PanelColour: "#f74343"
+PanelTitle: "SupportBot"
+PanelColour: "#0cc559"
+
+Button:
+  Text: "Create Ticket"
+  Emoji: "🎫"
+  Color: "2"
+
+# Available Button Styles
+# 1 - Blurple
+# 2 - Grey
+# 3 - Red
+# 4 - Green
 
 TicketPanel_Description: true
-TicketPanel_Thumbnail: true
+TicketPanel_Thumbnail: false
 TicketPanel_Image: true
 
-PanelMessage: "Click the button to open a new support ticket."
+PanelMessage: "Click on the button to file a `Ticket` and our team will try their best to assist you in the best way we can!"
 PanelThumbnail: "https://i.imgur.com/ieeZejl.png"
-PanelImage: "https://i.imgur.com/5NkcmDq.png"
+PanelImage: "https://i.imgur.com/dejQvkg.png"
