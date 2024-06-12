@@ -24,6 +24,18 @@
     <img src="https://img.shields.io/github/downloads/Emerald-Services/SupportBot/total?style=for-the-badge" alt="shield.png">
 </a>
 
+## Supported Versions
+
+| SupportBot | Node.JS | Discord.JS |  Supported |
+|------------|---------|------------|------------|
+|    8.x     |   20.x  |    14.x.   | ✅ Yes
+|    7.7.3   |   16.x  |    13.x.   | ✅ Yes
+|    7.x     |   16.x  |    13.x.   | ❌ No
+|    6.x     |   14.x  |    13.x.   | ❌ No
+|    5.x     |   12.x  |    13.x.   | ❌ No
+|    4.x     |   11.x  |    13.x.   | ❌ No
+|    Older   | 10.x    |    13.x.   | ❌ No
+
 </div>
 
 <p align="center">
