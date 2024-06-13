@@ -20,7 +20,7 @@ SupportBot_Version: "v8.0"
 
 General:
   Name: "SupportBot"
-  Token: "BOT_TOKEN"
+  Token: "BOT_TOKEN_HERE"
   # To get your Discord Bot Token, Go to https://discord.com/developers/applications
 
   Addons:

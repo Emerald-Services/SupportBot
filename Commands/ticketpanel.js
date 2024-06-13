@@ -35,7 +35,7 @@ module.exports = new Command({
       });
     }
 
-    const channelName = panelconfig.TicketCategory;
+    const channelName = panelconfig.Channel;
     const channel = interaction.guild.channels.cache.find(ch => ch.name === channelName);
     if (!channel) {
       console.log(`[TICKET PANEL] ${channelName} channel not found. Please check your config file.`);
