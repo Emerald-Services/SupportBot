@@ -8,6 +8,13 @@ const msgconfig = yaml.load(fs.readFileSync("./Configs/messages.yml", "utf8"));
 
 const Event = require("../Structures/Event.js");
 
+let suggestions;
+try {
+  suggestions = require("../Data/SuggestionData.json");
+} catch (error) {
+  suggestions = {};
+}
+
 module.exports = new Event("interactionCreate", async (client, interaction) => {
   if (interaction.type == Discord.InteractionType.ApplicationCommand) {
     const command = client.commands.find(
@@ -70,10 +77,6 @@ module.exports = new Event("interactionCreate", async (client, interaction) => {
           }
           break;
 
-        case "ticketremoveuser":
-          await removeUserFromThread(interaction);
-          break;
-          
         case "enableinvites":
           await handleInvites(interaction, true);
           break;
@@ -186,6 +189,55 @@ module.exports = new Event("interactionCreate", async (client, interaction) => {
         ephemeral: true,
       });
     }
+
+    // SUGGESTION INTERACTIONS [START]
+    
+    if (interaction.customId === 'upvote' || interaction.customId === 'downvote' || interaction.customId === 'removevote') {
+      const suggestion = suggestions[interaction.message.id];
+      if (!suggestion) return interaction.reply({ content: 'Suggestion not found.', ephemeral: true });
+
+      const userId = interaction.user.id;
+      const hasUpvoted = suggestion.upvotes.includes(userId);
+      const hasDownvoted = suggestion.downvotes.includes(userId);
+
+      if (interaction.customId === 'upvote') {
+        if (hasUpvoted) {
+          suggestion.upvotes = suggestion.upvotes.filter(id => id !== userId);
+        } else {
+          suggestion.upvotes.push(userId);
+          if (hasDownvoted) {
+            suggestion.downvotes = suggestion.downvotes.filter(id => id !== userId);
+          }
+        }
+      } else if (interaction.customId === 'downvote') {
+        if (hasDownvoted) {
+          suggestion.downvotes = suggestion.downvotes.filter(id => id !== userId);
+        } else {
+          suggestion.downvotes.push(userId);
+          if (hasUpvoted) {
+            suggestion.upvotes = suggestion.upvotes.filter(id => id !== userId);
+          }
+        }
+      } else if (interaction.customId === 'removevote') {
+        suggestion.upvotes = suggestion.upvotes.filter(id => id !== userId);
+        suggestion.downvotes = suggestion.downvotes.filter(id => id !== userId);
+      }
+
+      fs.writeFileSync("./Data/SuggestionData.json", JSON.stringify(suggestions, null, 2));
+
+      const upvoteCount = suggestion.upvotes.length;
+      const downvoteCount = suggestion.downvotes.length;
+
+      const updatedEmbed = new Discord.EmbedBuilder(interaction.message.embeds[0].data)
+        .setFields([
+          { name: 'Suggestion', value: suggestion.suggestion, inline: true },
+          { name: 'From', value: `<@${suggestion.author}>` },
+          { name: `${supportbot.Suggestions.UpvoteEmoji} ${supportbot.Suggestions.UpvoteTitle}`, value: `${upvoteCount}`, inline: true },
+          { name: `${supportbot.Suggestions.DownvoteEmoji} ${supportbot.Suggestions.DownvoteTitle}`, value: `${downvoteCount}`, inline: true }
+        ]);
+
+      await interaction.update({ embeds: [updatedEmbed] });
+    }
   }
 
   async function handleInvites(interaction, enable) {
@@ -221,4 +273,6 @@ module.exports = new Event("interactionCreate", async (client, interaction) => {
       ephemeral: true,
     });
   }
+
+
 });

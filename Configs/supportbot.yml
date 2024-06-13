@@ -20,7 +20,7 @@ SupportBot_Version: "v8.0"
 
 General:
   Name: "SupportBot"
-  Token: "BOT_TOKEN_HERE"
+  Token: "BOT_TOKEN"
   # To get your Discord Bot Token, Go to https://discord.com/developers/applications
 
   Addons:
@@ -152,7 +152,7 @@ Ticket:
 
   ClaimTickets:
     Enabled: true
-    Channel: "0000000000000000000" 
+    Channel: "1249723473757077624" 
     # Channel name or Channel ID
     
     ButtonTitle: "Claim Ticket"

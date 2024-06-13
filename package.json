@@ -1,17 +1,17 @@
 {
   "name": "supportbot",
-  "version": "8.1",
+  "version": "8.0.1",
   "description": "SupportBot is an open-sourced support system for discord. It's completely free to use with high amounts of customization to match your own brand.",
   "main": "index.js",
   "scripts": {
-    "start": "npm i && node index.js",
-    "test": "node index.js test"
+    "setup": "npm i && node index.js",
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Emerald-Services/SupportBot.git"
   },
-  "author": "Emerald Development",
+  "author": "Emerald Services",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/Emerald-Services/SupportBot/issues"

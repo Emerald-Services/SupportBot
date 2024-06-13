@@ -20,9 +20,6 @@ Panel: true
 #   Ticket Panel Message Configuration #2b2d31
 # ----------------------------------------
 
-TicketCategory: "📗┃tickets"
-# This is the channel name for the ticket threads to be created, NOT A DISCORD CATEGORY!
-
 PanelTitle: "SupportBot"
 PanelColour: "#0cc559"
 

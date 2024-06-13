@@ -100,7 +100,7 @@ module.exports = new Command({
       (c) => c.name === supportbot.Ticket.TicketCategory || c.id === supportbot.Ticket.TicketCategory
     );
 
-    const channel = await getChannel(panelconfig.Channel, interaction.guild);
+    const channel = await getChannel(supportbot.Ticket.TicketCategory, interaction.guild);
     const ticketChannel = await channel.threads.create({
       name: `${supportbot.Ticket.Channel}${ticketNumberID}`,
       type: ChannelType.PrivateThread,

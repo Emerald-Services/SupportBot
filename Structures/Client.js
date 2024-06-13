@@ -1,20 +1,15 @@
+// C:\Users\ollie\Documents\GitHub\SupportBot\Structures\Client.js
+
 // SupportBot | Emerald Services
 // Client Structure
 
 const fs = require("fs");
-
 const Discord = require("discord.js");
 const { GatewayIntentBits, Partials } = require('discord.js');
-
 const yaml = require("js-yaml");
 
-const supportbot = yaml.load(
-  fs.readFileSync("./Configs/supportbot.yml", "utf8")
-);
-
-const cmdconfig = yaml.load(
-  fs.readFileSync("./Configs/commands.yml", "utf8")
-);
+const supportbot = yaml.load(fs.readFileSync("./Configs/supportbot.yml", "utf8"));
+const cmdconfig = yaml.load(fs.readFileSync("./Configs/commands.yml", "utf8"));
 
 class Client extends Discord.Client {
   constructor() {
@@ -29,29 +24,34 @@ class Client extends Discord.Client {
 
     this.commands = new Discord.Collection();
   }
-  
+
   async getChannel(channel, guild) {
+    if (!channel) return null; // Add check for undefined channel
     return guild.channels.cache.find(
       (c) =>
         (c.type === Discord.ChannelType.GuildText || c.type === Discord.ChannelType.GuildNews) &&
-        (c.id === channel || c.name.toLowerCase() === channel.toLowerCase())
+        (c.id === channel || (c.name && c.name.toLowerCase() === channel.toLowerCase()))
     );
   }
+
   async getRole(role, guild) {
+    if (!role) return null; // Add check for undefined role
     return guild.roles.cache.find(
-      (r) => r.id === role || r.name.toLowerCase() === role.toLowerCase()
+      (r) => r.id === role || (r.name && r.name.toLowerCase() === role.toLowerCase())
     );
   }
+
   async getCategory(category, guild) {
+    if (!category) return null; // Add check for undefined category
     return guild.channels.cache.find(
       (c) =>
         c.type === Discord.ChannelType.GuildCategory &&
-        (c.id === category || c.name.toLowerCase() === category.toLowerCase())
+        (c.id === category || (c.name && c.name.toLowerCase() === category.toLowerCase()))
     );
   }
 
   async start(token) {
-    var tempCommandFiles = fs.readdirSync("./Commands").filter((file) => file.endsWith(".js"));
+    let tempCommandFiles = fs.readdirSync("./Commands").filter((file) => file.endsWith(".js"));
 
     if (cmdconfig.Suggestion.Enabled === false) {
       tempCommandFiles = tempCommandFiles.filter(item => item !== "suggest.js");
@@ -98,7 +98,6 @@ class Client extends Discord.Client {
     }
 
     const commandFiles = tempCommandFiles;
-
     const commands = commandFiles.map((file) => require(`../Commands/${file}`));
 
     // Commands
@@ -112,9 +111,7 @@ class Client extends Discord.Client {
     console.log(`\u001b[34;1m`, "▬▬▬▬▬▬▬ Commands ▬▬▬▬▬▬▬");
 
     if (supportbot.General.Addons.Enabled) {
-      const addonFiles = fs
-        .readdirSync("./Addons")
-        .filter((file) => file.endsWith(".js"));
+      const addonFiles = fs.readdirSync("./Addons").filter((file) => file.endsWith(".js"));
 
       const addons = addonFiles.map((file) => {
         let addon = require(`../Addons/${file}`);
@@ -135,17 +132,16 @@ class Client extends Discord.Client {
           `\u001b[32;1m`,
           "Loaded"
         );
-      addon.commands?.forEach((command) => {
-        this.commands.set(command.name, command);
+        addon.commands?.forEach((command) => {
+          this.commands.set(command.name, command);
+        });
+        addon.events?.forEach((event) => {
+          this.on(event.event, (...args) => event.run(this, ...args));
+        });
       });
-      addon.events?.forEach((event) => {
-        this.on(event.event, (...args) => event.run(this, ...args));
-      });
-    });
 
-    console.log(`\u001b[34;1m`, "▬▬▬▬▬▬▬ Addons ▬▬▬▬▬▬▬");
-
-    } 
+      console.log(`\u001b[34;1m`, "▬▬▬▬▬▬▬ Addons ▬▬▬▬▬▬▬");
+    }
 
     // Slash Commands
 
@@ -162,13 +158,11 @@ class Client extends Discord.Client {
     console.log("   ");
     console.log(`\u001b[34;1m`, "▬▬▬▬▬▬▬ Events ▬▬▬▬▬▬▬");
 
-    fs.readdirSync("./Events")
-      .filter((file) => file.endsWith(".js"))
-      .forEach((file) => {
-        const event = require(`../Events/${file}`);
-        console.log(`\u001b[32m`, `[EVENT]`, `\u001b[37;1m`, `${event.event}`, `\u001b[32;1m`, "Loaded");
-        this.on(event.event, (...args) => event.run(this, ...args));
-      });
+    fs.readdirSync("./Events").filter((file) => file.endsWith(".js")).forEach((file) => {
+      const event = require(`../Events/${file}`);
+      console.log(`\u001b[32m`, `[EVENT]`, `\u001b[37;1m`, `${event.event}`, `\u001b[32;1m`, "Loaded");
+      this.on(event.event, (...args) => event.run(this, ...args));
+    });
 
     console.log(`\u001b[34;1m`, "▬▬▬▬▬▬▬ Events ▬▬▬▬▬▬▬");
     if (process.argv[2] !== "test") {
