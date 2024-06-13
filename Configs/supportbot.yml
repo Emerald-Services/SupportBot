@@ -152,7 +152,7 @@ Ticket:
 
   ClaimTickets:
     Enabled: true
-    Channel: "1249723473757077624" 
+    Channel: "0000000000000000000" 
     # Channel name or Channel ID
     
     ButtonTitle: "Claim Ticket"
