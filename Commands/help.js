@@ -1,17 +1,9 @@
-// SupportBot | Emerald Services
-// Help Command
-
 const fs = require("fs");
 const Discord = require("discord.js");
 const yaml = require("js-yaml");
 
-const supportbot = yaml.load(
-  fs.readFileSync("./Configs/supportbot.yml", "utf8")
-);
-
-const cmdconfig = yaml.load(
-  fs.readFileSync("./Configs/commands.yml", "utf8")
-);
+const supportbot = yaml.load(fs.readFileSync("./Configs/supportbot.yml", "utf8"));
+const cmdconfig = yaml.load(fs.readFileSync("./Configs/commands.yml", "utf8"));
 
 const Command = require("../Structures/Command.js");
 
@@ -32,11 +24,17 @@ module.exports = new Command({
       );
     }
 
-    // Fetch all commands from the client's commands collection
+    // Separate regular commands and addon commands
     let botCommands = "";
+    let addonCommands = "";
+
     interaction.client.commands.forEach((command) => {
       if (command.permissions) {
-        botCommands += `\`${command.name}\` `;
+        if (command.addon) {
+          addonCommands += `\`${command.name}\` `;
+        } else {
+          botCommands += `\`${command.name}\` `;
+        }
       }
     });
 
@@ -50,15 +48,6 @@ module.exports = new Command({
         value: botCommands || "No commands available.",
         inline: false,
       });
-
-    // Conditionally add Addons section
-    if (supportbot.General.Addons.Enabled) {
-      HelpEmbed1.addFields({
-        name: "🛠️ Addons\n",
-        value: "No addons available.",
-        inline: false,
-      });
-    }
 
     HelpEmbed1.setFooter({
       text: supportbot.Embed.Footer,

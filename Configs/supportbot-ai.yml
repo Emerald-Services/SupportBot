@@ -17,16 +17,16 @@ General:
   # Max tokens you can set is 400
   # For more information about tokens, go to https://openai.com/api/pricing/
 
-  OpenAI_Key: "OPEN_AI_API_KEY"
+  OpenAI_Key: "OPEN AI KEY"
   # To create an OpenAI API key, go to https://platform.openai.com/api-keys
 
 
-  PastebinAPI_Key: "PASTEBIN_API_KEY"
+  PastebinAPI_Key: "PASTEBIN KEY"
   # You can get your Pastebin API Key from https://pastebin.com
   PastebinAPI_URL: "https://pastebin.com/api/api_post.php" 
 
 Channels:
-  AIChannel: "0000000000000000000"
+  AIChannel: "1250190338954498048"
   # This is the channel where AI will respond in without needing to mention the bot.
 
 Embed:

@@ -98,6 +98,9 @@ Ticket:
     NoPermsToClaimTitle: "Error, no permissions!"
     NoPermsToClaim: "> :x: **Err!** You do not permissions to claim this ticket."
 
+    ReassigningTitle: "Reassigning!..."
+    ReassigningMessage: "> <@%user%> did not claim the ticket. **Reassigning...**"
+
 TicketStats: 
   OpenTickets: "✅ Open Tickets"
   TotalTickets: "🎫 Total Tickets"

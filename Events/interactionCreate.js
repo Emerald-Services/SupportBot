@@ -274,5 +274,52 @@ module.exports = new Event("interactionCreate", async (client, interaction) => {
     });
   }
 
+  // Modal submission handler for editing profile
+  if (interaction.type === Discord.InteractionType.ModalSubmit && interaction.customId === 'editProfileModal') {
+    const userId = interaction.user.id;
+    const profilePath = `./Data/Profiles/${userId}.json`;
 
+    let profileData;
+    if (fs.existsSync(profilePath)) {
+      profileData = JSON.parse(fs.readFileSync(profilePath, "utf8"));
+    } else {
+      profileData = {
+        bio: "",
+        timezone: "",
+        clockedIn: false
+      };
+    }
+
+    try {
+      const newBio = interaction.fields.getTextInputValue('bio');
+      const newTimezone = interaction.fields.getTextInputValue('timezone');
+
+      profileData.bio = newBio;
+      profileData.timezone = newTimezone;
+
+      fs.writeFileSync(profilePath, JSON.stringify(profileData, null, 2));
+
+      const updatedProfileEmbed = new Discord.EmbedBuilder()
+        .setTitle(`${interaction.user.username}'s Profile`)
+        .setColor(supportbot.Embed.Colours.General)
+        .setThumbnail(interaction.user.displayAvatarURL())
+        .addFields(
+          { name: 'Bio', value: newBio || 'No bio set.', inline: false },
+          { name: 'Timezone', value: newTimezone || 'No timezone set.', inline: true }
+        );
+
+      if (profileData.clockedIn !== undefined) {
+        updatedProfileEmbed.addFields({
+          name: 'Clocked In Status',
+          value: profileData.clockedIn ? '✅ Clocked In' : '❌ Clocked Out',
+          inline: true
+        });
+      }
+
+      await interaction.reply({ embeds: [updatedProfileEmbed], ephemeral: true });
+    } catch (error) {
+      console.error("Failed to update profile data: ", error);
+      await interaction.reply({ content: "There was an error while updating your profile. Please try again later.", ephemeral: true });
+    }
+  }
 });

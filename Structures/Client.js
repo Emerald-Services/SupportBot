@@ -1,12 +1,8 @@
-// C:\Users\ollie\Documents\GitHub\SupportBot\Structures\Client.js
-
-// SupportBot | Emerald Services
-// Client Structure
-
 const fs = require("fs");
 const Discord = require("discord.js");
 const { GatewayIntentBits, Partials } = require('discord.js');
 const yaml = require("js-yaml");
+const { Command, Event } = require('./Addon.js'); // Adjust the path as needed
 
 const supportbot = yaml.load(fs.readFileSync("./Configs/supportbot.yml", "utf8"));
 const cmdconfig = yaml.load(fs.readFileSync("./Configs/commands.yml", "utf8"));
@@ -89,18 +85,14 @@ class Client extends Discord.Client {
       tempCommandFiles = tempCommandFiles.filter(item => item !== "Ping.js");
     }
 
-    if (cmdconfig.Ping.Enabled === false) {
-      tempCommandFiles = tempCommandFiles.filter(item => item !== "Ping.js");
-    }
-
     if (supportbot.Ticket.ClaimTickets.Enabled === false) {
-        tempCommandFiles = tempCommandFiles.filter(item => item !== "ticketstats.js");
+      tempCommandFiles = tempCommandFiles.filter(item => item !== "ticketstats.js");
     }
 
     const commandFiles = tempCommandFiles;
     const commands = commandFiles.map((file) => require(`../Commands/${file}`));
 
-    // Commands
+    // Load main commands
     console.log(`\u001b[34;1m`, "▬▬▬▬▬▬▬ Commands ▬▬▬▬▬▬▬");
 
     commands.forEach((cmd) => {
@@ -108,13 +100,14 @@ class Client extends Discord.Client {
       this.commands.set(cmd.name, cmd);
     });
 
+    // Load addon commands and events
     console.log(`\u001b[34;1m`, "▬▬▬▬▬▬▬ Commands ▬▬▬▬▬▬▬");
 
     if (supportbot.General.Addons.Enabled) {
       const addonFiles = fs.readdirSync("./Addons").filter((file) => file.endsWith(".js"));
 
       const addons = addonFiles.map((file) => {
-        let addon = require(`../Addons/${file}`);
+        const addon = require(`../Addons/${file}`);
         addon.name = file.split(".")[0];
         return addon;
       });
@@ -132,18 +125,24 @@ class Client extends Discord.Client {
           `\u001b[32;1m`,
           "Loaded"
         );
-        addon.commands?.forEach((command) => {
-          this.commands.set(command.name, command);
-        });
-        addon.events?.forEach((event) => {
-          this.on(event.event, (...args) => event.run(this, ...args));
-        });
+
+        if (addon instanceof Command) {
+          this.commands.set(addon.name, addon);
+        }
+
+        if (addon.events && Array.isArray(addon.events)) {
+          addon.events.forEach((event) => {
+            if (event instanceof Event) {
+              this.on(event.event, (...args) => event.run(this, ...args));
+            }
+          });
+        }
       });
 
       console.log(`\u001b[34;1m`, "▬▬▬▬▬▬▬ Addons ▬▬▬▬▬▬▬");
     }
 
-    // Slash Commands
+    // Register Slash Commands
 
     this.once("ready", async () => {
       await this.guilds.cache.first()?.commands.set(this.commands);
