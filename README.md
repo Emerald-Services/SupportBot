@@ -84,5 +84,13 @@ Released under the [MIT](https://opensource.org/licenses/MIT) license.
   <img src="https://contrib.rocks/image?repo=Emerald-Services/SupportBot">
 </a>
 
+## Hosting
+
+You can use our [Pterodactyl egg](https://github.com/Emerald-Services/Pterodactyl-Egg) to host it on your own panel. We currently don't offer hosting for you, altough we might add this in the future.
+If you don't know how to install pterodactyl, you could always host it on replit:
+
+[![Run on Repl.it](https://repl.it/badge/github/ItsNyoty/IKI-bot)]([https://repl.it/github/ItsNyoty/iki](https://repl.it/github/Emerald-Services/SupportBot
+)
+
 
 
