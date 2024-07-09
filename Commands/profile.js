@@ -25,10 +25,10 @@ function updateClockedInStatus(profileEmbed, clockedIn) {
 }
 
 module.exports = new Command({
-  name: 'profile',
-  description: 'Show user profile',
+  name: cmdconfig.Profile.Command,
+  description: cmdconfig.Profile.Description,
   type: ApplicationCommandType.ChatInput,
-  permissions: ["SendMessages"],
+  permissions: cmdconfig.Profile.Permission,
   options: [
     {
       name: 'user',

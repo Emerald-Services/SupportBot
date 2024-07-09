@@ -85,9 +85,21 @@ class Client extends Discord.Client {
       tempCommandFiles = tempCommandFiles.filter(item => item !== "Ping.js");
     }
 
-    if (supportbot.Ticket.ClaimTickets.Enabled === false) {
-      tempCommandFiles = tempCommandFiles.filter(item => item !== "ticketstats.js");
+    if (cmdconfig.AddUser.Enabled === false) {
+      tempCommandFiles = tempCommandFiles.filter(item => item !== "addUser.js");
     }
+
+    if (cmdconfig.RemoveUser.Enabled === false) {
+      tempCommandFiles = tempCommandFiles.filter(item => item !== "removeUser.js");
+    }    
+
+    if (cmdconfig.ForceAddUser.Enabled === false) {
+      tempCommandFiles = tempCommandFiles.filter(item => item !== "forceaddUser.js");
+    }   
+
+    if (cmdconfig.Profile.Enabled === false) {
+      tempCommandFiles = tempCommandFiles.filter(item => item !== "Profile.js");
+    }    
 
     const commandFiles = tempCommandFiles;
     const commands = commandFiles.map((file) => require(`../Commands/${file}`));

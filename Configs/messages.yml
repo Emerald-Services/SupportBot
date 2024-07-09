@@ -70,12 +70,6 @@ Ticket:
 
 #  <@%user%> - Tags the user who was added to the ticket.
 
-  AddUserToTicket_Title: "➕ Add User!"
-  AddUserToTicket: "> To add a user to this ticket, Tag them."
-
-  RemovedUserFromTicket_Title: "➖ Removed User!"
-  RemovedUserFromTicket: "> <@%user%> has been `Removed` from this ticket"
-
   Blacklisted: "> :x: You are not allowed to open a ticket"
   Muted: "> :x: You are `Muted` and therefore not allowed to open any tickets"
   InvalidSubject: "> No Reason Provided!"
@@ -107,6 +101,66 @@ TicketStats:
   ResponseTime: "⏱️ Average Response Time"
 
   Title: "Your Ticket Stats"
+
+AddUser:
+  NotInTicket_Title: "Ticket Invitation"
+  NotInTicket_Description: "> This command can only be used within a ticket thread."
+  
+  Invite_Title: "User Invited"
+  Invite_Description: "> %username% has been invited to join the ticket."
+
+  DM_Title: "Ticket Invitation"
+  DM_Description: "> You have been invited to join the ticket %channelname%. Do you accept?"
+  
+  Accept_Label: "Accept"
+  Reject_Label: "Reject"
+  ViewTicket_Label: "Go to Ticket"
+  
+  Accepted_Title: "Invitation Accepted"
+  Accepted_Message: "> You have been added to the ticket."
+  AddedToTicket_Title: "Added to Ticket"
+  AddedToTicket_Description: "> You have been added to the ticket %channel_link%."
+  
+  Declined_Title: "Invitation Declined"
+  Declined_Message: "> You have declined the invitation."
+  
+  NoResponse_Title: "No Response"
+  NoResponse_Message: "> You did not respond in time. Please contact staff if you wish to join the ticket."
+  
+  Error_Title: "Error"
+  Error_Adding: "> There was an error adding you to the ticket. Please try again."
+  
+  DM_Error_Title: "Error"
+  DM_Error_Description: "> Unable to send a DM to %username%. Please ensure your DMs are enabled."
+  
+  Unexpected_Error_Title: "Error"
+  Unexpected_Error_Description: "> An unexpected error occurred: %error%"
+
+RemoveUser:
+  NotInTicket_Title: "Error"
+  NotInTicket_Description: "This command can only be used in ticket threads."
+  
+  Removed_Title: "User Removed"
+  Removed_Message: "The user has been successfully removed from the ticket."
+  
+  RemovedFromTicket_Title: "Removed from Ticket"
+  RemovedFromTicket_Description: "You have been removed from the ticket channel %channel_link%."
+
+  Error_Title: "Error"
+  Error_Removing: "There was an error removing the user from the ticket."
+
+ForceAddUser:
+  NotInTicket_Title: "Not a Ticket"
+  NotInTicket_Description: "This command can only be used within a ticket thread."
+
+  Added_Title: "User Added"
+  Added_Description: "Successfully added %username% to the ticket."
+
+  AddedToTicket_Title: "You have been added to a Ticket"
+  AddedToTicket_Description: "You have been added to the ticket channel [%channel_link%]."
+
+  Error_Title: "Error"
+  Error_Adding: "There was an error adding the user to the ticket."
 
 Error:
   IncorrectPerms: "> :x: **Err!** You do not have the correct permissions to use this."

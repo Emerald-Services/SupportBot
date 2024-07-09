@@ -16,20 +16,25 @@ try {
 }
 
 module.exports = new Event("interactionCreate", async (client, interaction) => {
-  if (interaction.type == Discord.InteractionType.ApplicationCommand) {
+  console.log("Interaction received:", interaction.type); // Log interaction type
+
+  if (interaction.type === Discord.InteractionType.ApplicationCommand) {
     const command = client.commands.find(
       (cmd) => cmd.name.toLowerCase() === interaction.commandName
     );
 
+    console.log("Command received:", interaction.commandName); // Log command name
+
     if (interaction.user.bot || !interaction.guild) return;
 
     const NotValid = new Discord.EmbedBuilder()
-      .setDescription(`:x: \`Invalid Command\` `)
+      .setDescription(`:x: \`Invalid Command\``)
       .setColor(supportbot.Embed.Colours.Error);
 
     if (!command)
       return interaction.reply({
         embeds: [NotValid],
+        ephemeral: true,
       });
 
     const permission = interaction.member.permissions.has(command.permissions);
@@ -43,8 +48,50 @@ module.exports = new Event("interactionCreate", async (client, interaction) => {
     if (!permission)
       return interaction.reply({
         embeds: [ValidPerms],
+        ephemeral: true,
       });
-    command.run(interaction);
+
+    try {
+      if (command.name === cmdconfig.OpenTicket.Command && supportbot.Ticket.TicketReason) {
+        const modal = new Discord.ModalBuilder()
+          .setCustomId("ticketReasonModal")
+          .setTitle("Ticket Reason")
+          .addComponents(
+            new Discord.ActionRowBuilder().addComponents(
+              new Discord.TextInputBuilder()
+                .setCustomId("reasonInput")
+                .setLabel("Reason")
+                .setStyle(Discord.TextInputStyle.Paragraph)
+                .setRequired(true)
+            )
+          );
+
+        await interaction.showModal(modal);
+      } else {
+        console.log("Running command:", command.name); // Log running command
+        await command.run(interaction);
+      }
+    } catch (error) {
+      console.error("Error executing command:", error);
+      await interaction.reply({
+        content: "An error occurred while executing the command.",
+        ephemeral: true,
+      });
+    }
+  }
+
+  if (interaction.isModalSubmit()) {
+    if (interaction.customId === "ticketReasonModal") {
+      const reason = interaction.fields.getTextInputValue("reasonInput");
+      interaction.customId = `createticket-${reason}`;
+      const cmd = client.commands.get(cmdconfig.OpenTicket.Command);
+      if (cmd) {
+        interaction.reason = reason; // Attach the reason to the interaction object
+        await cmd.run(interaction);
+      } else {
+        console.error("Command not found.");
+      }
+    }
   }
 
   if (interaction.isStringSelectMenu()) {
@@ -52,26 +99,11 @@ module.exports = new Event("interactionCreate", async (client, interaction) => {
       const selectedOption = interaction.values[0];
       const { getRole, getChannel } = interaction.client;
       switch (selectedOption) {
-        case "ticketadduser":
-          const AddUserThreadTicket = new Discord.EmbedBuilder()
-            .setTitle(`${msgconfig.Ticket.AddUserToTicket}`)
-            .setDescription(`${msgconfig.Ticket.AddUserToTicket}`)
-            .setColor(supportbot.Embed.Colours.General);
-
-          await interaction.reply({
-            embeds: [AddUserThreadTicket],
-            ephemeral: true,
-          });
-          break;
-
-        case "ticketremoveuser":
-          await removeUserFromThread(interaction);
-          break;
 
         case "ticketclose":
           const closeCommand = client.commands.get(cmdconfig.CloseTicket.Command);
           if (closeCommand) {
-            closeCommand.run(interaction);
+            await closeCommand.run(interaction);
           } else {
             console.error("[X] Close Command Not Found");
           }
@@ -89,32 +121,66 @@ module.exports = new Event("interactionCreate", async (client, interaction) => {
   }
 
   if (interaction.isButton()) {
-    if (interaction.customId === 'createticket') {
-      try {
-        const cmd = client.commands.get(cmdconfig.OpenTicket.Command);
-        if (!cmd) return;
-        cmd.run(interaction);
-      } catch (error) {
-        console.error("Error executing the ticket command:", error);
-        await interaction.reply({
-          content: "An error occurred while creating the ticket.",
-          ephemeral: true,
-        });
+    if (interaction.customId === "createticket") {
+      if (supportbot.Ticket.TicketReason) {
+        const modal = new Discord.ModalBuilder()
+          .setCustomId("ticketReasonModal")
+          .setTitle("Ticket Reason")
+          .addComponents(
+            new Discord.ActionRowBuilder().addComponents(
+              new Discord.TextInputBuilder()
+                .setCustomId("reasonInput")
+                .setLabel("Reason")
+                .setStyle(Discord.TextInputStyle.Paragraph)
+                .setRequired(true)
+            )
+          );
+
+        await interaction.showModal(modal);
+      } else {
+        try {
+          const cmd = client.commands.get(cmdconfig.OpenTicket.Command);
+          if (!cmd) return;
+          await cmd.run(interaction);
+        } catch (error) {
+          console.error("Error executing the ticket command:", error);
+          await interaction.reply({
+            content: "An error occurred while creating the ticket.",
+            ephemeral: true,
+          });
+        }
       }
     }
 
     if (interaction.customId === "openticket") {
-      try {
-        const cmd = client.commands.get(cmdconfig.OpenTicket);
-        if (!cmd) return;
-        cmd.run(interaction);
-      } catch (error) {
-        console.error(error);
+      if (supportbot.Ticket.TicketReason) {
+        const modal = new Discord.ModalBuilder()
+          .setCustomId("ticketReasonModal")
+          .setTitle("Ticket Reason")
+          .addComponents(
+            new Discord.ActionRowBuilder().addComponents(
+              new Discord.TextInputBuilder()
+                .setCustomId("reasonInput")
+                .setLabel("Reason")
+                .setStyle(Discord.TextInputStyle.Paragraph)
+                .setRequired(true)
+            )
+          );
+
+        await interaction.showModal(modal);
+      } else {
+        try {
+          const cmd = client.commands.get(cmdconfig.OpenTicket.Command);
+          if (!cmd) return;
+          await cmd.run(interaction);
+        } catch (error) {
+          console.error(error);
+        }
       }
     }
 
-    if (interaction.customId.startsWith('claimticket-')) {
-      const ticketChannelId = interaction.customId.split('-')[1];
+    if (interaction.customId.startsWith("claimticket-")) {
+      const ticketChannelId = interaction.customId.split("-")[1];
       const ticketChannel = interaction.guild.channels.cache.get(ticketChannelId);
       if (!ticketChannel) {
         return interaction.reply({
@@ -144,7 +210,7 @@ module.exports = new Event("interactionCreate", async (client, interaction) => {
       const NoPermsClaim = new Discord.EmbedBuilder()
         .setTitle(msgconfig.Ticket.ClaimTickets.NoPermsToClaimTitle)
         .setDescription(
-          msgconfig.Ticket.ClaimTickets.NoPermsToClaim.replace('%channel%', ticketChannel.name)
+          msgconfig.Ticket.ClaimTickets.NoPermsToClaim.replace("%channel%", ticketChannel.name)
         )
         .setColor(supportbot.Embed.Colours.Error);
 
@@ -160,7 +226,7 @@ module.exports = new Event("interactionCreate", async (client, interaction) => {
 
       setTimeout(() => {
         pingclaimedstaff.delete();
-      }, 2000)
+      }, 2000);
 
       const TicketData = JSON.parse(fs.readFileSync("./Data/TicketData.json", "utf8"));
       const ticketIndex = TicketData.tickets.findIndex((t) => t.id === ticketChannelId);
@@ -174,13 +240,13 @@ module.exports = new Event("interactionCreate", async (client, interaction) => {
       const claimedEmbed = new Discord.EmbedBuilder(claimMessage.embeds[0].data)
         .setTitle(msgconfig.Ticket.ClaimTickets.ClaimedTitle)
         .setDescription(
-          msgconfig.Ticket.ClaimTickets.ClaimMessage_Edit.replace('%user%', interaction.user.id).replace('%channel%', ticketChannel.id)
+          msgconfig.Ticket.ClaimTickets.ClaimMessage_Edit.replace("%user%", interaction.user.id).replace("%channel%", ticketChannel.id)
         )
         .setColor(supportbot.Embed.Colours.Success);
 
       const successfullyClaimed = new Discord.EmbedBuilder()
         .setTitle(msgconfig.Ticket.ClaimTickets.ClaimedTitle)
-        .setDescription(msgconfig.Ticket.ClaimTickets.Claimed.replace('%channel%', ticketChannel.id))
+        .setDescription(msgconfig.Ticket.ClaimTickets.Claimed.replace("%channel%", ticketChannel.id))
         .setColor(supportbot.Embed.Colours.Success);
 
       await claimMessage.edit({ embeds: [claimedEmbed], components: [] });
@@ -191,36 +257,41 @@ module.exports = new Event("interactionCreate", async (client, interaction) => {
     }
 
     // SUGGESTION INTERACTIONS [START]
-    
-    if (interaction.customId === 'upvote' || interaction.customId === 'downvote' || interaction.customId === 'removevote') {
+
+    if (
+      interaction.customId === "upvote" ||
+      interaction.customId === "downvote" ||
+      interaction.customId === "removevote"
+    ) {
       const suggestion = suggestions[interaction.message.id];
-      if (!suggestion) return interaction.reply({ content: 'Suggestion not found.', ephemeral: true });
+      if (!suggestion)
+        return interaction.reply({ content: "Suggestion not found.", ephemeral: true });
 
       const userId = interaction.user.id;
       const hasUpvoted = suggestion.upvotes.includes(userId);
       const hasDownvoted = suggestion.downvotes.includes(userId);
 
-      if (interaction.customId === 'upvote') {
+      if (interaction.customId === "upvote") {
         if (hasUpvoted) {
-          suggestion.upvotes = suggestion.upvotes.filter(id => id !== userId);
+          suggestion.upvotes = suggestion.upvotes.filter((id) => id !== userId);
         } else {
           suggestion.upvotes.push(userId);
           if (hasDownvoted) {
-            suggestion.downvotes = suggestion.downvotes.filter(id => id !== userId);
+            suggestion.downvotes = suggestion.downvotes.filter((id) => id !== userId);
           }
         }
-      } else if (interaction.customId === 'downvote') {
+      } else if (interaction.customId === "downvote") {
         if (hasDownvoted) {
-          suggestion.downvotes = suggestion.downvotes.filter(id => id !== userId);
+          suggestion.downvotes = suggestion.downvotes.filter((id) => id !== userId);
         } else {
           suggestion.downvotes.push(userId);
           if (hasUpvoted) {
-            suggestion.upvotes = suggestion.upvotes.filter(id => id !== userId);
+            suggestion.upvotes = suggestion.upvotes.filter((id) => id !== userId);
           }
         }
-      } else if (interaction.customId === 'removevote') {
-        suggestion.upvotes = suggestion.upvotes.filter(id => id !== userId);
-        suggestion.downvotes = suggestion.downvotes.filter(id => id !== userId);
+      } else if (interaction.customId === "removevote") {
+        suggestion.upvotes = suggestion.upvotes.filter((id) => id !== userId);
+        suggestion.downvotes = suggestion.downvotes.filter((id) => id !== userId);
       }
 
       fs.writeFileSync("./Data/SuggestionData.json", JSON.stringify(suggestions, null, 2));
@@ -228,13 +299,20 @@ module.exports = new Event("interactionCreate", async (client, interaction) => {
       const upvoteCount = suggestion.upvotes.length;
       const downvoteCount = suggestion.downvotes.length;
 
-      const updatedEmbed = new Discord.EmbedBuilder(interaction.message.embeds[0].data)
-        .setFields([
-          { name: 'Suggestion', value: suggestion.suggestion, inline: true },
-          { name: 'From', value: `<@${suggestion.author}>` },
-          { name: `${supportbot.Suggestions.UpvoteEmoji} ${supportbot.Suggestions.UpvoteTitle}`, value: `${upvoteCount}`, inline: true },
-          { name: `${supportbot.Suggestions.DownvoteEmoji} ${supportbot.Suggestions.DownvoteTitle}`, value: `${downvoteCount}`, inline: true }
-        ]);
+      const updatedEmbed = new Discord.EmbedBuilder(interaction.message.embeds[0].data).setFields([
+        { name: "Suggestion", value: suggestion.suggestion, inline: true },
+        { name: "From", value: `<@${suggestion.author}>` },
+        {
+          name: `${supportbot.Suggestions.UpvoteEmoji} ${supportbot.Suggestions.UpvoteTitle}`,
+          value: `${upvoteCount}`,
+          inline: true,
+        },
+        {
+          name: `${supportbot.Suggestions.DownvoteEmoji} ${supportbot.Suggestions.DownvoteTitle}`,
+          value: `${downvoteCount}`,
+          inline: true,
+        },
+      ]);
 
       await interaction.update({ embeds: [updatedEmbed] });
     }
@@ -246,7 +324,9 @@ module.exports = new Event("interactionCreate", async (client, interaction) => {
       const Admin = await getRole(supportbot.Roles.StaffMember.Admin, interaction.guild);
 
       if (!SupportStaff || !Admin) {
-        return interaction.reply("Some roles seem to be missing!\nPlease check for errors when starting the bot.");
+        return interaction.reply(
+          "Some roles seem to be missing!\nPlease check for errors when starting the bot."
+        );
       }
 
       const NoPerms = new Discord.EmbedBuilder()
@@ -256,7 +336,10 @@ module.exports = new Event("interactionCreate", async (client, interaction) => {
         )
         .setColor(supportbot.Embed.Colours.Warn);
 
-      if (!interaction.member.roles.cache.has(SupportStaff.id) && !interaction.member.roles.cache.has(Admin.id)) {
+      if (
+        !interaction.member.roles.cache.has(SupportStaff.id) &&
+        !interaction.member.roles.cache.has(Admin.id)
+      ) {
         return interaction.reply({ embeds: [NoPerms] });
       }
     }
@@ -264,9 +347,7 @@ module.exports = new Event("interactionCreate", async (client, interaction) => {
     await interaction.channel.setInvitable(enable);
 
     const message = enable ? msgconfig.Ticket.EnableInvites : msgconfig.Ticket.DisableInvites;
-    const embed = new Discord.EmbedBuilder()
-      .setDescription(message)
-      .setColor(supportbot.Embed.Colours.General);
+    const embed = new Discord.EmbedBuilder().setDescription(message).setColor(supportbot.Embed.Colours.General);
 
     await interaction.reply({
       embeds: [embed],
@@ -275,7 +356,7 @@ module.exports = new Event("interactionCreate", async (client, interaction) => {
   }
 
   // Modal submission handler for editing profile
-  if (interaction.type === Discord.InteractionType.ModalSubmit && interaction.customId === 'editProfileModal') {
+  if (interaction.type === Discord.InteractionType.ModalSubmit && interaction.customId === "editProfileModal") {
     const userId = interaction.user.id;
     const profilePath = `./Data/Profiles/${userId}.json`;
 
@@ -286,13 +367,13 @@ module.exports = new Event("interactionCreate", async (client, interaction) => {
       profileData = {
         bio: "",
         timezone: "",
-        clockedIn: false
+        clockedIn: false,
       };
     }
 
     try {
-      const newBio = interaction.fields.getTextInputValue('bio');
-      const newTimezone = interaction.fields.getTextInputValue('timezone');
+      const newBio = interaction.fields.getTextInputValue("bio");
+      const newTimezone = interaction.fields.getTextInputValue("timezone");
 
       profileData.bio = newBio;
       profileData.timezone = newTimezone;
@@ -304,22 +385,25 @@ module.exports = new Event("interactionCreate", async (client, interaction) => {
         .setColor(supportbot.Embed.Colours.General)
         .setThumbnail(interaction.user.displayAvatarURL())
         .addFields(
-          { name: 'Bio', value: newBio || 'No bio set.', inline: false },
-          { name: 'Timezone', value: newTimezone || 'No timezone set.', inline: true }
+          { name: "Bio", value: newBio || "No bio set.", inline: false },
+          { name: "Timezone", value: newTimezone || "No timezone set.", inline: true }
         );
 
       if (profileData.clockedIn !== undefined) {
         updatedProfileEmbed.addFields({
-          name: 'Clocked In Status',
-          value: profileData.clockedIn ? '✅ Clocked In' : '❌ Clocked Out',
-          inline: true
+          name: "Clocked In Status",
+          value: profileData.clockedIn ? "✅ Clocked In" : "❌ Clocked Out",
+          inline: true,
         });
       }
 
       await interaction.reply({ embeds: [updatedProfileEmbed], ephemeral: true });
     } catch (error) {
       console.error("Failed to update profile data: ", error);
-      await interaction.reply({ content: "There was an error while updating your profile. Please try again later.", ephemeral: true });
+      await interaction.reply({
+        content: "There was an error while updating your profile. Please try again later.",
+        ephemeral: true,
+      });
     }
   }
 });

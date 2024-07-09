@@ -14,10 +14,10 @@ function loadConfig(path) {
     }
 }
 
-const supportbotai = yaml.load(fs.readFileSync("./Configs/supportbot-ai.yml"));
-const supportbot = yaml.load(fs.readFileSync("./Configs/supportbot.yml", "utf8"));
-const cmdconfig = yaml.load(fs.readFileSync("./Configs/commands.yml", "utf8"));
-const msgconfig = yaml.load(fs.readFileSync("./Configs/messages.yml", "utf8"));
+const supportbotai = loadConfig("./Configs/supportbot-ai.yml");
+const supportbot = loadConfig("./Configs/supportbot.yml");
+const cmdconfig = loadConfig("./Configs/commands.yml");
+const msgconfig = loadConfig("./Configs/messages.yml");
 
 // Validate configuration values
 function validateConfig(config, keys) {
@@ -27,6 +27,11 @@ function validateConfig(config, keys) {
         }
     });
 }
+
+validateConfig(supportbotai, ['General', 'Channels', 'Messages']);
+validateConfig(supportbot, ['Embed']);
+validateConfig(cmdconfig, ['Ping']);
+validateConfig(msgconfig, ['ErrorResponse', 'OpenAIError']);
 
 const CHANNELS = [supportbotai.Channels.AIChannel];
 
@@ -64,10 +69,25 @@ async function createPaste(content) {
     }
 }
 
+// Function to fetch latest commands and configuration
+function getDynamicData() {
+    const commands = loadConfig("./Configs/commands.yml");
+    const configurations = {
+        supportbotai: loadConfig("./Configs/supportbot-ai.yml"),
+        supportbot: loadConfig("./Configs/supportbot.yml"),
+        cmdconfig: loadConfig("./Configs/commands.yml"),
+        msgconfig: loadConfig("./Configs/messages.yml"),
+    };
+
+    return { commands, configurations };
+}
+
 // Event handler for message creation
 module.exports = new Event("messageCreate", async (client, message) => {
     if (message.author.bot || !message.guild) return;
     if (!CHANNELS.includes(message.channelId) && !message.mentions.users.has(client.user.id)) return;
+
+    const { commands, configurations } = getDynamicData();
 
     if (supportbotai.Enabled) {
         const sendTypingInterval = setInterval(() => {

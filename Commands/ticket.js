@@ -8,7 +8,7 @@ const {
   ButtonBuilder,
   StringSelectMenuBuilder,
   StringSelectMenuOptionBuilder,
-  ButtonStyle
+  ButtonStyle,
 } = require("discord.js");
 const yaml = require("js-yaml");
 
@@ -22,7 +22,7 @@ const TicketNumberID = require("../Structures/TicketID.js");
 
 async function getClockedInUsers(guild) {
   const clockedInUsers = new Set();
-  
+
   const profilesDir = './Data/Profiles';
   const profileFiles = fs.readdirSync(profilesDir);
 
@@ -201,10 +201,6 @@ async function assignTicketToUser(ticketChannel, Staff, Admin, interaction, atte
   }
 }
 
-
-
-
-
 module.exports = new Command({
   name: cmdconfig.OpenTicket.Command,
   description: cmdconfig.OpenTicket.Description,
@@ -220,7 +216,11 @@ module.exports = new Command({
 
   async run(interaction) {
     try {
-      let department = interaction.customId?.split("-")[1] || null;
+      let TicketReason = null;
+      if (supportbot.Ticket.TicketReason) {
+        TicketReason = interaction.reason || null; // Retrieve the reason from the interaction object
+      }
+
       let TicketData = JSON.parse(fs.readFileSync("./Data/TicketData.json", "utf8"));
       const { getRole, getChannel } = interaction.client;
       let User = interaction.guild.members.cache.get(interaction.user.id);
@@ -256,7 +256,7 @@ module.exports = new Command({
       }
 
       let ticketNumberID = await TicketNumberID.pad();
-      const TicketSubject = interaction.options?.getString("reason") || msgconfig.Ticket.InvalidSubject;
+      const TicketSubject = TicketReason || msgconfig.Ticket.InvalidSubject;
 
       const TicketExists = new EmbedBuilder()
         .setTitle("Ticket Exists!")
@@ -304,9 +304,7 @@ module.exports = new Command({
       }
 
       // Add user to the ticket channel
-      if (!department) {
-        await ticketChannel.members.add(interaction.user.id);
-      }
+      await ticketChannel.members.add(interaction.user.id);
 
       // Save ticket data
       TicketData.tickets.push({
@@ -335,6 +333,7 @@ module.exports = new Command({
           msgconfig.Ticket.TicketCreatedAlert.replace(/%ticketauthor%/g, interaction.user.id)
             .replace(/%ticketid%/g, ticketChannel.id)
             .replace(/%ticketusername%/g, interaction.user.username)
+            .replace(/%ticketreason%/g, TicketSubject)
         )
         .setColor(supportbot.Embed.Colours.General);
       await interaction.reply({ embeds: [CreatedTicket], ephemeral: true });
@@ -356,24 +355,22 @@ module.exports = new Command({
           msgconfig.Ticket.TicketMessage.replace(/%ticketauthor%/g, interaction.user.id)
             .replace(/%ticketid%/g, ticketChannel.id)
             .replace(/%ticketusername%/g, interaction.user.username)
+            .replace(/%ticketreason%/g, TicketSubject)
         )
         .setColor(supportbot.Embed.Colours.General);
+
+      // Add reason field if ticket reason is enabled
+      if (supportbot.Ticket.TicketReason && TicketReason) {
+        TicketMessage.addFields(
+          { name: "Reason", value: TicketReason, inline: false }
+        );
+      }
 
       // Create the control panel
       const SelectMenus = new StringSelectMenuBuilder()
         .setCustomId("ticketcontrolpanel")
         .setPlaceholder("Ticket Control Panel")
         .addOptions(
-          new StringSelectMenuOptionBuilder()
-            .setLabel("Add User")
-            .setDescription("Add a user to the ticket.")
-            .setEmoji(supportbot.SelectMenus.Tickets.AddUserEmoji)
-            .setValue("ticketadduser"),
-          new StringSelectMenuOptionBuilder()
-            .setLabel("Remove User")
-            .setDescription("Remove a user from the ticket.")
-            .setEmoji(supportbot.SelectMenus.Tickets.RemoveUserEmoji)
-            .setValue("ticketremoveuser"),
           new StringSelectMenuOptionBuilder()
             .setLabel("Close")
             .setDescription("Close the ticket.")
@@ -399,11 +396,12 @@ module.exports = new Command({
         components: [row2],
       });
 
+      // Handle department selection if not specified
       if (!department) {
         try {
-          let buttons = supportbot.Departments.map((x) =>
+          const buttons = supportbot.Departments.map((x, index) =>
             new ButtonBuilder()
-              .setCustomId("Department" + supportbot.Departments.indexOf(x))
+              .setCustomId("Department" + index)
               .setLabel(x.title)
               .setStyle(x.color)
               .setEmoji(x.emoji)
@@ -411,37 +409,39 @@ module.exports = new Command({
 
           const row = new ActionRowBuilder().addComponents(buttons);
 
-          try {
-            const filter = (i) => i.user.id === interaction.user.id;
-            await m.awaitMessageComponent({
-              filter,
-              max: 1,
-              componentType: "BUTTON",
-              time: supportbot.Ticket.Timeout * 60000,
-            });
-          } catch (e) {
-            if (e.code === "COLLECTOR_ERROR") {
-              try {
-                let ticket = TicketData.tickets.findIndex((t) => t.id === ticketChannel.id);
-                TicketData.tickets[ticket].open = false;
-                fs.writeFileSync(
-                  "./Data/TicketData.json",
-                  JSON.stringify(TicketData, null, 4),
-                  (err) => {
-                    if (err) console.error(err);
-                  }
-                );
-                interaction.user.send(
-                  "Your ticket has timed out. Please open a new one, and select a department."
-                );
-              } catch (error) {return assignedUserId;
-                console.error("An error occurred while handling collector:", error);
-              }
-              return await ticketChannel.delete();
+          const message = await ticketChannel.send({
+            content: "Please select a department:",
+            components: [row],
+          });
+
+          const filter = (i) => i.user.id === interaction.user.id;
+          await message.awaitMessageComponent({
+            filter,
+            max: 1,
+            componentType: "BUTTON",
+            time: supportbot.Ticket.Timeout * 60000,
+          });
+
+        } catch (e) {
+          if (e.code === "COLLECTOR_ERROR") {
+            try {
+              const ticket = TicketData.tickets.findIndex((t) => t.id === ticketChannel.id);
+              TicketData.tickets[ticket].open = false;
+              fs.writeFileSync(
+                "./Data/TicketData.json",
+                JSON.stringify(TicketData, null, 4),
+                (err) => {
+                  if (err) console.error(err);
+                }
+              );
+              await interaction.user.send(
+                "Your ticket has timed out. Please open a new one and select a department."
+              );
+            } catch (error) {
+              console.error("An error occurred while handling collector:", error);
             }
+            await ticketChannel.delete();
           }
-        } catch (error) {
-          console.error("Error sending message:", error);
         }
       }
     } catch (error) {
