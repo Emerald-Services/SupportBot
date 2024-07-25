@@ -11,8 +11,11 @@ const yaml = require("js-yaml");
 const panelconfig = yaml.load(fs.readFileSync("./Configs/ticket-panel.yml", "utf8"));
 const supportbot = yaml.load(fs.readFileSync("./Configs/supportbot.yml", "utf8"));
 const cmdconfig = yaml.load(fs.readFileSync("./Configs/commands.yml", "utf8"));
+const MySQLStorage = require("../Structures/Storage");
 
 const Command = require("../Structures/Command.js");
+
+const mysqlStorage = new MySQLStorage();
 
 module.exports = new Command({
   name: cmdconfig.TicketPanel.Command,
@@ -45,15 +48,29 @@ module.exports = new Command({
       });
     }
 
-    const panelid = JSON.parse(fs.readFileSync("./Data/ticket-panel-id.json", "utf8"));
-
     try {
-      await channel.messages.fetch(panelid.TicketPanelID);
-      return interaction.reply({
-        content: "Ticket panel message already exists.",
-        ephemeral: true,
-      });
-    } catch (error) {
+      let panelid;
+
+      if (mysqlStorage.useMySQL) {
+        await mysqlStorage.connect();
+        const result = await mysqlStorage.query(`
+          SELECT * FROM ticket_panel WHERE id = 1
+        `);
+        if (result.length > 0) {
+          panelid = result[0];
+        }
+      } else {
+        panelid = JSON.parse(fs.readFileSync("./Data/ticket-panel-id.json", "utf8"));
+      }
+
+      if (panelid && panelid.TicketPanelID) {
+        await channel.messages.fetch(panelid.TicketPanelID);
+        return interaction.reply({
+          content: "Ticket panel message already exists.",
+          ephemeral: true,
+        });
+      }
+
       let embed = new EmbedBuilder()
         .setTitle(panelconfig.PanelTitle)
         .setColor(panelconfig.PanelColour)
@@ -82,14 +99,18 @@ module.exports = new Command({
 
       let row = new ActionRowBuilder().addComponents(createTicketButton);
 
-      try {
-        const message = await channel.send({
-          embeds: [embed],
-          components: [row],
-        });
+      const message = await channel.send({
+        embeds: [embed],
+        components: [row],
+      });
 
+      if (mysqlStorage.useMySQL) {
+        await mysqlStorage.query(`
+          REPLACE INTO ticket_panel (id, TicketPanelID) VALUES (1, ?)
+        `, [message.id]);
+      } else {
         let data = {
-          id: panelid.id,
+          id: 1,
           TicketPanelID: message.id,
         };
 
@@ -98,18 +119,18 @@ module.exports = new Command({
           JSON.stringify(data),
           "utf8"
         );
-
-        return interaction.reply({
-          content: "Ticket panel message has been sent!",
-          ephemeral: true,
-        });
-      } catch (e) {
-        console.log("Error sending message:", e);
-        return interaction.reply({
-          content: "An error occurred while sending the ticket panel message.",
-          ephemeral: true,
-        });
       }
+
+      return interaction.reply({
+        content: "Ticket panel message has been sent!",
+        ephemeral: true,
+      });
+    } catch (e) {
+      console.log("Error:", e);
+      return interaction.reply({
+        content: "An error occurred while sending the ticket panel message.",
+        ephemeral: true,
+      });
     }
   },
 });

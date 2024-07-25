@@ -1,3 +1,5 @@
+// ticket.js
+
 const fs = require("fs");
 const {
   EmbedBuilder,
@@ -19,6 +21,20 @@ const msgconfig = yaml.load(fs.readFileSync("./Configs/messages.yml", "utf8"));
 
 const Command = require("../Structures/Command.js");
 const TicketNumberID = require("../Structures/TicketID.js");
+const MySQLStorage = require("../Structures/Storage.js");
+
+// Initialize storage
+const storage = new MySQLStorage();
+storage.connect();
+
+let ticket_data;
+if (!storage.useMySQL) {
+  try {
+    ticket_data = require("../Data/TicketData.json");
+  } catch (error) {
+    ticket_data = {};
+  }
+}
 
 async function getClockedInUsers(guild) {
   const clockedInUsers = new Set();
@@ -319,13 +335,25 @@ module.exports = new Command({
         claimedAt: null,
       });
 
-      fs.writeFileSync(
-        "./Data/TicketData.json",
-        JSON.stringify(TicketData, null, 4),
-        (err) => {
-          if (err) console.error(err);
-        }
-      );
+      if (storage.useMySQL) {
+        // Ensuring no undefined values are passed to the MySQL query
+        const ticketToSave = {
+          id: ticketChannel.id,
+          user: interaction.user.id,
+          reason: TicketSubject,
+          createdAt: new Date().toISOString(),
+          open: true,
+        };
+        await storage.saveTicket(ticketToSave);
+      } else {
+        fs.writeFileSync(
+          "./Data/TicketData.json",
+          JSON.stringify(TicketData, null, 4),
+          (err) => {
+            if (err) console.error(err);
+          }
+        );
+      }
 
       // Notify the user that the ticket was created
       const CreatedTicket = new EmbedBuilder()

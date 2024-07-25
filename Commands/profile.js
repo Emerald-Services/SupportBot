@@ -39,7 +39,7 @@ module.exports = new Command({
   ],
 
   async run(interaction) {
-    await interaction.deferReply({ ephemeral: true });  // Acknowledge the interaction immediately
+    await interaction.deferReply({ ephemeral: true });
 
     const userOption = interaction.options.getUser('user');
     const viewingUser = userOption || interaction.user;
@@ -77,13 +77,18 @@ module.exports = new Command({
 
     const { bio, timezone, clockedIn } = profileData;
 
+    const joinDateServer = `<t:${Math.floor(user.joinedTimestamp / 1000)}:D>`;
+    const joinDateDiscord = `<t:${Math.floor(viewingUser.createdTimestamp / 1000)}:D>`;
+    const roles = user.roles.cache.map(role => role.name).join(', ') || 'No roles';
+
     let profileEmbed = new EmbedBuilder()
       .setTitle(`${viewingUser.username}'s Profile`)
       .setColor(supportbot.Embed.Colours.General)
       .setThumbnail(viewingUser.displayAvatarURL())
       .addFields(
         { name: 'Bio', value: bio || 'No bio set.', inline: false },
-        { name: 'Timezone', value: timezone || 'No timezone set.', inline: true }
+        { name: 'Timezone', value: timezone || 'No timezone set.', inline: true },
+        { name: 'User Information:', value: `📛**User ID:** \`${viewingUserId}\`\n📆**Joined Server:** ${joinDateServer}\n🎂**Creation:** ${joinDateDiscord}\n📋**Roles:** ${roles}`, inline: false },
       );
 
     if (isStaff) {
@@ -198,7 +203,7 @@ module.exports = new Command({
         let clockedinout = new EmbedBuilder()
           .setTitle(profileData.clockedIn ? 'Clocked In!' : 'Clocked Out!') 
           .setDescription(profileData.clockedIn ? 'You have successfully clocked in.' : 'You have successfully clocked out.')
-          .setColor(supportbot.Embed.Colours.General)
+          .setColor(supportbot.Embed.Colours.General);
 
         await interaction.followUp({ embeds: [clockedinout], ephemeral: true });
       }

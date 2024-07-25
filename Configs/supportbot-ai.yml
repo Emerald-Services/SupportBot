@@ -17,11 +17,11 @@ General:
   # Max tokens you can set is 400
   # For more information about tokens, go to https://openai.com/api/pricing/
 
-  OpenAI_Key: "OPENAI_KEY"
+  OpenAI_Key: ""
   # To create an OpenAI API key, go to https://platform.openai.com/api-keys
 
 
-  PastebinAPI_Key: "PASTEBIN_KEY"
+  PastebinAPI_Key: ""
   # You can get your Pastebin API Key from https://pastebin.com
   PastebinAPI_URL: "https://pastebin.com/api/api_post.php" 
 

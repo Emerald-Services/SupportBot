@@ -1,20 +1,26 @@
 const fs = require("fs");
 const Discord = require("discord.js");
 const yaml = require("js-yaml");
+const path = require("path");
+const MySQLStorage = require("../Structures/Storage.js");
 
-// Load configurations
 const supportbot = yaml.load(fs.readFileSync("./Configs/supportbot.yml", "utf8"));
 const cmdconfig = yaml.load(fs.readFileSync("./Configs/commands.yml", "utf8"));
 const msgconfig = yaml.load(fs.readFileSync("./Configs/messages.yml", "utf8"));
 
 const Command = require("../Structures/Command.js");
 
-// Ensure suggestions file exists and is correctly loaded
+// Initialize storage
+const storage = new MySQLStorage();
+storage.connect();
+
 let suggestions;
-try {
-  suggestions = require("../Data/SuggestionData.json");
-} catch (error) {
-  suggestions = {};
+if (!storage.useMySQL) {
+  try {
+    suggestions = require("../Data/SuggestionData.json");
+  } catch (error) {
+    suggestions = {};
+  }
 }
 
 module.exports = new Command({
@@ -81,14 +87,17 @@ module.exports = new Command({
 
     const suggestionMsg = await suggestChannel.send({ embeds: [SuggestEmbed], components: [row] });
 
-    suggestions[suggestionMsg.id] = {
-      suggestion: suggestion,
-      author: interaction.user.id,
-      upvotes: [],
-      downvotes: []
-    };
-
-    fs.writeFileSync("./Data/SuggestionData.json", JSON.stringify(suggestions, null, 2));
+    if (storage.useMySQL) {
+      await storage.saveSuggestion(suggestionMsg.id, interaction.user.id, suggestion);
+    } else {
+      suggestions[suggestionMsg.id] = {
+        suggestion: suggestion,
+        author: interaction.user.id,
+        upvotes: [],
+        downvotes: []
+      };
+      fs.writeFileSync("./Data/SuggestionData.json", JSON.stringify(suggestions, null, 2));
+    }
 
     if (supportbot.Suggestions.Threads.Enabled) {
       await suggestionMsg.startThread({
