@@ -1,12 +1,8 @@
-// C:\Users\ollie\Documents\GitHub\SupportBot\Structures\Client.js
-
-// SupportBot | Emerald Services
-// Client Structure
-
 const fs = require("fs");
 const Discord = require("discord.js");
 const { GatewayIntentBits, Partials } = require('discord.js');
 const yaml = require("js-yaml");
+const { Command, Event } = require('./Addon.js'); // Adjust the path as needed
 
 const supportbot = yaml.load(fs.readFileSync("./Configs/supportbot.yml", "utf8"));
 const cmdconfig = yaml.load(fs.readFileSync("./Configs/commands.yml", "utf8"));
@@ -89,39 +85,48 @@ class Client extends Discord.Client {
       tempCommandFiles = tempCommandFiles.filter(item => item !== "Ping.js");
     }
 
-    if (cmdconfig.Ping.Enabled === false) {
-      tempCommandFiles = tempCommandFiles.filter(item => item !== "Ping.js");
+    if (cmdconfig.AddUser.Enabled === false) {
+      tempCommandFiles = tempCommandFiles.filter(item => item !== "addUser.js");
     }
 
-    if (supportbot.Ticket.ClaimTickets.Enabled === false) {
-        tempCommandFiles = tempCommandFiles.filter(item => item !== "ticketstats.js");
-    }
+    if (cmdconfig.RemoveUser.Enabled === false) {
+      tempCommandFiles = tempCommandFiles.filter(item => item !== "removeUser.js");
+    }    
+
+    if (cmdconfig.ForceAddUser.Enabled === false) {
+      tempCommandFiles = tempCommandFiles.filter(item => item !== "forceaddUser.js");
+    }   
+
+    if (cmdconfig.Profile.Enabled === false) {
+      tempCommandFiles = tempCommandFiles.filter(item => item !== "Profile.js");
+    }    
 
     const commandFiles = tempCommandFiles;
     const commands = commandFiles.map((file) => require(`../Commands/${file}`));
 
-    // Commands
-    console.log(`\u001b[34;1m`, "▬▬▬▬▬▬▬ Commands ▬▬▬▬▬▬▬");
+    // Load main commands
+    console.log(`\u001b[33m`, "――――――――――――――――――――――――――――――――――――――――――――");
 
     commands.forEach((cmd) => {
       console.log(`\u001b[32m`, `[CMD]`, `\u001b[37;1m`, `${cmd.name}`, `\u001b[32;1m`, "Loaded");
       this.commands.set(cmd.name, cmd);
     });
 
-    console.log(`\u001b[34;1m`, "▬▬▬▬▬▬▬ Commands ▬▬▬▬▬▬▬");
+    // Load addon commands and events
+    console.log(`\u001b[33m`, "▬▬▬▬▬▬▬ Commands ▬▬▬▬▬▬▬");
 
     if (supportbot.General.Addons.Enabled) {
       const addonFiles = fs.readdirSync("./Addons").filter((file) => file.endsWith(".js"));
 
       const addons = addonFiles.map((file) => {
-        let addon = require(`../Addons/${file}`);
+        const addon = require(`../Addons/${file}`);
         addon.name = file.split(".")[0];
         return addon;
       });
 
       // Addons
       console.log("   ");
-      console.log(`\u001b[34;1m`, "▬▬▬▬▬▬▬ Addons ▬▬▬▬▬▬▬");
+      console.log(`\u001b[33m`, "▬▬▬▬▬▬▬ Addons ▬▬▬▬▬▬▬");
 
       addons.forEach((addon) => {
         console.log(
@@ -132,18 +137,24 @@ class Client extends Discord.Client {
           `\u001b[32;1m`,
           "Loaded"
         );
-        addon.commands?.forEach((command) => {
-          this.commands.set(command.name, command);
-        });
-        addon.events?.forEach((event) => {
-          this.on(event.event, (...args) => event.run(this, ...args));
-        });
+
+        if (addon instanceof Command) {
+          this.commands.set(addon.name, addon);
+        }
+
+        if (addon.events && Array.isArray(addon.events)) {
+          addon.events.forEach((event) => {
+            if (event instanceof Event) {
+              this.on(event.event, (...args) => event.run(this, ...args));
+            }
+          });
+        }
       });
 
-      console.log(`\u001b[34;1m`, "▬▬▬▬▬▬▬ Addons ▬▬▬▬▬▬▬");
+      console.log(`\u001b[33m`, "▬▬▬▬▬▬▬ Addons ▬▬▬▬▬▬▬");
     }
 
-    // Slash Commands
+    // Register Slash Commands
 
     this.once("ready", async () => {
       await this.guilds.cache.first()?.commands.set(this.commands);
@@ -156,7 +167,7 @@ class Client extends Discord.Client {
     });
 
     console.log("   ");
-    console.log(`\u001b[34;1m`, "▬▬▬▬▬▬▬ Events ▬▬▬▬▬▬▬");
+    console.log(`\u001b[33m`, "▬▬▬▬▬▬▬ Events ▬▬▬▬▬▬▬");
 
     fs.readdirSync("./Events").filter((file) => file.endsWith(".js")).forEach((file) => {
       const event = require(`../Events/${file}`);
@@ -164,7 +175,7 @@ class Client extends Discord.Client {
       this.on(event.event, (...args) => event.run(this, ...args));
     });
 
-    console.log(`\u001b[34;1m`, "▬▬▬▬▬▬▬ Events ▬▬▬▬▬▬▬");
+    console.log(`\u001b[33m`, "▬▬▬▬▬▬▬ Events ▬▬▬▬▬▬▬");
     if (process.argv[2] !== "test") {
       await this.login(token);
     } else {

@@ -19,12 +19,6 @@ Help:
   Permission: ["SendMessages"]
   Enabled: true
 
-EnableAI:
-  Command: "enableai"
-  Description: "Talk with SupportBot"
-  Permission: ["SendMessages"]
-  Enabled: true
-
 Info:
   Command: "info"
   Description: "Get information about the **ServerName**."
@@ -37,9 +31,9 @@ TicketPanel:
   Permission: ["Administrator"]
   Enabled: true  
 
-TicketStats:
-  Command: "ticketstats"
-  Description: "Shows staff members their ticket statistics"
+Profile:
+  Command: "profile"
+  Description: "Shows the profile for a discord member."
   Permission: ["SendMessages"]
   # Command is automatically disabled when the TicketClaims is disabled.
 
@@ -49,9 +43,21 @@ OpenTicket:
   Permission: ["SendMessages"]
   Enabled: true
 
-Add:
+AddUser:
   Command: "add"
-  Description: "Add a user to the ticket."
+  Description: "Add a user to a support ticket."
+  Permission: ["SendMessages"]
+  Enabled: true
+
+ForceAddUser:
+  Command: "forceadd"
+  Description: "Add a user to a support ticket by bypassing the invite system."
+  Permission: ["SendMessages"]
+  Enabled: true
+
+RemoveUser:
+  Command: "remove"
+  Description: "Remove a user from a support ticket."
   Permission: ["SendMessages"]
   Enabled: true
   

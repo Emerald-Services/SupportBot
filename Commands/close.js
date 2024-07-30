@@ -81,7 +81,8 @@ module.exports = new Command({
     const CloseButton = new Discord.ButtonBuilder()
       .setCustomId("confirmCloseTicket")
       .setLabel(supportbot.Ticket.Close.Confirmation_Button)
-      .setStyle(Discord.ButtonStyle.Danger);
+      .setEmoji(supportbot.Ticket.Close.Confirmation_Emoji)
+      .setStyle(supportbot.Ticket.Close.Confirmation_Style);
 
     const row = new Discord.ActionRowBuilder().addComponents(CloseButton);
 

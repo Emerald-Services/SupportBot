@@ -11,7 +11,7 @@
 #           Official Documentation: https://github.com/Emerald-Services/SupportBot/wiki
 #           Third-Party Documentation: COMING SOON
 
-SupportBot_Version: "v8.0"
+SupportBot_Version: "v8.1"
 # Do not change the version number
 
 # -------------------------
@@ -24,7 +24,7 @@ General:
   # To get your Discord Bot Token, Go to https://discord.com/developers/applications
 
   Addons:
-    Enabled: false
+    Enabled: true
     
 # -------------------------
 #  Activity
@@ -145,17 +145,32 @@ Ticket:
     StaffOnly: true
     # Set to false is anyone is able to close a ticket.
     Confirmation_Button: "Confirm Close"
+    Confirmation_Emoji: "🗑️"
+    Confirmation_Style: "2"
     Title: "Are you sure you want to close this ticket?"
+
+    # Available Button Styles
+    # 1 - Blurple
+    # 2 - Grey
+    # 3 - Green
+    # 4 - Red
 
   Invites:
     StaffOnly: true
+
+  LockedTickets:
+    Channel: "1267856939275124809" 
 
   ClaimTickets:
     Enabled: true
     Channel: "1249723473757077624" 
     # Channel name or Channel ID
     
+    ClaimAcceptTime: 120000
+    # How long the assigned user has to accept the ticket before it gets re-assigned to someone else.
+
     ButtonTitle: "Claim Ticket"
+    ButtonEmoji: "🎫"
     Button: "1"
 
     # Available Button Styles
@@ -184,6 +199,15 @@ Buttons:
     ClaimEmoji: "🧑‍💻"
     ClaimStyle: "1"
 
+    Unarchive: "Unarchive Ticket"
+    Unarchive_Emoji: "♻️"
+    Unarchive_Style: "2"
+
+    Unlock: "Unlock Ticket"
+    Unlock_Emoji: "🔓"
+    Unlock_Style: "2"
+
+
     # Available Button Styles
     # 1 - Blurple
     # 2 - Grey
@@ -198,14 +222,13 @@ Buttons:
 SelectMenus:
   Tickets:
     PanelEmoji: "⚙️"
+
     CloseEmoji: "🗑️"
     ArchiveEmoji: "♻️"
-    LockTicketEmoji: "🔒"
-    UnLockTicketEmoji: "🔓"
-    EnableInvitesEmoji: "🔒"
-    DisableInvitesEmoji: "🔓"
-    AddUserEmoji: "➕"
-    RemoveUserEmoji: "➖"
+    LockEmoji: "🔐"
+
+    EnableInvitesEmoji: "📤"
+    DisableInvitesEmoji: "📥"
 
 
 # -------------------------

@@ -24,7 +24,7 @@ Welcome:
   Embed:
     Colour: "#f74343"
     Title: "Welcome to ServerName"
-    Message: "> :smile: %joined_user% has just landed!"
+    Message: ":smile: %joined_user% has just landed!"
     Thumbnail: "BOT"
 
     ImageEnabled: false
@@ -34,7 +34,7 @@ Leave:
   Embed:
     Colour: "#f74343"
     Title: "Goodbye!"
-    Message: "> :slight_frown: %joined_user% has recently dropped out!"
+    Message: ":slight_frown: %joined_user% has recently dropped out!"
     Thumbnail: "BOT"
 
     ImageEnabled: false
@@ -42,8 +42,8 @@ Leave:
 
 Suggestions:
   Sent_Title: "Suggestion Sent!"
-  Sent: "> :white_check_mark: **You have successfully sent a suggestion.**"
-  NoSelfVote: "> :x: **You cannot vote on your own suggestion.**"
+  Sent: ":white_check_mark: **You have successfully sent a suggestion.**"
+  NoSelfVote: ":x: **You cannot vote on your own suggestion.**"
   RemoveVoteButton: "Remove Vote"
 
 Ticket:
@@ -56,47 +56,47 @@ Ticket:
 
   TicketAuthorTitle: "%ticketusername%'s Ticket"
   TicketTitle: "Support Ticket"
-  TicketMessage: "> Hello <@%ticketauthor%>, Thank you for creating a support ticket\nPlease wait patiently whilst a member of our team reaches out to you."
+  TicketMessage: "Hello <@%ticketauthor%>, Thank you for creating a support ticket\nPlease wait patiently whilst a member of our team reaches out to you."
   TicketThumbnail: "https://images.emojiterra.com/google/android-pie/512px/1f39f.png"
-  TicketCreatedAlert: "> :ticket: Ticked Created: <#%ticketid%>"
-  TicketExists: "> ❌ Ticket already exists"
-  TicketClaim: "> :white_check_mark: Ticket claimed by" #The user who claimed the ticket will be added to the end of this message
-  TicketUnclaim: "> :white_check_mark: Ticket unclaimed by" #The user who claimed the ticket will be added to the end of this message
+  TicketCreatedAlert: ":ticket: Ticked Created: <#%ticketid%>"
+  TicketExists: "❌ Ticket already exists"
+  TicketClaim: ":white_check_mark: Ticket claimed by" #The user who claimed the ticket will be added to the end of this message
+  TicketUnclaim: ":white_check_mark: Ticket unclaimed by" #The user who claimed the ticket will be added to the end of this message
 
-  DisableInvites: "> 🔒 Invites have been disabled for this ticket." 
-  EnableInvites: "> 🔓 Invites have been enabled for this ticket." 
+  TicketArchived: ":white_check_mark: Ticket archived."
+  TicketUnarchived: ":white_check_mark: Ticket unarchived."
+  TicketLocked: ":lock: Ticket is locked."
+  DisableInvites: "🔒 Invites have been disabled for this ticket." 
+  EnableInvites: "🔓 Invites have been enabled for this ticket." 
 
 #  Available Placeholders:
 
 #  <@%user%> - Tags the user who was added to the ticket.
 
-  AddUserToTicket_Title: "➕ Add User!"
-  AddUserToTicket: "> To add a user to this ticket, Tag them."
-
-  RemovedUserFromTicket_Title: "➖ Removed User!"
-  RemovedUserFromTicket: "> <@%user%> has been `Removed` from this ticket"
-
-  Blacklisted: "> :x: You are not allowed to open a ticket"
-  Muted: "> :x: You are `Muted` and therefore not allowed to open any tickets"
-  InvalidSubject: "> No Reason Provided!"
+  Blacklisted: ":x: You are not allowed to open a ticket"
+  Muted: ":x: You are `Muted` and therefore not allowed to open any tickets"
+  InvalidSubject: "No Reason Provided!"
 
   TranscriptSavedMessage: "📝 **Transcript Saved!**"
   TicketLockMessage: "❌ **Ticket Locked!**"
   TicketDeleteMessage: "⚠ **Ticket Deleting!**" 
 
-  ClosingTicket: "> :warning: You have requested to close your support ticket."
-  ConfirmClose: "> Please confirm closing the ticket by clicking the button below."
-  CloseTimeout: "> Ticket close confirmation timed out."
+  ClosingTicket: ":warning: You have requested to close your support ticket."
+  ConfirmClose: "Please confirm closing the ticket by clicking the button below."
+  CloseTimeout: "Ticket close confirmation timed out."
 
   ClaimTickets:
     ClaimTitle: "Incoming Support Request!"
-    ClaimMessage: "> A new ticket has been created by <@!%user%>. Click the button below to claim this ticket."
-    ClaimMessage_Edit: "> <#%channel%> was claimed by <@!%user%>."
+    ClaimMessage: "A new ticket has been created by <@!%user%>. Click the button below to claim this ticket."
+    ClaimMessage_Edit: "<#%channel%> was claimed by <@!%user%>."
 
     ClaimedTitle: "Ticket Claimed!"
-    Claimed: "> You have successfully claimed this ticket. <#%channel%>"
+    Claimed: "You have successfully claimed this ticket. <#%channel%>"
     NoPermsToClaimTitle: "Error, no permissions!"
-    NoPermsToClaim: "> :x: **Err!** You do not permissions to claim this ticket."
+    NoPermsToClaim: ":x: **Err!** You do not permissions to claim this ticket."
+
+    ReassigningTitle: "Reassigning!..."
+    ReassigningMessage: "<@%user%> did not claim the ticket. **Reassigning...**"
 
 TicketStats: 
   OpenTickets: "✅ Open Tickets"
@@ -105,12 +105,72 @@ TicketStats:
 
   Title: "Your Ticket Stats"
 
+AddUser:
+  NotInTicket_Title: "Ticket Invitation"
+  NotInTicket_Description: "This command can only be used within a ticket thread."
+  
+  Invite_Title: "User Invited"
+  Invite_Description: "%username% has been invited to join the ticket."
+
+  DM_Title: "Ticket Invitation"
+  DM_Description: "You have been invited to join the ticket %channelname%. Do you accept?"
+  
+  Accept_Label: "Accept"
+  Reject_Label: "Reject"
+  ViewTicket_Label: "Go to Ticket"
+  
+  Accepted_Title: "Invitation Accepted"
+  Accepted_Message: "You have been added to the ticket."
+  AddedToTicket_Title: "Added to Ticket"
+  AddedToTicket_Description: "You have been added to the ticket %channel_link%."
+  
+  Declined_Title: "Invitation Declined"
+  Declined_Message: "You have declined the invitation."
+  
+  NoResponse_Title: "No Response"
+  NoResponse_Message: "You did not respond in time. Please contact staff if you wish to join the ticket."
+  
+  Error_Title: "Error"
+  Error_Adding: "There was an error adding you to the ticket. Please try again."
+  
+  DM_Error_Title: "Error"
+  DM_Error_Description: "Unable to send a DM to %username%. Please ensure your DMs are enabled."
+  
+  Unexpected_Error_Title: "Error"
+  Unexpected_Error_Description: "An unexpected error occurred: %error%"
+
+RemoveUser:
+  NotInTicket_Title: "Error"
+  NotInTicket_Description: "This command can only be used in ticket threads."
+  
+  Removed_Title: "User Removed"
+  Removed_Message: "The user has been successfully removed from the ticket."
+  
+  RemovedFromTicket_Title: "Removed from Ticket"
+  RemovedFromTicket_Description: "You have been removed from the ticket channel %channel_link%."
+
+  Error_Title: "Error"
+  Error_Removing: "There was an error removing the user from the ticket."
+
+ForceAddUser:
+  NotInTicket_Title: "Not a Ticket"
+  NotInTicket_Description: "This command can only be used within a ticket thread."
+
+  Added_Title: "User Added"
+  Added_Description: "Successfully added %username% to the ticket."
+
+  AddedToTicket_Title: "You have been added to a Ticket"
+  AddedToTicket_Description: "You have been added to the ticket channel [%channel_link%]."
+
+  Error_Title: "Error"
+  Error_Adding: "There was an error adding the user to the ticket."
+
 Error:
-  IncorrectPerms: "> :x: **Err!** You do not have the correct permissions to use this."
-  InvalidChannel: "> :x: **Err!** Channel not found. Please create it!"
-  UserNotFound: "> :x: **Err!** This user doesn't exist, Are they in this server?"
-  NoValidTicket: "> :warning: You cannot execute this command here."
-  TicketExists: "> :warning: This ticket cannot be opened, It already exists!"
+  IncorrectPerms: ":x: **Err!** You do not have the correct permissions to use this."
+  InvalidChannel: ":x: **Err!** Channel not found. Please create it!"
+  UserNotFound: ":x: **Err!** This user doesn't exist, Are they in this server?"
+  NoValidTicket: ":warning: You cannot execute this command here."
+  TicketExists: ":warning: This ticket cannot be opened, It already exists!"
 
 
 

@@ -59,7 +59,7 @@ module.exports = new Event("ready", async (client, interaction) => {
     });
   }
 
-  console.log(`\u001b[32m`, `――――――――――――――――――――――――――――――――――――――――――――`);
+  console.log(`\u001b[33m`, `――――――――――――――――――――――――――――――――――――――――――――`);
   console.log(`    `);
   console.log(`\u001b[31m`, `┏━━━┓╋╋╋╋╋╋╋╋╋╋╋╋╋┏┓┏━━┓╋╋╋┏┓`);
   console.log(`\u001b[31m`, `┃┏━┓┃╋╋╋╋╋╋╋╋╋╋╋╋┏┛┗┫┏┓┃╋╋┏┛┗┓`);
@@ -70,60 +70,22 @@ module.exports = new Event("ready", async (client, interaction) => {
   console.log(`\u001b[31m`, `┗╋╋╋╋╋╋╋┃┃╋┃┃`);
   console.log(`\u001b[31m`, `╋╋╋╋╋╋╋┗┛╋┗┛`);
   console.log(`    `);
-  console.log(`\u001b[32m`, `――――――――――――――――――――――――――――――――――――――――――――`);
+  console.log(`\u001b[33m`, `――――――――――――――――――――――――――――――――――――――――――――`);
+  console.log(`    `);  
+  console.log(`\u001b[33m`, `${supportbot.General.Name} | [${supportbot.SupportBot_Version}]`, `\u001b[32m`, `Connected to Discord`,);
+  console.log("\u001b[32m", "SupportBot created by Emerald Development ");
   console.log(`    `);
-  console.log(
-    `\u001b[31m`,
-    `${supportbot.General.Name} | [${supportbot.SupportBot_Version}]`,
-    `\u001b[32m`,
-    `Connected to Discord`,
-  );
-  
-  console.log(`\u001b[31m`, `SupportBot proudly created by Emerald Development`);
-
+  console.log(`\u001b[33m`, `――――――――――――――――― [Links] ――――――――――――――――――`);
+  console.log("\u001b[32m", "Discord: https://dsc.gg/emerald-dev");
+  console.log("\u001b[32m", "Website: https://emeraldsrv.com");
+  console.log("\u001b[32m", "Community: https://community.emeraldsrv.com");
+  console.log("\u001b[32m", "Documentation: https://docs.emeraldsrv.com");
   console.log(`    `);
-
-  console.log(
-    `\u001b[31m`,
-    `Discord`,
-    `\u001b[32m`,
-    `https://dsc.gg/emerald-dev`,
-  );
-
-  console.log(
-    `\u001b[31m`,
-    `Website`,
-    `\u001b[32m`,
-    `https://emeraldsrv.com`,
-  );
-
-  console.log(
-    `\u001b[31m`,
-    `Marketplace`,
-    `\u001b[32m`,
-    `https://market.emeraldsrv.com`,
-  );
-
-  console.log(
-    `\u001b[31m`,
-    `Documentation`,
-    `\u001b[32m`,
-    `https://emeraldsrv.com/third-party`,
-  );
-
+  console.log(`\u001b[33m`, `――――――――――――――――― [Invite] ――――――――――――――――――`);
+  console.log("\u001b[32m", `Invite URL: https://discord.com/api/oauth2/authorize?client_id=${client.user.id}&permissions=8&scope=bot%20applications.commands`);
   console.log(`    `);
-
-  console.log(
-    `\u001b[31m`,
-    `Invite URL:`,
-    `\u001b[36m`,
-    `https://discord.com/api/oauth2/authorize?client_id=` +
-      client.user.id +
-      `&permissions=8&scope=bot%20applications.commands`
-  );
-
-  console.log(`    `);
-  console.log(`\u001b[32m`, `――――――――――――――――――――――――――――――――――――――――――――`);
+  console.log(`\u001b[33m`, `――――――――――――――――― [Config Check] ――――――――――――――――――`);
+  console.log("\u001b[32m", "Config initialization...");
 
   const roles = [
     supportbot.Roles.StaffMember.Admin,
@@ -168,35 +130,18 @@ module.exports = new Event("ready", async (client, interaction) => {
  //   if (!find) missingCat.push(cat);
  // }
 
-  if (missingR.length > 0) {
-    console.log(
-      "\u001b[31m",
-      `[MISSING CONFIGURATION]`,
-      "\u001b[33m",
-      `The following Roles could not be found in your server.\n`, `\u001b[31m`, `[${missingR.join(
-        ", "
-      )}]`, `\n  `,
-    );
+ const missingRoles = await Promise.all(roles.map(role => getRole(role, client.guilds.cache.first())));
+ const missingChannels = await Promise.all(channels.map(channel => getChannel(channel, client.guilds.cache.first())));
+
+ if (missingRoles.some(role => !role)) {
+  console.log("\u001b[31m", `Missing roles in your server configuration: ${missingRoles.filter(role => !role).join(', ')}`);
   }
 
-  if (missingC.length > 0) {
-    console.log(
-      "\u001b[31m",
-      `[MISSING CONFIGURATION]`,
-      "\u001b[33m",
-      `The following Channels could not be found in your server.\n`, `\u001b[31m`, `[${missingC.join(
-        ", "
-      )}]`, `\n  `
-    );
+  if (missingChannels.some(channel => !channel)) {
+  console.log("\u001b[31m", `Missing channels in your server configuration: ${missingChannels.filter(channel => !channel).join(', ')}`);
   }
-  if (missingCat.length > 0) {
-    console.log(
-      "\u001b[31m",
-      `[MISSING CONFIGURATION]`,
-      "\u001b[33m",
-      `The following Categories could not be found in your server.\n`, `\u001b[31m`, `[${missingCat.join(
-        ", "
-      )}]`, `\n  `,
-    );
-  }
+
+  console.log("\u001b[32m", "Configs initialized, No problems were detected.");
+  console.log(`    `);
+
 });
