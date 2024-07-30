@@ -16,14 +16,11 @@ try {
 }
 
 module.exports = new Event("interactionCreate", async (client, interaction) => {
-  console.log("Interaction received:", interaction.type); // Log interaction type
 
   if (interaction.type === Discord.InteractionType.ApplicationCommand) {
     const command = client.commands.find(
       (cmd) => cmd.name.toLowerCase() === interaction.commandName
     );
-
-    console.log("Command received:", interaction.commandName); // Log command name
 
     if (interaction.user.bot || !interaction.guild) return;
 
@@ -68,7 +65,7 @@ module.exports = new Event("interactionCreate", async (client, interaction) => {
 
         await interaction.showModal(modal);
       } else {
-        console.log("Running command:", command.name); // Log running command
+        console.log("\u001b[32m", "[Executed]", "\u001b[37;1m", `${interaction.user.username} has executed ${command.name}`);
         await command.run(interaction);
       }
     } catch (error) {
@@ -109,6 +106,50 @@ module.exports = new Event("interactionCreate", async (client, interaction) => {
           }
           break;
 
+          case "archiveticket":
+              const arcembed = new Discord.EmbedBuilder()
+                .setDescription(msgconfig.Ticket.TicketArchived)
+                .setColor(supportbot.Embed.Colours.Success);
+
+              const CloseButton = new Discord.ButtonBuilder()
+                .setCustomId("confirmCloseTicket")
+                .setLabel(supportbot.Ticket.Close.Confirmation_Button)
+                .setEmoji(supportbot.Ticket.Close.Confirmation_Emoji)
+                .setStyle(supportbot.Ticket.Close.Confirmation_Style);
+
+              const unarchiveButton = new Discord.ButtonBuilder()
+                .setCustomId("unarchiveTicket")
+                .setLabel(supportbot.Buttons.Tickets.Unarchive)
+                .setEmoji(supportbot.Buttons.Tickets.Unarchive_Emoji)
+                .setStyle(supportbot.Buttons.Tickets.Unarchive_Style);
+
+              const ArchivedOptions = new Discord.ActionRowBuilder() 
+                .addComponents(CloseButton, unarchiveButton);
+
+                await interaction.channel.send({
+                  embeds: [arcembed],
+                  components: [ArchivedOptions],
+                });
+
+                await interaction.channel.setArchived(true);
+
+            break;
+  
+        case "lockticket":
+            const lockembed = new Discord.EmbedBuilder()
+              .setDescription(msgconfig.Ticket.TicketLocked)
+              .setColor(supportbot.Embed.Colours.Success);
+
+            await interaction.channel.send({
+              embeds: [lockembed],
+              components: [],
+              ephemeral: true,s
+            });
+
+            await interaction.channel.setLocked(true);
+            
+        break;
+
         case "enableinvites":
           await handleInvites(interaction, true);
           break;
@@ -121,6 +162,20 @@ module.exports = new Event("interactionCreate", async (client, interaction) => {
   }
 
   if (interaction.isButton()) {
+    if (interaction.customId === "unarchiveTicket") {
+      await interaction.channel.setArchived(false);
+
+      const unrcembed = new Discord.EmbedBuilder()
+      .setDescription(msgconfig.Ticket.TicketUnarchived)
+      .setColor(supportbot.Embed.Colours.Success);
+
+      await interaction.update({
+        embeds: [unrcembed],
+        components: [],
+      });
+
+    }
+
     if (interaction.customId === "createticket") {
       if (supportbot.Ticket.TicketReason) {
         const modal = new Discord.ModalBuilder()
@@ -320,6 +375,7 @@ module.exports = new Event("interactionCreate", async (client, interaction) => {
 
   async function handleInvites(interaction, enable) {
     if (supportbot.Ticket.Invites.StaffOnly) {
+      const { getRole, getChannel } = interaction.client;
       const SupportStaff = await getRole(supportbot.Roles.StaffMember.Staff, interaction.guild);
       const Admin = await getRole(supportbot.Roles.StaffMember.Admin, interaction.guild);
 

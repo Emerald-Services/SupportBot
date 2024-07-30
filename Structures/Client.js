@@ -105,7 +105,7 @@ class Client extends Discord.Client {
     const commands = commandFiles.map((file) => require(`../Commands/${file}`));
 
     // Load main commands
-    console.log(`\u001b[34;1m`, "▬▬▬▬▬▬▬ Commands ▬▬▬▬▬▬▬");
+    console.log(`\u001b[33m`, "――――――――――――――――――――――――――――――――――――――――――――");
 
     commands.forEach((cmd) => {
       console.log(`\u001b[32m`, `[CMD]`, `\u001b[37;1m`, `${cmd.name}`, `\u001b[32;1m`, "Loaded");
@@ -113,7 +113,7 @@ class Client extends Discord.Client {
     });
 
     // Load addon commands and events
-    console.log(`\u001b[34;1m`, "▬▬▬▬▬▬▬ Commands ▬▬▬▬▬▬▬");
+    console.log(`\u001b[33m`, "▬▬▬▬▬▬▬ Commands ▬▬▬▬▬▬▬");
 
     if (supportbot.General.Addons.Enabled) {
       const addonFiles = fs.readdirSync("./Addons").filter((file) => file.endsWith(".js"));
@@ -126,7 +126,7 @@ class Client extends Discord.Client {
 
       // Addons
       console.log("   ");
-      console.log(`\u001b[34;1m`, "▬▬▬▬▬▬▬ Addons ▬▬▬▬▬▬▬");
+      console.log(`\u001b[33m`, "▬▬▬▬▬▬▬ Addons ▬▬▬▬▬▬▬");
 
       addons.forEach((addon) => {
         console.log(
@@ -151,7 +151,7 @@ class Client extends Discord.Client {
         }
       });
 
-      console.log(`\u001b[34;1m`, "▬▬▬▬▬▬▬ Addons ▬▬▬▬▬▬▬");
+      console.log(`\u001b[33m`, "▬▬▬▬▬▬▬ Addons ▬▬▬▬▬▬▬");
     }
 
     // Register Slash Commands
@@ -167,7 +167,7 @@ class Client extends Discord.Client {
     });
 
     console.log("   ");
-    console.log(`\u001b[34;1m`, "▬▬▬▬▬▬▬ Events ▬▬▬▬▬▬▬");
+    console.log(`\u001b[33m`, "▬▬▬▬▬▬▬ Events ▬▬▬▬▬▬▬");
 
     fs.readdirSync("./Events").filter((file) => file.endsWith(".js")).forEach((file) => {
       const event = require(`../Events/${file}`);
@@ -175,7 +175,7 @@ class Client extends Discord.Client {
       this.on(event.event, (...args) => event.run(this, ...args));
     });
 
-    console.log(`\u001b[34;1m`, "▬▬▬▬▬▬▬ Events ▬▬▬▬▬▬▬");
+    console.log(`\u001b[33m`, "▬▬▬▬▬▬▬ Events ▬▬▬▬▬▬▬");
     if (process.argv[2] !== "test") {
       await this.login(token);
     } else {

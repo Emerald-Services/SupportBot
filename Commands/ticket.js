@@ -377,6 +377,16 @@ module.exports = new Command({
             .setEmoji(supportbot.SelectMenus.Tickets.CloseEmoji)
             .setValue("ticketclose"),
           new StringSelectMenuOptionBuilder()
+            .setLabel("Archive")
+            .setDescription("Acrhive the ticket.")
+            .setEmoji(supportbot.SelectMenus.Tickets.ArchiveEmoji)
+            .setValue("archiveticket"),
+          new StringSelectMenuOptionBuilder()
+            .setLabel("Lock Ticket")
+            .setDescription("Lock the ticket.")
+            .setEmoji(supportbot.SelectMenus.Tickets.LockEmoji)
+            .setValue("lockticket"),
+          new StringSelectMenuOptionBuilder()
             .setLabel("Enable Invites")
             .setDescription("Enable invites.")
             .setEmoji(supportbot.SelectMenus.Tickets.EnableInvitesEmoji)
