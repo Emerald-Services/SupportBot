@@ -11,7 +11,7 @@
 #           Official Documentation: https://github.com/Emerald-Services/SupportBot/wiki
 #           Third-Party Documentation: COMING SOON
 
-SupportBot_Version: "v8.1"
+SupportBot_Version: "v8.2"
 # Do not change the version number
 
 # -------------------------
@@ -37,6 +37,8 @@ Activity:
   StreamingURL: "https://www.twitch.tv/YOUR_TWITCH_NAME"
   # Set The Type to "Streaming" for a streaming status!
 
+  # You can update the activity via Discord using: /settings
+
 # -------------------------
 #  Embeds
 # -------------------------
@@ -57,15 +59,15 @@ Embed:
 Roles:
   AutoRole:
     Enabled: true
-    Role: "Member"
+    Role: "ROLE_ID"
 
   StaffMember:
-    Staff: "Staff"
-    Admin: "Admin"
+    Staff: "STAFF_ROLE_ID"
+    Admin: "ADMIN_ROLE_ID"
 
   ModRoles:
-    Muted: "Muted"
-    Blacklisted: "Blacklisted"
+    Muted: "MUTED_ROLE_ID"
+    Blacklisted: "BLACKLISTED_ROLE_ID"
 
 # ----------------------------
 #  System Messages
@@ -73,18 +75,18 @@ Roles:
 
 Welcome: 
   Enabled: true
-  Channel: "🚨┃join-leave-logs"
+  Channel: "WELCOME_CHANNEL_ID"
 
 Leave: 
   Enabled: true
-  Channel: "🚨┃join-leave-logs"
+  Channel: "LEAVE_CHANNEL_ID"
 
 # ----------------------------
 #  Suggestions
 # ----------------------------
 
 Suggestions:
-  Channel: "📗┃suggestions"
+  Channel: "SUGGEST_CHANNEL_ID"
   UpvoteEmoji: "✅"
   DownvoteEmoji: "❌"
 
@@ -119,8 +121,23 @@ Suggestions:
 # -------------------------
 
 Ticket:
-  TicketCategory: "📗┃tickets" #Where tickets normally go with the /ticket command
-  # This is the channel name for the ticket threads to be created, NOT A DISCORD CATEGORY!
+  TicketType: "channels" # Choose how you want tickets to be created.
+  # Options:
+  # channels - Tickets will be created as channels in the 
+  # threads - Tickets will be created as threads through the "TicketHome"
+
+  # For TicketType "Threads"
+  TicketHome: "TICKETHOME_CHANNEL_ID" 
+  # What is TicketHome?
+  # - Channel where the Ticket creation panel is sent.
+  # - Channel where ticket threads are made. (only if ticket threads is enabled above.)
+
+  # For TicketType "Channels"
+  TicketChannelsCategory: "TICKET_CATEGORY_ID" # if Type is set to channels
+  TicketChannelsCategory2: "BACKUP_TICKET_CATEGORY_ID" # This will be used if the first category has reached the max channel limit.
+  TicketArchiveCategory: "ARCHIVE_TICKET_CATEGORY_ID"
+
+  # ---
 
   Channel: "ticket-" # The prefix for ticket channel names
   TicketsPerUser: 100
@@ -134,19 +151,17 @@ Ticket:
   # Set to true to allow all staff to access the ticket
 
   Log:
-    TicketLog: "🚨┃ticket-data"
-    TicketLog_Title: "Ticket Closed"
-    DisableTicketLogChannel: false
-
-    TranscriptLog: "🚨┃ticket-data"
-    TranscriptTitle: "Ticket Transcript"
+    TicketDataLog: "TICKET_LOG_ID"
+    TickeDataTitle: "Ticket Data"
 
   Close:
     StaffOnly: true
     # Set to false is anyone is able to close a ticket.
+
     Confirmation_Button: "Confirm Close"
     Confirmation_Emoji: "🗑️"
     Confirmation_Style: "2"
+
     Title: "Are you sure you want to close this ticket?"
 
     # Available Button Styles
@@ -158,16 +173,18 @@ Ticket:
   Invites:
     StaffOnly: true
 
-  LockedTickets:
-    Channel: "1267856939275124809" 
-
   ClaimTickets:
     Enabled: true
-    Channel: "1249723473757077624" 
+    Channel: "CLAIM_TICKETS_CHANNEL_ID" 
     # Channel name or Channel ID
     
     ClaimAcceptTime: 120000
     # How long the assigned user has to accept the ticket before it gets re-assigned to someone else.
+    # 120000 = 2 Minutes
+    # 180000 = 3 Minutes
+    # 240000 = 4 Minutes
+    # 300000 = 5 Minutes
+    # Time in Mliseconds
 
     ButtonTitle: "Claim Ticket"
     ButtonEmoji: "🎫"
@@ -178,18 +195,6 @@ Ticket:
     # 2 - Grey
     # 3 - Green
     # 4 - Red
-
-
-# -------------------------
-#   Departments - NOT IN THIS UPDATE
-# -------------------------
-
-Departments:
-  - title: "Create Ticket"
-    role: "Staff"
-    color: "2"
-    emoji: "🎫"
-    category: "TICKETS"
 
 # -------------------------
 #  Buttons
@@ -207,13 +212,11 @@ Buttons:
     Unlock_Emoji: "🔓"
     Unlock_Style: "2"
 
-
     # Available Button Styles
     # 1 - Blurple
     # 2 - Grey
     # 3 - Green
     # 4 - Red
-
 
 # -------------------------
 #  Select Menus
@@ -222,18 +225,18 @@ Buttons:
 SelectMenus:
   Tickets:
     PanelEmoji: "⚙️"
-
+    
     CloseEmoji: "🗑️"
     ArchiveEmoji: "♻️"
     LockEmoji: "🔐"
+    RenameEmoji: "🏷️"
 
     EnableInvitesEmoji: "📤"
     DisableInvitesEmoji: "📥"
-
 
 # -------------------------
 #  Misc
 # -------------------------
 
 Translate:
-  Log: "🚨┃logs"
+  TranslateLog: "TRANSLATE_LOG_ID"

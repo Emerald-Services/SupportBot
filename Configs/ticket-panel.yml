@@ -20,9 +20,6 @@ Panel: true
 #   Ticket Panel Message Configuration #2b2d31
 # ----------------------------------------
 
-Channel: "📗┃tickets"
-# The channel used to create the ticket panel, Use command /ticketpanel to generate it.
-
 PanelTitle: "SupportBot"
 PanelColour: "#0cc559"
 

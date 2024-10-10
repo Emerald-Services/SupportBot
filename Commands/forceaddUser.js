@@ -1,9 +1,9 @@
-// File: Commands/ForceAddUser.js
 const fs = require("fs");
 const {
   EmbedBuilder,
   ApplicationCommandOptionType,
   ApplicationCommandType,
+  ChannelType,
 } = require("discord.js");
 const yaml = require("js-yaml");
 
@@ -20,7 +20,7 @@ module.exports = new Command({
   options: [
     {
       name: "user",
-      description: "The user to add",
+      description: "The user to forcefully add",
       type: ApplicationCommandOptionType.User,
       required: true,
     },
@@ -28,34 +28,14 @@ module.exports = new Command({
   permissions: cmdconfig.ForceAddUser.Permission,
 
   async run(interaction) {
-
-    const { getRole } = interaction.client;
-    let SupportStaff = await getRole(supportbot.Roles.StaffMember.Staff, interaction.guild);
-    let Admin = await getRole(supportbot.Roles.StaffMember.Admin, interaction.guild);
-    if (!SupportStaff || !Admin)
-    
-      return interaction.reply(
-        "Some roles seem to be missing!\nPlease check for errors when starting the bot."
-      );
-
-      const NoPerms = new EmbedBuilder()
-      .setTitle("Invalid Permissions!")
-      .setDescription(
-        `${msgconfig.Error.IncorrectPerms}\n\nRole Required: \`${supportbot.Roles.StaffMember.Staff}\` or \`${supportbot.Roles.StaffMember.Admin}\``
-      )
-      .setColor(supportbot.Embed.Colours.Warn);
-
-    if (
-        !interaction.member.roles.cache.has(SupportStaff.id) &&
-        !interaction.member.roles.cache.has(Admin.id)
-    )
-      return interaction.reply({ embeds: [NoPerms] });
-
     const userToAdd = interaction.options.getUser("user");
     const ticketChannel = interaction.channel;
     const ticketDataPath = "./Data/TicketData.json";
 
-    if (!ticketChannel.isThread()) {
+    if (
+      (supportbot.Ticket.TicketType === "threads" && !ticketChannel.isThread()) ||
+      (supportbot.Ticket.TicketType === "channels" && ticketChannel.type !== ChannelType.GuildText)
+    ) {
       const onlyInTicket = new EmbedBuilder()
         .setTitle(msgconfig.ForceAddUser.NotInTicket_Title)
         .setDescription(msgconfig.ForceAddUser.NotInTicket_Description)
@@ -68,7 +48,42 @@ module.exports = new Command({
     }
 
     try {
-      await ticketChannel.members.add(userToAdd.id);
+
+      if (supportbot.Ticket.TicketType === "threads") {
+        try {
+            // Explicitly ensure the bot is in the thread
+            const botMember = await ticketChannel.members.fetch(interaction.client.user.id).catch(() => null);
+            if (!botMember) {
+                await ticketChannel.join();
+            }
+    
+            // Delay to ensure API has processed the bot's membership
+            await new Promise(res => setTimeout(res, 1000));
+    
+            // Attempt to add the user to the thread
+            await ticketChannel.members.add(userToAdd.id);
+    
+            console.log("User successfully added to the thread.");
+        } catch (err) {
+            console.error("Error adding user to the thread:", err.message);
+            const errorEmbed = new EmbedBuilder()
+                .setTitle(msgconfig.ForceAddUser.Error_Title)
+                .setDescription(`An error occurred: ${err.message}`)
+                .setColor(supportbot.Embed.Colours.Error);
+    
+            return interaction.reply({
+                embeds: [errorEmbed],
+                ephemeral: true,
+            });
+        }
+
+      } else if (supportbot.Ticket.TicketType === "channels") {
+        await ticketChannel.permissionOverwrites.create(userToAdd.id, {
+          ViewChannel: true,
+          SendMessages: true,
+          ReadMessageHistory: true,
+        }); 
+      }
 
       const ticketData = JSON.parse(fs.readFileSync(ticketDataPath, "utf8"));
       const ticketIndex = ticketData.tickets.findIndex((t) => t.id === ticketChannel.id);
@@ -79,10 +94,9 @@ module.exports = new Command({
 
       const addedEmbed = new EmbedBuilder()
         .setTitle(msgconfig.ForceAddUser.Added_Title)
-        .setDescription(msgconfig.ForceAddUser.Added_Description.replace(
-          "%username%",
-          userToAdd.username
-        ))
+        .setDescription(
+          msgconfig.ForceAddUser.Added_Description.replace("%username%", userToAdd.username)
+        )
         .setColor(supportbot.Embed.Colours.Success);
 
       await interaction.reply({
@@ -92,16 +106,17 @@ module.exports = new Command({
 
       const addedToTicketEmbed = new EmbedBuilder()
         .setTitle(msgconfig.ForceAddUser.AddedToTicket_Title)
-        .setDescription(msgconfig.ForceAddUser.AddedToTicket_Description.replace(
-          "%channel_link%",
-          `[${ticketChannel.name}](https://discord.com/channels/${ticketChannel.guild.id}/${ticketChannel.id})`
-        ))
+        .setDescription(
+          msgconfig.ForceAddUser.AddedToTicket_Description.replace(
+            "%channel_link%",
+            `[${ticketChannel.name}](https://discord.com/channels/${ticketChannel.guild.id}/${ticketChannel.id})`
+          )
+        )
         .setColor(supportbot.Embed.Colours.General);
 
       await userToAdd.send({
         embeds: [addedToTicketEmbed],
       });
-
     } catch (err) {
       console.error("Error adding user to the ticket:", err);
 

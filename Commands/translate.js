@@ -71,7 +71,7 @@ module.exports = new Command({
     let url = "https://www.science.co.il/language/Codes.php"; // URL to all available language codes
     let text = await interaction.options.getString("text"); // Grab the text to translate by the user
     let translatelog = await getChannel(
-      supportbot.Translate.Log,
+      supportbot.Translate.TranslateLog,
       interaction.guild
     ); // Grab the set logging channel for translations
 

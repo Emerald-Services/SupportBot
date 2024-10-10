@@ -10,9 +10,9 @@ const Command = require("../Structures/Command.js");
 
 const clockedInUsers = new Set();
 
-async function getRole(roleName, guild) {
-  return guild.roles.cache.find(role => role.name === roleName);
-}
+// async function getRole(roleName, guild) {
+//  return guild.roles.cache.find(role => role.name === roleName);
+// }
 
 function updateClockedInStatus(profileEmbed, clockedIn) {
   profileEmbed.data.fields = profileEmbed.data.fields.map(field => {
@@ -47,6 +47,7 @@ module.exports = new Command({
     const interactionUserId = interaction.user.id;
 
     const user = interaction.guild.members.cache.get(viewingUserId);
+    const { getRole, getChannel } = interaction.client;
 
     const Staff = await getRole(supportbot.Roles.StaffMember.Staff, interaction.guild);
     const Admin = await getRole(supportbot.Roles.StaffMember.Admin, interaction.guild);

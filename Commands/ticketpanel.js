@@ -35,8 +35,13 @@ module.exports = new Command({
       });
     }
 
-    const channelName = panelconfig.Channel;
-    const channel = interaction.guild.channels.cache.find(ch => ch.name === channelName);
+    const { getChannel } = interaction.client;
+
+    const channel = await getChannel(
+      supportbot.Ticket.TicketHome,
+      interaction.guild
+    );
+
     if (!channel) {
       console.log(`[TICKET PANEL] ${channelName} channel not found. Please check your config file.`);
       return interaction.reply({

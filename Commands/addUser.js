@@ -6,6 +6,7 @@ const {
   ActionRowBuilder,
   ButtonBuilder,
   ButtonStyle,
+  ChannelType,
 } = require("discord.js");
 const yaml = require("js-yaml");
 
@@ -34,8 +35,10 @@ module.exports = new Command({
     const ticketChannel = interaction.channel;
     const ticketDataPath = "./Data/TicketData.json";
 
-    // Check if the channel is a ticket thread
-    if (!ticketChannel.isThread()) {
+    if (
+      (supportbot.Ticket.TicketType === "threads" && !ticketChannel.isThread()) ||
+      (supportbot.Ticket.TicketType === "channels" && ticketChannel.type !== ChannelType.GuildText)
+    ) {
       const onlyInTicket = new EmbedBuilder()
         .setTitle(msgconfig.AddUser.NotInTicket_Title)
         .setDescription(msgconfig.AddUser.NotInTicket_Description)
@@ -91,7 +94,16 @@ module.exports = new Command({
       collector.on("collect", async (i) => {
         if (i.customId === "accept_invite") {
           try {
-            await ticketChannel.members.add(userToAdd.id);
+            // Add user to thread or channel based on TicketType
+            if (supportbot.Ticket.TicketType === "threads") {
+              await ticketChannel.members.add(userToAdd.id); // For threads
+            } else if (supportbot.Ticket.TicketType === "channels") {
+              await ticketChannel.permissionOverwrites.create(userToAdd.id, {
+                ViewChannel: true,
+                SendMessages: true,
+                ReadMessageHistory: true,
+              }); // For channels
+            }
 
             const ticketData = JSON.parse(fs.readFileSync(ticketDataPath, "utf8"));
             const ticketIndex = ticketData.tickets.findIndex((t) => t.id === ticketChannel.id);
@@ -109,6 +121,18 @@ module.exports = new Command({
               embeds: [acceptedEmbed],
               components: [],
             });
+
+            // Send the added user ticket message in the ticket channel
+
+              const addeduserTicket = new EmbedBuilder()
+                .setTitle(msgconfig.AddUser.Added_Title)
+                .setDescription(msgconfig.AddUser.Added_Description.replace('%username%', userToAdd.username))
+                .setColor(supportbot.Embed.Colours.General);
+
+              await ticketChannel.send({
+                embeds: [addeduserTicket],
+              });
+
 
             const addedToTicketEmbed = new EmbedBuilder()
               .setTitle(msgconfig.AddUser.AddedToTicket_Title)
