@@ -13,6 +13,8 @@
 #
 #           Command Configuration
 
+# If you don't want to mess with this configuration, You can manage commands via Discord Settings the Intregations.
+
 Help:
   Command: "help"
   Description: "Get a list of all the commands."
@@ -95,6 +97,16 @@ Ping:
   Command: "ping"
   Description: "Pong."
   Permission: ["SendMessages"]
+  Enabled: true
+
+# ---------------------------------------
+#   Bot Administrator Commands
+# ---------------------------------------
+
+Settings:
+  Command: "settings"
+  Description: "Update bot settings."
+  Permission: ["Administrator"]
   Enabled: true
 
 # ---------------------------------------

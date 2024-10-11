@@ -2,15 +2,9 @@ const fs = require("fs");
 const Discord = require("discord.js");
 const yaml = require("js-yaml");
 
-const supportbot = yaml.load(
-  fs.readFileSync("./Configs/supportbot.yml", "utf8")
-);
-const cmdconfig = yaml.load(
-  fs.readFileSync("./Configs/commands.yml", "utf8")
-);
-const msgconfig = yaml.load(
-  fs.readFileSync("./Configs/messages.yml", "utf8")
-);
+const supportbot = yaml.load(fs.readFileSync("./Configs/supportbot.yml", "utf8"));
+const cmdconfig = yaml.load(fs.readFileSync("./Configs/commands.yml", "utf8"));
+const msgconfig = yaml.load(fs.readFileSync("./Configs/messages.yml", "utf8"));
 
 const Command = require("../Structures/Command.js");
 
@@ -35,28 +29,25 @@ module.exports = new Command({
       let Admin = await getRole(supportbot.Roles.StaffMember.Admin, interaction.guild);
 
       if (!SupportStaff || !Admin)
-        return interaction.reply(
-          "Some roles seem to be missing!\nPlease check for errors when starting the bot."
-        );
+        return interaction.reply("Some roles seem to be missing!\nPlease check for errors when starting the bot.");
 
       const NoPerms = new Discord.EmbedBuilder()
         .setTitle("Invalid Permissions!")
-        .setDescription(
-          `${msgconfig.Error.IncorrectPerms}\n\nRole Required: \`${supportbot.Roles.StaffMember.Staff}\` or \`${supportbot.Roles.StaffMember.Admin}\``
-        )
+        .setDescription(`${msgconfig.Error.IncorrectPerms}\n\nRole Required: \`${supportbot.Roles.StaffMember.Staff}\` or \`${supportbot.Roles.StaffMember.Admin}\``)
         .setColor(supportbot.Embed.Colours.Warn);
 
-      if (
-        !interaction.member.roles.cache.has(SupportStaff.id) &&
-        !interaction.member.roles.cache.has(Admin.id)
-      )
+      if (!interaction.member.roles.cache.has(SupportStaff.id) && !interaction.member.roles.cache.has(Admin.id))
         return interaction.reply({ embeds: [NoPerms] });
     }
 
-    if (interaction.channel.type !== Discord.ChannelType.PrivateThread) {
+    // Check if it's a thread or channel based on config
+    if (
+      (supportbot.Ticket.TicketType === "threads" && interaction.channel.type !== Discord.ChannelType.PrivateThread) ||
+      (supportbot.Ticket.TicketType === "channels" && interaction.channel.type !== Discord.ChannelType.GuildText)
+    ) {
       const NotTicketChannel = new Discord.EmbedBuilder()
         .setTitle("Invalid Channel!")
-        .setDescription("This command can only be used in a ticket thread.")
+        .setDescription(`This command can only be used in a ${supportbot.Ticket.TicketType === "threads" ? "ticket thread" : "ticket channel"}.`)
         .setColor(supportbot.Embed.Colours.Warn);
 
       return interaction.reply({ embeds: [NotTicketChannel], ephemeral: true });
@@ -88,9 +79,7 @@ module.exports = new Command({
 
     const CloseTicketRequest = new Discord.EmbedBuilder()
       .setTitle(`**${supportbot.Ticket.Close.Title}**`)
-      .setDescription(
-        `${msgconfig.Ticket.ConfirmClose}`
-      )
+      .setDescription(`${msgconfig.Ticket.ConfirmClose}`)
       .setColor(supportbot.Embed.Colours.General);
 
     await interaction.followUp({
@@ -117,10 +106,9 @@ async function handleCloseTicket(interaction, reason, ticket, TicketData) {
 
   let tickets = JSON.parse(fs.readFileSync("./Data/TicketData.json", "utf8"));
   let tUser = interaction.client.users.cache.get(ticket.user);
-  let transcriptChannel = await getChannel(supportbot.Ticket.Log.TranscriptLog, interaction.guild);
-  let logChannel = await getChannel(supportbot.Ticket.Log.TicketLog, interaction.guild);
+  let transcriptChannel = await getChannel(supportbot.Ticket.Log.TicketDataLog, interaction.guild);
 
-  if (!transcriptChannel || !logChannel)
+  if (!transcriptChannel)
     return interaction.followUp("Some Channels seem to be missing!");
 
   try {
@@ -134,22 +122,8 @@ async function handleCloseTicket(interaction, reason, ticket, TicketData) {
     );
 
     const transcriptEmbed = new Discord.EmbedBuilder()
-      .setTitle(supportbot.Ticket.Log.TranscriptTitle)
-      .setColor(supportbot.Embed.Colours.General)
-      .setFooter({
-        text: supportbot.Embed.Footer,
-        iconURL: interaction.user.displayAvatarURL(),
-      })
-      .addFields(
-        { name: "Ticket", value: `${interaction.channel.name} (${interaction.channel.id})` },
-        { name: "User", value: `${tUser?.username || "N/A"}#${tUser?.discriminator || "N/A"} (${tUser?.id || ticket.user})` },
-        { name: "Closed By", value: interaction.user.tag },
-        { name: "Reason", value: reason }
-      );
-
-    const logEmbed = new Discord.EmbedBuilder()
-      .setTitle(supportbot.Ticket.Log.TicketLog_Title)
-      .setColor(supportbot.Embed.Colours.General)
+      .setTitle(msgconfig.TicketLog.Title)
+      .setColor(msgconfig.TicketLog.Colour)
       .setFooter({
         text: supportbot.Embed.Footer,
         iconURL: interaction.user.displayAvatarURL(),
@@ -262,12 +236,6 @@ async function handleCloseTicket(interaction, reason, ticket, TicketData) {
         </body>
       </html>
     `;
-
-    if (!supportbot.Ticket.Log.DisableTicketLogChannel) {
-      await logChannel.send({ embeds: [logEmbed] }).catch((err) => {
-        console.error(err);
-      });
-    }
 
     let file = new Discord.AttachmentBuilder(
       Buffer.from(html),

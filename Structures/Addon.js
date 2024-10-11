@@ -1,6 +1,6 @@
+
 // SupportBot | Emerald Services
 // Addon Structure
-
 class Command {
   constructor(options) {
     this.name = options.name;
@@ -10,7 +10,13 @@ class Command {
     this.run = options.run;
     this.defaultPermission = true;
   }
+
+  // Method to dynamically update options
+  setOptions(options) {
+    this.options = options;
+  }
 }
+
 class Event {
   constructor(event, run) {
     this.event = event;

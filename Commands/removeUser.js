@@ -1,10 +1,9 @@
-// File path: Commands/RemoveUser.js
-
 const fs = require("fs");
 const {
   EmbedBuilder,
   ApplicationCommandOptionType,
   ApplicationCommandType,
+  ChannelType,
   ActionRowBuilder,
   ButtonBuilder,
   ButtonStyle,
@@ -36,13 +35,13 @@ module.exports = new Command({
     const { getRole } = interaction.client;
     let SupportStaff = await getRole(supportbot.Roles.StaffMember.Staff, interaction.guild);
     let Admin = await getRole(supportbot.Roles.StaffMember.Admin, interaction.guild);
-    if (!SupportStaff || !Admin)
-    
+    if (!SupportStaff || !Admin) {
       return interaction.reply(
         "Some roles seem to be missing!\nPlease check for errors when starting the bot."
       );
+    }
 
-      const NoPerms = new EmbedBuilder()
+    const NoPerms = new EmbedBuilder()
       .setTitle("Invalid Permissions!")
       .setDescription(
         `${msgconfig.Error.IncorrectPerms}\n\nRole Required: \`${supportbot.Roles.StaffMember.Staff}\` or \`${supportbot.Roles.StaffMember.Admin}\``
@@ -50,17 +49,21 @@ module.exports = new Command({
       .setColor(supportbot.Embed.Colours.Warn);
 
     if (
-        !interaction.member.roles.cache.has(SupportStaff.id) &&
-        !interaction.member.roles.cache.has(Admin.id)
-    )
+      !interaction.member.roles.cache.has(SupportStaff.id) &&
+      !interaction.member.roles.cache.has(Admin.id)
+    ) {
       return interaction.reply({ embeds: [NoPerms] });
+    }
 
     const userToRemove = interaction.options.getUser("user");
     const ticketChannel = interaction.channel;
     const ticketDataPath = "./Data/TicketData.json";
 
-    // Check if the channel is a ticket thread
-    if (!ticketChannel.isThread()) {
+    // Check if the channel is a ticket thread or text channel based on TicketType
+    if (
+      (supportbot.Ticket.TicketType === "threads" && !ticketChannel.isThread()) ||
+      (supportbot.Ticket.TicketType === "channels" && ticketChannel.type !== ChannelType.GuildText)
+    ) {
       const onlyInTicket = new EmbedBuilder()
         .setTitle(msgconfig.RemoveUser.NotInTicket_Title)
         .setDescription(msgconfig.RemoveUser.NotInTicket_Description)
@@ -73,8 +76,14 @@ module.exports = new Command({
     }
 
     try {
-      await ticketChannel.members.remove(userToRemove.id);
+      // Remove user from thread or channel based on TicketType
+      if (supportbot.Ticket.TicketType === "threads") {
+        await ticketChannel.members.remove(userToRemove.id); // For threads
+      } else if (supportbot.Ticket.TicketType === "channels") {
+        await ticketChannel.permissionOverwrites.delete(userToRemove.id); // For channels
+      }
 
+      // Update the ticket data
       const ticketData = JSON.parse(fs.readFileSync(ticketDataPath, "utf8"));
       const ticketIndex = ticketData.tickets.findIndex((t) => t.id === ticketChannel.id);
       if (ticketIndex !== -1) {

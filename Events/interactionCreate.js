@@ -91,6 +91,46 @@ module.exports = new Event("interactionCreate", async (client, interaction) => {
     }
   }
 
+  if (interaction.customId === "renameTicketModal") {
+    const newTicketName = interaction.fields.getTextInputValue("renameTicket");
+
+    // Fixing the ticketChannelId extraction and lookup
+    const ticketChannelId = interaction.channel.id;
+
+    let ticketChannel;
+    if (supportbot.Ticket.TicketType === "threads") {
+        ticketChannel = interaction.guild.channels.cache.get(ticketChannelId);
+    } else if (supportbot.Ticket.TicketType === "channels") {
+        ticketChannel = interaction.guild.channels.cache.get(ticketChannelId);
+    }
+
+    if (!ticketChannel) {
+        return interaction.reply({
+            content: "Ticket channel not found.",
+            ephemeral: true,
+        });
+    }
+
+    try {
+        await ticketChannel.setName(newTicketName);
+
+        const renamedsuccess = new Discord.EmbedBuilder()
+            .setDescription(msgconfig.Ticket.RenamedSuccess)
+            .setColor(supportbot.Embed.Colours.Success);
+
+        return interaction.reply({
+            embeds: [renamedsuccess],
+            ephemeral: true,
+        });
+    } catch (error) {
+        console.error("Error renaming the ticket:", error);
+        return interaction.reply({
+            content: "There was an error renaming the ticket.",
+            ephemeral: true,
+        });
+    }
+}
+
   if (interaction.isStringSelectMenu()) {
     if (interaction.customId === "ticketcontrolpanel") {
       const selectedOption = interaction.values[0];
@@ -131,25 +171,112 @@ module.exports = new Event("interactionCreate", async (client, interaction) => {
                   components: [ArchivedOptions],
                 });
 
-                await interaction.channel.setArchived(true);
+                if (supportbot.Ticket.TicketType === "threads") {
+                  await interaction.channel.setArchived(true);
+                }
+              
+                if (supportbot.Ticket.TicketType === "channels") {
+                  const { getRole, getChannel } = interaction.client;
+                  await interaction.channel.setParent(supportbot.Ticket.TicketArchiveCategory);
 
-            break;
+                  const ticketData = JSON.parse(fs.readFileSync("./Data/TicketData.json", "utf8"));
+                  const ticketInfo = ticketData.tickets.find(t => t.id === interaction.channel.id);
+              
+                  if (ticketInfo) {
+                    const user = interaction.guild.members.cache.get(ticketInfo.user) || ticketInfo.user;
+                    const claimedBy = interaction.guild.members.cache.get(ticketInfo.claimedBy) || ticketInfo.claimedBy;
+                    const Admin = await interaction.guild.roles.fetch(supportbot.Roles.StaffMember.Admin);
+                    const Staff = await interaction.guild.roles.fetch(supportbot.Roles.StaffMember.Staff);
+              
+                    if (user && user.id) {
+                      await interaction.channel.permissionOverwrites.edit(user.id, {
+                        ViewChannel: false,
+                        SendMessages: false,
+                      });
+                    }
+              
+                    if (supportbot.ClaimTickets === true) {
+                      if (claimedBy && claimedBy.id) {
+                        await interaction.channel.permissionOverwrites.edit(claimedBy.id, {
+                          ViewChannel: true,
+                          SendMessages: true,
+                          ReadMessageHistory: true,
+                        });
+                      }  
+                    }
   
-        case "lockticket":
-            const lockembed = new Discord.EmbedBuilder()
-              .setDescription(msgconfig.Ticket.TicketLocked)
-              .setColor(supportbot.Embed.Colours.Success);
-
-            await interaction.channel.send({
-              embeds: [lockembed],
-              components: [],
-              ephemeral: true,s
-            });
-
-            await interaction.channel.setLocked(true);
+                    if (supportbot.ClaimTickets === false) {
+                      if (Staff && Staff.id) {
+                        await interaction.channel.permissionOverwrites.edit(claimedBy.id, {
+                          ViewChannel: true,
+                          SendMessages: true,
+                          ReadMessageHistory: true,
+                        });
+                      }  
+                    }
+              
+                    if (Admin && Admin.id) {
+                      await interaction.channel.permissionOverwrites.edit(Admin.id, {
+                        ViewChannel: true,
+                        SendMessages: true,
+                        ReadMessageHistory: true,
+                      });
+                    }
+              
+                    await interaction.channel.permissionOverwrites.edit(interaction.guild.roles.everyone.id, {
+                      ViewChannel: false,
+                      SendMessages: false,
+                      ReadMessageHistory: false,
+                    });
+                  }
             
-        break;
+                }
 
+                break;
+
+                case "lockticket":
+                  const lockembed = new Discord.EmbedBuilder()
+                    .setDescription(msgconfig.Ticket.TicketLocked)
+                    .setColor(supportbot.Embed.Colours.Success);
+              
+                  const unlockButton = new Discord.ButtonBuilder()
+                    .setCustomId("unlockTicket")
+                    .setLabel(supportbot.Buttons.Tickets.Unlock)
+                    .setEmoji(supportbot.Buttons.Tickets.Unlock_Emoji)
+                    .setStyle(supportbot.Buttons.Tickets.Unlock_Style);
+              
+                  const LockedOptions = new Discord.ActionRowBuilder()
+                    .addComponents(unlockButton);
+              
+                  await interaction.channel.send({
+                    embeds: [lockembed],
+                    components: [LockedOptions],
+                    ephemeral: false, 
+                  });
+              
+
+                  if (supportbot.Ticket.TicketType === "threads") {
+                    await interaction.channel.setLocked(true);  
+                  }
+              
+                  break;
+
+                  case "unlockTicket":
+                    const unlockEmbed = new Discord.EmbedBuilder()
+                      .setDescription(msgconfig.Ticket.TicketUnlocked)
+                      .setColor(supportbot.Embed.Colours.Success);
+                
+                    await interaction.channel.send({
+                      embeds: [unlockEmbed],
+                      ephemeral: false,
+                    });
+                
+                    if (supportbot.Ticket.TicketType === "threads") {
+                      await interaction.channel.setLocked(false);  
+                    }
+                
+                    break;
+              
         case "enableinvites":
           await handleInvites(interaction, true);
           break;
@@ -157,23 +284,101 @@ module.exports = new Event("interactionCreate", async (client, interaction) => {
         case "disableinvites":
           await handleInvites(interaction, false);
           break;
+
+        case "renameticket":
+          const modal = new Discord.ModalBuilder()
+          .setCustomId("renameTicketModal")
+          .setTitle("Rename Channel")
+          .addComponents(
+            new Discord.ActionRowBuilder()
+              .addComponents(
+                new Discord.TextInputBuilder()
+                  .setCustomId("renameTicket")
+                  .setLabel("New Channel Name")
+                  .setStyle(Discord.TextInputStyle.Short)
+                  .setRequired(true)
+                )
+              );
+            await interaction.showModal(modal);
+            break;
+
       }
     }
   }
 
   if (interaction.isButton()) {
     if (interaction.customId === "unarchiveTicket") {
-      await interaction.channel.setArchived(false);
 
+      if (supportbot.Ticket.TicketType === "threads") {
+        await interaction.channel.setArchived(false);
+      }
+    
+      if (supportbot.Ticket.TicketType === "channels") {
+        const { getRole, getChannel } = interaction.client;
+        await interaction.channel.setParent(supportbot.Ticket.TicketChannelsCategory);
+
+        const ticketData = JSON.parse(fs.readFileSync("./Data/TicketData.json", "utf8"));
+        const ticketInfo = ticketData.tickets.find(t => t.id === interaction.channel.id);
+      
+        if (ticketInfo) {
+          const user = interaction.guild.members.cache.get(ticketInfo.user) || ticketInfo.user;
+          const claimedBy = interaction.guild.members.cache.get(ticketInfo.claimedBy) || ticketInfo.claimedBy;
+          const Admin = await interaction.guild.roles.fetch(supportbot.Roles.StaffMember.Admin);
+          const Staff = await interaction.guild.roles.fetch(supportbot.Roles.StaffMember.Staff);
+      
+          if (user && user.id) {
+            await interaction.channel.permissionOverwrites.edit(user.id, {
+              ViewChannel: true,
+              SendMessages: true,
+              ReadMessageHistory: true,
+            });
+          }
+      
+          if (supportbot.ClaimTickets === true) {
+            if (claimedBy && claimedBy.id) {
+              await interaction.channel.permissionOverwrites.edit(claimedBy.id, {
+                ViewChannel: true,
+                SendMessages: true,
+                ReadMessageHistory: true,
+              });
+            }  
+          }
+
+          if (supportbot.ClaimTickets === false) {
+            if (Staff && Staff.id) {
+              await interaction.channel.permissionOverwrites.edit(claimedBy.id, {
+                ViewChannel: true,
+                SendMessages: true,
+                ReadMessageHistory: true,
+              });
+            }  
+          }
+      
+          if (Admin && Admin.id) {
+            await interaction.channel.permissionOverwrites.edit(Admin.id, {
+              ViewChannel: true,
+              SendMessages: true,
+              ReadMessageHistory: true,
+            });
+          }
+      
+          await interaction.channel.permissionOverwrites.edit(interaction.guild.roles.everyone.id, {
+            ViewChannel: false,
+            SendMessages: false,
+            ReadMessageHistory: false,
+          });
+        }
+      }
+    
       const unrcembed = new Discord.EmbedBuilder()
-      .setDescription(msgconfig.Ticket.TicketUnarchived)
-      .setColor(supportbot.Embed.Colours.Success);
-
+        .setDescription(msgconfig.Ticket.TicketUnarchived)
+        .setColor(supportbot.Embed.Colours.Success);
+    
       await interaction.update({
         embeds: [unrcembed],
         components: [],
       });
-
+    
     }
 
     if (interaction.customId === "createticket") {
@@ -276,7 +481,27 @@ module.exports = new Event("interactionCreate", async (client, interaction) => {
         });
       }
 
-      await ticketChannel.members.add(interaction.user.id);
+      if (supportbot.Ticket.TicketType === "threads") {
+        await ticketChannel.members.add(interaction.user.id); 
+
+    } else if (supportbot.Ticket.TicketType === "channels") {
+        await ticketChannel.permissionOverwrites.create(interaction.user.id, {
+            ViewChannel: true,
+            SendMessages: true,
+            ReadMessageHistory: true,
+        }); 
+
+        await ticketChannel.permissionOverwrites.create(Admin, {
+            ViewChannel: true,
+            SendMessages: true,
+            ReadMessageHistory: true,
+        }); 
+
+        await ticketChannel.permissionOverwrites.create(interaction.guild.roles.everyone, {
+          ViewChannel: false,
+        }); 
+    }
+    
       const pingclaimedstaff = await ticketChannel.send(`<@${interaction.user.id}>`);
 
       setTimeout(() => {
@@ -371,6 +596,7 @@ module.exports = new Event("interactionCreate", async (client, interaction) => {
 
       await interaction.update({ embeds: [updatedEmbed] });
     }
+
   }
 
   async function handleInvites(interaction, enable) {

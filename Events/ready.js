@@ -26,7 +26,7 @@ const msgconfig = yaml.load(
 
 const Event = require("../Structures/Event.js");
 
-let chan1 = client.channels.cache.get(panelconfig.Channel);
+let chan1 = client.channels.cache.get(supportbot.Ticket.TicketHome);
 
 module.exports = new Event("ready", async (client, interaction) => {
   const { getRole, getChannel, getCategory } = client;
@@ -94,15 +94,13 @@ module.exports = new Event("ready", async (client, interaction) => {
     supportbot.Roles.ModRoles.Muted
   ];
 
-    supportbot.Departments.forEach((department) => roles.push(department.role));
-
   if (supportbot.Roles.AutoRole.Role) roles.push(supportbot.Roles.AutoRole.Role);
   
    const channels = [
      supportbot.Suggestions.Channel,
      supportbot.Ticket.Log.TicketLog,
      supportbot.Ticket.Log.TranscriptLog,
-     panelconfig.Channel,
+     supportbot.Ticket.TicketHome,
      supportbot.Welcome.Channel,
      supportbot.Leave.Channel,
      supportbot.Translate.Log

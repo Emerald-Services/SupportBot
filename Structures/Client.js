@@ -98,7 +98,11 @@ class Client extends Discord.Client {
     }   
 
     if (cmdconfig.Profile.Enabled === false) {
-      tempCommandFiles = tempCommandFiles.filter(item => item !== "Profile.js");
+      tempCommandFiles = tempCommandFiles.filter(item => item !== "profile.js");
+    }    
+
+    if (cmdconfig.Settings.Enabled === false) {
+      tempCommandFiles = tempCommandFiles.filter(item => item !== "settings.js");
     }    
 
     const commandFiles = tempCommandFiles;

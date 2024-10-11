@@ -17,7 +17,7 @@ Info:
   Title: "About Us"
   Description: "SupportBot is an open-sourced support system for discord. It's completely free to use with high amounts of customization to match your own brand."
   Button: "Visit Site"
-  URL: "https://emeraldsrv.com"
+  URL: "https://docs.emeraldsrv.com"
   Colour: "#f74343"
 
 Welcome:
@@ -77,13 +77,10 @@ Ticket:
   Muted: ":x: You are `Muted` and therefore not allowed to open any tickets"
   InvalidSubject: "No Reason Provided!"
 
-  TranscriptSavedMessage: "📝 **Transcript Saved!**"
-  TicketLockMessage: "❌ **Ticket Locked!**"
-  TicketDeleteMessage: "⚠ **Ticket Deleting!**" 
-
-  ClosingTicket: ":warning: You have requested to close your support ticket."
   ConfirmClose: "Please confirm closing the ticket by clicking the button below."
   CloseTimeout: "Ticket close confirmation timed out."
+
+  RenamedSuccess: "🏷️ Ticket renamed successfully!"
 
   ClaimTickets:
     ClaimTitle: "Incoming Support Request!"
@@ -105,6 +102,10 @@ TicketStats:
 
   Title: "Your Ticket Stats"
 
+TicketLog:
+  Title: "Ticket Log"
+  Colour: "#0cc559"
+
 AddUser:
   NotInTicket_Title: "Ticket Invitation"
   NotInTicket_Description: "This command can only be used within a ticket thread."
@@ -123,6 +124,10 @@ AddUser:
   Accepted_Message: "You have been added to the ticket."
   AddedToTicket_Title: "Added to Ticket"
   AddedToTicket_Description: "You have been added to the ticket %channel_link%."
+
+  # Added Message for inside the ticket, this informs everyone inside the ticket that the user has been added.
+  Added_Title: "User Added"
+  Added_Description: "Successfully added **%username%** to the ticket."
   
   Declined_Title: "Invitation Declined"
   Declined_Message: "You have declined the invitation."
