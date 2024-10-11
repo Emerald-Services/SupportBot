@@ -20,7 +20,7 @@
   "dependencies": {
     "@paypal/checkout-server-sdk": "^1.0.3",
     "@vitalets/google-translate-api": "^8.0.0",
-    "axios": "^1.7.2",
+    "axios": "^1.7.4",
     "chatgpt": "^5.2.5",
     "discord.js": "^14.13.0",
     "js": "^0.1.0",
