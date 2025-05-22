@@ -278,7 +278,7 @@ SelectMenus:
 # -------------------------
 
 MessageDelete:
-  Channel: "MESSAGE_DELETE_CHANNEL_ID""
+  Channel: "MESSAGE_DELETE_CHANNEL_ID"
   Colour: "#d92525"
 
 MessageUpdate:
