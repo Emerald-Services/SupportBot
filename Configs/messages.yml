@@ -268,8 +268,4 @@ Error:
   EntryAlreadyExists: ":warning: Cannot complete the action, as the entry already exists."
   EntryDoesNotExist: ":warning: Cannot complete the action, as the entry does not exist."
   ActionFailed: ":x: **Error!** An error occurred while processing your request. Please try again later."
-
-
-
-
-  
+  InvalidChannel: ":x: **Error!** The suggestions channel has not been set up correctly."
