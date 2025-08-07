@@ -33,20 +33,89 @@ module.exports = new Command({
 
   async run(interaction) {
     const { getChannel } = interaction.client;
+    const mode = supportbot.Suggestions.Mode || "Standard";
 
-    const suggestChannel = await getChannel(
-      supportbot.Suggestions.Channel,
-      interaction.guild
-    );
+    let suggestion = interaction.options.getString("suggestion");
+
+    if (mode === "Forum") {
+      const forumChannel = await interaction.guild.channels.fetch(supportbot.Suggestions.ForumChannel).catch(() => null);
+
+      const NoChannel = new Discord.EmbedBuilder()
+        .setTitle("Missing Forum Channel!")
+        .setDescription(msgconfig.Error.MissingChannel)
+        .setColor(supportbot.Embed.Colours.Error);
+
+      if (!forumChannel || forumChannel.type !== Discord.ChannelType.GuildForum) {
+        return interaction.reply({ embeds: [NoChannel], ephemeral: true });
+      }
+
+      const SuggestForumEmbed = new Discord.EmbedBuilder()
+        .addFields(
+          { name: "Suggestion", value: suggestion, inline: true },
+          { name: "From", value: `<@${interaction.user.id}>` },
+          { name: `${supportbot.Suggestions.UpvoteEmoji} ${supportbot.Suggestions.UpvoteTitle}`, value: "0", inline: true },
+          { name: `${supportbot.Suggestions.DownvoteEmoji} ${supportbot.Suggestions.DownvoteTitle}`, value: "0", inline: true }
+        )
+        .setThumbnail(interaction.user.displayAvatarURL())
+        .setFooter({
+          text: supportbot.Embed.Footer,
+          iconURL: interaction.user.displayAvatarURL(),
+        })
+        .setColor(supportbot.Embed.Colours.General);
+
+      const UpvoteForumButton = new Discord.ButtonBuilder()
+        .setCustomId("upvote")
+        .setEmoji(supportbot.Suggestions.UpvoteEmoji)
+        .setStyle(supportbot.Suggestions.Buttons.Upvote);
+
+      const DownvoteForumButton = new Discord.ButtonBuilder()
+        .setCustomId("downvote")
+        .setEmoji(supportbot.Suggestions.DownvoteEmoji)
+        .setStyle(supportbot.Suggestions.Buttons.Downvote);
+
+      const RemoveVoteForumButton = new Discord.ButtonBuilder()
+        .setCustomId("removevote")
+        .setLabel(supportbot.Suggestions.Buttons.RemoveVote_Title)
+        .setStyle(supportbot.Suggestions.Buttons.RemoveVote);
+
+      const row = new Discord.ActionRowBuilder().addComponents(UpvoteForumButton, DownvoteForumButton, RemoveVoteForumButton);
+
+      const post = await forumChannel.threads.create({
+        name: suggestion.slice(0, 100),
+        message: {
+          embeds: [SuggestForumEmbed],
+          components: [row],
+        },
+        reason: "New suggestion submitted",
+        autoArchiveDuration: 1440,
+      });
+
+      suggestions[post.id] = {
+        suggestion: suggestion,
+        author: interaction.user.id,
+        upvotes: [],
+        downvotes: []
+      };
+
+      fs.writeFileSync("./Data/SuggestionData.json", JSON.stringify(suggestions, null, 2));
+
+      const successEmbed = new Discord.EmbedBuilder()
+        .setTitle(msgconfig.Suggestions.Sent_Title)
+        .setDescription(msgconfig.Suggestions.Sent)
+        .addFields({ name: "Posted in forum:", value: `<#${forumChannel.id}>` })
+        .setColor(supportbot.Embed.Colours.Success);
+
+      return interaction.reply({ embeds: [successEmbed], ephemeral: true });
+    }
+
+    const suggestChannel = await getChannel(supportbot.Suggestions.Channel, interaction.guild);
 
     const NoChannel = new Discord.EmbedBuilder()
       .setTitle("Missing Channel!")
-      .setDescription(msgconfig.Error.InvalidChannel)
+      .setDescription(msgconfig.Error.MissingChannel)
       .setColor(supportbot.Embed.Colours.Error);
 
     if (!suggestChannel) return interaction.reply({ embeds: [NoChannel] });
-
-    let suggestion = interaction.options.getString("suggestion");
 
     const SuggestEmbed = new Discord.EmbedBuilder()
       .addFields(
@@ -75,7 +144,7 @@ module.exports = new Command({
     const RemoveVoteButton = new Discord.ButtonBuilder()
       .setCustomId("removevote")
       .setLabel(supportbot.Suggestions.Buttons.RemoveVote_Title)
-      .setStyle(supportbot.Suggestions.Buttons.RemoveVote); // Red button
+      .setStyle(supportbot.Suggestions.Buttons.RemoveVote);
 
     const row = new Discord.ActionRowBuilder().addComponents(UpvoteButton, DownvoteButton, RemoveVoteButton);
 
@@ -100,16 +169,11 @@ module.exports = new Command({
     }
 
     const Submitted = new Discord.EmbedBuilder()
-      .setTitle(`${msgconfig.Suggestions.Sent_Title}`)
-      .setDescription(`${msgconfig.Suggestions.Sent}`)
-      .addFields(
-        { name: "Sent to:", value: `<#${suggestChannel.id}>` },
-      )
+      .setTitle(msgconfig.Suggestions.Sent_Title)
+      .setDescription(msgconfig.Suggestions.Sent)
+      .addFields({ name: "Sent to:", value: `<#${suggestChannel.id}>` })
       .setColor(supportbot.Embed.Colours.Success);
 
-    await interaction.reply({ 
-      ephemeral: true, 
-      embeds: [Submitted] 
-    });
+    await interaction.reply({ ephemeral: true, embeds: [Submitted] });
   },
 });

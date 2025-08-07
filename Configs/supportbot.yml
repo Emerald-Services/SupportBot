@@ -13,7 +13,7 @@
 #
 #           SupportBot Configuration (supportbot.yml)
 
-SupportBot_Version: "v8.3"
+SupportBot_Version: "v8.4-DEV-1"
 
 # -------------------------
 #   General
@@ -21,7 +21,7 @@ SupportBot_Version: "v8.3"
 
 General:
   Name: "SupportBot"
-  Token: "BOT_TOKEN"
+  Token: "DISCORD_BOT_TOKEN"
 
   Addons:
     Enabled: true
@@ -66,12 +66,12 @@ Embed:
 Roles:
   AutoRole:
     Enabled: true
-    Role: "ROLE_ID"
+    Role: "1202669457751801917"
 
   StaffMember:
-    Staff: "ROLE_ID"
-    Admin: "ROLE_ID"
-    Moderator: "ROLE_ID"
+    Staff: "996420644373811371"
+    Admin: "996419960442208326"
+    Moderator: "996420644373811371"
 
   Mod:
     AllowSupportStaff: false
@@ -84,18 +84,21 @@ Roles:
 
 Welcome: 
   Enabled: true
-  Channel: "JOIN_CHANNEL_ID"
+  Channel: "1295788797065166869"
 
 Leave: 
   Enabled: true
-  Channel: "JOIN_CHANNEL_ID"
+  Channel: "1295788797065166869"
 
 # ----------------------------
 #  Suggestions
 # ----------------------------
 
 Suggestions:
-  Channel: "SUGGESTIONS_CHANNEL_ID"
+  Mode: "Forum" # or Forum
+  ForumChannel: "1402655496477081671"
+  Channel: "1295788900094316706"
+
   UpvoteEmoji: "✅"
   DownvoteEmoji: "❌"
 
@@ -132,7 +135,7 @@ Suggestions:
 
 VoiceTickets:
   Name: "%username%'s VC" 
-  Category: "VOICEE_CATEGORY_ID"
+  Category: "1297539636159315999"
 
 Ticket:
   TicketType: "channels" 
@@ -141,16 +144,16 @@ Ticket:
   # channels - Tickets will be created as channels in the TicketChannelsCategory
   # threads - Tickets will be created as threads through the "TicketHome" channel.
 
-  TicketHome: "TICKETHOME_CHANNEL_ID" 
+  TicketHome: "1295784943204700171" 
 
   # What is TicketHome?
   # - Channel where the Ticket creation panel is sent.
   # - Channel where ticket threads are made. (only if ticket threads is enabled above.)
 
   # For TicketType: channels
-  TicketChannelsCategory: "TICKETCHANNEL_CATEGORY_ID" 
-  TicketChannelsCategory2: "TICKETCHANNEL_BACKUP_CATEGORY_ID" # This will be used if the first category has reached the max channel limit.
-  TicketArchiveCategory: "ARCHIVE_CATEGORY_ID"
+  TicketChannelsCategory: "1295789095070728253" 
+  TicketChannelsCategory2: "1295789210040537088" # This will be used if the first category has reached the max channel limit.
+  TicketArchiveCategory: "1295789286322343946"
   # ---
 
   Channel: "ticket-" # The prefix for ticket channel names
@@ -189,7 +192,7 @@ Ticket:
 
   ClaimTickets:
     Enabled: true
-    Channel: "CLAIM_TICKETS_CHANNEL_ID" 
+    Channel: "1295789389619793961" 
     # Channel where the ticket assignments are sent for staff to claim.
     
     ClaimAcceptTime: 120000
@@ -211,8 +214,8 @@ Ticket:
     # 4 - Red
 
   ReviewSystem:
-    Enabled: true                
-    Channel: "REVIEW_CHANNEL_ID"
+    Enabled: false                
+    Channel: "1304480728884445225"
     UseModal: true
 
   Questions:
@@ -223,9 +226,9 @@ Ticket:
       - "Have you tried resolving the issue yourself?"
 
   Log:
-    TicketDataLog: "TICKET_DATA_LOG_ID"
+    TicketDataLog: "1339271338761650290"
     TickeDataTitle: "Ticket Data"
-    TicketBlacklistLog: "TICKET_BLACKLIST_LOG_ID"
+    TicketBlacklistLog: "1339271338761650290"
 
 # -------------------------
 #  Buttons
@@ -278,12 +281,12 @@ SelectMenus:
 # -------------------------
 
 MessageDelete:
-  Channel: "MESSAGE_DELETE_CHANNEL_ID""
+  Channel: "1202671982932402246"
   Colour: "#d92525"
 
 MessageUpdate:
-  Channel: "MESSAGE_UPDATE_CHANNEL_ID"
+  Channel: "1202671982932402246"
   Colour: "#f2a024"
 
 Translate:
-  TranslateLog: "TRANSLATE_LOG_ID"
+  TranslateLog: "1202671982932402246"
