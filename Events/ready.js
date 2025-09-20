@@ -60,9 +60,7 @@ const logStartup = async (client) => {
   // Links section
   console.log(gradient.summer("┏━━━━━━━━━━━━━━━━━━━ Important Links ━━━━━━━━━━━━━━━━━━━┓"));
   console.log(gradient.summer("┃                                                       ┃"));
-  console.log(gradient.summer("┃  ") + "🌐 Website    : " + gradient.cristal("https://emeraldsrv.com               ┃"));
-  console.log(gradient.summer("┃  ") + "📚 Docs       : " + gradient.cristal("https://docs.emeraldsrv.com          ┃"));
-  console.log(gradient.summer("┃  ") + "💬 Community  : " + gradient.cristal("https://community.emeraldsrv.com     ┃"));
+  console.log(gradient.summer("┃  ") + "📚 Docs       : " + gradient.cristal("https://emerald-services.gitbook.io/ ┃"));
   console.log(gradient.summer("┃  ") + "🤝 Discord    : " + gradient.cristal("https://dsc.gg/emerald-dev           ┃"));
   console.log(gradient.summer("┃                                                       ┃"));
   console.log(gradient.summer("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n"));
@@ -123,7 +121,7 @@ const checkConfigs = async (client) => {
   console.log(gradient.morning("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n"));
 };
 
-module.exports = new Event("ready", async (client) => {
+module.exports = new Event("clientReady", async (client) => {
   setActivity(client, supportbot?.Activity?.Type, supportbot?.Activity?.Status);
   await logStartup(client);
   await checkConfigs(client);

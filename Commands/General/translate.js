@@ -18,7 +18,7 @@ const msgconfig = yaml.load(
   fs.readFileSync("./Configs/messages.yml", "utf8")
 )
 
-const Command = require("../Structures/Command.js");
+const Command = require("../../Structures/Command.js");
 const translate = require("@vitalets/google-translate-api");
 
 module.exports = new Command({
@@ -89,7 +89,7 @@ module.exports = new Command({
                 "Click the title to see which 2 letter language codes are valid."
               ),
           ],
-          ephemeral: true,
+          flags: Discord.MessageFlags.Ephemeral,
         });
       }
     });

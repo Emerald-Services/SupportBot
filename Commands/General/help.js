@@ -5,7 +5,7 @@ const yaml = require("js-yaml");
 const supportbot = yaml.load(fs.readFileSync("./Configs/supportbot.yml", "utf8"));
 const cmdconfig = yaml.load(fs.readFileSync("./Configs/commands.yml", "utf8"));
 
-const Command = require("../Structures/Command.js");
+const Command = require("../../Structures/Command.js");
 
 module.exports = new Command({
   name: cmdconfig.Help.Command,
@@ -55,7 +55,7 @@ module.exports = new Command({
     });
 
     interaction.reply({
-      ephemeral: true,
+      flags: Discord.MessageFlags.Ephemeral,
       embeds: [HelpEmbed1],
     });
   },

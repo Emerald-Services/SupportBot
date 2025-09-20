@@ -21,7 +21,7 @@ SupportBot_Version: "v8.4-DEV-1"
 
 General:
   Name: "SupportBot"
-  Token: "DISCORD_BOT_TOKEN"
+  Token: "BOT_TOKEN"
 
   Addons:
     Enabled: true
@@ -95,7 +95,7 @@ Leave:
 # ----------------------------
 
 Suggestions:
-  Mode: "Forum" # or Forum
+  Mode: "Channel" # Channel or Forum
   ForumChannel: "1402655496477081671"
   Channel: "1295788900094316706"
 
@@ -129,13 +129,19 @@ Suggestions:
     # 3 - Green
     # 4 - Red
 
+  Tags:
+   Created: "1418937323118137435"
+   Considering: "1418937237156139130"
+   Solved: "1418937168029679697"
+   Denied: "1418937185469464647"
+
 # -------------------------
 #  Tickets
 # -------------------------
 
 VoiceTickets:
   Name: "%username%'s VC" 
-  Category: "1297539636159315999"
+  Category: "1419062819688550460"
 
 Ticket:
   TicketType: "channels" 
@@ -151,9 +157,9 @@ Ticket:
   # - Channel where ticket threads are made. (only if ticket threads is enabled above.)
 
   # For TicketType: channels
-  TicketChannelsCategory: "1295789095070728253" 
-  TicketChannelsCategory2: "1295789210040537088" # This will be used if the first category has reached the max channel limit.
-  TicketArchiveCategory: "1295789286322343946"
+  TicketChannelsCategory: "1418988408193155112" 
+  TicketChannelsCategory2: "1418988456167870615" # This will be used if the first category has reached the max channel limit.
+  TicketArchiveCategory: "1418988434600759348"
   # ---
 
   Channel: "ticket-" # The prefix for ticket channel names

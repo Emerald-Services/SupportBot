@@ -2,11 +2,13 @@ const fs = require("fs");
 const Discord = require("discord.js");
 const yaml = require("js-yaml");
 
+const db = require("../../Structures/Database.js");
+
 const supportbot = yaml.load(fs.readFileSync("./Configs/supportbot.yml", "utf8"));
 const cmdconfig = yaml.load(fs.readFileSync("./Configs/commands.yml", "utf8"));
 const msgconfig = yaml.load(fs.readFileSync("./Configs/messages.yml", "utf8"));
 
-const Command = require("../Structures/Command.js");
+const Command = require("../../Structures/Command.js");
 
 module.exports = new Command({
   name: cmdconfig.CloseTicket.Command,
@@ -57,18 +59,9 @@ module.exports = new Command({
 
     await interaction.deferReply();
 
-    let tickets;
-    try {
-      tickets = JSON.parse(fs.readFileSync("./Data/TicketData.json", "utf8"));
-    } catch (err) {
-      console.error("Error reading ticket data file:", err);
-      return interaction.followUp({ content: "There was an error loading ticket data." });
-    }
-
-    let TicketData = tickets.tickets.findIndex((t) => t.id === interaction.channel.id);
-    let ticket = tickets.tickets[TicketData];
-
-    if (TicketData === -1) {
+    const ticket = db.getTicket(interaction.channel.id);
+    
+    if (!ticket) {
       const Exists = new Discord.EmbedBuilder()
         .setTitle("No Ticket Found!")
         .setDescription(msgconfig.Error.NoValidTicket)
@@ -120,9 +113,9 @@ module.exports = new Command({
         await interaction.followUp({ embeds: [reviewEmbed] });
       }
 
-      await handleCloseTicket(interaction, reason, ticket, TicketData);
+      await handleCloseTicket(interaction, reason, ticket);
     } else {
-      await handleCloseTicket(interaction, reason, ticket, TicketData);
+      await handleCloseTicket(interaction, reason, ticket);
     }
   },
 });
@@ -150,7 +143,7 @@ async function collectReviewRating(interaction, ticketUserId) {
     content: `<@${ticketUserId}>`,
     embeds: [reviewPrompt],
     components: [stars],
-    ephemeral: true,
+    flags: Discord.MessageFlags.Ephemeral,
   });
 
   const starRating = await interaction.channel.awaitMessageComponent({
@@ -170,7 +163,7 @@ async function collectReviewComment(interaction, ticketUserId) {
   await interaction.followUp({
     content: `<@${ticketUserId}>`,
     embeds: [commentPrompt],
-    ephemeral: true,
+    flags: Discord.MessageFlags.Ephemeral,
   });
 
   const filter = (response) => response.author.id === ticketUserId;
@@ -179,18 +172,10 @@ async function collectReviewComment(interaction, ticketUserId) {
   const comment = commentCollection.first()?.content;
   return comment && comment.toLowerCase() !== "no" ? comment : "No Comment Provided";
 }
-async function handleCloseTicket(interaction, reason, ticket, TicketData) {
+async function handleCloseTicket(interaction, reason, ticket) {
   const { getChannel } = interaction.client;
 
-  let tickets;
-  try {
-    tickets = JSON.parse(fs.readFileSync("./Data/TicketData.json", "utf8"));
-  } catch (err) {
-    console.error("Error reading ticket data:", err);
-    return interaction.followUp("Failed to load ticket data.");
-  }
-
-  let tUser = interaction.client.users.cache.get(ticket.user);
+  let tUser = interaction.client.users.cache.get(ticket.user_id);
   let transcriptChannel = await getChannel(supportbot.Ticket.Log.TicketDataLog, interaction.guild);
 
   if (!transcriptChannel) {
@@ -199,7 +184,6 @@ async function handleCloseTicket(interaction, reason, ticket, TicketData) {
   }
 
   try {
-    // Fetch all messages from the channel
     let allMessages = [];
     let lastId = null;
     
@@ -218,10 +202,8 @@ async function handleCloseTicket(interaction, reason, ticket, TicketData) {
       if (messages.size < 100) break;
     }
 
-    // Sort messages by timestamp
     allMessages.sort((a, b) => a.createdTimestamp - b.createdTimestamp);
 
-    // Create transcript data
     const transcriptData = allMessages.map(msg => ({
       content: msg.content || "No content",
       username: msg.author.username,
@@ -239,10 +221,7 @@ async function handleCloseTicket(interaction, reason, ticket, TicketData) {
       }))
     }));
 
-    // Update ticket status
-    tickets.tickets[TicketData].open = false;
-    tickets.tickets[TicketData].messages = transcriptData;
-    fs.writeFileSync("./Data/TicketData.json", JSON.stringify(tickets, null, 4));
+    db.updateTicketStatus(interaction.channel.id, "closed");
 
     const transcriptEmbed = new Discord.EmbedBuilder()
       .setTitle(msgconfig.TicketLog.Title)
@@ -250,7 +229,7 @@ async function handleCloseTicket(interaction, reason, ticket, TicketData) {
       .setFooter({ text: supportbot.Embed.Footer, iconURL: interaction.user.displayAvatarURL() })
       .setDescription(
         `> **Ticket:** ${interaction.channel.name} (\`${interaction.channel.id}\`)\n` +
-        `> **User:** ${tUser?.tag || "Unknown User"} (\`${tUser?.id || ticket.user}\`)\n` +
+        `> **User:** ${tUser?.tag || "Unknown User"} (\`${tUser?.id || ticket.user_id}\`)` +
         `> **Closed by:** <@${interaction.user.id}>\n` +
         `> **Message Count:** ${transcriptData.length}`
       )
@@ -264,6 +243,12 @@ async function handleCloseTicket(interaction, reason, ticket, TicketData) {
       },
       reason
     );
+    
+    const transcriptDir = "./Data/Transcripts";
+    
+    if (!fs.existsSync(transcriptDir)) {
+      fs.mkdirSync(transcriptDir, { recursive: true });
+    }
 
     const fileName = `${interaction.channel.id}-transcript.html`;
     fs.writeFileSync(`./Data/Transcripts/${fileName}`, html);
@@ -288,19 +273,14 @@ async function handleCloseTicket(interaction, reason, ticket, TicketData) {
 }
 
 function parseMarkdown(content) {
-  // Convert **bold** text to <strong> tags
   content = content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
   
-  // Convert _italic_ text to <em> tags
   content = content.replace(/_(.*?)_/g, '<em>$1</em>');
   
-  // Convert inline `code` to <code> tags
   content = content.replace(/`(.*?)`/g, '<code>$1</code>');
   
-  // Convert [text](link) to <a> tags
   content = content.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank">$1</a>');
   
-  // Convert multiline code blocks ```code``` to <pre><code> tags
   content = content.replace(/```(.*?)```/gs, '<pre><code>$1</code></pre>');
   
   return content;
