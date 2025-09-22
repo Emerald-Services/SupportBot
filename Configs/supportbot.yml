@@ -8,12 +8,12 @@
 #           Installed with MIT License
 #
 #           Discord Support: https://discord.gg/emeraldsrv
-#           Official Documentation: https://docs.emeraldsrv.com
-#           Addons Marketplace: https://community.emeraldsrv.com
+#           Official Documentation: https://docs.emeraldsrv.dev
+#           Addons Marketplace: https://community.emeraldsrv.dev
 #
 #           SupportBot Configuration (supportbot.yml)
 
-SupportBot_Version: "v8.4-DEV-1"
+SupportBot_Version: "v8.4-DEV-2"
 
 # -------------------------
 #   General
@@ -21,7 +21,7 @@ SupportBot_Version: "v8.4-DEV-1"
 
 General:
   Name: "SupportBot"
-  Token: "BOT_TOKEN"
+  Token: ""
 
   Addons:
     Enabled: true
@@ -144,7 +144,7 @@ VoiceTickets:
   Category: "1419062819688550460"
 
 Ticket:
-  TicketType: "channels" 
+  TicketType: "threads" 
 
   # Available TicketTypes:
   # channels - Tickets will be created as channels in the TicketChannelsCategory

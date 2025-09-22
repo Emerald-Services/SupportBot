@@ -6,7 +6,6 @@ const path = require("path");
 
 const db = new Database(path.join(__dirname, "../Data/supportbot.db"));
 
-// ----- Core tables -----
 db.prepare(`
   CREATE TABLE IF NOT EXISTS suggestions (
     thread_id TEXT PRIMARY KEY,
@@ -62,7 +61,6 @@ db.prepare(`
   )
 `).run();
 
-/* ---- NEW table for global bot settings ---- */
 db.prepare(`
   CREATE TABLE IF NOT EXISTS settings (
     id   INTEGER PRIMARY KEY,
@@ -71,7 +69,6 @@ db.prepare(`
 `).run();
 
 module.exports = {
-  // ----- Suggestions -----
   addSuggestion(threadId, authorId, text) {
     db.prepare(`
       INSERT INTO suggestions (thread_id, author_id, text)
@@ -122,7 +119,6 @@ module.exports = {
       .run(value ? 1 : 0, userId);
   },
 
-  // ----- Tickets -----
   addTicket(ticket) {
     const now = Date.now();
     db.prepare(`
@@ -184,7 +180,6 @@ module.exports = {
     `).get();
   },
 
-  // ----- Ticket participants -----
   addUserToTicket(ticketId, userId) {
     db.prepare(`
       INSERT INTO ticket_users (ticket_id, user_id)
@@ -205,7 +200,6 @@ module.exports = {
     `).all(ticketId).map(r => r.user_id);
   },
 
-  // ----- Global Settings -----
   getSettings() {
     const row = db.prepare(`SELECT data FROM settings WHERE id=1`).get();
     if (!row) return {};

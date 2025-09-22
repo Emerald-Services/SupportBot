@@ -8,6 +8,7 @@ const { Command, Event } = require('./Addon.js');
 const supportbot = yaml.load(fs.readFileSync("./Configs/supportbot.yml", "utf8"));
 const cmdconfig = yaml.load(fs.readFileSync("./Configs/commands.yml", "utf8"));
 
+
 function walk(dir, ext = ".js", fileList = []) {
   const files = fs.readdirSync(dir);
   for (const file of files) {
@@ -179,7 +180,7 @@ class Client extends Discord.Client {
       console.log(`\u001b[33m`, "▬▬▬▬▬▬▬ Addons ▬▬▬▬▬▬▬");
     }
 
-    this.once("ready", async () => {
+    this.once("clientReady", async () => {
       await this.guilds.cache.first()?.commands.set(this.commands);
       console.log(
         "\u001b[32m",

@@ -288,119 +288,154 @@ function parseMarkdown(content) {
 
 function createTranscriptHTML(ticket, reason) {
   return `
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
-        <style>
-          body {
-            background-color: #1a1a1a;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: white;
-            margin: 0;
-            padding: 20px;
-          }
-          .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            background-color: rgba(0, 0, 0, 0.3);
-            border-radius: 15px;
-            padding: 20px;
-          }
-          .message {
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 15px;
-          }
-          .message-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-          }
-          .avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            margin-right: 15px;
-          }
-          .username {
-            font-weight: bold;
-            color: #4CAF50;
-          }
-          .timestamp {
-            margin-left: auto;
-            color: #888;
-            font-size: 0.9em;
-          }
-          .content {
-            word-break: break-word;
-          }
-          .embed {
-            border-left: 4px solid #4CAF50;
-            padding-left: 10px;
-            margin: 10px 0;
-            background-color: rgba(0, 0, 0, 0.2);
-          }
-          .attachment {
-            display: inline-block;
-            background-color: rgba(76, 175, 80, 0.1);
-            border: 1px solid #4CAF50;
-            border-radius: 5px;
-            padding: 5px 10px;
-            margin: 5px 0;
-            color: #4CAF50;
-            text-decoration: none;
-          }
-        </style>
-      </head>
-      <body>
-        <div class="container">
-          <div class="mb-6">
-            <h1 class="text-3xl font-bold mb-4">Ticket Transcript</h1>
-            <p><strong>Channel:</strong> ${ticket.name}</p>
-            <p><strong>Ticket ID:</strong> ${ticket.id}</p>
-            <p><strong>Message Count:</strong> ${ticket.messages.length}</p>
-            <p><strong>Close Reason:</strong> ${reason}</p>
-          </div>
-          
-          <div class="messages">
-            ${ticket.messages.map(msg => `
-              <div class="message">
-                <div class="message-header">
-                  <img src="${msg.avatar}" alt="Avatar" class="avatar">
-                  <span class="username">${msg.username}</span>
-                  <span class="timestamp">${new Date(msg.timestamp).toLocaleString()}</span>
-                </div>
-                <div class="content">
-                  ${parseMarkdown(msg.content)}
-                  
-                  ${msg.embeds.map(embed => `
-                    <div class="embed">
-                      ${embed.title ? `<div class="font-bold">${embed.title}</div>` : ''}
-                      ${embed.description ? `<div>${embed.description}</div>` : ''}
-                      ${embed.fields.map(field => `
-                        <div class="mt-2">
-                          <strong>${field.name}:</strong>
-                          <div>${field.value}</div>
-                        </div>
-                      `).join('')}
-                    </div>
-                  `).join('')}
-                  
-                  ${msg.attachments.map(att => `
-                    <a href="${att.url}" class="attachment" target="_blank">
-                      📎 ${att.name}
-                    </a>
-                  `).join('')}
-                </div>
-              </div>
-            `).join('')}
-          </div>
+  <!DOCTYPE html>
+  <html>
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+      <style>
+        body {
+          background: url('file-EWLgzFEYsq16ANVg6ENJrP.png') no-repeat center center fixed;
+          background-size: cover;
+          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+          color: #ffffff;
+          margin: 0;
+          padding: 20px;
+        }
+
+        .container {
+          max-width: 1000px;
+          margin: 0 auto;
+          padding: 20px;
+          backdrop-filter: blur(10px);
+          background: rgba(0,0,0,0.4);
+          border-radius: 20px;
+          box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+        }
+
+        h1 {
+          font-size: 2.5rem;
+          font-weight: bold;
+          text-align: center;
+          margin-bottom: 20px;
+        }
+
+        .ticket-info p {
+          margin: 5px 0;
+        }
+
+        .message {
+          backdrop-filter: blur(15px);
+          background: rgba(255, 255, 255, 0.05);
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          border-radius: 15px;
+          padding: 15px;
+          margin-bottom: 15px;
+          transition: transform 0.2s;
+        }
+
+        .message:hover {
+          transform: scale(1.02);
+        }
+
+        .message-header {
+          display: flex;
+          align-items: center;
+          margin-bottom: 10px;
+        }
+
+        .avatar {
+          width: 50px;
+          height: 50px;
+          border-radius: 50%;
+          margin-right: 15px;
+          border: 2px solid rgba(255,255,255,0.3);
+        }
+
+        .username {
+          font-weight: bold;
+          color: #00ffe4;
+          font-size: 1.1rem;
+        }
+
+        .timestamp {
+          margin-left: auto;
+          color: #aaa;
+          font-size: 0.85rem;
+        }
+
+        .content {
+          word-break: break-word;
+          font-size: 1rem;
+        }
+
+        .embed {
+          border-left: 4px solid #00ffe4;
+          padding-left: 10px;
+          margin: 10px 0;
+          background: rgba(255, 255, 255, 0.05);
+          border-radius: 10px;
+        }
+
+        .attachment {
+          display: inline-block;
+          background-color: rgba(0, 255, 228, 0.1);
+          border: 1px solid #00ffe4;
+          border-radius: 5px;
+          padding: 5px 10px;
+          margin: 5px 0;
+          color: #00ffe4;
+          text-decoration: none;
+        }
+
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <h1>Ticket Transcript</h1>
+        <div class="ticket-info mb-6">
+          <p><strong>Channel:</strong> ${ticket.name}</p>
+          <p><strong>Ticket ID:</strong> ${ticket.id}</p>
+          <p><strong>Message Count:</strong> ${ticket.messages.length}</p>
+          <p><strong>Close Reason:</strong> ${reason}</p>
         </div>
-      </body>
-    </html>
+
+        <div class="messages">
+          ${ticket.messages.map(msg => `
+            <div class="message">
+              <div class="message-header">
+                <img src="${msg.avatar}" alt="Avatar" class="avatar">
+                <span class="username">${msg.username}</span>
+                <span class="timestamp">${new Date(msg.timestamp).toLocaleString()}</span>
+              </div>
+              <div class="content">
+                ${parseMarkdown(msg.content)}
+
+                ${msg.embeds.map(embed => `
+                  <div class="embed">
+                    ${embed.title ? `<div class="font-bold">${embed.title}</div>` : ''}
+                    ${embed.description ? `<div>${embed.description}</div>` : ''}
+                    ${embed.fields.map(field => `
+                      <div class="mt-2">
+                        <strong>${field.name}:</strong>
+                        <div>${field.value}</div>
+                      </div>
+                    `).join('')}
+                  </div>
+                `).join('')}
+
+                ${msg.attachments.map(att => `
+                  <a href="${att.url}" class="attachment" target="_blank">
+                    📎 ${att.name}
+                  </a>
+                `).join('')}
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </body>
+  </html>
   `;
 }

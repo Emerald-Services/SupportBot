@@ -25,7 +25,7 @@ module.exports = new Event("interactionCreate", async (client, interaction) => {
     if (!command)
       return interaction.reply({
         embeds: [NotValid],
-        ephemeral: true,
+        flags: Discord.MessageFlags.Ephemeral,
       });
 
     const permission = interaction.member.permissions.has(command.permissions);
@@ -39,7 +39,7 @@ module.exports = new Event("interactionCreate", async (client, interaction) => {
     if (!permission)
       return interaction.reply({
         embeds: [ValidPerms],
-        ephemeral: true,
+        flags: Discord.MessageFlags.Ephemeral,
       });
 
     try {
@@ -66,7 +66,7 @@ module.exports = new Event("interactionCreate", async (client, interaction) => {
       console.error("Error executing command:", error);
       await interaction.reply({
         content: "An error occurred while executing the command.",
-        ephemeral: true,
+        flags: Discord.MessageFlags.Ephemeral,
       });
     }
   }
@@ -97,7 +97,7 @@ module.exports = new Event("interactionCreate", async (client, interaction) => {
     if (!ticketChannel) {
         return interaction.reply({
             content: "Ticket channel not found.",
-            ephemeral: true,
+            flags: Discord.MessageFlags.Ephemeral,
         });
     }
     try {
@@ -107,16 +107,17 @@ module.exports = new Event("interactionCreate", async (client, interaction) => {
             .setColor(supportbot.Embed.Colours.Success);
         return interaction.reply({
             embeds: [renamedsuccess],
-            ephemeral: true,
+            flags: Discord.MessageFlags.Ephemeral,
         });
     } catch (error) {
         console.error("Error renaming the ticket:", error);
         return interaction.reply({
             content: "There was an error renaming the ticket.",
-            ephemeral: true,
+            flags: Discord.MessageFlags.Ephemeral,
         });
     }
 }
+
   if (interaction.isStringSelectMenu()) {
     if (interaction.customId === "ticketcontrolpanel") {
       const selectedOption = interaction.values[0];
@@ -151,7 +152,7 @@ module.exports = new Event("interactionCreate", async (client, interaction) => {
             if (!VCcategory) {
               return interaction.reply({
                 content: "⚠️ The Support VC category does not exist!",
-                ephemeral: true,
+                flags: Discord.MessageFlags.Ephemeral,
               });
             }
 
@@ -343,7 +344,7 @@ module.exports = new Event("interactionCreate", async (client, interaction) => {
             .setColor(supportbot.Embed.Colours.Success);
           await interaction.reply({
             embeds: [successEmbed],
-            ephemeral: true,
+            flags: Discord.MessageFlags.Ephemeral,
           });
         } else {
           const errorEmbed = new Discord.EmbedBuilder()
@@ -351,7 +352,7 @@ module.exports = new Event("interactionCreate", async (client, interaction) => {
             .setColor(supportbot.Embed.Colours.Error);
           await interaction.reply({
             embeds: [errorEmbed],
-            ephemeral: true,
+            flags: Discord.MessageFlags.Ephemeral,
           });
         }
       } catch (error) {
@@ -361,7 +362,7 @@ module.exports = new Event("interactionCreate", async (client, interaction) => {
           .setColor(supportbot.Embed.Colours.Error);
         await interaction.reply({
           embeds: [errorEmbed],
-          ephemeral: true,
+          flags: Discord.MessageFlags.Ephemeral,
         });
       }
     } else {
@@ -370,7 +371,7 @@ module.exports = new Event("interactionCreate", async (client, interaction) => {
         .setColor(supportbot.Embed.Colours.Warn);
       await interaction.reply({
         embeds: [errorEmbed],
-        ephemeral: true,
+        flags: Discord.MessageFlags.Ephemeral,
       });
     }
   }
@@ -462,7 +463,7 @@ module.exports = new Event("interactionCreate", async (client, interaction) => {
           console.error("Error executing the ticket command:", error);
           await interaction.reply({
             content: "An error occurred while creating the ticket.",
-            ephemeral: true,
+            flags: Discord.MessageFlags.Ephemeral,
           });
         }
       }
@@ -500,7 +501,7 @@ module.exports = new Event("interactionCreate", async (client, interaction) => {
       if (!ticketChannel) {
         return interaction.reply({
           content: "Ticket channel not found.",
-          ephemeral: true,
+          flags: Discord.MessageFlags.Ephemeral,
         });
       }
 
@@ -675,7 +676,7 @@ module.exports = new Event("interactionCreate", async (client, interaction) => {
 
     await interaction.reply({
       embeds: [embed],
-      ephemeral: true,
+      flags: Discord.MessageFlags.Ephemeral,
     });
   }
 
@@ -725,7 +726,7 @@ module.exports = new Event("interactionCreate", async (client, interaction) => {
       console.error("Failed to update profile data: ", error);
       await interaction.reply({
         content: "There was an error while updating your profile. Please try again later.",
-        ephemeral: true,
+        flags: Discord.MessageFlags.Ephemeral,
       });
     }
   }

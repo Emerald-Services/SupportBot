@@ -22,27 +22,74 @@ Info:
   Description: "SupportBot is an open-sourced support system for discord. It's completely free to use with high amounts of customization to match your own brand."
   Button: "Visit Site"
   URL: "https://docs.emeraldsrv.com"
-  Colour: "#f74343"
+  Colour: "#45b463"
 
 # ----------------------------
 # Welcome/Leave Messages
 # ----------------------------
 
 Welcome:
-  Embed:
-    Colour: "#f74343"
-    Title: "Welcome to ServerName"
-    Message: ":smile: %joined_user% has just landed!"
-    Thumbnail: "BOT"
+  Enabled: true
+  LayoutStyle: "modern" 
+  # Available Layout Styles
+  #  "modern" - For the new Discord v2 components
+  #  "classic" - Use the classic Discord look.
 
-    ImageEnabled: false
-    ImageURL: "https://animagelink.png/"
+  Embed:
+    Colour: "#45b463"
+    Title: "Welcome to ServerName"
+    Message: ":smile: %joined_user% has just landed!\n\n🔨 **Server Rules:** <#1202667199853232129>"
+    Icon:
+      Mode: "USER" # USER | BOT | CUSTOM
+      CustomURL: "https://example.com/custom.png"
+    Image:
+      Enabled: false
+      URL: "https://example.com/banner.png"
+    Buttons:
+      Enabled: true
+      List:
+        - label: "BuiltByBit"
+          style: "Link"
+          url: "https://your-website.com/how-to-play-java"
+          emoji: "⌨️"
+        - label: "GitHub"
+          style: "Link"
+          url: "https://your-website.com/how-to-play-bedrock"
+          emoji: "👾"
+        - label: "Tebex"
+          style: "Link"
+          url: "https://your-store.tebex.io/"
+          emoji: "🛒"
+
+  Modern:
+    Colour: "#45b463"
+    Title: "**Welcome to ServerName**"
+    Body: ":smile: %joined_user% has just landed!\n\n🔨 **Server Rules:** <#1202667199853232129>"
+    Icon:
+      Mode: "BOT" # USER | BOT | CUSTOM
+      CustomURL: "https://example.com/custom-icon.png"
+    Image:
+      Enabled: false
+      URL: "https://example.com/banner.png"
+    Buttons:
+      - label: "BuiltByBit"
+        style: "Link"
+        url: "https://your-website.com/how-to-play-java"
+        emoji: "⌨️"
+      - label: "GitHub"
+        style: "Link"
+        url: "https://your-website.com/how-to-play-bedrock"
+        emoji: "👾"
+      - label: "Tebex"
+        style: "Link"
+        url: "https://your-store.tebex.io/"
+        emoji: "🛒"
 
 Leave:
   Embed:
     Colour: "#f74343"
     Title: "Goodbye!"
-    Message: ":slight_frown: %joined_user% has recently dropped out!"
+    Message: ":slight_frown: %left_user% has recently dropped out!"
     Thumbnail: "BOT"
 
     ImageEnabled: false
