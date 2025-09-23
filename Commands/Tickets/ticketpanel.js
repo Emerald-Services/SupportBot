@@ -5,6 +5,12 @@ const {
   ActionRowBuilder,
   ButtonBuilder,
   MessageFlags,
+  ContainerBuilder,
+  TextDisplayBuilder,
+  MediaGalleryBuilder,
+  SeparatorBuilder,
+  ThumbnailBuilder,
+  SectionBuilder
 } = require("discord.js");
 const yaml = require("js-yaml");
 
@@ -52,6 +58,7 @@ module.exports = new Command({
     }
 
     const panelRow = db.getTicketPanel();
+
     if (panelRow) {
       try {
         await channel.messages.fetch(panelRow.message_id);
@@ -62,24 +69,35 @@ module.exports = new Command({
       } catch (err) {}
     }
 
-    let embed = new EmbedBuilder()
-      .setTitle(panelconfig.PanelTitle)
-      .setColor(panelconfig.PanelColour)
-      .setFooter({
-        text: supportbot.Embed.Footer,
-        iconURL: interaction.user.displayAvatarURL(),
-      });
+    const panelContainer = new ContainerBuilder()
 
-    if (panelconfig.TicketPanel_Description) {
-      embed.setDescription(panelconfig.PanelMessage);
+    if (panelconfig.Style.Color) {
+      panelContainer.setAccentColor(
+        parseInt(panelconfig.Style.Color.replace("#", ""), 16)
+      )
     }
 
-    if (panelconfig.TicketPanel_Thumbnail) {
-      embed.setThumbnail(panelconfig.PanelThumbnail);
+    const panelTitle = new TextDisplayBuilder().setContent(
+      panelconfig.Style.Title,
+    );
+
+    const topSeperator = new SeparatorBuilder()
+      .setDivider(true)
+
+    if (panelconfig.Settings.TopTitle) {
+      panelContainer.addTextDisplayComponents(panelTitle)
     }
 
-    if (panelconfig.TicketPanel_Image) {
-      embed.setImage(panelconfig.PanelImage);
+    if (panelconfig.Settings.TopDivider) {
+      panelContainer.addSeparatorComponents(topSeperator)
+    }
+
+    const panelDesc = new TextDisplayBuilder().setContent(
+      panelconfig.Style.Description,
+    );
+
+    if (panelconfig.Style.Layout === "3") {
+      panelContainer.addTextDisplayComponents(panelDesc)
     }
 
     const createTicketButton = new ButtonBuilder()
@@ -88,12 +106,62 @@ module.exports = new Command({
       .setEmoji(panelconfig.Button.Emoji)
       .setStyle(panelconfig.Button.Color);
 
-    let row = new ActionRowBuilder().addComponents(createTicketButton);
+    const middleSection = new SectionBuilder()
+      .addTextDisplayComponents(panelDesc)
+      .setButtonAccessory(createTicketButton)
+
+    if (panelconfig.Style.Layout === "1") {
+      panelContainer.addSectionComponents(middleSection)
+    }
+
+    const panelImage = new MediaGalleryBuilder()
+      .addItems([
+        {
+          media: {
+            url: panelconfig.Style.Image,
+          },
+        }
+      ])
+
+    if (panelconfig.Settings.Image) {
+      panelContainer.addMediaGalleryComponents(panelImage)
+    }
+
+    // START OF STYLE 2 - TEXT UNDER THE IMAGE
+
+    const bottomSeperator = new SeparatorBuilder()
+      .setDivider(true)
+
+    if (panelconfig.Settings.BottomTitle) {
+      panelContainer.addTextDisplayComponents(panelTitle)
+    }
+
+    if (panelconfig.Settings.BottomDivider) {
+      panelContainer.addSeparatorComponents(bottomSeperator)
+    }
+
+    if (panelconfig.Style.Layout === "2") {
+      panelContainer.addSectionComponents(middleSection)
+    }
+
+    // START OF STYLE 3
+
+    const buttonRow = new ActionRowBuilder();
+      const ticketButtonRow = new ButtonBuilder()
+        .setCustomId("createticket")
+        .setLabel(panelconfig.Button.Text)
+        .setEmoji(panelconfig.Button.Emoji)
+        .setStyle(panelconfig.Button.Color);
+      buttonRow.addComponents(ticketButtonRow)
+
+    if (panelconfig.Style.Layout === "3") {
+      panelContainer.addActionRowComponents(buttonRow)
+    }
 
     try {
       const message = await channel.send({
-        embeds: [embed],
-        components: [row],
+        flags: MessageFlags.IsComponentsV2,
+        components: [panelContainer],
       });
 
       db.saveTicketPanel(message.id, channel.id);

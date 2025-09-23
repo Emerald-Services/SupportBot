@@ -35,7 +35,8 @@ function getWelcomeThumbnail(client, member, iconCfg) {
 }
 
 function buildModernComponents(client, member) {
-    const container = new ContainerBuilder().setAccentColor(
+    const container = new ContainerBuilder()
+    .setAccentColor(
         parseInt(msgconfig.Welcome.Modern.Colour.replace("#", ""), 16)
     );
 
@@ -79,6 +80,7 @@ function buildModernComponents(client, member) {
         });
 
         container.addActionRowComponents(row);
+        
     }
 
     return [container];

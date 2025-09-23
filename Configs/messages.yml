@@ -117,8 +117,18 @@ Ticket:
 #  <@%ticketauthor%> - Tags the user who created the ticket.
 #  <#%ticketid%> - Mentions the ticket channel.
 
-  TicketAuthorTitle: "%ticketusername%'s Ticket"
-  TicketTitle: "Support Ticket"
+  # You can use Markdown formatting in this message:
+  # # Heading 1
+  # ## Heading 2
+  # ### Heading 3
+  # **Bold** text
+  # *Italic* text
+  # -# Small text
+  # - Bullet points
+  # Links: [text](https://example.com)
+
+  TicketAuthorTitle: "-# %ticketusername%'s Ticket"
+  TicketTitle: "## Support Ticket"
   TicketMessage: "Hello <@%ticketauthor%>, Thank you for creating a support ticket\nPlease wait patiently whilst a member of our team reaches out to you."
   TicketThumbnail: "https://images.emojiterra.com/google/android-pie/512px/1f39f.png"
   TicketCreatedAlert: ":ticket: Ticked Created: <#%ticketid%>"

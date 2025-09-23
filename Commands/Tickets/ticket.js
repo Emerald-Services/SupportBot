@@ -11,6 +11,9 @@ const {
   ButtonStyle,
   MessageCollector,
   MessageFlags,
+  SeparatorBuilder,
+  ContainerBuilder,
+  TextDisplayBuilder
 } = require("discord.js");
 const yaml = require("js-yaml");
 
@@ -455,31 +458,56 @@ module.exports = new Command({
         .setColor(supportbot.Embed.Colours.General);
       await interaction.reply({ embeds: [CreatedTicket], flags: MessageFlags.Ephemeral  });
 
-      const TicketMessage = new EmbedBuilder()
-        .setAuthor({
-          name: msgconfig.Ticket.TicketAuthorTitle.replace(/%ticketauthor%/g, interaction.user.id)
-            .replace(/%ticketid%/g, ticketChannel.id)
-            .replace(/%ticketusername%/g, interaction.user.username),
-          iconURL: interaction.user.displayAvatarURL(),
-        })
-        .setTitle(
-          msgconfig.Ticket.TicketTitle.replace(/%ticketauthor%/g, interaction.user.id)
-            .replace(/%ticketid%/g, ticketChannel.id)
-            .replace(/%ticketusername%/g, interaction.user.username)
+      // TICKET MESSAGE - UPDATED WITH COMPONENTS V2
+      
+      const ticketMsgContainer = new ContainerBuilder()
+        
+      if (supportbot.Embed.Colours.General) {
+        ticketMsgContainer.setAccentColor(
+          parseInt(supportbot.Embed.Colours.General.replace("#", ""), 16)
         )
-        .setDescription(
-          msgconfig.Ticket.TicketMessage.replace(/%ticketauthor%/g, interaction.user.id)
-            .replace(/%ticketid%/g, ticketChannel.id)
-            .replace(/%ticketusername%/g, interaction.user.username)
-            .replace(/%ticketreason%/g, TicketSubject)
-        )
-        .setColor(supportbot.Embed.Colours.General);
-
-      if (supportbot.Ticket.TicketReason && TicketReason) {
-        TicketMessage.addFields(
-          { name: "Reason", value: TicketReason, inline: false }
-        );
       }
+
+      const ticketAuthor = new TextDisplayBuilder().setContent(
+        msgconfig.Ticket.TicketAuthorTitle.replace(/%ticketauthor%/g, interaction.user.id)
+          .replace(/%ticketid%/g, ticketChannel.id)
+          .replace(/%ticketusername%/g, interaction.user.username),
+      );
+
+      ticketMsgContainer.addTextDisplayComponents(ticketAuthor)
+
+      const ticketTitle = new TextDisplayBuilder().setContent(
+        msgconfig.Ticket.TicketTitle.replace(/%ticketauthor%/g, interaction.user.id)
+          .replace(/%ticketid%/g, ticketChannel.id)
+          .replace(/%ticketusername%/g, interaction.user.username)
+      );
+
+      ticketMsgContainer.addTextDisplayComponents(ticketTitle)
+      
+      const seperator2 = new SeparatorBuilder()
+        .setDivider(true)
+
+      ticketMsgContainer.addSeparatorComponents(seperator2)
+
+      const ticketDescription = new TextDisplayBuilder().setContent(
+        msgconfig.Ticket.TicketMessage.replace(/%ticketauthor%/g, interaction.user.id)
+          .replace(/%ticketid%/g, ticketChannel.id)
+          .replace(/%ticketusername%/g, interaction.user.username)
+          .replace(/%ticketreason%/g, TicketSubject)
+      );
+
+      ticketMsgContainer.addTextDisplayComponents(ticketDescription)
+
+      const seperator3 = new SeparatorBuilder()
+        .setDivider(true)
+
+      ticketMsgContainer.addSeparatorComponents(seperator3)
+
+      const ticketReason = new TextDisplayBuilder().setContent(
+        `**Reason:**\n ${TicketReason}`
+      );
+
+      const selectMenuRow = new ActionRowBuilder();
 
       const SelectMenus = new StringSelectMenuBuilder()
       .setCustomId("ticketcontrolpanel")
@@ -529,11 +557,17 @@ module.exports = new Command({
           );
         }
 
-      const row2 = new ActionRowBuilder().addComponents(SelectMenus);
+      selectMenuRow.addComponents(SelectMenus)
+
+      ticketMsgContainer.addActionRowComponents(selectMenuRow)
+
+      if (supportbot.Ticket.TicketReason && TicketReason) {
+        ticketMsgContainer.addTextDisplayComponents(ticketReason)
+      }
 
       await ticketChannel.send({
-        embeds: [TicketMessage],
-        components: [row2],
+        flags: MessageFlags.IsComponentsV2,
+        components: [ticketMsgContainer],
       });
 
       if (supportbot.Ticket.Questions.Enabled) {

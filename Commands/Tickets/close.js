@@ -289,112 +289,141 @@ function parseMarkdown(content) {
 function createTranscriptHTML(ticket, reason) {
   return `
   <!DOCTYPE html>
-  <html>
+  <html lang="en">
     <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Ticket Transcript</title>
       <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
       <style>
         body {
-          background: url('file-EWLgzFEYsq16ANVg6ENJrP.png') no-repeat center center fixed;
-          background-size: cover;
+          background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
           font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-          color: #ffffff;
+          color: #e5e7eb;
           margin: 0;
-          padding: 20px;
+          padding: 40px;
         }
 
         .container {
           max-width: 1000px;
-          margin: 0 auto;
-          padding: 20px;
-          backdrop-filter: blur(10px);
-          background: rgba(0,0,0,0.4);
+          margin: auto;
+          padding: 25px;
           border-radius: 20px;
-          box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+          backdrop-filter: blur(18px) saturate(180%);
+          background: rgba(17, 25, 40, 0.75);
+          box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+          border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         h1 {
-          font-size: 2.5rem;
-          font-weight: bold;
+          font-size: 2rem;
+          font-weight: 700;
           text-align: center;
+          color: #22c55e; /* green accent */
           margin-bottom: 20px;
+          text-shadow: 0 0 4px rgba(34,197,94,0.4); /* subtle glow */
+        }
+
+        .ticket-info {
+          margin-bottom: 25px;
+          padding: 15px;
+          border-radius: 12px;
+          background: rgba(255, 255, 255, 0.05);
+          border: 1px solid rgba(255,255,255,0.1);
         }
 
         .ticket-info p {
-          margin: 5px 0;
+          margin: 6px 0;
+          font-size: 0.95rem;
         }
 
         .message {
-          backdrop-filter: blur(15px);
           background: rgba(255, 255, 255, 0.05);
-          border: 1px solid rgba(255, 255, 255, 0.2);
+          border: 1px solid rgba(255, 255, 255, 0.1);
           border-radius: 15px;
-          padding: 15px;
+          padding: 16px;
           margin-bottom: 15px;
-          transition: transform 0.2s;
+          transition: all 0.2s ease-in-out;
         }
 
         .message:hover {
-          transform: scale(1.02);
+          background: rgba(255, 255, 255, 0.08);
+          transform: translateY(-2px);
+          box-shadow: 0 6px 20px rgba(0,0,0,0.4);
         }
 
         .message-header {
           display: flex;
           align-items: center;
-          margin-bottom: 10px;
+          margin-bottom: 12px;
         }
 
         .avatar {
-          width: 50px;
-          height: 50px;
+          width: 45px;
+          height: 45px;
           border-radius: 50%;
-          margin-right: 15px;
-          border: 2px solid rgba(255,255,255,0.3);
+          margin-right: 12px;
+          border: 2px solid rgba(34,197,94,0.6);
         }
 
         .username {
-          font-weight: bold;
-          color: #00ffe4;
-          font-size: 1.1rem;
+          font-weight: 600;
+          color: #22c55e;
         }
 
         .timestamp {
           margin-left: auto;
-          color: #aaa;
           font-size: 0.85rem;
+          color: #9ca3af;
         }
 
         .content {
           word-break: break-word;
-          font-size: 1rem;
+          font-size: 0.95rem;
+          line-height: 1.4rem;
         }
 
         .embed {
-          border-left: 4px solid #00ffe4;
-          padding-left: 10px;
-          margin: 10px 0;
-          background: rgba(255, 255, 255, 0.05);
-          border-radius: 10px;
+          margin-top: 12px;
+          border-left: 4px solid #22c55e;
+          padding-left: 12px;
+          border-radius: 6px;
+          background: rgba(34,197,94,0.1);
+        }
+
+        .embed strong {
+          color: #f9fafb;
         }
 
         .attachment {
           display: inline-block;
-          background-color: rgba(0, 255, 228, 0.1);
-          border: 1px solid #00ffe4;
-          border-radius: 5px;
-          padding: 5px 10px;
-          margin: 5px 0;
-          color: #00ffe4;
+          background: rgba(34,197,94,0.1);
+          border: 1px solid #22c55e;
+          border-radius: 6px;
+          padding: 6px 12px;
+          margin: 6px 0;
+          color: #22c55e;
           text-decoration: none;
+          font-size: 0.9rem;
         }
 
+        .attachment:hover {
+          background: rgba(34,197,94,0.2);
+        }
+
+        code, pre {
+          background: rgba(0,0,0,0.4);
+          color: #f8fafc;
+          padding: 4px 8px;
+          border-radius: 6px;
+          font-family: 'Consolas', 'Monaco', monospace;
+        }
       </style>
     </head>
     <body>
       <div class="container">
         <h1>Ticket Transcript</h1>
-        <div class="ticket-info mb-6">
+        <div class="ticket-info">
           <p><strong>Channel:</strong> ${ticket.name}</p>
           <p><strong>Ticket ID:</strong> ${ticket.id}</p>
           <p><strong>Message Count:</strong> ${ticket.messages.length}</p>
@@ -426,9 +455,7 @@ function createTranscriptHTML(ticket, reason) {
                 `).join('')}
 
                 ${msg.attachments.map(att => `
-                  <a href="${att.url}" class="attachment" target="_blank">
-                    📎 ${att.name}
-                  </a>
+                  <a href="${att.url}" class="attachment" target="_blank">📎 ${att.name}</a>
                 `).join('')}
               </div>
             </div>

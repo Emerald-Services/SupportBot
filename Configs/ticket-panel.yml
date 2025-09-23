@@ -19,19 +19,28 @@
 
 Panel: true
 
-LayoutStyle: modern
-
 # ----------------------------------------
 #   Ticket Panel Message Configuration #2b2d31
 # ----------------------------------------
 
-PanelTitle: "SupportBot"
-PanelColour: "#0cc559"
+Style:
+  Title: "## SupportBot Ticket Creation"
+  Description: "Click on the button to file a `Ticket` and our team will try their best to assist you in the best way we can!"
+  Image: "https://i.imgur.com/dejQvkg.png"
+  Color: "#45b463"
+  # Leave Color empty to remove the color from the embed/container.
+
+  Layout: "3"
+
+# Available Layout Styles
+# "1" - Style 1 - Title & Text, Button at the top -- Image at the bottom
+# "2" - Style 2 - Title & Text, Button at the bottom -- Image at the top
+# "3" - Style 3 - The classic look - Title & Text at the top -- Image in the middle -- Button at the bottom
 
 Button:
   Text: "Create Ticket"
   Emoji: "🎫"
-  Color: "2"
+  Color: "3"
 
 # Available Button Styles
 # 1 - Blurple
@@ -39,10 +48,15 @@ Button:
 # 3 - Red
 # 4 - Green
 
-TicketPanel_Description: true
-TicketPanel_Thumbnail: false
-TicketPanel_Image: true
+Settings:
+  Image: true
 
-PanelMessage: "Click on the button to file a `Ticket` and our team will try their best to assist you in the best way we can!"
-PanelThumbnail: "https://i.imgur.com/ieeZejl.png"
-PanelImage: "https://i.imgur.com/dejQvkg.png"
+  # Text and divider will appear above the image.
+  TopTitle: true
+  TopDivider: true
+
+  # Text and divider will appear below the image.
+  BottomTitle: false
+  BottomDivider: false
+
+  # Note: If Image is set to false, the bottom and top settings will look the samme.

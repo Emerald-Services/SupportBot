@@ -13,7 +13,7 @@
 #
 #           SupportBot Configuration (supportbot.yml)
 
-SupportBot_Version: "v8.4-DEV-2"
+SupportBot_Version: "v8.4"
 
 # -------------------------
 #   General
@@ -21,7 +21,7 @@ SupportBot_Version: "v8.4-DEV-2"
 
 General:
   Name: "SupportBot"
-  Token: ""
+  Token: "BOT_TOKEN"
 
   Addons:
     Enabled: true
@@ -50,10 +50,10 @@ Activity:
 
 Embed:
   Colours:
-    General: 0x0cc559
-    Success: 0x04b545
-    Error: 0xd13030
-    Warn: 0xfca117
+    General: "#0cc559"
+    Success: "#04b545"
+    Error: "#d13030"
+    Warn: "#fca117"
 
   Footer: "SupportBot | Developed by Emerald Development"
 
@@ -66,12 +66,12 @@ Embed:
 Roles:
   AutoRole:
     Enabled: true
-    Role: "1202669457751801917"
+    Role: "1111111111111111"
 
   StaffMember:
-    Staff: "996420644373811371"
-    Admin: "996419960442208326"
-    Moderator: "996420644373811371"
+    Staff: "1111111111111111"
+    Admin: "1111111111111111"
+    Moderator: "1111111111111111"
 
   Mod:
     AllowSupportStaff: false
@@ -84,11 +84,11 @@ Roles:
 
 Welcome: 
   Enabled: true
-  Channel: "1295788797065166869"
+  Channel: "1111111111111111"
 
 Leave: 
   Enabled: true
-  Channel: "1295788797065166869"
+  Channel: "1111111111111111"
 
 # ----------------------------
 #  Suggestions
@@ -96,8 +96,8 @@ Leave:
 
 Suggestions:
   Mode: "Channel" # Channel or Forum
-  ForumChannel: "1402655496477081671"
-  Channel: "1295788900094316706"
+  ForumChannel: "1111111111111111"
+  Channel: "1111111111111111"
 
   UpvoteEmoji: "✅"
   DownvoteEmoji: "❌"
@@ -130,10 +130,10 @@ Suggestions:
     # 4 - Red
 
   Tags:
-   Created: "1418937323118137435"
-   Considering: "1418937237156139130"
-   Solved: "1418937168029679697"
-   Denied: "1418937185469464647"
+   Created: "1111111111111111"
+   Considering: "1111111111111111"
+   Solved: "1111111111111111"
+   Denied: "1111111111111111"
 
 # -------------------------
 #  Tickets
@@ -141,7 +141,7 @@ Suggestions:
 
 VoiceTickets:
   Name: "%username%'s VC" 
-  Category: "1419062819688550460"
+  Category: "1111111111111111"
 
 Ticket:
   TicketType: "threads" 
@@ -150,16 +150,16 @@ Ticket:
   # channels - Tickets will be created as channels in the TicketChannelsCategory
   # threads - Tickets will be created as threads through the "TicketHome" channel.
 
-  TicketHome: "1295784943204700171" 
+  TicketHome: "1111111111111111" 
 
   # What is TicketHome?
   # - Channel where the Ticket creation panel is sent.
   # - Channel where ticket threads are made. (only if ticket threads is enabled above.)
 
   # For TicketType: channels
-  TicketChannelsCategory: "1418988408193155112" 
-  TicketChannelsCategory2: "1418988456167870615" # This will be used if the first category has reached the max channel limit.
-  TicketArchiveCategory: "1418988434600759348"
+  TicketChannelsCategory: "1111111111111111" 
+  TicketChannelsCategory2: "1111111111111111" # This will be used if the first category has reached the max channel limit.
+  TicketArchiveCategory: "1111111111111111"
   # ---
 
   Channel: "ticket-" # The prefix for ticket channel names
@@ -198,7 +198,7 @@ Ticket:
 
   ClaimTickets:
     Enabled: true
-    Channel: "1295789389619793961" 
+    Channel: "1111111111111111" 
     # Channel where the ticket assignments are sent for staff to claim.
     
     ClaimAcceptTime: 120000
@@ -221,7 +221,7 @@ Ticket:
 
   ReviewSystem:
     Enabled: false                
-    Channel: "1304480728884445225"
+    Channel: "1111111111111111"
     UseModal: true
 
   Questions:
@@ -232,9 +232,9 @@ Ticket:
       - "Have you tried resolving the issue yourself?"
 
   Log:
-    TicketDataLog: "1339271338761650290"
+    TicketDataLog: "1111111111111111"
     TickeDataTitle: "Ticket Data"
-    TicketBlacklistLog: "1339271338761650290"
+    TicketBlacklistLog: "1111111111111111"
 
 # -------------------------
 #  Buttons
@@ -287,12 +287,12 @@ SelectMenus:
 # -------------------------
 
 MessageDelete:
-  Channel: "1202671982932402246"
+  Channel: "1111111111111111"
   Colour: "#d92525"
 
 MessageUpdate:
-  Channel: "1202671982932402246"
+  Channel: "1111111111111111"
   Colour: "#f2a024"
 
 Translate:
-  TranslateLog: "1202671982932402246"
+  TranslateLog: "1111111111111111"
