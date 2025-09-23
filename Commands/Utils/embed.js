@@ -9,9 +9,10 @@ const {
   TextInputBuilder,
   TextInputStyle,
   ButtonStyle,
-  ComponentType
+  ComponentType,
+  MessageFlags,
 } = require('discord.js');
-const Command = require('../Structures/Command.js');
+const Command = require('../../Structures/Command.js');
 const fs = require('fs');
 const yaml = require('js-yaml');
 
@@ -19,7 +20,6 @@ const supportbot = yaml.load(fs.readFileSync('./Configs/supportbot.yml', 'utf8')
 const cmdconfig = yaml.load(fs.readFileSync('./Configs/commands.yml', 'utf8'));
 const msgconfig = yaml.load(fs.readFileSync('./Configs/messages.yml', 'utf8'));
 
-// Helper function to validate and convert hex color
 function parseColor(color) {
   if (!color) return 0x5865F2;
   if (typeof color === 'number') return color;
@@ -46,7 +46,6 @@ module.exports = new Command({
   permissions: cmdconfig.Embed.Permission,
 
   async run(interaction) {
-    // Permission check
     const { getRole } = interaction.client;
     let SupportStaff = await getRole(supportbot.Roles.StaffMember.Staff, interaction.guild);
     let Admin = await getRole(supportbot.Roles.StaffMember.Admin, interaction.guild);
@@ -61,12 +60,11 @@ module.exports = new Command({
         .setTitle('Invalid Permissions!')
         .setDescription(`${msgconfig.Error.IncorrectPerms}\n\nRole Required: \`${supportbot.Roles.StaffMember.Staff}\` or \`${supportbot.Roles.StaffMember.Admin}\``)
         .setColor(0xFF0000);
-      return interaction.reply({ embeds: [NoPerms], ephemeral: true });
+      return interaction.reply({ embeds: [NoPerms], flags: MessageFlags.Ephemeral });
     }
 
     const channel = interaction.options.getChannel('channel');
     
-    // Initial message state
     const messageData = {
       type: 'embed',
       title: 'New Embed',
@@ -79,7 +77,6 @@ module.exports = new Command({
       timestamp: false
     };
 
-    // Create initial embed
     function createEmbed() {
       const embed = new EmbedBuilder()
         .setTitle(messageData.title)
@@ -105,7 +102,6 @@ module.exports = new Command({
       return embed;
     }
 
-    // Create type selector
     const typeRow = new ActionRowBuilder()
       .addComponents(
         new StringSelectMenuBuilder()
@@ -125,12 +121,10 @@ module.exports = new Command({
           ])
       );
 
-    // Create button rows function
     function createButtons(messageType) {
       const buttons = [];
       
       if (messageType === 'embed') {
-        // Only show these buttons for embed mode
         const row1 = new ActionRowBuilder()
           .addComponents(
             new ButtonBuilder()
@@ -173,7 +167,6 @@ module.exports = new Command({
         
         buttons.push(row1, row2);
       } else {
-        // Text mode only shows edit text button
         const textRow = new ActionRowBuilder()
           .addComponents(
             new ButtonBuilder()
@@ -198,7 +191,6 @@ module.exports = new Command({
       return buttons;
     }
 
-    // Function to update the message preview
     async function updatePreview(i) {
       if (messageData.type === 'embed') {
         await i.update({
@@ -207,7 +199,6 @@ module.exports = new Command({
           components: [typeRow, ...createButtons('embed')]
         });
       } else {
-        // For text mode, just show the text directly
         await i.update({
           content: messageData.description,
           embeds: [],
@@ -216,15 +207,13 @@ module.exports = new Command({
       }
     }
 
-    // Send initial message
     const message = await interaction.reply({
       content: messageData.type === 'text' ? messageData.description : 'Customize your message:',
       components: [typeRow, ...createButtons(messageData.type)],
       embeds: messageData.type === 'embed' ? [createEmbed()] : [],
-      ephemeral: true
+      flags: MessageFlags.Ephemeral 
     });
 
-    // Create collector for interactions
     const collector = message.createMessageComponentCollector({
       time: 900000
     });
@@ -233,7 +222,7 @@ module.exports = new Command({
       if (i.user.id !== interaction.user.id) {
         return i.reply({ 
           content: 'You cannot edit this message.', 
-          ephemeral: true 
+          flags: MessageFlags.Ephemeral  
         });
       }
 
@@ -422,7 +411,7 @@ module.exports = new Command({
           } catch (error) {
             await i.reply({ 
               content: 'Failed to send message. Please check channel permissions.', 
-              ephemeral: true 
+              flags: MessageFlags.Ephemeral  
             });
           }
           break;

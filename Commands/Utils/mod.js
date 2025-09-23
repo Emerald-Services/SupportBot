@@ -1,11 +1,11 @@
 const fs = require("fs");
-const { ApplicationCommandOptionType, ApplicationCommandType, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType } = require("discord.js");
+const { ApplicationCommandOptionType, ApplicationCommandType, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType, MessageFlags } = require("discord.js");
 const yaml = require("js-yaml");
 const supportbot = yaml.load(fs.readFileSync("./Configs/supportbot.yml", "utf8"));
 const cmdconfig = yaml.load(fs.readFileSync("./Configs/commands.yml", "utf8"));
 const msgconfig = yaml.load(fs.readFileSync("./Configs/messages.yml", "utf8"));
 
-const Command = require("../Structures/Command.js");
+const Command = require("../../Structures/Command.js");
 
 // Function to chunk array into smaller arrays
 function chunkArray(arr, size) {
@@ -116,7 +116,7 @@ module.exports = new Command({
           const alreadyBlacklistedEmbed = new EmbedBuilder()
             .setDescription(msgconfig.Mod.TicketBlacklist.Add.AlreadyBlacklisted.replace("{userTag}", user.tag) || ":x: User is already blacklisted.")
             .setColor(supportbot.Embed.Colours.Warn);
-          return interaction.reply({ embeds: [alreadyBlacklistedEmbed], ephemeral: true });
+          return interaction.reply({ embeds: [alreadyBlacklistedEmbed], flags: MessageFlags.Ephemeral  });
         }
 
         blacklistedUsers.push(user.id);
@@ -141,7 +141,7 @@ module.exports = new Command({
 
         return interaction.reply({
           embeds: [successEmbed],
-          ephemeral: true 
+          flags: MessageFlags.Ephemeral  
         });
 
       } else if (subcommand === cmdconfig.Mod.TicketBlacklist.Remove.Command) {
@@ -149,7 +149,7 @@ module.exports = new Command({
           const notBlacklistedEmbed = new EmbedBuilder()
             .setDescription(msgconfig.Mod.TicketBlacklist.Remove.NotBlacklisted.replace("{userTag}", user.tag) || ":x: User is not blacklisted.")
             .setColor(supportbot.Embed.Colours.Warn);
-          return interaction.reply({ embeds: [notBlacklistedEmbed], ephemeral: true });
+          return interaction.reply({ embeds: [notBlacklistedEmbed], flags: MessageFlags.Ephemeral  });
         }
 
         blacklistedUsers = blacklistedUsers.filter(id => id !== user.id);
@@ -172,14 +172,14 @@ module.exports = new Command({
           blacklistChannel.send({ embeds: [blacklistLogEmbed] });
         }
 
-        return interaction.reply({ embeds: [removedEmbed], ephemeral: true });
+        return interaction.reply({ embeds: [removedEmbed], flags: MessageFlags.Ephemeral  });
 
       } else if (subcommand === "view") {
         if (blacklistedUsers.length === 0) {
           const noBlacklistedUsersEmbed = new EmbedBuilder()
             .setDescription(msgconfig.Mod.TicketBlacklist.View.NoBlacklistedUsers || "No users are blacklisted.")
             .setColor(supportbot.Embed.Colours.Success);
-          return interaction.reply({ embeds: [noBlacklistedUsersEmbed], ephemeral: true });
+          return interaction.reply({ embeds: [noBlacklistedUsersEmbed], flags: MessageFlags.Ephemeral  });
         }
 
         const chunkedUsers = chunkArray(blacklistedUsers, 5);
@@ -210,7 +210,7 @@ module.exports = new Command({
         const response = await interaction.reply({
           embeds: [createEmbed(currentPage)],
           components: chunkedUsers.length > 1 ? [buttons] : [],
-          ephemeral: true
+          flags: MessageFlags.Ephemeral 
         });
 
         if (chunkedUsers.length <= 1) return;
@@ -224,7 +224,7 @@ module.exports = new Command({
           if (i.user.id !== interaction.user.id) {
             return i.reply({
               content: 'You cannot use these buttons.',
-              ephemeral: true
+              flags: MessageFlags.Ephemeral 
             });
           }
 
@@ -255,7 +255,7 @@ module.exports = new Command({
       const errorEmbed = new EmbedBuilder()
         .setDescription(msgconfig.Error.ActionFailed || "An error occurred while processing your request.")
         .setColor(supportbot.Embed.Colours.Warn);
-      interaction.reply({ embeds: [errorEmbed], ephemeral: true });
+      interaction.reply({ embeds: [errorEmbed], flags: MessageFlags.Ephemeral  });
     }
   }
 });

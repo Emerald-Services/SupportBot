@@ -8,12 +8,12 @@
 #           Installed with MIT License
 #
 #           Discord Support: https://discord.gg/emeraldsrv
-#           Official Documentation: https://docs.emeraldsrv.com
-#           Addons Marketplace: https://community.emeraldsrv.com
+#           Official Documentation: https://docs.emeraldsrv.dev
+#           Addons Marketplace: https://community.emeraldsrv.dev
 #
 #           SupportBot Configuration (supportbot.yml)
 
-SupportBot_Version: "v8.3"
+SupportBot_Version: "v8.4"
 
 # -------------------------
 #   General
@@ -50,10 +50,10 @@ Activity:
 
 Embed:
   Colours:
-    General: 0x0cc559
-    Success: 0x04b545
-    Error: 0xd13030
-    Warn: 0xfca117
+    General: "#0cc559"
+    Success: "#04b545"
+    Error: "#d13030"
+    Warn: "#fca117"
 
   Footer: "SupportBot | Developed by Emerald Development"
 
@@ -66,12 +66,12 @@ Embed:
 Roles:
   AutoRole:
     Enabled: true
-    Role: "ROLE_ID"
+    Role: "1111111111111111"
 
   StaffMember:
-    Staff: "ROLE_ID"
-    Admin: "ROLE_ID"
-    Moderator: "ROLE_ID"
+    Staff: "1111111111111111"
+    Admin: "1111111111111111"
+    Moderator: "1111111111111111"
 
   Mod:
     AllowSupportStaff: false
@@ -84,18 +84,21 @@ Roles:
 
 Welcome: 
   Enabled: true
-  Channel: "JOIN_CHANNEL_ID"
+  Channel: "1111111111111111"
 
 Leave: 
   Enabled: true
-  Channel: "JOIN_CHANNEL_ID"
+  Channel: "1111111111111111"
 
 # ----------------------------
 #  Suggestions
 # ----------------------------
 
 Suggestions:
-  Channel: "SUGGESTIONS_CHANNEL_ID"
+  Mode: "Channel" # Channel or Forum
+  ForumChannel: "1111111111111111"
+  Channel: "1111111111111111"
+
   UpvoteEmoji: "✅"
   DownvoteEmoji: "❌"
 
@@ -126,31 +129,37 @@ Suggestions:
     # 3 - Green
     # 4 - Red
 
+  Tags:
+   Created: "1111111111111111"
+   Considering: "1111111111111111"
+   Solved: "1111111111111111"
+   Denied: "1111111111111111"
+
 # -------------------------
 #  Tickets
 # -------------------------
 
 VoiceTickets:
   Name: "%username%'s VC" 
-  Category: "VOICEE_CATEGORY_ID"
+  Category: "1111111111111111"
 
 Ticket:
-  TicketType: "channels" 
+  TicketType: "threads" 
 
   # Available TicketTypes:
   # channels - Tickets will be created as channels in the TicketChannelsCategory
   # threads - Tickets will be created as threads through the "TicketHome" channel.
 
-  TicketHome: "TICKETHOME_CHANNEL_ID" 
+  TicketHome: "1111111111111111" 
 
   # What is TicketHome?
   # - Channel where the Ticket creation panel is sent.
   # - Channel where ticket threads are made. (only if ticket threads is enabled above.)
 
   # For TicketType: channels
-  TicketChannelsCategory: "TICKETCHANNEL_CATEGORY_ID" 
-  TicketChannelsCategory2: "TICKETCHANNEL_BACKUP_CATEGORY_ID" # This will be used if the first category has reached the max channel limit.
-  TicketArchiveCategory: "ARCHIVE_CATEGORY_ID"
+  TicketChannelsCategory: "1111111111111111" 
+  TicketChannelsCategory2: "1111111111111111" # This will be used if the first category has reached the max channel limit.
+  TicketArchiveCategory: "1111111111111111"
   # ---
 
   Channel: "ticket-" # The prefix for ticket channel names
@@ -189,7 +198,7 @@ Ticket:
 
   ClaimTickets:
     Enabled: true
-    Channel: "CLAIM_TICKETS_CHANNEL_ID" 
+    Channel: "1111111111111111" 
     # Channel where the ticket assignments are sent for staff to claim.
     
     ClaimAcceptTime: 120000
@@ -211,8 +220,8 @@ Ticket:
     # 4 - Red
 
   ReviewSystem:
-    Enabled: true                
-    Channel: "REVIEW_CHANNEL_ID"
+    Enabled: false                
+    Channel: "1111111111111111"
     UseModal: true
 
   Questions:
@@ -223,9 +232,9 @@ Ticket:
       - "Have you tried resolving the issue yourself?"
 
   Log:
-    TicketDataLog: "TICKET_DATA_LOG_ID"
+    TicketDataLog: "1111111111111111"
     TickeDataTitle: "Ticket Data"
-    TicketBlacklistLog: "TICKET_BLACKLIST_LOG_ID"
+    TicketBlacklistLog: "1111111111111111"
 
 # -------------------------
 #  Buttons
@@ -278,12 +287,12 @@ SelectMenus:
 # -------------------------
 
 MessageDelete:
-  Channel: "MESSAGE_DELETE_CHANNEL_ID"
+  Channel: "1111111111111111"
   Colour: "#d92525"
 
 MessageUpdate:
-  Channel: "MESSAGE_UPDATE_CHANNEL_ID"
+  Channel: "1111111111111111"
   Colour: "#f2a024"
 
 Translate:
-  TranslateLog: "TRANSLATE_LOG_ID"
+  TranslateLog: "1111111111111111"

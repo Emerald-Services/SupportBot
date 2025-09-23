@@ -1,33 +1,35 @@
-const { Command } = require('../Structures/Addon.js');
+const { Command } = require('../../Structures/Addon.js');
 const Discord = require("discord.js");
 const fs = require("fs");
 const yaml = require("js-yaml");
-const path = require("path");
+const db = require("../../Structures/Database.js");
 
 const supportbot = yaml.load(fs.readFileSync("./Configs/supportbot.yml", "utf8"));
 const cmdconfig = yaml.load(fs.readFileSync("./Configs/commands.yml", "utf8"));
-const settingsFilePath = path.resolve(__dirname, '../Data/settings.json');
 
-function loadSettings() {
-  try {
-    if (fs.existsSync(settingsFilePath)) {
-      const data = fs.readFileSync(settingsFilePath, 'utf8');
-      return JSON.parse(data);
-    } else {
-      return {};
-    }
-  } catch (error) {
-    console.error("Error reading settings file:", error);
-    return {};
-  }
+async function loadSettings() {
+  return new Promise((resolve, reject) => {
+    db.get("SELECT data FROM settings WHERE id = 1", (err, row) => {
+      if (err) return reject(err);
+      if (!row) return resolve({});
+      try {
+        resolve(JSON.parse(row.data));
+      } catch (e) {
+        resolve({});
+      }
+    });
+  });
 }
 
-function saveSettings(settings) {
-  try {
-    fs.writeFileSync(settingsFilePath, JSON.stringify(settings, null, 2), 'utf8');
-  } catch (error) {
-    console.error("Error writing settings file:", error);
-  }
+async function saveSettings(settings) {
+  const data = JSON.stringify(settings);
+  return new Promise((resolve, reject) => {
+    db.run(
+      "INSERT INTO settings (id, data) VALUES (1, ?) ON CONFLICT(id) DO UPDATE SET data = excluded.data",
+      [data],
+      (err) => (err ? reject(err) : resolve())
+    );
+  });
 }
 
 module.exports = new Command({
@@ -119,7 +121,7 @@ module.exports = new Command({
 
   async run(interaction) {
     const subcommand = interaction.options.getSubcommand();
-    const settings = loadSettings();
+    const settings = await loadSettings();
 
     if (subcommand === 'setstatus') {
       const status = interaction.options.getString('status');
@@ -131,15 +133,15 @@ module.exports = new Command({
         });
 
         settings.status = status;
-        saveSettings(settings);
+        await saveSettings(settings);
 
         const embed = new Discord.EmbedBuilder()
           .setDescription(`Status set to **${status.charAt(0).toUpperCase() + status.slice(1)}**`)
           .setColor(supportbot.Embed.Colours.General);
 
-        return interaction.reply({ embeds: [embed], ephemeral: true });
+        return interaction.reply({ embeds: [embed], flags: Discord.MessageFlags.Ephemeral });
       } catch (error) {
-        return interaction.reply({ content: `Failed to set status: ${error.message}`, ephemeral: true });
+        return interaction.reply({ content: `Failed to set status: ${error.message}`, flags: Discord.MessageFlags.Ephemeral });
       }
     } 
     
@@ -154,15 +156,15 @@ module.exports = new Command({
         });
 
         settings.activity = { type: activityType, message: activityMessage };
-        saveSettings(settings);
+        await saveSettings(settings);
 
         const embed = new Discord.EmbedBuilder()
           .setDescription(`Activity set to **${activityType.toLowerCase()} ${activityMessage}**`)
           .setColor(supportbot.Embed.Colours.General);
 
-        return interaction.reply({ embeds: [embed], ephemeral: true });
+        return interaction.reply({ embeds: [embed], flags: Discord.MessageFlags.Ephemeral  });
       } catch (error) {
-        return interaction.reply({ content: `Failed to set activity: ${error.message}`, ephemeral: true });
+        return interaction.reply({ content: `Failed to set activity: ${error.message}`, flags: Discord.MessageFlags.Ephemeral  });
       }
     } else if (subcommand === 'streammode') {
       const toggle = interaction.options.getString('toggle');
@@ -170,7 +172,7 @@ module.exports = new Command({
 
       if (toggle === 'on') {
         if (!twitchUrl) {
-          return interaction.reply({ content: 'Please provide a Twitch URL to stream.', ephemeral: true });
+          return interaction.reply({ content: 'Please provide a Twitch URL to stream.', flags: Discord.MessageFlags.Ephemeral  });
         }
 
         try {
@@ -180,15 +182,15 @@ module.exports = new Command({
           });
 
           settings.streaming = { active: true, url: twitchUrl };
-          saveSettings(settings);
+          await saveSettings(settings);
 
           const embed = new Discord.EmbedBuilder()
             .setDescription(`**Streaming mode enabled!**\nStreaming: [Twitch](${twitchUrl})`)
             .setColor(supportbot.Embed.Colours.General);
 
-          return interaction.reply({ embeds: [embed], ephemeral: true });
+          return interaction.reply({ embeds: [embed], flags: Discord.MessageFlags.Ephemeral  });
         } catch (error) {
-          return interaction.reply({ content: `Failed to enable streaming mode: ${error.message}`, ephemeral: true });
+          return interaction.reply({ content: `Failed to enable streaming mode: ${error.message}`, flags: Discord.MessageFlags.Ephemeral  });
         }
       } else if (toggle === 'off') {
         try {
@@ -198,15 +200,15 @@ module.exports = new Command({
           });
 
           settings.streaming = { active: false };
-          saveSettings(settings);
+          await saveSettings(settings);
 
           const embed = new Discord.EmbedBuilder()
             .setDescription(`**Streaming mode disabled!**`)
             .setColor(supportbot.Embed.Colours.General);
 
-          return interaction.reply({ embeds: [embed], ephemeral: true });
+          return interaction.reply({ embeds: [embed], flags: Discord.MessageFlags.Ephemeral  });
         } catch (error) {
-          return interaction.reply({ content: `Failed to disable streaming mode: ${error.message}`, ephemeral: true });
+          return interaction.reply({ content: `Failed to disable streaming mode: ${error.message}`, flags: Discord.MessageFlags.Ephemeral  });
         }
       }
     } else if (subcommand === 'setnickname') {
@@ -218,18 +220,18 @@ module.exports = new Command({
         await botMember.setNickname(nickname);
 
         settings.nickname = nickname;
-        saveSettings(settings);
+        await saveSettings(settings);
 
         const embed = new Discord.EmbedBuilder()
           .setDescription(`Bot nickname set to **${nickname}**`)
           .setColor(supportbot.Embed.Colours.General);
 
-        return interaction.reply({ embeds: [embed], ephemeral: true });
+        return interaction.reply({ embeds: [embed], flags: Discord.MessageFlags.Ephemeral  });
       } catch (error) {
-        return interaction.reply({ content: `Failed to set nickname: ${error.message}`, ephemeral: true });
+        return interaction.reply({ content: `Failed to set nickname: ${error.message}`, flags: Discord.MessageFlags.Ephemeral  });
       }
     } else {
-      return interaction.reply({ content: 'Invalid command usage.', ephemeral: true });
+      return interaction.reply({ content: 'Invalid command usage.', flags: Discord.MessageFlags.Ephemeral  });
     }
   },
 });

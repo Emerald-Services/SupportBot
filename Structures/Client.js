@@ -1,11 +1,27 @@
 const fs = require("fs");
+const path = require("path");
 const Discord = require("discord.js");
 const { GatewayIntentBits, Partials } = require('discord.js');
 const yaml = require("js-yaml");
-const { Command, Event } = require('./Addon.js'); // Adjust the path as needed
+const { Command, Event } = require('./Addon.js');
 
 const supportbot = yaml.load(fs.readFileSync("./Configs/supportbot.yml", "utf8"));
 const cmdconfig = yaml.load(fs.readFileSync("./Configs/commands.yml", "utf8"));
+
+
+function walk(dir, ext = ".js", fileList = []) {
+  const files = fs.readdirSync(dir);
+  for (const file of files) {
+    const full = `${dir}/${file}`;
+    const stat = fs.statSync(full);
+    if (stat.isDirectory()) {
+      walk(full, ext, fileList);
+    } else if (file.endsWith(ext)) {
+      fileList.push(full);
+    }
+  }
+  return fileList;
+}
 
 class Client extends Discord.Client {
   constructor() {
@@ -23,7 +39,7 @@ class Client extends Discord.Client {
   }
 
   async getChannel(channel, guild) {
-    if (!channel) return null; // Add check for undefined channel
+    if (!channel) return null;
     return guild.channels.cache.find(
       (c) =>
         (c.type === Discord.ChannelType.GuildText || c.type === Discord.ChannelType.GuildNews) &&
@@ -32,14 +48,14 @@ class Client extends Discord.Client {
   }
 
   async getRole(role, guild) {
-    if (!role) return null; // Add check for undefined role
+    if (!role) return null;
     return guild.roles.cache.find(
       (r) => r.id === role || (r.name && r.name.toLowerCase() === role.toLowerCase())
     );
   }
 
   async getCategory(category, guild) {
-    if (!category) return null; // Add check for undefined category
+    if (!category) return null;
     return guild.channels.cache.find(
       (c) =>
         c.type === Discord.ChannelType.GuildCategory &&
@@ -48,72 +64,75 @@ class Client extends Discord.Client {
   }
 
   async start(token) {
-    let tempCommandFiles = fs.readdirSync("./Commands").filter((file) => file.endsWith(".js"));
+    let tempCommandFiles = walk("./Commands");
 
     if (cmdconfig.Suggestion.Enabled === false) {
-      tempCommandFiles = tempCommandFiles.filter(item => item !== "suggest.js");
+      tempCommandFiles = tempCommandFiles.filter(item => path.basename(item) !== "suggest.js");
+    }
+
+    if (cmdconfig.Suggestion.Enabled === false) {
+      tempCommandFiles = tempCommandFiles.filter(item => path.basename(item) !== "suggestadmin.js");
     }
 
     if (cmdconfig.Help.Enabled === false) {
-      tempCommandFiles = tempCommandFiles.filter(item => item !== "help.js");
+      tempCommandFiles = tempCommandFiles.filter(item => path.basename(item) !== "help.js");
     }
 
     if (cmdconfig.Info.Enabled === false) {
-      tempCommandFiles = tempCommandFiles.filter(item => item !== "info.js");
+      tempCommandFiles = tempCommandFiles.filter(item => path.basename(item) !== "info.js");
     }
 
     if (cmdconfig.OpenTicket.Enabled === false) {
-      tempCommandFiles = tempCommandFiles.filter(item => item !== "ticket.js");
+      tempCommandFiles = tempCommandFiles.filter(item => path.basename(item) !== "ticket.js");
     }
 
     if (cmdconfig.CloseTicket.Enabled === false) {
-      tempCommandFiles = tempCommandFiles.filter(item => item !== "close.js");
+      tempCommandFiles = tempCommandFiles.filter(item => path.basename(item) !== "close.js");
     }
 
     if (cmdconfig.Embed.Enabled === false) {
-      tempCommandFiles = tempCommandFiles.filter(item => item !== "embed.js");
+      tempCommandFiles = tempCommandFiles.filter(item => path.basename(item) !== "embed.js");
     }
 
     if (cmdconfig.Translate.Enabled === false) {
-      tempCommandFiles = tempCommandFiles.filter(item => item !== "translate.js");
+      tempCommandFiles = tempCommandFiles.filter(item => path.basename(item) !== "translate.js");
     }
 
     if (cmdconfig.UserInfo.Enabled === false) {
-      tempCommandFiles = tempCommandFiles.filter(item => item !== "userinfo.js");
+      tempCommandFiles = tempCommandFiles.filter(item => path.basename(item) !== "userinfo.js");
     }
 
     if (cmdconfig.Ping.Enabled === false) {
-      tempCommandFiles = tempCommandFiles.filter(item => item !== "Ping.js");
+      tempCommandFiles = tempCommandFiles.filter(item => path.basename(item) !== "Ping.js");
     }
 
     if (cmdconfig.AddUser.Enabled === false) {
-      tempCommandFiles = tempCommandFiles.filter(item => item !== "addUser.js");
+      tempCommandFiles = tempCommandFiles.filter(item => path.basename(item) !== "addUser.js");
     }
 
     if (cmdconfig.RemoveUser.Enabled === false) {
-      tempCommandFiles = tempCommandFiles.filter(item => item !== "removeUser.js");
+      tempCommandFiles = tempCommandFiles.filter(item => path.basename(item) !== "removeUser.js");
     }    
 
     if (cmdconfig.ForceAddUser.Enabled === false) {
-      tempCommandFiles = tempCommandFiles.filter(item => item !== "forceaddUser.js");
+      tempCommandFiles = tempCommandFiles.filter(item => path.basename(item) !== "forceaddUser.js");
     }   
 
     if (cmdconfig.Profile.Enabled === false) {
-      tempCommandFiles = tempCommandFiles.filter(item => item !== "profile.js");
+      tempCommandFiles = tempCommandFiles.filter(item => path.basename(item) !== "profile.js");
     }    
 
     if (cmdconfig.Settings.Enabled === false) {
-      tempCommandFiles = tempCommandFiles.filter(item => item !== "settings.js");
+      tempCommandFiles = tempCommandFiles.filter(item => path.basename(item) !== "settings.js");
     }    
 
     if (cmdconfig.Mod.Enabled === false) {
-      tempCommandFiles = tempCommandFiles.filter(item => item !== "mod.js");
+      tempCommandFiles = tempCommandFiles.filter(item => path.basename(item) !== "mod.js");
     }    
 
     const commandFiles = tempCommandFiles;
-    const commands = commandFiles.map((file) => require(`../Commands/${file}`));
+    const commands = commandFiles.map((file) => require(`../${file}`));
 
-    // Load main commands
     console.log(`\u001b[33m`, "――――――――――――――――――――――――――――――――――――――――――――");
 
     commands.forEach((cmd) => {
@@ -121,7 +140,6 @@ class Client extends Discord.Client {
       this.commands.set(cmd.name, cmd);
     });
 
-    // Load addon commands and events
     console.log(`\u001b[33m`, "▬▬▬▬▬▬▬ Commands ▬▬▬▬▬▬▬");
 
     if (supportbot.General.Addons.Enabled) {
@@ -133,7 +151,6 @@ class Client extends Discord.Client {
         return addon;
       });
 
-      // Addons
       console.log("   ");
       console.log(`\u001b[33m`, "▬▬▬▬▬▬▬ Addons ▬▬▬▬▬▬▬");
 
@@ -163,9 +180,7 @@ class Client extends Discord.Client {
       console.log(`\u001b[33m`, "▬▬▬▬▬▬▬ Addons ▬▬▬▬▬▬▬");
     }
 
-    // Register Slash Commands
-
-    this.once("ready", async () => {
+    this.once("clientReady", async () => {
       await this.guilds.cache.first()?.commands.set(this.commands);
       console.log(
         "\u001b[32m",

@@ -10,7 +10,7 @@ const supportbot = yaml.load(
 );
 const cmdconfig = yaml.load(fs.readFileSync("./Configs/commands.yml", "utf8"));
 
-const Command = require("../Structures/Command.js");
+const Command = require("../../Structures/Command.js");
 
 module.exports = new Command({
   name: cmdconfig.Ping.Command,

@@ -18,7 +18,7 @@ const msgconfig = yaml.load(
   fs.readFileSync("./Configs/messages.yml", "utf8")
 );
 
-const Command = require("../Structures/Command.js");
+const Command = require("../../Structures/Command.js");
 
 module.exports = new Command({
   name: cmdconfig.Info.Command,

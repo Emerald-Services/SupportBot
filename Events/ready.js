@@ -1,143 +1,128 @@
-// SupportBot | Emerald Services
-// Ready Event
-
 const fs = require("fs");
-
 const Discord = require("discord.js");
-const { Client, GatewayIntentBits, ActivityType } = require('discord.js');
-const client = new Discord.Client({intents: 32767})
-
 const yaml = require("js-yaml");
-
-const supportbot = yaml.load(
-  fs.readFileSync("./Configs/supportbot.yml", "utf8")
-);
-const panelconfig = yaml.load(
-  fs.readFileSync("./Configs/ticket-panel.yml", "utf8")
-);
-
-const cmdconfig = yaml.load(
-  fs.readFileSync("./Configs/commands.yml", "utf8")
-);
-
-const msgconfig = yaml.load(
-  fs.readFileSync("./Configs/messages.yml", "utf8")
-);
-
 const Event = require("../Structures/Event.js");
+const gradient = require("gradient-string");
+const figlet = require("figlet");
 
-let chan1 = client.channels.cache.get(supportbot.Ticket.TicketHome);
+// Load configs
+const supportbot = yaml.load(fs.readFileSync("./Configs/supportbot.yml", "utf8"));
+const panel = yaml.load(fs.readFileSync("./Configs/ticket-panel.yml", "utf8"));
+const cmdconfig = yaml.load(fs.readFileSync("./Configs/commands.yml", "utf8"));
+const msgconfig = yaml.load(fs.readFileSync("./Configs/messages.yml", "utf8"));
 
-module.exports = new Event("ready", async (client, interaction) => {
-  const { getRole, getChannel, getCategory } = client;
+const ACTIVITY_TYPES = {
+  PLAYING: Discord.ActivityType.Playing,
+  WATCHING: Discord.ActivityType.Watching,
+  LISTENING: Discord.ActivityType.Listening,
+  COMPETING: Discord.ActivityType.Competing
+};
 
-  if (supportbot.Activity.Type === "Playing", "playing") {
+const setActivity = (client, type, status) => {
+  const activityType = ACTIVITY_TYPES[type?.toUpperCase()];
+  if (activityType) {
     client.user.setPresence({
-      activities: [{ name: supportbot.Activity.Status, type: Discord.ActivityType.Playing }],
-      status: supportbot.Activity.Type,
+      activities: [{ name: status || "Online", type: activityType }],
+      status: type?.toLowerCase() || "online"
     });
   }
+};
 
-  if (supportbot.Activity.Type === "Watching", "watching") {
-    client.user.setPresence({
-      activities: [{ name: supportbot.Activity.Status, type: Discord.ActivityType.Watching }],
-      status: supportbot.Activity.Type,
-    });
-  }
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const logStartup = async (client) => {
+  console.clear();
   
-  if (supportbot.Activity.Type === "Listening", "listening") {
-    client.user.setPresence({
-      activities: [{ name: supportbot.Activity.Status, type: Discord.ActivityType.Listening }],
-      status: supportbot.Activity.Type,
-    });
+  // Animated loading
+  const frames = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
+  for (let i = 0; i < frames.length * 2; i++) {
+    process.stdout.write(`\r${frames[i % frames.length]} Initializing SupportBot...`);
+    await sleep(100);
   }
+  console.clear();
 
-  if (supportbot.Activity.Type === "Competing", "competing") {
-    client.user.setPresence({
-      activities: [{ name: supportbot.Activity.Status, type: Discord.ActivityType.Competing }],
-      status: supportbot.Activity.Type,
-    });
-  }
+  // Main title
+  console.log("\n" + gradient.pastel.multiline(figlet.textSync("SupportBot", { font: "ANSI Shadow", horizontalLayout: "fitted" })));
 
-  console.log(`\u001b[33m`, `――――――――――――――――――――――――――――――――――――――――――――`);
-  console.log(`    `);
-  console.log(`\u001b[31m`, `┏━━━┓╋╋╋╋╋╋╋╋╋╋╋╋╋┏┓┏━━┓╋╋╋┏┓`);
-  console.log(`\u001b[31m`, `┃┏━┓┃╋╋╋╋╋╋╋╋╋╋╋╋┏┛┗┫┏┓┃╋╋┏┛┗┓`);
-  console.log(`\u001b[31m`, `┃┗━━┳┓┏┳━━┳━━┳━━┳┻┓┏┫┗┛┗┳━┻┓┏┛`);
-  console.log(`\u001b[31m`, `┗━━┓┃┃┃┃┏┓┃┏┓┃┏┓┃┏┫┃┃┏━┓┃┏┓┃┃`);
-  console.log(`\u001b[31m`, `┃┗━┛┃┗┛┃┗┛┃┗┛┃┗┛┃┃┃┗┫┗━┛┃┗┛┃┗┓`);
-  console.log(`\u001b[31m`, `┗━━━┻━━┫┏━┫┏━┻━━┻┛┗━┻━━━┻━━┻━┛`);
-  console.log(`\u001b[31m`, `┗╋╋╋╋╋╋╋┃┃╋┃┃`);
-  console.log(`\u001b[31m`, `╋╋╋╋╋╋╋┗┛╋┗┛`);
-  console.log(`    `);
-  console.log(`\u001b[33m`, `――――――――――――――――――――――――――――――――――――――――――――`);
-  console.log(`    `);  
-  console.log(`\u001b[33m`, `${supportbot.General.Name} | [${supportbot.SupportBot_Version}]`, `\u001b[32m`, `Connected to Discord`,);
-  console.log("\u001b[32m", "SupportBot created by Emerald Development ");
-  console.log(`    `);
-  console.log(`\u001b[33m`, `――――――――――――――――― [Links] ――――――――――――――――――`);
-  console.log("\u001b[32m", "Discord: https://dsc.gg/emerald-dev");
-  console.log("\u001b[32m", "Website: https://emeraldsrv.com");
-  console.log("\u001b[32m", "Community: https://community.emeraldsrv.com");
-  console.log("\u001b[32m", "Documentation: https://docs.emeraldsrv.com");
-  console.log(`    `);
-  console.log(`\u001b[33m`, `――――――――――――――――― [Invite] ――――――――――――――――――`);
-  console.log("\u001b[32m", `Invite URL: https://discord.com/api/oauth2/authorize?client_id=${client.user.id}&permissions=8&scope=bot%20applications.commands`);
-  console.log(`    `);
-  console.log(`\u001b[33m`, `――――――――――――――――― [Config Check] ――――――――――――――――――`);
-  console.log("\u001b[32m", "Config initialization...");
+  // Extract bot details safely
+  const botName = supportbot?.General?.Name || "SupportBot";
+  const botVersion = supportbot.SupportBot_Version;
+
+  console.log("\n╔═══════════════════════════════════════════════════════════════╗");
+  console.log("║                      System Information                       ║");
+  console.log("╠═══════════════════════════════════════════════════════════════╣");
+  console.log(`║  Bot Name    : ${botName.padEnd(45)}  ║`);
+  console.log(`║  Version     : ${botVersion.padEnd(45)}  ║`);
+  console.log(`║  Node.js     : ${process.version.padEnd(45)}  ║`);
+  console.log(`║  Discord.js  : v${Discord.version.padEnd(44)}  ║`);
+  console.log("╚═══════════════════════════════════════════════════════════════╝\n");
+
+  // Links section
+  console.log(gradient.summer("┏━━━━━━━━━━━━━━━━━━━ Important Links ━━━━━━━━━━━━━━━━━━━┓"));
+  console.log(gradient.summer("┃                                                       ┃"));
+  console.log(gradient.summer("┃  ") + "📚 Docs       : " + gradient.cristal("https://emerald-services.gitbook.io/ ┃"));
+  console.log(gradient.summer("┃  ") + "🤝 Discord    : " + gradient.cristal("https://dsc.gg/emerald-dev           ┃"));
+  console.log(gradient.summer("┃                                                       ┃"));
+  console.log(gradient.summer("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n"));
+
+  // Bot Invite
+  const inviteUrl = `https://discord.com/api/oauth2/authorize?client_id=${client.user.id}&permissions=8&scope=bot%20applications.commands`;
+  console.log(gradient.teen("╔════════════════════════ Bot Invite ════════════════════════╗"));
+  console.log(gradient.teen("║                                                            ║"));
+  console.log(gradient.teen("║  ") + gradient.pastel(inviteUrl.padEnd(56)) + gradient.teen("║"));
+  console.log(gradient.teen("║                                                            ║"));
+  console.log(gradient.teen("╚════════════════════════════════════════════════════════════╝\n"));
+};
+
+const checkConfigs = async (client) => {
+  const guild = client.guilds.cache.first();
+  if (!guild) return;
+
+  console.log(gradient.morning("┏━━━━━━━━━━━━━━━━━━━━ Config Check ━━━━━━━━━━━━━━━━━━━━━┓"));
 
   const roles = [
-    supportbot.Roles.StaffMember.Admin,
-    supportbot.Roles.StaffMember.Staff
-  ];
+    supportbot?.Roles?.StaffMember?.Admin,
+    supportbot?.Roles?.StaffMember?.Staff,
+    supportbot?.Roles?.AutoRole?.Role
+  ].filter(Boolean);
 
-  if (supportbot.Roles.AutoRole.Role) roles.push(supportbot.Roles.AutoRole.Role);
-  
-   const channels = [
-     supportbot.Suggestions.Channel,
-     supportbot.Ticket.Log.TicketLog,
-     supportbot.Ticket.Log.TranscriptLog,
-     supportbot.Ticket.TicketHome,
-     supportbot.Welcome.Channel,
-     supportbot.Leave.Channel,
-     supportbot.Translate.Log
-   ];
-  //const categories = [supportbot.TicketCategory];
+  const channels = [
+    supportbot?.Suggestions?.Channel,
+    supportbot?.Ticket?.Log?.TicketLog,
+    supportbot?.Ticket?.Log?.TranscriptLog,
+    supportbot?.Ticket?.TicketHome,
+    supportbot?.Welcome?.Channel,
+    supportbot?.Leave?.Channel,
+    supportbot?.Translate?.Log
+  ].filter(Boolean);
 
-  if (!channels) {
-      console.log("\u001b[31m", `[MISSING CHANNEL]`, `\u001b[37;1m`, `${channels}`, "\u001b[31m", `channel not found. Please check your config file.`);
-      return;
-  }
-//  else {
-//      console.log(`\u001b[32m`, `[CHANNEL LOCATED]`, `\u001b[37;1m`, `${channels}`, `\u001b[32;1m`, `channel has been found.`);
-//  }
+  const [missingRoles, missingChannels] = await Promise.all([
+    Promise.all(roles.map((role) => client.getRole(role, guild))),
+    Promise.all(channels.map((channel) => client.getChannel(channel, guild)))
+  ]);
 
-  const missingC = [];
-  const missingR = [];
-  const missingCat = [];
-  
-  for (let r of roles) {
-    const find = await getRole(r, client.guilds.cache.first());
-    if (!find) missingR.push(r);
-  }
- // for (let cat of categories) {
- //   const find = await getCategory(cat, client.guilds.cache.first());
- //   if (!find) missingCat.push(cat);
- // }
+  const missing = {
+    roles: roles.filter((_, i) => !missingRoles[i]),
+    channels: channels.filter((_, i) => !missingChannels[i])
+  };
 
- const missingRoles = await Promise.all(roles.map(role => getRole(role, client.guilds.cache.first())));
- const missingChannels = await Promise.all(channels.map(channel => getChannel(channel, client.guilds.cache.first())));
-
- if (missingRoles.some(role => !role)) {
-  console.log("\u001b[31m", `Missing roles in your server configuration: ${missingRoles.filter(role => !role).join(', ')}`);
+  if (missing.roles.length || missing.channels.length) {
+    console.log(gradient.morning("┃  ⚠️ - Configuration Issues Found:                     ┃"));
+    if (missing.roles.length) {
+      console.log(gradient.morning("┃  • Missing Roles: ") + gradient.fruit(missing.roles.join(", ")));
+    }
+    if (missing.channels.length) {
+      console.log(gradient.morning("┃  • Missing Channels: ") + gradient.fruit(missing.channels.join(", ")));
+    }
+  } else {
+    console.log(gradient.morning("┃  ✅ - All configurations validated successfully       ┃"));
   }
 
-  if (missingChannels.some(channel => !channel)) {
-  console.log("\u001b[31m", `Missing channels in your server configuration: ${missingChannels.filter(channel => !channel).join(', ')}`);
-  }
+  console.log(gradient.morning("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n"));
+};
 
-  console.log("\u001b[32m", "Configs initialized, No problems were detected.");
-  console.log(`    `);
-
+module.exports = new Event("clientReady", async (client) => {
+  setActivity(client, supportbot?.Activity?.Type, supportbot?.Activity?.Status);
+  await logStartup(client);
+  await checkConfigs(client);
 });

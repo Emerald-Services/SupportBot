@@ -2,11 +2,13 @@ const fs = require("fs");
 const Discord = require("discord.js");
 const yaml = require("js-yaml");
 
+const db = require("../../Structures/Database.js");
+
 const supportbot = yaml.load(fs.readFileSync("./Configs/supportbot.yml", "utf8"));
 const cmdconfig = yaml.load(fs.readFileSync("./Configs/commands.yml", "utf8"));
 const msgconfig = yaml.load(fs.readFileSync("./Configs/messages.yml", "utf8"));
 
-const Command = require("../Structures/Command.js");
+const Command = require("../../Structures/Command.js");
 
 module.exports = new Command({
   name: cmdconfig.CloseTicket.Command,
@@ -57,18 +59,9 @@ module.exports = new Command({
 
     await interaction.deferReply();
 
-    let tickets;
-    try {
-      tickets = JSON.parse(fs.readFileSync("./Data/TicketData.json", "utf8"));
-    } catch (err) {
-      console.error("Error reading ticket data file:", err);
-      return interaction.followUp({ content: "There was an error loading ticket data." });
-    }
-
-    let TicketData = tickets.tickets.findIndex((t) => t.id === interaction.channel.id);
-    let ticket = tickets.tickets[TicketData];
-
-    if (TicketData === -1) {
+    const ticket = db.getTicket(interaction.channel.id);
+    
+    if (!ticket) {
       const Exists = new Discord.EmbedBuilder()
         .setTitle("No Ticket Found!")
         .setDescription(msgconfig.Error.NoValidTicket)
@@ -120,9 +113,9 @@ module.exports = new Command({
         await interaction.followUp({ embeds: [reviewEmbed] });
       }
 
-      await handleCloseTicket(interaction, reason, ticket, TicketData);
+      await handleCloseTicket(interaction, reason, ticket);
     } else {
-      await handleCloseTicket(interaction, reason, ticket, TicketData);
+      await handleCloseTicket(interaction, reason, ticket);
     }
   },
 });
@@ -150,7 +143,7 @@ async function collectReviewRating(interaction, ticketUserId) {
     content: `<@${ticketUserId}>`,
     embeds: [reviewPrompt],
     components: [stars],
-    ephemeral: true,
+    flags: Discord.MessageFlags.Ephemeral,
   });
 
   const starRating = await interaction.channel.awaitMessageComponent({
@@ -170,7 +163,7 @@ async function collectReviewComment(interaction, ticketUserId) {
   await interaction.followUp({
     content: `<@${ticketUserId}>`,
     embeds: [commentPrompt],
-    ephemeral: true,
+    flags: Discord.MessageFlags.Ephemeral,
   });
 
   const filter = (response) => response.author.id === ticketUserId;
@@ -179,18 +172,10 @@ async function collectReviewComment(interaction, ticketUserId) {
   const comment = commentCollection.first()?.content;
   return comment && comment.toLowerCase() !== "no" ? comment : "No Comment Provided";
 }
-async function handleCloseTicket(interaction, reason, ticket, TicketData) {
+async function handleCloseTicket(interaction, reason, ticket) {
   const { getChannel } = interaction.client;
 
-  let tickets;
-  try {
-    tickets = JSON.parse(fs.readFileSync("./Data/TicketData.json", "utf8"));
-  } catch (err) {
-    console.error("Error reading ticket data:", err);
-    return interaction.followUp("Failed to load ticket data.");
-  }
-
-  let tUser = interaction.client.users.cache.get(ticket.user);
+  let tUser = interaction.client.users.cache.get(ticket.user_id);
   let transcriptChannel = await getChannel(supportbot.Ticket.Log.TicketDataLog, interaction.guild);
 
   if (!transcriptChannel) {
@@ -199,7 +184,6 @@ async function handleCloseTicket(interaction, reason, ticket, TicketData) {
   }
 
   try {
-    // Fetch all messages from the channel
     let allMessages = [];
     let lastId = null;
     
@@ -218,10 +202,8 @@ async function handleCloseTicket(interaction, reason, ticket, TicketData) {
       if (messages.size < 100) break;
     }
 
-    // Sort messages by timestamp
     allMessages.sort((a, b) => a.createdTimestamp - b.createdTimestamp);
 
-    // Create transcript data
     const transcriptData = allMessages.map(msg => ({
       content: msg.content || "No content",
       username: msg.author.username,
@@ -239,10 +221,7 @@ async function handleCloseTicket(interaction, reason, ticket, TicketData) {
       }))
     }));
 
-    // Update ticket status
-    tickets.tickets[TicketData].open = false;
-    tickets.tickets[TicketData].messages = transcriptData;
-    fs.writeFileSync("./Data/TicketData.json", JSON.stringify(tickets, null, 4));
+    db.updateTicketStatus(interaction.channel.id, "closed");
 
     const transcriptEmbed = new Discord.EmbedBuilder()
       .setTitle(msgconfig.TicketLog.Title)
@@ -250,7 +229,7 @@ async function handleCloseTicket(interaction, reason, ticket, TicketData) {
       .setFooter({ text: supportbot.Embed.Footer, iconURL: interaction.user.displayAvatarURL() })
       .setDescription(
         `> **Ticket:** ${interaction.channel.name} (\`${interaction.channel.id}\`)\n` +
-        `> **User:** ${tUser?.tag || "Unknown User"} (\`${tUser?.id || ticket.user}\`)\n` +
+        `> **User:** ${tUser?.tag || "Unknown User"} (\`${tUser?.id || ticket.user_id}\`)` +
         `> **Closed by:** <@${interaction.user.id}>\n` +
         `> **Message Count:** ${transcriptData.length}`
       )
@@ -264,6 +243,12 @@ async function handleCloseTicket(interaction, reason, ticket, TicketData) {
       },
       reason
     );
+    
+    const transcriptDir = "./Data/Transcripts";
+    
+    if (!fs.existsSync(transcriptDir)) {
+      fs.mkdirSync(transcriptDir, { recursive: true });
+    }
 
     const fileName = `${interaction.channel.id}-transcript.html`;
     fs.writeFileSync(`./Data/Transcripts/${fileName}`, html);
@@ -288,19 +273,14 @@ async function handleCloseTicket(interaction, reason, ticket, TicketData) {
 }
 
 function parseMarkdown(content) {
-  // Convert **bold** text to <strong> tags
   content = content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
   
-  // Convert _italic_ text to <em> tags
   content = content.replace(/_(.*?)_/g, '<em>$1</em>');
   
-  // Convert inline `code` to <code> tags
   content = content.replace(/`(.*?)`/g, '<code>$1</code>');
   
-  // Convert [text](link) to <a> tags
   content = content.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank">$1</a>');
   
-  // Convert multiline code blocks ```code``` to <pre><code> tags
   content = content.replace(/```(.*?)```/gs, '<pre><code>$1</code></pre>');
   
   return content;
@@ -308,119 +288,181 @@ function parseMarkdown(content) {
 
 function createTranscriptHTML(ticket, reason) {
   return `
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
-        <style>
-          body {
-            background-color: #1a1a1a;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: white;
-            margin: 0;
-            padding: 20px;
-          }
-          .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            background-color: rgba(0, 0, 0, 0.3);
-            border-radius: 15px;
-            padding: 20px;
-          }
-          .message {
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 15px;
-          }
-          .message-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-          }
-          .avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            margin-right: 15px;
-          }
-          .username {
-            font-weight: bold;
-            color: #4CAF50;
-          }
-          .timestamp {
-            margin-left: auto;
-            color: #888;
-            font-size: 0.9em;
-          }
-          .content {
-            word-break: break-word;
-          }
-          .embed {
-            border-left: 4px solid #4CAF50;
-            padding-left: 10px;
-            margin: 10px 0;
-            background-color: rgba(0, 0, 0, 0.2);
-          }
-          .attachment {
-            display: inline-block;
-            background-color: rgba(76, 175, 80, 0.1);
-            border: 1px solid #4CAF50;
-            border-radius: 5px;
-            padding: 5px 10px;
-            margin: 5px 0;
-            color: #4CAF50;
-            text-decoration: none;
-          }
-        </style>
-      </head>
-      <body>
-        <div class="container">
-          <div class="mb-6">
-            <h1 class="text-3xl font-bold mb-4">Ticket Transcript</h1>
-            <p><strong>Channel:</strong> ${ticket.name}</p>
-            <p><strong>Ticket ID:</strong> ${ticket.id}</p>
-            <p><strong>Message Count:</strong> ${ticket.messages.length}</p>
-            <p><strong>Close Reason:</strong> ${reason}</p>
-          </div>
-          
-          <div class="messages">
-            ${ticket.messages.map(msg => `
-              <div class="message">
-                <div class="message-header">
-                  <img src="${msg.avatar}" alt="Avatar" class="avatar">
-                  <span class="username">${msg.username}</span>
-                  <span class="timestamp">${new Date(msg.timestamp).toLocaleString()}</span>
-                </div>
-                <div class="content">
-                  ${parseMarkdown(msg.content)}
-                  
-                  ${msg.embeds.map(embed => `
-                    <div class="embed">
-                      ${embed.title ? `<div class="font-bold">${embed.title}</div>` : ''}
-                      ${embed.description ? `<div>${embed.description}</div>` : ''}
-                      ${embed.fields.map(field => `
-                        <div class="mt-2">
-                          <strong>${field.name}:</strong>
-                          <div>${field.value}</div>
-                        </div>
-                      `).join('')}
-                    </div>
-                  `).join('')}
-                  
-                  ${msg.attachments.map(att => `
-                    <a href="${att.url}" class="attachment" target="_blank">
-                      📎 ${att.name}
-                    </a>
-                  `).join('')}
-                </div>
-              </div>
-            `).join('')}
-          </div>
+  <!DOCTYPE html>
+  <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Ticket Transcript</title>
+      <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+      <style>
+        body {
+          background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+          color: #e5e7eb;
+          margin: 0;
+          padding: 40px;
+        }
+
+        .container {
+          max-width: 1000px;
+          margin: auto;
+          padding: 25px;
+          border-radius: 20px;
+          backdrop-filter: blur(18px) saturate(180%);
+          background: rgba(17, 25, 40, 0.75);
+          box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        h1 {
+          font-size: 2rem;
+          font-weight: 700;
+          text-align: center;
+          color: #22c55e; /* green accent */
+          margin-bottom: 20px;
+          text-shadow: 0 0 4px rgba(34,197,94,0.4); /* subtle glow */
+        }
+
+        .ticket-info {
+          margin-bottom: 25px;
+          padding: 15px;
+          border-radius: 12px;
+          background: rgba(255, 255, 255, 0.05);
+          border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .ticket-info p {
+          margin: 6px 0;
+          font-size: 0.95rem;
+        }
+
+        .message {
+          background: rgba(255, 255, 255, 0.05);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          border-radius: 15px;
+          padding: 16px;
+          margin-bottom: 15px;
+          transition: all 0.2s ease-in-out;
+        }
+
+        .message:hover {
+          background: rgba(255, 255, 255, 0.08);
+          transform: translateY(-2px);
+          box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+        }
+
+        .message-header {
+          display: flex;
+          align-items: center;
+          margin-bottom: 12px;
+        }
+
+        .avatar {
+          width: 45px;
+          height: 45px;
+          border-radius: 50%;
+          margin-right: 12px;
+          border: 2px solid rgba(34,197,94,0.6);
+        }
+
+        .username {
+          font-weight: 600;
+          color: #22c55e;
+        }
+
+        .timestamp {
+          margin-left: auto;
+          font-size: 0.85rem;
+          color: #9ca3af;
+        }
+
+        .content {
+          word-break: break-word;
+          font-size: 0.95rem;
+          line-height: 1.4rem;
+        }
+
+        .embed {
+          margin-top: 12px;
+          border-left: 4px solid #22c55e;
+          padding-left: 12px;
+          border-radius: 6px;
+          background: rgba(34,197,94,0.1);
+        }
+
+        .embed strong {
+          color: #f9fafb;
+        }
+
+        .attachment {
+          display: inline-block;
+          background: rgba(34,197,94,0.1);
+          border: 1px solid #22c55e;
+          border-radius: 6px;
+          padding: 6px 12px;
+          margin: 6px 0;
+          color: #22c55e;
+          text-decoration: none;
+          font-size: 0.9rem;
+        }
+
+        .attachment:hover {
+          background: rgba(34,197,94,0.2);
+        }
+
+        code, pre {
+          background: rgba(0,0,0,0.4);
+          color: #f8fafc;
+          padding: 4px 8px;
+          border-radius: 6px;
+          font-family: 'Consolas', 'Monaco', monospace;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <h1>Ticket Transcript</h1>
+        <div class="ticket-info">
+          <p><strong>Channel:</strong> ${ticket.name}</p>
+          <p><strong>Ticket ID:</strong> ${ticket.id}</p>
+          <p><strong>Message Count:</strong> ${ticket.messages.length}</p>
+          <p><strong>Close Reason:</strong> ${reason}</p>
         </div>
-      </body>
-    </html>
+
+        <div class="messages">
+          ${ticket.messages.map(msg => `
+            <div class="message">
+              <div class="message-header">
+                <img src="${msg.avatar}" alt="Avatar" class="avatar">
+                <span class="username">${msg.username}</span>
+                <span class="timestamp">${new Date(msg.timestamp).toLocaleString()}</span>
+              </div>
+              <div class="content">
+                ${parseMarkdown(msg.content)}
+
+                ${msg.embeds.map(embed => `
+                  <div class="embed">
+                    ${embed.title ? `<div class="font-bold">${embed.title}</div>` : ''}
+                    ${embed.description ? `<div>${embed.description}</div>` : ''}
+                    ${embed.fields.map(field => `
+                      <div class="mt-2">
+                        <strong>${field.name}:</strong>
+                        <div>${field.value}</div>
+                      </div>
+                    `).join('')}
+                  </div>
+                `).join('')}
+
+                ${msg.attachments.map(att => `
+                  <a href="${att.url}" class="attachment" target="_blank">📎 ${att.name}</a>
+                `).join('')}
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </body>
+  </html>
   `;
 }

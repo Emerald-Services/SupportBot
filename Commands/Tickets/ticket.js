@@ -10,16 +10,22 @@ const {
   StringSelectMenuOptionBuilder,
   ButtonStyle,
   MessageCollector,
+  MessageFlags,
+  SeparatorBuilder,
+  ContainerBuilder,
+  TextDisplayBuilder
 } = require("discord.js");
 const yaml = require("js-yaml");
+
+const db = require("../../Structures/Database.js");
 
 const panelconfig = yaml.load(fs.readFileSync("./Configs/ticket-panel.yml", "utf8"));
 const supportbot = yaml.load(fs.readFileSync("./Configs/supportbot.yml", "utf8"));
 const cmdconfig = yaml.load(fs.readFileSync("./Configs/commands.yml", "utf8"));
 const msgconfig = yaml.load(fs.readFileSync("./Configs/messages.yml", "utf8"));
 
-const Command = require("../Structures/Command.js");
-const TicketNumberID = require("../Structures/TicketID.js");
+const Command = require("../../Structures/Command.js");
+const TicketNumberID = require("../../Structures/TicketID.js");
 
 async function isBlacklisted(userId) {
   let blacklistData;
@@ -40,16 +46,11 @@ async function isBlacklisted(userId) {
 
 async function getClockedInUsers(guild) {
   const clockedInUsers = new Set();
-
-  const profilesDir = './Data/Profiles';
-  const profileFiles = fs.readdirSync(profilesDir);
-
-  for (const file of profileFiles) {
-    const profileData = JSON.parse(fs.readFileSync(`${profilesDir}/${file}`, "utf8"));
-    if (profileData.clockedIn) {
-      const userId = file.replace('.json', '');
-      const member = await guild.members.fetch(userId);
-      if (member) clockedInUsers.add(member.id);
+  const rows = guild.members.cache.map(m => m.id);
+  for (const id of rows) {
+    const profile = db.getProfile(id);
+    if (profile && profile.clockedIn) {
+      clockedInUsers.add(id);
     }
   }
   return clockedInUsers;
@@ -61,14 +62,11 @@ async function askTicketQuestions(ticketChannel, interaction, questions) {
 
   const sendNextQuestion = async () => {
     if (questionIndex < questions.length) {
-
       const questionsEmbed = new EmbedBuilder()
         .setDescription(`**${questionIndex + 1}.** ${questions[questionIndex]}`)
-        .setColor(supportbot.Embed.Colours.General)
+        .setColor(supportbot.Embed.Colours.General);
 
-      const questionMessage = await ticketChannel.send({
-        embeds: [questionsEmbed], 
-      });
+      const questionMessage = await ticketChannel.send({ embeds: [questionsEmbed] });
 
       const collector = new MessageCollector(ticketChannel, {
         filter: (m) => m.author.id === interaction.user.id,
@@ -83,12 +81,12 @@ async function askTicketQuestions(ticketChannel, interaction, questions) {
         await questionMessage.delete();
         sendNextQuestion();
       });
-
     } else {
-
       const summaryEmbed = new EmbedBuilder()
         .setTitle(msgconfig.Ticket.TicketQuestions.Details.Title)
-        .setDescription(msgconfig.Ticket.TicketQuestions.Details.Description.replace('%user%', interaction.user.id))
+        .setDescription(
+          msgconfig.Ticket.TicketQuestions.Details.Description.replace("%user%", interaction.user.id)
+        )
         .setColor(supportbot.Embed.Colours.General)
         .addFields(
           answers.map((a) => ({
@@ -99,18 +97,14 @@ async function askTicketQuestions(ticketChannel, interaction, questions) {
         )
         .setTimestamp();
 
-      await ticketChannel.send({ 
-        embeds: [summaryEmbed] 
-      });
+      await ticketChannel.send({ embeds: [summaryEmbed] });
     }
   };
 
-  // Start asking the first question
   sendNextQuestion();
 }
 
 async function assignTicketToUser(ticketChannel, Staff, Admin, interaction, attempts = 0) {
-
   try {
     const clockedInUsers = await getClockedInUsers(interaction.guild);
 
@@ -124,7 +118,7 @@ async function assignTicketToUser(ticketChannel, Staff, Admin, interaction, atte
 
         const claimButton = new ButtonBuilder()
           .setCustomId(`claimticket-${ticketChannel.id}`)
-          .setLabel(supportbot.Ticket.ClaimTickets.ButtonTitle || 'Claim Ticket')
+          .setLabel(supportbot.Ticket.ClaimTickets.ButtonTitle || "Claim Ticket")
           .setStyle(ButtonStyle.Primary);
 
         const row = new ActionRowBuilder().addComponents(claimButton);
@@ -135,20 +129,25 @@ async function assignTicketToUser(ticketChannel, Staff, Admin, interaction, atte
           components: [row],
         });
 
-        const filter = i => i.customId === `claimticket-${ticketChannel.id}` && i.member.roles.cache.has(Staff.id);
+        const filter = (i) =>
+          i.customId === `claimticket-${ticketChannel.id}` &&
+          i.member.roles.cache.has(Staff.id);
         const collector = claimMessage.createMessageComponentCollector({ filter, time: 120000 });
 
-        collector.on('collect', async i => {
+        collector.on("collect", async (i) => {
           await ticketChannel.send({ content: `<@${i.user.id}> has claimed the ticket.` });
         });
 
-        collector.on('end', async collected => {
+        collector.on("end", async (collected) => {
           if (collected.size === 0) {
             await claimMessage.delete();
-
             await claimChannel.send({
-              content: `Ticket is still unclaimed. \nCC: [<@&${Staff.id}> <@&${Admin.id}]`,
-              embeds: [new EmbedBuilder().setDescription(`Ticket is still unclaimed: <#${ticketChannel.id}>`).setColor(supportbot.Embed.Colours.Warn)],
+              content: `Ticket is still unclaimed. \nCC: [<@&${Staff.id}> <@&${Admin.id}>]`,
+              embeds: [
+                new EmbedBuilder()
+                  .setDescription(`Ticket is still unclaimed: <#${ticketChannel.id}>`)
+                  .setColor(supportbot.Embed.Colours.Warn),
+              ],
             });
           }
         });
@@ -161,22 +160,27 @@ async function assignTicketToUser(ticketChannel, Staff, Admin, interaction, atte
     }
 
     const clockedInArray = Array.from(clockedInUsers);
-    const assignedUserId = clockedInArray[Math.floor(Math.random() * clockedInArray.length)];
+    const assignedUserId =
+      clockedInArray[Math.floor(Math.random() * clockedInArray.length)];
     const assignedUser = await interaction.guild.members.fetch(assignedUserId);
 
     const claimEmbed = new EmbedBuilder()
       .setTitle(msgconfig.Ticket.ClaimTickets.ClaimTitle)
-      .setDescription(msgconfig.Ticket.ClaimTickets.ClaimMessage.replace('%user%', interaction.user.id))
+      .setDescription(
+        msgconfig.Ticket.ClaimTickets.ClaimMessage.replace("%user%", interaction.user.id)
+      )
       .setColor(supportbot.Embed.Colours.General);
 
     const claimButton = new ButtonBuilder()
       .setCustomId(`claimticket-${ticketChannel.id}`)
-      .setLabel(supportbot.Ticket.ClaimTickets.ButtonTitle || 'Claim Ticket')
+      .setLabel(supportbot.Ticket.ClaimTickets.ButtonTitle || "Claim Ticket")
       .setStyle(ButtonStyle.Primary);
 
     const row = new ActionRowBuilder().addComponents(claimButton);
 
-    const claimChannel = await interaction.guild.channels.cache.get(supportbot.Ticket.ClaimTickets.Channel);
+    const claimChannel = await interaction.guild.channels.cache.get(
+      supportbot.Ticket.ClaimTickets.Channel
+    );
     if (!claimChannel) {
       console.error("Claim channel not found");
       return null;
@@ -188,21 +192,28 @@ async function assignTicketToUser(ticketChannel, Staff, Admin, interaction, atte
       components: [row],
     });
 
-    const filter = i => i.customId === `claimticket-${ticketChannel.id}` && i.user.id === assignedUserId;
+    const filter = (i) =>
+      i.customId === `claimticket-${ticketChannel.id}` && i.user.id === assignedUserId;
     const collector = claimMessage.createMessageComponentCollector({ filter, time: 120000 });
 
-    collector.on('collect', async i => {
-      await ticketChannel.send({ content: `<@${assignedUserId}>` }).then(msg => setTimeout(() => msg.delete(), 5000));
+    collector.on("collect", async (i) => {
+      await ticketChannel
+        .send({ content: `<@${assignedUserId}>` })
+        .then((msg) => setTimeout(() => msg.delete(), 5000));
     });
 
-    collector.on('end', async collected => {
+    collector.on("end", async (collected) => {
       if (collected.size === 0) {
         await claimMessage.delete();
 
         if (attempts >= 1) {
           await claimChannel.send({
             content: `No one claimed the ticket. Tagging roles: <@&${Staff.id}> <@&${Admin.id}>`,
-            embeds: [new EmbedBuilder().setDescription(`Ticket is still unclaimed: <#${ticketChannel.id}>`).setColor(supportbot.Embed.Colours.Warn)],
+            embeds: [
+              new EmbedBuilder()
+                .setDescription(`Ticket is still unclaimed: <#${ticketChannel.id}>`)
+                .setColor(supportbot.Embed.Colours.Warn),
+            ],
           });
 
           const claimEmbed = new EmbedBuilder()
@@ -223,17 +234,24 @@ async function assignTicketToUser(ticketChannel, Staff, Admin, interaction, atte
             components: [row],
           });
 
-          const filter = i => i.customId === `claimticket-${ticketChannel.id}` && i.member.roles.cache.has(Staff.id);
-          const collector = claimMessage.createMessageComponentCollector({ filter, time: 120000 });
+          const filter = (i) =>
+            i.customId === `claimticket-${ticketChannel.id}` &&
+            i.member.roles.cache.has(Staff.id);
+          const collector = claimMessage.createMessageComponentCollector({
+            filter,
+            time: 120000,
+          });
 
-          collector.on('collect', async i => {
+          collector.on("collect", async (i) => {
             console.log(`Ticket ${ticketChannel.id} claimed by user ${i.user.id}`);
             await ticketChannel.member.add(i.user.id);
           });
 
-          collector.on('end', async collected => {
+          collector.on("end", async (collected) => {
             if (collected.size === 0) {
-              console.log(`No one claimed the ticket (${ticketChannel.id}), notifying all staff`);
+              console.log(
+                `No one claimed the ticket (${ticketChannel.id}), notifying all staff`
+              );
               await claimMessage.delete();
 
               await claimChannel.send({
@@ -244,7 +262,9 @@ async function assignTicketToUser(ticketChannel, Staff, Admin, interaction, atte
         } else {
           const ReassigningEmbed = new EmbedBuilder()
             .setTitle(msgconfig.Ticket.ClaimTickets.ReassigningTitle)
-            .setDescription(msgconfig.Ticket.ClaimTickets.ReassigningMessage.replace('%user%', assignedUserId))
+            .setDescription(
+              msgconfig.Ticket.ClaimTickets.ReassigningMessage.replace("%user%", assignedUserId)
+            )
             .setColor(supportbot.Embed.Colours.General);
 
           await claimChannel.send({ embeds: [ReassigningEmbed], components: [] });
@@ -256,9 +276,6 @@ async function assignTicketToUser(ticketChannel, Staff, Admin, interaction, atte
     return assignedUserId;
   } catch (error) {
     console.error("Error in assignTicketToUser function:", error);
-    if (error instanceof CombinedError) {
-      console.error("CombinedError details:", error.errors);
-    }
     return null;
   }
 }
@@ -283,16 +300,17 @@ module.exports = new Command({
       if (await isBlacklisted(interaction.user.id)) {
         return interaction.reply({
           content: msgconfig.Ticket.Blacklisted,
-          ephemeral: true,
+          flags: MessageFlags.Ephemeral 
         });
       }
 
       let TicketReason = null;
       if (supportbot.Ticket.TicketReason) {
-        TicketReason = interaction.reason || null; // Retrieve the reason from the interaction object
+        TicketReason = interaction.reason || null; 
       }
 
-      let TicketData = JSON.parse(fs.readFileSync("./Data/TicketData.json", "utf8"));
+      let TicketData = { tickets: db.getAllTickets() };
+
       const { getRole, getChannel } = interaction.client;
       let User = interaction.guild.members.cache.get(interaction.user.id);
 
@@ -308,7 +326,7 @@ module.exports = new Command({
               color: supportbot.Embed.Colours.Warn,
             },
           ],
-          ephemeral: true,
+          flags: MessageFlags.Ephemeral 
         });
       }
 
@@ -326,7 +344,7 @@ module.exports = new Command({
       ) {
         return await interaction.reply({
           embeds: [TicketExists],
-          ephemeral: true,
+          flags: MessageFlags.Ephemeral 
         });
       }
 
@@ -335,7 +353,7 @@ module.exports = new Command({
       if (!Staff || !Admin)
         return interaction.reply({
           content: "Some roles seem to be missing!\nPlease check for errors when starting the bot.",
-          ephemeral: true,
+          flags: MessageFlags.Ephemeral 
         });
 
       let ticketChannel;
@@ -361,7 +379,7 @@ module.exports = new Command({
         if (!category) {
           return interaction.reply({
             content: "The ticket category does not exist!",
-            ephemeral: true,
+            flags: MessageFlags.Ephemeral 
           });
         }
 
@@ -372,7 +390,6 @@ module.exports = new Command({
           reason: 'support ticket',
         });
 
-        // Move to secondary category if the primary one is full
         if (category.children.size >= 50) {
           const secondaryCategory = interaction.guild.channels.cache.find(
             (c) => c.name === supportbot.Ticket.TicketChannelsCategory2 || c.id === supportbot.Ticket.TicketChannelsCategory2
@@ -383,13 +400,12 @@ module.exports = new Command({
           } else {
             return interaction.reply({
               content: "The secondary ticket category does not exist!",
-              ephemeral: true,
+              flags: MessageFlags.Ephemeral 
             });
           }
         }
       }
 
-      // Assign ticket to a user if claiming tickets is enabled
       if (supportbot.Ticket.ClaimTickets.Enabled) {
         const assignedUserId = await assignTicketToUser(ticketChannel, Staff, Admin, interaction);
         if (!assignedUserId) {
@@ -418,17 +434,8 @@ module.exports = new Command({
           ViewChannel: false,
         }); 
     }
-    
-      // Ask questions to the user after the ticket is opened
-      if (supportbot.Ticket.Questions.Enabled) {
-        const questions = supportbot.Ticket.Questions.List || [];
-        if (questions.length > 0) {
-          await askTicketQuestions(ticketChannel, interaction, questions);
-        }
-      }
 
-      // Save ticket data
-      TicketData.tickets.push({
+      db.addTicket({
         id: ticketChannel.id,
         name: ticketChannel.name,
         user: interaction.user.id,
@@ -439,16 +446,8 @@ module.exports = new Command({
         createdAt: new Date().toISOString(),
         claimedAt: null,
       });
+      TicketData.tickets = db.getAllTickets();
 
-      fs.writeFileSync(
-        "./Data/TicketData.json",
-        JSON.stringify(TicketData, null, 4),
-        (err) => {
-          if (err) console.error(err);
-        }
-      );
-
-      // Notify the user that the ticket was created
       const CreatedTicket = new EmbedBuilder()
         .setDescription(
           msgconfig.Ticket.TicketCreatedAlert.replace(/%ticketauthor%/g, interaction.user.id)
@@ -457,36 +456,59 @@ module.exports = new Command({
             .replace(/%ticketreason%/g, TicketSubject)
         )
         .setColor(supportbot.Embed.Colours.General);
-      await interaction.reply({ embeds: [CreatedTicket], ephemeral: true });
+      await interaction.reply({ embeds: [CreatedTicket], flags: MessageFlags.Ephemeral  });
 
-      // Create the ticket message
-      const TicketMessage = new EmbedBuilder()
-        .setAuthor({
-          name: msgconfig.Ticket.TicketAuthorTitle.replace(/%ticketauthor%/g, interaction.user.id)
-            .replace(/%ticketid%/g, ticketChannel.id)
-            .replace(/%ticketusername%/g, interaction.user.username),
-          iconURL: interaction.user.displayAvatarURL(),
-        })
-        .setTitle(
-          msgconfig.Ticket.TicketTitle.replace(/%ticketauthor%/g, interaction.user.id)
-            .replace(/%ticketid%/g, ticketChannel.id)
-            .replace(/%ticketusername%/g, interaction.user.username)
+      // TICKET MESSAGE - UPDATED WITH COMPONENTS V2
+      
+      const ticketMsgContainer = new ContainerBuilder()
+        
+      if (supportbot.Embed.Colours.General) {
+        ticketMsgContainer.setAccentColor(
+          parseInt(supportbot.Embed.Colours.General.replace("#", ""), 16)
         )
-        .setDescription(
-          msgconfig.Ticket.TicketMessage.replace(/%ticketauthor%/g, interaction.user.id)
-            .replace(/%ticketid%/g, ticketChannel.id)
-            .replace(/%ticketusername%/g, interaction.user.username)
-            .replace(/%ticketreason%/g, TicketSubject)
-        )
-        .setColor(supportbot.Embed.Colours.General);
-
-      if (supportbot.Ticket.TicketReason && TicketReason) {
-        TicketMessage.addFields(
-          { name: "Reason", value: TicketReason, inline: false }
-        );
       }
 
-      // Create the control panel
+      const ticketAuthor = new TextDisplayBuilder().setContent(
+        msgconfig.Ticket.TicketAuthorTitle.replace(/%ticketauthor%/g, interaction.user.id)
+          .replace(/%ticketid%/g, ticketChannel.id)
+          .replace(/%ticketusername%/g, interaction.user.username),
+      );
+
+      ticketMsgContainer.addTextDisplayComponents(ticketAuthor)
+
+      const ticketTitle = new TextDisplayBuilder().setContent(
+        msgconfig.Ticket.TicketTitle.replace(/%ticketauthor%/g, interaction.user.id)
+          .replace(/%ticketid%/g, ticketChannel.id)
+          .replace(/%ticketusername%/g, interaction.user.username)
+      );
+
+      ticketMsgContainer.addTextDisplayComponents(ticketTitle)
+      
+      const seperator2 = new SeparatorBuilder()
+        .setDivider(true)
+
+      ticketMsgContainer.addSeparatorComponents(seperator2)
+
+      const ticketDescription = new TextDisplayBuilder().setContent(
+        msgconfig.Ticket.TicketMessage.replace(/%ticketauthor%/g, interaction.user.id)
+          .replace(/%ticketid%/g, ticketChannel.id)
+          .replace(/%ticketusername%/g, interaction.user.username)
+          .replace(/%ticketreason%/g, TicketSubject)
+      );
+
+      ticketMsgContainer.addTextDisplayComponents(ticketDescription)
+
+      const seperator3 = new SeparatorBuilder()
+        .setDivider(true)
+
+      ticketMsgContainer.addSeparatorComponents(seperator3)
+
+      const ticketReason = new TextDisplayBuilder().setContent(
+        `**Reason:**\n ${TicketReason}`
+      );
+
+      const selectMenuRow = new ActionRowBuilder();
+
       const SelectMenus = new StringSelectMenuBuilder()
       .setCustomId("ticketcontrolpanel")
       .setPlaceholder("Ticket Control Panel")
@@ -535,13 +557,26 @@ module.exports = new Command({
           );
         }
 
-      const row2 = new ActionRowBuilder().addComponents(SelectMenus);
+      selectMenuRow.addComponents(SelectMenus)
+
+      ticketMsgContainer.addActionRowComponents(selectMenuRow)
+
+      if (supportbot.Ticket.TicketReason && TicketReason) {
+        ticketMsgContainer.addTextDisplayComponents(ticketReason)
+      }
 
       await ticketChannel.send({
-        embeds: [TicketMessage],
-        components: [row2],
+        flags: MessageFlags.IsComponentsV2,
+        components: [ticketMsgContainer],
       });
 
+      if (supportbot.Ticket.Questions.Enabled) {
+        const questions = supportbot.Ticket.Questions.List || [];
+        
+        if (questions.length > 0) {
+          await askTicketQuestions(ticketChannel, interaction, questions);
+        }
+}
       
     } catch (error) {
       console.error("Error in run method:", error);

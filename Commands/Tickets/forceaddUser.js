@@ -4,6 +4,7 @@ const {
   ApplicationCommandOptionType,
   ApplicationCommandType,
   ChannelType,
+  MessageFlags,
 } = require("discord.js");
 const yaml = require("js-yaml");
 
@@ -11,7 +12,8 @@ const supportbot = yaml.load(fs.readFileSync("./Configs/supportbot.yml", "utf8")
 const msgconfig = yaml.load(fs.readFileSync("./Configs/messages.yml", "utf8"));
 const cmdconfig = yaml.load(fs.readFileSync("./Configs/commands.yml", "utf8"));
 
-const Command = require("../Structures/Command.js");
+const Command = require("../../Structures/Command.js");
+const db = require("../../Structures/Database.js");
 
 module.exports = new Command({
   name: cmdconfig.ForceAddUser.Command,
@@ -30,7 +32,6 @@ module.exports = new Command({
   async run(interaction) {
     const userToAdd = interaction.options.getUser("user");
     const ticketChannel = interaction.channel;
-    const ticketDataPath = "./Data/TicketData.json";
 
     if (
       (supportbot.Ticket.TicketType === "threads" && !ticketChannel.isThread()) ||
@@ -43,54 +44,38 @@ module.exports = new Command({
 
       return interaction.reply({
         embeds: [onlyInTicket],
-        ephemeral: true,
+        flags: MessageFlags.Ephemeral,
+      });
+    }
+
+    const ticketRow = db.getTicket(ticketChannel.id);
+    if (!ticketRow) {
+      const notFound = new EmbedBuilder()
+        .setTitle(msgconfig.ForceAddUser.NotInTicket_Title)
+        .setDescription(msgconfig.ForceAddUser.NotInTicket_Description)
+        .setColor(supportbot.Embed.Colours.Error);
+
+      return interaction.reply({
+        embeds: [notFound],
+        flags: MessageFlags.Ephemeral,
       });
     }
 
     try {
-
       if (supportbot.Ticket.TicketType === "threads") {
-        try {
-            // Explicitly ensure the bot is in the thread
-            const botMember = await ticketChannel.members.fetch(interaction.client.user.id).catch(() => null);
-            if (!botMember) {
-                await ticketChannel.join();
-            }
-    
-            // Delay to ensure API has processed the bot's membership
-            await new Promise(res => setTimeout(res, 1000));
-    
-            // Attempt to add the user to the thread
-            await ticketChannel.members.add(userToAdd.id);
-    
-            console.log("User successfully added to the thread.");
-        } catch (err) {
-            console.error("Error adding user to the thread:", err.message);
-            const errorEmbed = new EmbedBuilder()
-                .setTitle(msgconfig.ForceAddUser.Error_Title)
-                .setDescription(`An error occurred: ${err.message}`)
-                .setColor(supportbot.Embed.Colours.Error);
-    
-            return interaction.reply({
-                embeds: [errorEmbed],
-                ephemeral: true,
-            });
-        }
-
+        const botMember = await ticketChannel.members.fetch(interaction.client.user.id).catch(() => null);
+        if (!botMember) await ticketChannel.join();
+        await new Promise(res => setTimeout(res, 1000));
+        await ticketChannel.members.add(userToAdd.id);
       } else if (supportbot.Ticket.TicketType === "channels") {
         await ticketChannel.permissionOverwrites.create(userToAdd.id, {
           ViewChannel: true,
           SendMessages: true,
           ReadMessageHistory: true,
-        }); 
+        });
       }
 
-      const ticketData = JSON.parse(fs.readFileSync(ticketDataPath, "utf8"));
-      const ticketIndex = ticketData.tickets.findIndex((t) => t.id === ticketChannel.id);
-      if (ticketIndex !== -1) {
-        ticketData.tickets[ticketIndex].subUsers.push(userToAdd.id);
-        fs.writeFileSync(ticketDataPath, JSON.stringify(ticketData, null, 4));
-      }
+      db.addUserToTicket(ticketChannel.id, userToAdd.id);
 
       const addedEmbed = new EmbedBuilder()
         .setTitle(msgconfig.ForceAddUser.Added_Title)
@@ -101,7 +86,7 @@ module.exports = new Command({
 
       await interaction.reply({
         embeds: [addedEmbed],
-        ephemeral: true,
+        flags: MessageFlags.Ephemeral,
       });
 
       const addedToTicketEmbed = new EmbedBuilder()
@@ -127,7 +112,7 @@ module.exports = new Command({
 
       await interaction.reply({
         embeds: [errorEmbed],
-        ephemeral: true,
+        flags: MessageFlags.Ephemeral,
       });
     }
   },

@@ -73,6 +73,12 @@ Suggestion:
   Permission: ["SendMessages"]
   Enabled: true
 
+SuggestionAdmin:
+  Command: "suggestadmin"
+  Description: "Update a suggestion’s status."
+  Permission: ['SendMessages']
+  # Disable "Suggestion" to disable this command.
+
 Embed:
   Command: "embed"
   Description: "Build a discord embed."
