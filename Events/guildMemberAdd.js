@@ -36,10 +36,11 @@ function getWelcomeThumbnail(client, member, iconCfg) {
 
 function buildModernComponents(client, member) {
     const container = new ContainerBuilder()
-    .setAccentColor(
-        parseInt(msgconfig.Welcome.Modern.Colour.replace("#", ""), 16)
-    );
 
+    if (msgconfig.Welcome.Modern.Colour) {
+        container .setAccentColor(parseInt(msgconfig.Welcome.Modern.Colour.replace("#", ""), 16));
+    }
+    
     const section = new SectionBuilder().addTextDisplayComponents(
         new TextDisplayBuilder().setContent(
             msgconfig.Welcome.Modern.Title.replace(/%joined_user%/g, member.user)
