@@ -507,6 +507,10 @@ module.exports = new Command({
         `**Reason:**\n ${TicketReason}`
       );
 
+      if (supportbot.Ticket.TicketReason && TicketReason) {
+        ticketMsgContainer.addTextDisplayComponents(ticketReason)
+      }
+
       const selectMenuRow = new ActionRowBuilder();
 
       const SelectMenus = new StringSelectMenuBuilder()
@@ -560,10 +564,6 @@ module.exports = new Command({
       selectMenuRow.addComponents(SelectMenus)
 
       ticketMsgContainer.addActionRowComponents(selectMenuRow)
-
-      if (supportbot.Ticket.TicketReason && TicketReason) {
-        ticketMsgContainer.addTextDisplayComponents(ticketReason)
-      }
 
       await ticketChannel.send({
         flags: MessageFlags.IsComponentsV2,

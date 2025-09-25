@@ -41,26 +41,26 @@ logTypes.forEach((type) => {
 
 function logToFile(type, data) {
   const date = new Date().toISOString().split("T")[0];
-  const file = path.join(`./logs/${type}`, `${type}-${date}.log`);
+  const file = path.join(`./Logs/${type}`, `${type}-${date}.log`);
   fs.appendFileSync(file, `[${new Date().toISOString()}] ${data}\n`);
 }
 
 const origLog = console.log;
 console.log = (...args) => {
   origLog(...args);
-  logToFile("output", args.join(" "));
+  logToFile("Output", args.join(" "));
 };
 
 const origWarn = console.warn;
 console.warn = (...args) => {
   origWarn(...args);
-  logToFile("warn", args.join(" "));
+  logToFile("Warn", args.join(" "));
 };
 
 const origError = console.error;
 console.error = (...args) => {
   origError(...args);
-  logToFile("error", args.join(" "));
+  logToFile("Error", args.join(" "));
 };
 
 process.on("unhandledRejection", (reason) => {
