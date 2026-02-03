@@ -37,11 +37,20 @@ Profile:
   Permission: ["SendMessages"]
   # Command is automatically disabled when the TicketClaims is disabled.
 
+
+
 OpenTicket:
   Command: "ticket"
   Description: "Create a support ticket."
   Permission: ["SendMessages"]
   Enabled: true
+
+TicketRename:
+  Command: "rename"
+  Description: "Rename a support ticket."
+  Permission: ["SendMessages"]
+  Enabled: true
+
 
 AddUser:
   Command: "add"
