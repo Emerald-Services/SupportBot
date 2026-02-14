@@ -46,25 +46,19 @@ module.exports = new Command({
   permissions: cmdconfig.TicketRename.Permission,
 
   async run(interaction) {
-    let disableCommand = true;
+    const modal = new ModalBuilder()
+      .setCustomId("renameTicketModal")
+      .setTitle("Rename Channel")
+      .addComponents(
+        new ActionRowBuilder().addComponents(
+          new TextInputBuilder()
+            .setCustomId("renameTicket")
+            .setLabel("New Channel Name")
+            .setStyle(TextInputStyle.Short)
+            .setRequired(true)
+        )
+      );
 
-    const subcommand = interaction.options.getSubcommand(false);
-
-    if (subcommand === cmdconfig.TicketRename.Command) {
-      const modal = new ModalBuilder()
-        .setCustomId("renameTicketModal")
-        .setTitle("Rename Channel")
-          new ActionRowBuilder().addComponents(
-            new TextInputBuilder()
-              .setCustomId("renameTicket")
-              .setLabel("New Channel Name")
-              .setStyle(TextInputStyle.Short)
-              .setRequired(true)
-          );
-
-      return interaction.showModal(modal);
-
-    }
-
+    return interaction.showModal(modal);
   },
 });
