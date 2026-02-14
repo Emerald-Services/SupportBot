@@ -18,7 +18,7 @@
   },
   "homepage": "https://community.emeraldsrv.dev",
   "dependencies": {
-    "axios": "^1.7.2",
+    "axios": "^1.13.5",
     "better-sqlite3": "^12.2.0",
     "discord.js": "^14.13.0",
     "figlet": "^1.9.3",
