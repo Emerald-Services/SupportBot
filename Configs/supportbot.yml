@@ -13,7 +13,7 @@
 #
 #           SupportBot Configuration (supportbot.yml)
 
-SupportBot_Version: "v8.4.1"
+SupportBot_Version: "v8.2"
 
 # -------------------------
 #   General
@@ -21,7 +21,7 @@ SupportBot_Version: "v8.4.1"
 
 General:
   Name: "SupportBot"
-  Token: "BOT_TOKEN"
+  Token: "BBOT_TOKEN_HERE"
 
   Addons:
     Enabled: true
@@ -66,12 +66,12 @@ Embed:
 Roles:
   AutoRole:
     Enabled: true
-    Role: "1111111111111111"
+    Role: "ROLE_ID"
 
   StaffMember:
-    Staff: "1111111111111111"
-    Admin: "1111111111111111"
-    Moderator: "1111111111111111"
+    Staff: "ROLE_ID"
+    Admin: "ROLE_ID"
+    Moderator: "ROLE_ID"
 
   Mod:
     AllowSupportStaff: false
@@ -84,11 +84,11 @@ Roles:
 
 Welcome: 
   Enabled: true
-  Channel: "1111111111111111"
+  Channel: "WELCOME_CHANNEL_ID"
 
 Leave: 
   Enabled: true
-  Channel: "1111111111111111"
+  Channel: "LEAVE_CHANNEL_ID "
 
 # ----------------------------
 #  Suggestions
@@ -96,8 +96,8 @@ Leave:
 
 Suggestions:
   Mode: "Channel" # Channel or Forum
-  ForumChannel: "1111111111111111"
-  Channel: "1111111111111111"
+  ForumChannel: "FORUM_CHANNEL_ID" # A forum channel, disabled if mode is set to Channel.
+  Channel: "SUGGESTIONS_CHANNEL_ID" # A text channel, disabled if mode is set to Forum.
 
   UpvoteEmoji: "✅"
   DownvoteEmoji: "❌"
@@ -130,10 +130,10 @@ Suggestions:
     # 4 - Red
 
   Tags:
-   Created: "1111111111111111"
-   Considering: "1111111111111111"
-   Solved: "1111111111111111"
-   Denied: "1111111111111111"
+   Created: "TAG_ID"
+   Considering: "TAG_ID"
+   Solved: "TAG_ID"
+   Denied: "TAG_ID"
 
 # -------------------------
 #  Tickets
@@ -141,25 +141,25 @@ Suggestions:
 
 VoiceTickets:
   Name: "%username%'s VC" 
-  Category: "1111111111111111"
+  Category: "VC_CATEGORY_ID"
 
 Ticket:
-  TicketType: "threads" 
+  TicketType: "channels" 
 
   # Available TicketTypes:
   # channels - Tickets will be created as channels in the TicketChannelsCategory
   # threads - Tickets will be created as threads through the "TicketHome" channel.
 
-  TicketHome: "1111111111111111" 
+  TicketHome: "TICKET_HOME_CHANNEL_ID"
 
   # What is TicketHome?
   # - Channel where the Ticket creation panel is sent.
   # - Channel where ticket threads are made. (only if ticket threads is enabled above.)
 
   # For TicketType: channels
-  TicketChannelsCategory: "1111111111111111" 
-  TicketChannelsCategory2: "1111111111111111" # This will be used if the first category has reached the max channel limit.
-  TicketArchiveCategory: "1111111111111111"
+  TicketChannelsCategory: "TICKET_CHANNELS_CATEGORY_ID" 
+  TicketChannelsCategory2: "TICKET_CHANNELS_CATEGORY_ID_2" # This will be used if the first category has reached the max channel limit.
+  TicketArchiveCategory: "TICKET_ARCHIVE_CATEGORY_ID"
   # ---
 
   Channel: "ticket-" # The prefix for ticket channel names
@@ -197,8 +197,8 @@ Ticket:
     StaffOnly: true
 
   ClaimTickets:
-    Enabled: true
-    Channel: "1111111111111111" 
+    Enabled: false
+    Channel: "CLAIM_TICKETS_CHANNEL_ID" 
     # Channel where the ticket assignments are sent for staff to claim.
     
     ClaimAcceptTime: 120000
@@ -220,8 +220,8 @@ Ticket:
     # 4 - Red
 
   ReviewSystem:
-    Enabled: false                
-    Channel: "1111111111111111"
+    Enabled: true                
+    Channel: "REVIEW_CHANNEL_ID"
     UseModal: true
 
   Questions:
@@ -232,9 +232,9 @@ Ticket:
       - "Have you tried resolving the issue yourself?"
 
   Log:
-    TicketDataLog: "1111111111111111"
+    TicketDataLog: "TICKKET_DATA_LOG_CHANNEL_ID"
     TickeDataTitle: "Ticket Data"
-    TicketBlacklistLog: "1111111111111111"
+    TicketBlacklistLog: "TICKET_BLACKLIST_LOG_CHANNEL_ID"
 
 # -------------------------
 #  Buttons
@@ -258,7 +258,6 @@ Buttons:
     Unlock: "Unlock Ticket"
     Unlock_Emoji: "🔓"
     Unlock_Style: "2"
-
     # Available Button Styles
     # 1 - Blurple
     # 2 - Grey
@@ -287,12 +286,12 @@ SelectMenus:
 # -------------------------
 
 MessageDelete:
-  Channel: "1111111111111111"
+  Channel: "LOG_CHANNEL_ID"
   Colour: "#d92525"
 
 MessageUpdate:
-  Channel: "1111111111111111"
+  Channel: "LOG_CHANNEL_ID"
   Colour: "#f2a024"
 
 Translate:
-  TranslateLog: "1111111111111111"
+  TranslateLog: "LOG_CHANNEL_ID"
