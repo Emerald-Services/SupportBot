@@ -10,7 +10,7 @@ Enabled: true
 General:
   Name: "SupportBot AI"
   # What would you like to call your AI
-  Model: "gpt-4o-mini"
+  Model: "gpt-5.4"
   # You can see a list of OpenAI Models here: https://platform.openai.com/docs/models
 
   Tokens: 400

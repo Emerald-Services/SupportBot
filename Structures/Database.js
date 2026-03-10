@@ -1,166 +1,205 @@
 // SupportBot | Emerald Services
-// Database Structure
-
 const Database = require("better-sqlite3");
 const path = require("path");
 
 const db = new Database(path.join(__dirname, "../Data/supportbot.db"));
 
-db.prepare(`
+db.prepare(
+  `
   CREATE TABLE IF NOT EXISTS suggestions (
     thread_id TEXT PRIMARY KEY,
     author_id TEXT,
-    text      TEXT,
-    status    TEXT DEFAULT 'Created'
+    text TEXT,
+    status TEXT DEFAULT 'Created'
   )
-`).run();
+`,
+).run();
 
-db.prepare(`
+db.prepare(
+  `
   CREATE TABLE IF NOT EXISTS profiles (
-    user_id   TEXT PRIMARY KEY,
-    bio       TEXT,
-    timezone  TEXT,
+    user_id TEXT PRIMARY KEY,
+    bio TEXT,
+    timezone TEXT,
     clockedIn INTEGER DEFAULT 0
   )
-`).run();
+`,
+).run();
 
-db.prepare(`
+db.prepare(
+  `
   CREATE TABLE IF NOT EXISTS tickets (
-    ticket_id      TEXT PRIMARY KEY,
-    user_id        TEXT,
-    status         TEXT DEFAULT 'open',
-    created_at     INTEGER,
-    updated_at     INTEGER,
-    subject        TEXT,
-    description    TEXT
+    ticket_id TEXT PRIMARY KEY,
+    user_id TEXT,
+    status TEXT DEFAULT 'open',
+    created_at INTEGER,
+    updated_at INTEGER,
+    subject TEXT,
+    description TEXT
   )
-`).run();
+`,
+).run();
 
-try {
-  db.prepare("ALTER TABLE tickets ADD COLUMN voiceChannelId TEXT").run();
-} catch (e) {
-  if (!String(e).includes("duplicate column name")) {
-    throw e;
+// Safe column upgrades
+const safeAlter = (sql) => {
+  try {
+    db.prepare(sql).run();
+  } catch (e) {
+    if (!String(e).includes("duplicate column name")) throw e;
   }
-}
+};
 
-db.prepare(`
+safeAlter(`ALTER TABLE tickets ADD COLUMN voiceChannelId TEXT`);
+safeAlter(`ALTER TABLE tickets ADD COLUMN department TEXT DEFAULT 'general'`);
+safeAlter(`ALTER TABLE tickets ADD COLUMN priority TEXT DEFAULT 'medium'`);
+
+db.prepare(
+  `
   CREATE TABLE IF NOT EXISTS ticket_panel (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     message_id TEXT,
     channel_id TEXT,
     created_at INTEGER
   )
-`).run();
+`,
+).run();
 
-db.prepare(`
+db.prepare(
+  `
   CREATE TABLE IF NOT EXISTS ticket_users (
     ticket_id TEXT,
-    user_id   TEXT,
+    user_id TEXT,
     PRIMARY KEY(ticket_id, user_id)
   )
-`).run();
+`,
+).run();
 
-db.prepare(`
+db.prepare(
+  `
   CREATE TABLE IF NOT EXISTS settings (
-    id   INTEGER PRIMARY KEY,
+    id INTEGER PRIMARY KEY,
     data TEXT
   )
-`).run();
+`,
+).run();
 
-module.exports = {
-  addSuggestion(threadId, authorId, text) {
-    db.prepare(`
-      INSERT INTO suggestions (thread_id, author_id, text)
-      VALUES (@threadId, @authorId, @text)
-      ON CONFLICT(thread_id) DO NOTHING
-    `).run({ threadId, authorId, text });
-  },
+function ensureProfile(userId) {
+  const existing = db.prepare(`
+    SELECT user_id FROM profiles WHERE user_id = ?
+  `).get(userId);
 
-  setSuggestionStatus(threadId, status) {
-    db.prepare(`
-      UPDATE suggestions SET status=@status WHERE thread_id=@threadId
-    `).run({ threadId, status });
-  },
-
-  getSuggestion(threadId) {
-    return db.prepare(`
-      SELECT * FROM suggestions WHERE thread_id=@threadId
-    `).get({ threadId });
-  },
-
-  // ----- Profiles -----
-  getProfile(userId) {
-    const row = db.prepare(`SELECT * FROM profiles WHERE user_id=?`).get(userId);
-    if (!row) {
-      db.prepare(`
-        INSERT INTO profiles (user_id, bio, timezone, clockedIn)
-        VALUES (?, '', '', 0)
-      `).run(userId);
-      return { user_id: userId, bio: "", timezone: "", clockedIn: 0 };
-    }
-    return row;
-  },
-
-  updateProfile(userId, data) {
-    const { bio = "", timezone = "", clockedIn = 0 } = data;
+  if (!existing) {
     db.prepare(`
       INSERT INTO profiles (user_id, bio, timezone, clockedIn)
-      VALUES (@userId, @bio, @timezone, @clockedIn)
-      ON CONFLICT(user_id) DO UPDATE SET
-        bio       = excluded.bio,
-        timezone  = excluded.timezone,
-        clockedIn = excluded.clockedIn
-    `).run({ userId, bio, timezone, clockedIn });
-  },
+      VALUES (?, '', '', 0)
+    `).run(userId);
+  }
+}
 
-  setClockedIn(userId, value) {
-    db.prepare(`UPDATE profiles SET clockedIn=? WHERE user_id=?`)
-      .run(value ? 1 : 0, userId);
-  },
-
+module.exports = {
   addTicket(ticket) {
     const now = Date.now();
-    db.prepare(`
-      INSERT INTO tickets (ticket_id, user_id, subject, description, created_at, updated_at)
-      VALUES (@ticket_id, @user_id, @subject, @description, @created_at, @updated_at)
+
+    db.prepare(
+      `
+      INSERT INTO tickets (
+        ticket_id,
+        user_id,
+        subject,
+        description,
+        created_at,
+        updated_at,
+        department,
+        priority
+      )
+      VALUES (
+        @ticket_id,
+        @user_id,
+        @subject,
+        @description,
+        @created_at,
+        @updated_at,
+        @department,
+        @priority
+      )
       ON CONFLICT(ticket_id) DO NOTHING
-    `).run({
+    `,
+    ).run({
       ticket_id: ticket.id,
       user_id: ticket.user,
       subject: ticket.reason || "",
       description: ticket.description || "",
       created_at: now,
-      updated_at: now
+      updated_at: now,
+      department: ticket.department || "general",
+      priority: ticket.priority || "medium",
     });
   },
 
   updateTicketVoice(ticketId, voiceChannelId) {
-    db.prepare(`
-      UPDATE tickets SET voiceChannelId=@voiceChannelId, updated_at=@updatedAt WHERE ticket_id=@ticketId
-    `).run({ ticketId, voiceChannelId, updatedAt: Date.now() });
-  },
-
-  getTicketVoice(ticketId) {
-    return db.prepare(`SELECT voiceChannelId FROM tickets WHERE ticket_id=?`).get(ticketId);
-  },
-
-  deleteTicketVoice(ticketId) {
-    db.prepare(`
-      UPDATE tickets SET voiceChannelId=NULL, updated_at=@updatedAt WHERE ticket_id=@ticketId
-    `).run({ ticketId, updatedAt: Date.now() });
+    db.prepare(
+      `
+      UPDATE tickets
+      SET voiceChannelId=@voiceChannelId, updated_at=@updatedAt
+      WHERE ticket_id=@ticketId
+    `,
+    ).run({
+      ticketId,
+      voiceChannelId,
+      updatedAt: Date.now(),
+    });
   },
 
   updateTicketStatus(ticketId, status) {
-    db.prepare(`
-      UPDATE tickets SET status=@status, updated_at=@updatedAt WHERE ticket_id=@ticketId
-    `).run({ status, updatedAt: Date.now(), ticketId });
+    db.prepare(
+      `
+      UPDATE tickets
+      SET status=@status, updated_at=@updatedAt
+      WHERE ticket_id=@ticketId
+    `,
+    ).run({
+      status,
+      updatedAt: Date.now(),
+      ticketId,
+    });
+  },
+
+  updateTicketDepartment(ticketId, department) {
+    db.prepare(
+      `
+      UPDATE tickets
+      SET department=@department, updated_at=@updatedAt
+      WHERE ticket_id=@ticketId
+    `,
+    ).run({
+      ticketId,
+      department,
+      updatedAt: Date.now(),
+    });
+  },
+
+  updateTicketPriority(ticketId, priority) {
+    db.prepare(
+      `
+      UPDATE tickets
+      SET priority=@priority, updated_at=@updatedAt
+      WHERE ticket_id=@ticketId
+    `,
+    ).run({
+      ticketId,
+      priority,
+      updatedAt: Date.now(),
+    });
   },
 
   getTicket(ticketId) {
-    return db.prepare(`
+    return db
+      .prepare(
+        `
       SELECT * FROM tickets WHERE ticket_id=@ticketId
-    `).get({ ticketId });
+    `,
+      )
+      .get({ ticketId });
   },
 
   getAllTickets() {
@@ -168,36 +207,51 @@ module.exports = {
   },
 
   saveTicketPanel(messageId, channelId) {
-    db.prepare(`
+    db.prepare(
+      `
       INSERT INTO ticket_panel (message_id, channel_id, created_at)
       VALUES (@messageId, @channelId, @createdAt)
-    `).run({ messageId, channelId, createdAt: Date.now() });
+    `,
+    ).run({ messageId, channelId, createdAt: Date.now() });
   },
 
   getTicketPanel() {
-    return db.prepare(`
+    return db
+      .prepare(
+        `
       SELECT * FROM ticket_panel ORDER BY id DESC LIMIT 1
-    `).get();
+    `,
+      )
+      .get();
   },
 
   addUserToTicket(ticketId, userId) {
-    db.prepare(`
+    db.prepare(
+      `
       INSERT INTO ticket_users (ticket_id, user_id)
       VALUES (?, ?)
       ON CONFLICT(ticket_id, user_id) DO NOTHING
-    `).run(ticketId, userId);
+    `,
+    ).run(ticketId, userId);
   },
 
   removeUserFromTicket(ticketId, userId) {
-    db.prepare(`
+    db.prepare(
+      `
       DELETE FROM ticket_users WHERE ticket_id=? AND user_id=?
-    `).run(ticketId, userId);
+    `,
+    ).run(ticketId, userId);
   },
 
   getTicketUsers(ticketId) {
-    return db.prepare(`
+    return db
+      .prepare(
+        `
       SELECT user_id FROM ticket_users WHERE ticket_id=?
-    `).all(ticketId).map(r => r.user_id);
+    `,
+      )
+      .all(ticketId)
+      .map((r) => r.user_id);
   },
 
   getSettings() {
@@ -210,12 +264,46 @@ module.exports = {
     }
   },
 
+  getProfile(userId) {
+    ensureProfile(userId);
+
+    const row = db.prepare(`
+      SELECT * FROM profiles WHERE user_id = ?
+    `).get(userId);
+
+    if (!row) {
+      return {
+        user_id: userId,
+        bio: "",
+        timezone: "",
+        clockedIn: false,
+      };
+    }
+
+    return {
+      ...row,
+      clockedIn: Boolean(row.clockedIn),
+    };
+  },
+
+  setClockedIn(userId, clockedIn) {
+    ensureProfile(userId);
+
+    db.prepare(`
+      UPDATE profiles
+      SET clockedIn = ?
+      WHERE user_id = ?
+    `).run(clockedIn ? 1 : 0, userId);
+  },
+
   saveSettings(obj) {
     const data = JSON.stringify(obj);
-    db.prepare(`
+    db.prepare(
+      `
       INSERT INTO settings (id, data)
       VALUES (1, @data)
       ON CONFLICT(id) DO UPDATE SET data = excluded.data
-    `).run({ data });
-  }
+    `,
+    ).run({ data });
+  },
 };

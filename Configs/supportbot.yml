@@ -13,7 +13,7 @@
 #
 #           SupportBot Configuration (supportbot.yml)
 
-SupportBot_Version: "v8.5"
+SupportBot_Version: "v26.0.0-prerelease-1"
 
 # -------------------------
 #   General
@@ -21,7 +21,7 @@ SupportBot_Version: "v8.5"
 
 General:
   Name: "SupportBot"
-  Token: "BBOT_TOKEN_HERE"
+  Token: "BOT_TOKEN"
 
   Addons:
     Enabled: true
@@ -84,11 +84,11 @@ Roles:
 
 Welcome: 
   Enabled: true
-  Channel: "WELCOME_CHANNEL_ID"
+  Channel: "CHANNEL_ID"
 
 Leave: 
   Enabled: true
-  Channel: "LEAVE_CHANNEL_ID "
+  Channel: "CHANNEL_ID"
 
 # ----------------------------
 #  Suggestions
@@ -97,7 +97,7 @@ Leave:
 Suggestions:
   Mode: "Channel" # Channel or Forum
   ForumChannel: "FORUM_CHANNEL_ID" # A forum channel, disabled if mode is set to Channel.
-  Channel: "SUGGESTIONS_CHANNEL_ID" # A text channel, disabled if mode is set to Forum.
+  Channel: "CHANNEL_ID" # A text channel, disabled if mode is set to Forum.
 
   UpvoteEmoji: "✅"
   DownvoteEmoji: "❌"
@@ -141,30 +141,34 @@ Suggestions:
 
 VoiceTickets:
   Name: "%username%'s VC" 
-  Category: "VC_CATEGORY_ID"
+  Category: "CATEGORY_ID"
 
 Ticket:
-  TicketType: "channels" 
+  TicketType: "threads" 
 
   # Available TicketTypes:
   # channels - Tickets will be created as channels in the TicketChannelsCategory
   # threads - Tickets will be created as threads through the "TicketHome" channel.
 
-  TicketHome: "TICKET_HOME_CHANNEL_ID"
+  UserManagement:
+    DMOnAdd: true # DM the user when they are added to the ticket
+    DMOnRemove: true # DM the user when they are removed from the ticket
+    DMTranscript: true # DM the user a transcript of the ticket when it is closed
+
+  TicketHome: "CHANNEL_ID"
 
   # What is TicketHome?
   # - Channel where the Ticket creation panel is sent.
   # - Channel where ticket threads are made. (only if ticket threads is enabled above.)
 
   # For TicketType: channels
-  TicketChannelsCategory: "TICKET_CHANNELS_CATEGORY_ID" 
-  TicketChannelsCategory2: "TICKET_CHANNELS_CATEGORY_ID_2" # This will be used if the first category has reached the max channel limit.
-  TicketArchiveCategory: "TICKET_ARCHIVE_CATEGORY_ID"
+  TicketChannelsCategory: "CATEGORY_ID" 
+  TicketChannelsCategory2: "CATEGORY_ID" # This will be used if the first category has reached the max channel limit.
+  TicketArchiveCategory: "CATEGORY_ID"
   # ---
 
   Channel: "ticket-" # The prefix for ticket channel names
   TicketsPerUser: 100
-  DMTranscripts: true
   TicketReason: true
   # If ticket reason is set to false, It will not prompt to create a reason
 
@@ -181,24 +185,12 @@ Ticket:
     StaffOnly: true
     # Set to false is anyone is able to close a ticket.
 
-    Confirmation_Button: "Confirm Close"
-    Confirmation_Emoji: "🗑️"
-    Confirmation_Style: "2"
-
-    Title: "Are you sure you want to close this ticket?"
-
-    # Available Button Styles:
-    # 1 - Blurple
-    # 2 - Grey
-    # 3 - Green
-    # 4 - Red
-
-  Invites:
+  Invites: # Invites is for ticket threads.
     StaffOnly: true
 
   ClaimTickets:
-    Enabled: false
-    Channel: "CLAIM_TICKETS_CHANNEL_ID" 
+    Enabled: true
+    Channel: "CHANNEL_ID" 
     # Channel where the ticket assignments are sent for staff to claim.
     
     ClaimAcceptTime: 120000
@@ -221,7 +213,7 @@ Ticket:
 
   ReviewSystem:
     Enabled: true                
-    Channel: "REVIEW_CHANNEL_ID"
+    Channel: "CHANNEL_ID"
     UseModal: true
 
   Questions:
@@ -232,9 +224,84 @@ Ticket:
       - "Have you tried resolving the issue yourself?"
 
   Log:
-    TicketDataLog: "TICKKET_DATA_LOG_CHANNEL_ID"
+    TicketDataLog: "CHANNEL_ID"
     TickeDataTitle: "Ticket Data"
-    TicketBlacklistLog: "TICKET_BLACKLIST_LOG_CHANNEL_ID"
+    TicketBlacklistLog: "CHANNEL_ID"
+
+# -------------------------
+#  Ticket Departments
+# -------------------------
+
+  DepartmentSystem:
+    Enabled: true
+    Placeholder: "Choose a ticket department"
+    DefaultDepartment: "general"
+
+    Departments:
+      general:
+        Name: "General Support"
+        Emoji: "🎫"
+        Category: "CATEGORY_ID"
+        Role: "ROLE_ID"
+        ChannelPrefix: "support-"
+        DefaultPriority: "normal"
+        Questions:
+          - "What do you need help with?"
+          - "When did the issue start?"
+
+      purchase:
+        Name: "Purchase Support"
+        Emoji: "💳"
+        Category: "CATEGORY_ID"
+        Role: "ROLE_ID"
+        ChannelPrefix: "purchase-"
+        DefaultPriority: "high"
+        Questions:
+          - "What is your order ID?"
+          - "What product did you purchase?"
+          - "What payment issue are you having?"
+
+      reports:
+        Name: "Player Report"
+        Emoji: "🚨"
+        Category: "CATEGORY_ID"
+        Role: "ROLE_ID"
+        ChannelPrefix: "report-"
+        DefaultPriority: "normal"
+        Questions:
+          - "Who are you reporting?"
+          - "What happened?"
+          - "Do you have evidence?"
+
+      appeals:
+        Name: "Ban Appeals"
+        Emoji: "⚖️"
+        Category: "CATEGORY_ID"
+        Role: "ROLE_ID"
+        ChannelPrefix: "appeals-"
+        DefaultPriority: "low"
+        Questions:
+          - "What punishment are you appealing?"
+          - "Why should it be reviewed?"
+          - "Anything else staff should know?"
+
+  PrioritySystem:
+    Enabled: true
+    DefaultPriority: "Normal"
+    AllowUsersToChooseOnOpen: true
+    Priorities:
+      low:
+        Name: "Low"
+        Emoji: "🟢"
+      normal:
+        Name: "Normal"
+        Emoji: "🟡"
+      high:
+        Name: "High"
+        Emoji: "🟠"
+      urgent:
+        Name: "Urgent"
+        Emoji: "🔴"
 
 # -------------------------
 #  Buttons
@@ -286,12 +353,12 @@ SelectMenus:
 # -------------------------
 
 MessageDelete:
-  Channel: "LOG_CHANNEL_ID"
+  Channel: "CHANNEL_ID"
   Colour: "#d92525"
 
 MessageUpdate:
-  Channel: "LOG_CHANNEL_ID"
+  Channel: "CHANNEL_ID"
   Colour: "#f2a024"
 
 Translate:
-  TranslateLog: "LOG_CHANNEL_ID"
+  TranslateLog: "CHANNEL_ID"
