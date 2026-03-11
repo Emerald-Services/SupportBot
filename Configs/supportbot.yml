@@ -13,7 +13,7 @@
 #
 #           SupportBot Configuration (supportbot.yml)
 
-SupportBot_Version: "v26.0.0-prerelease-1"
+SupportBot_Version: "v26.0.0-prerelease-2"
 
 # -------------------------
 #   General
@@ -144,7 +144,7 @@ VoiceTickets:
   Category: "CATEGORY_ID"
 
 Ticket:
-  TicketType: "threads" 
+  TicketType: "channels" 
 
   # Available TicketTypes:
   # channels - Tickets will be created as channels in the TicketChannelsCategory
@@ -189,7 +189,7 @@ Ticket:
     StaffOnly: true
 
   ClaimTickets:
-    Enabled: true
+    Enabled: false
     Channel: "CHANNEL_ID" 
     # Channel where the ticket assignments are sent for staff to claim.
     
@@ -212,12 +212,12 @@ Ticket:
     # 4 - Red
 
   ReviewSystem:
-    Enabled: true                
+    Enabled: false                
     Channel: "CHANNEL_ID"
     UseModal: true
 
-  Questions:
-    Enabled: true  # Set to false to disable ticket questions
+  Questions: # Default questions asked when a ticket is created, these are used if departments are disabled.
+    Enabled: false  
     List:
       - "Please provide your account email?"
       - "What is the nature of your issue?"
@@ -228,12 +228,17 @@ Ticket:
     TickeDataTitle: "Ticket Data"
     TicketBlacklistLog: "CHANNEL_ID"
 
+  AIMode:
+    Enabled: true
+    ThreadName: "Chat with SupportBot AI"
+    WelcomeMessage: "Hi! I’m SupportBot AI. You can chat with me here about your issue."
+
 # -------------------------
 #  Ticket Departments
 # -------------------------
 
   DepartmentSystem:
-    Enabled: true
+    Enabled: false
     Placeholder: "Choose a ticket department"
     DefaultDepartment: "general"
 
@@ -286,7 +291,7 @@ Ticket:
           - "Anything else staff should know?"
 
   PrioritySystem:
-    Enabled: true
+    Enabled: false
     DefaultPriority: "Normal"
     AllowUsersToChooseOnOpen: true
     Priorities:

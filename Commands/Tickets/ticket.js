@@ -1,6 +1,3 @@
-// SupportBot | Emerald Services
-// Ticket Command
-
 const fs = require("fs");
 const {
   EmbedBuilder,
@@ -22,8 +19,12 @@ const yaml = require("js-yaml");
 
 const db = require("../../Structures/Database.js");
 
-const panelconfig = yaml.load(fs.readFileSync("./Configs/ticket-panel.yml", "utf8"));
-const supportbot = yaml.load(fs.readFileSync("./Configs/supportbot.yml", "utf8"));
+const panelconfig = yaml.load(
+  fs.readFileSync("./Configs/ticket-panel.yml", "utf8"),
+);
+const supportbot = yaml.load(
+  fs.readFileSync("./Configs/supportbot.yml", "utf8"),
+);
 const cmdconfig = yaml.load(fs.readFileSync("./Configs/commands.yml", "utf8"));
 const msgconfig = yaml.load(fs.readFileSync("./Configs/messages.yml", "utf8"));
 
@@ -33,7 +34,9 @@ const TicketNumberID = require("../../Structures/TicketID.js");
 async function isBlacklisted(userId) {
   let blacklistData;
   try {
-    blacklistData = JSON.parse(fs.readFileSync("./Data/BlacklistedUsers.json", "utf8"));
+    blacklistData = JSON.parse(
+      fs.readFileSync("./Data/BlacklistedUsers.json", "utf8"),
+    );
   } catch (error) {
     console.error("Error reading BlacklistedUsers.json:", error);
     return false;
@@ -51,7 +54,9 @@ async function getClockedInUsers(guild) {
   const clockedInUsers = new Set();
 
   if (typeof db.getProfile !== "function") {
-    console.error("db.getProfile is not a function. Check Structures/Database.js");
+    console.error(
+      "db.getProfile is not a function. Check Structures/Database.js",
+    );
     return clockedInUsers;
   }
 
@@ -79,6 +84,14 @@ function getPrioritySystem() {
   return supportbot.Ticket?.PrioritySystem || {};
 }
 
+function getAIModeConfig() {
+  return supportbot.Ticket?.AIMode || {};
+}
+
+function isAIModeEnabledGlobally() {
+  return getAIModeConfig().Enabled === true;
+}
+
 function areDepartmentsEnabled() {
   return (
     supportbot.Ticket?.TicketType !== "threads" &&
@@ -91,6 +104,34 @@ function arePrioritiesEnabled() {
     supportbot.Ticket?.TicketType !== "threads" &&
     supportbot.Ticket?.PrioritySystem?.Enabled === true
   );
+}
+
+function getSelectedDepartmentKey(interaction) {
+  const departmentSystem = getDepartmentSystem();
+  const departmentsEnabled = areDepartmentsEnabled();
+  const departments = departmentSystem.Departments || {};
+
+  if (!departmentsEnabled) {
+    return departmentSystem.DefaultDepartment || "general";
+  }
+
+  const selectedDepartment =
+    interaction.options?.getString?.("department") ||
+    interaction.department ||
+    departmentSystem.DefaultDepartment ||
+    "general";
+
+  if (departments[selectedDepartment]) {
+    return selectedDepartment;
+  }
+
+  const firstDepartmentKey = Object.keys(departments)[0];
+  return firstDepartmentKey || departmentSystem.DefaultDepartment || "general";
+}
+
+function getDepartmentConfig(departmentKey) {
+  if (!departmentKey) return null;
+  return getDepartmentSystem().Departments?.[departmentKey] || null;
 }
 
 function getPriorityKey(interaction, departmentKey) {
@@ -110,37 +151,16 @@ function getPriorityKey(interaction, departmentKey) {
   );
 }
 
-function getDepartmentConfig(departmentKey) {
-  if (!departmentKey) return null;
-  return getDepartmentSystem().Departments?.[departmentKey] || null;
-}
-
-function getPriorityKey(interaction, departmentKey) {
-  if (!arePrioritiesEnabled()) {
-    return null;
-  }
-
-  const prioritySystem = getPrioritySystem();
-  const departmentConfig = getDepartmentConfig(departmentKey);
-
-  return (
-    interaction.priority ||
-    departmentConfig?.DefaultPriority ||
-    prioritySystem.DefaultPriority ||
-    "medium"
-  );
-}
-
 function getPriorityConfig(priorityKey) {
   if (!priorityKey) return null;
   return getPrioritySystem().Priorities?.[priorityKey] || null;
 }
 
 function buildTicketChannelName(ticketNumberID, priorityKey, departmentConfig) {
-  const defaultPrefix = supportbot.Ticket?.ChannelPrefix || supportbot.Ticket?.Channel || "ticket-";
+  const defaultPrefix =
+    supportbot.Ticket?.ChannelPrefix || supportbot.Ticket?.Channel || "ticket-";
 
   const departmentPrefix = departmentConfig?.ChannelPrefix || defaultPrefix;
-
   const safePrefix = String(departmentPrefix).trim() || "ticket-";
   const baseName = `${safePrefix}${ticketNumberID}`;
 
@@ -151,60 +171,114 @@ function buildTicketChannelName(ticketNumberID, priorityKey, departmentConfig) {
   return `${baseName}-${String(priorityKey).toLowerCase()}`;
 }
 
+function buildAIModeButtons(ticketId, aiEnabled = false) {
+  const enableButton = new ButtonBuilder()
+    .setCustomId(`ticket_ai_enable:${ticketId}`)
+    .setLabel(msgconfig.Ticket.AIMode.EnableButton)
+    .setStyle(ButtonStyle.Success)
+    .setDisabled(aiEnabled);
+
+  const disableButton = new ButtonBuilder()
+    .setCustomId(`ticket_ai_disable:${ticketId}`)
+    .setLabel(msgconfig.Ticket.AIMode.DisableButton)
+    .setStyle(ButtonStyle.Secondary)
+    .setDisabled(!aiEnabled);
+
+  return new ActionRowBuilder().addComponents(enableButton, disableButton);
+}
+
+async function createAITicketThread(parentTicketChannel, interaction) {
+  const threadName = supportbot.Ticket.AIMode?.ThreadName || "ai-chat";
+
+  const aiThread = await parentTicketChannel.threads.create({
+    name: threadName,
+    autoArchiveDuration: 60,
+    reason: "ticket ai mode thread",
+  });
+
+  const welcomeEmbed = new EmbedBuilder()
+    .setTitle(msgconfig.Ticket.AIMode.ThreadWelcomeTitle)
+    .setDescription(msgconfig.Ticket.AIMode.ThreadWelcomeMessage)
+    .setColor(supportbot.Embed.Colours.General);
+
+  await aiThread.send({ embeds: [welcomeEmbed] });
+
+  if (typeof db.setTicketAIState === "function") {
+    db.setTicketAIState(parentTicketChannel.id, {
+      enabled: true,
+      aiChannelId: aiThread.id,
+      aiType: "thread",
+      enabledBy: interaction.user.id,
+      enabledAt: new Date().toISOString(),
+    });
+  }
+
+  return aiThread;
+}
+
 async function askTicketQuestions(ticketChannel, interaction, questions) {
-  const answers = [];
-  let questionIndex = 0;
+  return new Promise(async (resolve) => {
+    const answers = [];
+    let questionIndex = 0;
 
-  const sendNextQuestion = async () => {
-    if (questionIndex < questions.length) {
-      const questionsEmbed = new EmbedBuilder()
-        .setDescription(`**${questionIndex + 1}.** ${questions[questionIndex]}`)
-        .setColor(supportbot.Embed.Colours.General);
+    const sendNextQuestion = async () => {
+      if (questionIndex < questions.length) {
+        const questionsEmbed = new EmbedBuilder()
+          .setDescription(
+            `**${questionIndex + 1}.** ${questions[questionIndex]}`,
+          )
+          .setColor(supportbot.Embed.Colours.General);
 
-      const questionMessage = await ticketChannel.send({
-        embeds: [questionsEmbed],
-      });
-
-      const collector = new MessageCollector(ticketChannel, {
-        filter: (m) => m.author.id === interaction.user.id,
-        max: 1,
-        time: 60000,
-      });
-
-      collector.on("collect", async (message) => {
-        answers.push({
-          question: questions[questionIndex],
-          answer: message.content,
+        const questionMessage = await ticketChannel.send({
+          embeds: [questionsEmbed],
         });
-        questionIndex++;
-        await message.delete().catch(() => {});
-        await questionMessage.delete().catch(() => {});
-        sendNextQuestion();
-      });
-    } else {
-      const summaryEmbed = new EmbedBuilder()
-        .setTitle(msgconfig.Ticket.TicketQuestions.Details.Title)
-        .setDescription(
-          msgconfig.Ticket.TicketQuestions.Details.Description.replace(
-            "%user%",
-            interaction.user.id,
-          ),
-        )
-        .setColor(supportbot.Embed.Colours.General)
-        .addFields(
-          answers.map((a) => ({
-            name: `Q: ${a.question}`,
-            value: `A: ${a.answer}`,
-            inline: false,
-          })),
-        )
-        .setTimestamp();
 
-      await ticketChannel.send({ embeds: [summaryEmbed] });
-    }
-  };
+        const collector = new MessageCollector(ticketChannel, {
+          filter: (m) => m.author.id === interaction.user.id,
+          max: 1,
+          time: 60000,
+        });
 
-  sendNextQuestion();
+        collector.on("collect", async (message) => {
+          answers.push({
+            question: questions[questionIndex],
+            answer: message.content,
+          });
+
+          questionIndex++;
+
+          await message.delete().catch(() => {});
+          await questionMessage.delete().catch(() => {});
+
+          sendNextQuestion();
+        });
+      } else {
+        const summaryEmbed = new EmbedBuilder()
+          .setTitle(msgconfig.Ticket.TicketQuestions.Details.Title)
+          .setDescription(
+            msgconfig.Ticket.TicketQuestions.Details.Description.replace(
+              "%user%",
+              interaction.user.id,
+            ),
+          )
+          .setColor(supportbot.Embed.Colours.General)
+          .addFields(
+            answers.map((a) => ({
+              name: `Q: ${a.question}`,
+              value: `A: ${a.answer}`,
+              inline: false,
+            })),
+          )
+          .setTimestamp();
+
+        await ticketChannel.send({ embeds: [summaryEmbed] });
+
+        resolve(answers);
+      }
+    };
+
+    sendNextQuestion();
+  });
 }
 
 async function assignTicketToUser(
@@ -243,7 +317,10 @@ async function assignTicketToUser(
     const claimEmbed = new EmbedBuilder()
       .setTitle(msgconfig.Ticket.ClaimTickets.ClaimTitle)
       .setDescription(
-        msgconfig.Ticket.ClaimTickets.ClaimMessage.replace("%user%", interaction.user.id),
+        msgconfig.Ticket.ClaimTickets.ClaimMessage.replace(
+          "%user%",
+          interaction.user.id,
+        ),
       )
       .setColor(supportbot.Embed.Colours.General);
 
@@ -294,11 +371,7 @@ async function assignTicketToUser(
           db.claimTicket(ticketChannel.id, i.user.id);
         }
 
-        await claimMessage
-          .edit({
-            components: [],
-          })
-          .catch(() => {});
+        await claimMessage.edit({ components: [] }).catch(() => {});
       });
 
       collector.on("end", async (collected) => {
@@ -308,7 +381,9 @@ async function assignTicketToUser(
             content: `Ticket is still unclaimed.\nCC: ${claimPing}`,
             embeds: [
               new EmbedBuilder()
-                .setDescription(`Ticket is still unclaimed: <#${ticketChannel.id}>`)
+                .setDescription(
+                  `Ticket is still unclaimed: <#${ticketChannel.id}>`,
+                )
                 .setColor(supportbot.Embed.Colours.Warn),
             ],
           });
@@ -319,9 +394,13 @@ async function assignTicketToUser(
     }
 
     const assignedUserId =
-      eligibleClockedInUsers[Math.floor(Math.random() * eligibleClockedInUsers.length)];
+      eligibleClockedInUsers[
+        Math.floor(Math.random() * eligibleClockedInUsers.length)
+      ];
 
-    const assignedUser = await interaction.guild.members.fetch(assignedUserId).catch(() => null);
+    const assignedUser = await interaction.guild.members
+      .fetch(assignedUserId)
+      .catch(() => null);
 
     if (!assignedUser) {
       return null;
@@ -351,18 +430,16 @@ async function assignTicketToUser(
       }
 
       await ticketChannel
-        .send({ content: `<@${assignedUserId}> has claimed the ticket.` })
+        .send({
+          content: `<@${assignedUserId}> has claimed the ticket.`,
+        })
         .catch(() => {});
 
       if (typeof db.claimTicket === "function") {
         db.claimTicket(ticketChannel.id, assignedUserId);
       }
 
-      await claimMessage
-        .edit({
-          components: [],
-        })
-        .catch(() => {});
+      await claimMessage.edit({ components: [] }).catch(() => {});
     });
 
     collector.on("end", async (collected) => {
@@ -374,7 +451,9 @@ async function assignTicketToUser(
             content: `No one claimed the ticket. Tagging roles: ${claimPing}`,
             embeds: [
               new EmbedBuilder()
-                .setDescription(`Ticket is still unclaimed: <#${ticketChannel.id}>`)
+                .setDescription(
+                  `Ticket is still unclaimed: <#${ticketChannel.id}>`,
+                )
                 .setColor(supportbot.Embed.Colours.Warn),
             ],
           });
@@ -397,10 +476,11 @@ async function assignTicketToUser(
             return hasAdmin || hasStaff || hasDepartmentRole;
           };
 
-          const retryCollector = retryClaimMessage.createMessageComponentCollector({
-            filter: retryFilter,
-            time: 120000,
-          });
+          const retryCollector =
+            retryClaimMessage.createMessageComponentCollector({
+              filter: retryFilter,
+              time: 120000,
+            });
 
           retryCollector.on("collect", async (i) => {
             await i.deferUpdate().catch(() => {});
@@ -417,11 +497,7 @@ async function assignTicketToUser(
               db.claimTicket(ticketChannel.id, i.user.id);
             }
 
-            await retryClaimMessage
-              .edit({
-                components: [],
-              })
-              .catch(() => {});
+            await retryClaimMessage.edit({ components: [] }).catch(() => {});
           });
 
           retryCollector.on("end", async (retryCollected) => {
@@ -436,7 +512,10 @@ async function assignTicketToUser(
           const ReassigningEmbed = new EmbedBuilder()
             .setTitle(msgconfig.Ticket.ClaimTickets.ReassigningTitle)
             .setDescription(
-              msgconfig.Ticket.ClaimTickets.ReassigningMessage.replace("%user%", assignedUserId),
+              msgconfig.Ticket.ClaimTickets.ReassigningMessage.replace(
+                "%user%",
+                assignedUserId,
+              ),
             )
             .setColor(supportbot.Embed.Colours.General);
 
@@ -513,7 +592,7 @@ module.exports = new Command({
   ],
 
   permissions: cmdconfig.OpenTicket.Permission,
-  
+
   async run(interaction) {
     try {
       if (await isBlacklisted(interaction.user.id)) {
@@ -525,7 +604,10 @@ module.exports = new Command({
 
       let TicketReason = null;
       if (supportbot.Ticket.TicketReason) {
-        TicketReason = interaction.options?.getString?.("reason") || interaction.reason || null;
+        TicketReason =
+          interaction.options?.getString?.("reason") ||
+          interaction.reason ||
+          null;
       }
 
       let TicketData = { tickets: db.getAllTickets() };
@@ -534,8 +616,9 @@ module.exports = new Command({
 
       if (
         supportbot.Ticket.TicketsPerUser &&
-        TicketData.tickets.filter((t) => t.user === interaction.user.id && t.open).length >=
-          supportbot.Ticket.TicketsPerUser
+        TicketData.tickets.filter(
+          (t) => t.user === interaction.user.id && t.open,
+        ).length >= supportbot.Ticket.TicketsPerUser
       ) {
         return interaction.reply({
           embeds: [
@@ -552,12 +635,21 @@ module.exports = new Command({
       const usingThreads = supportbot.Ticket.TicketType === "threads";
       const departmentsEnabled = areDepartmentsEnabled();
       const prioritiesEnabled = arePrioritiesEnabled();
+      const aiModeEnabled = isAIModeEnabledGlobally();
 
-      const departmentKey = departmentsEnabled ? getSelectedDepartmentKey(interaction) : null;
-      const departmentConfig = departmentsEnabled ? getDepartmentConfig(departmentKey) : null;
+      const departmentKey = departmentsEnabled
+        ? getSelectedDepartmentKey(interaction)
+        : null;
+      const departmentConfig = departmentsEnabled
+        ? getDepartmentConfig(departmentKey)
+        : null;
 
-      const priorityKey = prioritiesEnabled ? getPriorityKey(interaction, departmentKey) : null;
-      const priorityConfig = prioritiesEnabled ? getPriorityConfig(priorityKey) : null;
+      const priorityKey = prioritiesEnabled
+        ? getPriorityKey(interaction, departmentKey)
+        : null;
+      const priorityConfig = prioritiesEnabled
+        ? getPriorityConfig(priorityKey)
+        : null;
 
       let ticketNumberID = await TicketNumberID.pad();
       const TicketSubject = TicketReason || msgconfig.Ticket.InvalidSubject;
@@ -582,17 +674,26 @@ module.exports = new Command({
         });
       }
 
-      const Staff = await getRole(supportbot.Roles.StaffMember.Staff, interaction.guild);
-      const Admin = await getRole(supportbot.Roles.StaffMember.Admin, interaction.guild);
+      const Staff = await getRole(
+        supportbot.Roles.StaffMember.Staff,
+        interaction.guild,
+      );
+      const Admin = await getRole(
+        supportbot.Roles.StaffMember.Admin,
+        interaction.guild,
+      );
 
-      const departmentRoleId = departmentsEnabled ? departmentConfig?.Role || null : null;
+      const departmentRoleId = departmentsEnabled
+        ? departmentConfig?.Role || null
+        : null;
       const DepartmentRole = departmentRoleId
         ? await getRole(departmentRoleId, interaction.guild)
         : null;
 
       if (!Staff || !Admin) {
         return interaction.reply({
-          content: "Some roles seem to be missing!\nPlease check for errors when starting the bot.",
+          content:
+            "Some roles seem to be missing!\nPlease check for errors when starting the bot.",
           flags: MessageFlags.Ephemeral,
         });
       }
@@ -601,10 +702,15 @@ module.exports = new Command({
 
       if (usingThreads) {
         const TicketHome = interaction.guild.channels.cache.find(
-          (c) => c.name === supportbot.Ticket.TicketHome || c.id === supportbot.Ticket.TicketHome,
+          (c) =>
+            c.name === supportbot.Ticket.TicketHome ||
+            c.id === supportbot.Ticket.TicketHome,
         );
 
-        const channel = await getChannel(supportbot.Ticket.TicketHome, interaction.guild);
+        const channel = await getChannel(
+          supportbot.Ticket.TicketHome,
+          interaction.guild,
+        );
 
         ticketChannel = await channel.threads.create({
           name: ticketChannelName,
@@ -613,7 +719,7 @@ module.exports = new Command({
           autoArchiveDuration: 60,
           reason: "support ticket",
         });
-      } else if (supportbot.Ticket.TicketType === "channels") {
+      } else {
         let targetCategoryId = supportbot.Ticket.TicketChannelsCategory;
 
         if (departmentsEnabled && departmentConfig?.Category) {
@@ -638,7 +744,11 @@ module.exports = new Command({
           reason: "support ticket",
         });
 
-        if (!departmentsEnabled && category.children.cache && category.children.cache.size >= 50) {
+        if (
+          !departmentsEnabled &&
+          category.children.cache &&
+          category.children.cache.size >= 50
+        ) {
           const secondaryCategory = interaction.guild.channels.cache.find(
             (c) =>
               c.name === supportbot.Ticket.TicketChannelsCategory2 ||
@@ -657,12 +767,18 @@ module.exports = new Command({
       }
 
       if (supportbot.Ticket.ClaimTickets.Enabled) {
-        await assignTicketToUser(ticketChannel, Staff, Admin, interaction, DepartmentRole || null);
+        await assignTicketToUser(
+          ticketChannel,
+          Staff,
+          Admin,
+          interaction,
+          DepartmentRole || null,
+        );
       }
 
       if (usingThreads) {
         await ticketChannel.members.add(interaction.user.id);
-      } else if (supportbot.Ticket.TicketType === "channels") {
+      } else {
         await ticketChannel.permissionOverwrites.create(interaction.user.id, {
           ViewChannel: true,
           SendMessages: true,
@@ -689,9 +805,12 @@ module.exports = new Command({
           });
         }
 
-        await ticketChannel.permissionOverwrites.create(interaction.guild.roles.everyone.id, {
-          ViewChannel: false,
-        });
+        await ticketChannel.permissionOverwrites.create(
+          interaction.guild.roles.everyone.id,
+          {
+            ViewChannel: false,
+          },
+        );
       }
 
       db.addTicket({
@@ -706,13 +825,19 @@ module.exports = new Command({
         claimedAt: null,
         department: departmentKey,
         priority: priorityKey,
+        aiModeEnabled: !usingThreads && aiModeEnabled,
+        aiChannelId: null,
+        questionAnswers: [],
       });
 
       TicketData.tickets = db.getAllTickets();
 
       const CreatedTicket = new EmbedBuilder()
         .setDescription(
-          msgconfig.Ticket.TicketCreatedAlert.replace(/%ticketauthor%/g, interaction.user.id)
+          msgconfig.Ticket.TicketCreatedAlert.replace(
+            /%ticketauthor%/g,
+            interaction.user.id,
+          )
             .replace(/%ticketid%/g, ticketChannel.id)
             .replace(/%ticketusername%/g, interaction.user.username)
             .replace(/%ticketreason%/g, TicketSubject),
@@ -733,7 +858,10 @@ module.exports = new Command({
       }
 
       const ticketAuthor = new TextDisplayBuilder().setContent(
-        msgconfig.Ticket.TicketAuthorTitle.replace(/%ticketauthor%/g, interaction.user.id)
+        msgconfig.Ticket.TicketAuthorTitle.replace(
+          /%ticketauthor%/g,
+          interaction.user.id,
+        )
           .replace(/%ticketid%/g, ticketChannel.id)
           .replace(/%ticketusername%/g, interaction.user.username),
       );
@@ -741,7 +869,10 @@ module.exports = new Command({
       ticketMsgContainer.addTextDisplayComponents(ticketAuthor);
 
       const ticketTitle = new TextDisplayBuilder().setContent(
-        msgconfig.Ticket.TicketTitle.replace(/%ticketauthor%/g, interaction.user.id)
+        msgconfig.Ticket.TicketTitle.replace(
+          /%ticketauthor%/g,
+          interaction.user.id,
+        )
           .replace(/%ticketid%/g, ticketChannel.id)
           .replace(/%ticketusername%/g, interaction.user.username),
       );
@@ -752,7 +883,10 @@ module.exports = new Command({
       ticketMsgContainer.addSeparatorComponents(seperator2);
 
       const ticketDescription = new TextDisplayBuilder().setContent(
-        msgconfig.Ticket.TicketMessage.replace(/%ticketauthor%/g, interaction.user.id)
+        msgconfig.Ticket.TicketMessage.replace(
+          /%ticketauthor%/g,
+          interaction.user.id,
+        )
           .replace(/%ticketid%/g, ticketChannel.id)
           .replace(/%ticketusername%/g, interaction.user.username)
           .replace(/%ticketreason%/g, TicketSubject),
@@ -764,7 +898,9 @@ module.exports = new Command({
       ticketMsgContainer.addSeparatorComponents(seperator3);
 
       if (supportbot.Ticket.TicketReason && TicketReason) {
-        const ticketReason = new TextDisplayBuilder().setContent(`**Reason:**\n${TicketReason}`);
+        const ticketReason = new TextDisplayBuilder().setContent(
+          `**Reason:**\n${TicketReason}`,
+        );
         ticketMsgContainer.addTextDisplayComponents(ticketReason);
       }
 
@@ -788,6 +924,24 @@ module.exports = new Command({
         );
 
         ticketMsgContainer.addTextDisplayComponents(priorityText);
+      }
+
+      if (usingThreads && aiModeEnabled) {
+        const aiSeparator = new SeparatorBuilder().setDivider(true);
+        ticketMsgContainer.addSeparatorComponents(aiSeparator);
+
+        const aiTitleText = new TextDisplayBuilder().setContent(
+          `**${msgconfig.Ticket.AIMode.Title}**`,
+        );
+        ticketMsgContainer.addTextDisplayComponents(aiTitleText);
+
+        const aiBodyText = new TextDisplayBuilder().setContent(
+          msgconfig.Ticket.AIMode.Description,
+        );
+        ticketMsgContainer.addTextDisplayComponents(aiBodyText);
+
+        const aiRow = buildAIModeButtons(ticketChannel.id, false);
+        ticketMsgContainer.addActionRowComponents(aiRow);
       }
 
       const selectMenuRow = new ActionRowBuilder();
@@ -851,7 +1005,9 @@ module.exports = new Command({
       });
 
       const departmentQuestions =
-        departmentsEnabled && departmentConfig?.Questions ? departmentConfig.Questions : [];
+        departmentsEnabled && departmentConfig?.Questions
+          ? departmentConfig.Questions
+          : [];
 
       const globalQuestionsEnabled = supportbot.Ticket.Questions?.Enabled;
       const globalQuestions = supportbot.Ticket.Questions?.List || [];
@@ -864,8 +1020,31 @@ module.exports = new Command({
         questionsToAsk = globalQuestions;
       }
 
+      let ticketQuestionsAndAnswers = [];
+
       if (questionsToAsk.length > 0) {
-        await askTicketQuestions(ticketChannel, interaction, questionsToAsk);
+        ticketQuestionsAndAnswers = await askTicketQuestions(
+          ticketChannel,
+          interaction,
+          questionsToAsk,
+        );
+
+        if (typeof db.updateTicketQuestionAnswers === "function") {
+          db.updateTicketQuestionAnswers(
+            ticketChannel.id,
+            ticketQuestionsAndAnswers,
+          );
+        }
+      }
+
+      if (!usingThreads && aiModeEnabled) {
+        const aiThread = await createAITicketThread(
+          ticketChannel,
+          interaction,
+        ).catch((error) => {
+          console.error("Error creating AI mode thread:", error);
+          return null;
+        });
       }
     } catch (error) {
       console.error("Error in run method:", error);

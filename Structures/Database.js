@@ -52,6 +52,14 @@ const safeAlter = (sql) => {
 safeAlter(`ALTER TABLE tickets ADD COLUMN voiceChannelId TEXT`);
 safeAlter(`ALTER TABLE tickets ADD COLUMN department TEXT DEFAULT 'general'`);
 safeAlter(`ALTER TABLE tickets ADD COLUMN priority TEXT DEFAULT 'medium'`);
+safeAlter(`ALTER TABLE tickets ADD COLUMN aiModeEnabled INTEGER DEFAULT 0`);
+safeAlter(`ALTER TABLE tickets ADD COLUMN aiChannelId TEXT`);
+safeAlter(`ALTER TABLE tickets ADD COLUMN aiType TEXT`);
+safeAlter(`ALTER TABLE tickets ADD COLUMN aiEnabledBy TEXT`);
+safeAlter(`ALTER TABLE tickets ADD COLUMN aiEnabledAt INTEGER`);
+safeAlter(`ALTER TABLE tickets ADD COLUMN questionAnswers TEXT`);
+safeAlter(`ALTER TABLE tickets ADD COLUMN ticketName TEXT`);
+safeAlter(`ALTER TABLE tickets ADD COLUMN ticketNumber TEXT`);
 
 db.prepare(
   `
@@ -84,16 +92,44 @@ db.prepare(
 ).run();
 
 function ensureProfile(userId) {
-  const existing = db.prepare(`
+  const existing = db
+    .prepare(
+      `
     SELECT user_id FROM profiles WHERE user_id = ?
-  `).get(userId);
+  `,
+    )
+    .get(userId);
 
   if (!existing) {
-    db.prepare(`
+    db.prepare(
+      `
       INSERT INTO profiles (user_id, bio, timezone, clockedIn)
       VALUES (?, '', '', 0)
-    `).run(userId);
+    `,
+    ).run(userId);
   }
+}
+
+function normaliseTicketRow(row) {
+  if (!row) return null;
+
+  let questionAnswers = [];
+
+  if (row.questionAnswers) {
+    try {
+      questionAnswers = JSON.parse(row.questionAnswers);
+    } catch {
+      questionAnswers = [];
+    }
+  }
+
+  return {
+    ...row,
+    aiModeEnabled: Boolean(row.aiModeEnabled),
+    clockedIn:
+      row.clockedIn !== undefined ? Boolean(row.clockedIn) : row.clockedIn,
+    questionAnswers,
+  };
 }
 
 module.exports = {
@@ -110,7 +146,15 @@ module.exports = {
         created_at,
         updated_at,
         department,
-        priority
+        priority,
+        aiModeEnabled,
+        aiChannelId,
+        aiType,
+        aiEnabledBy,
+        aiEnabledAt,
+        questionAnswers,
+        ticketName,
+        ticketNumber
       )
       VALUES (
         @ticket_id,
@@ -120,7 +164,15 @@ module.exports = {
         @created_at,
         @updated_at,
         @department,
-        @priority
+        @priority,
+        @aiModeEnabled,
+        @aiChannelId,
+        @aiType,
+        @aiEnabledBy,
+        @aiEnabledAt,
+        @questionAnswers,
+        @ticketName,
+        @ticketNumber
       )
       ON CONFLICT(ticket_id) DO NOTHING
     `,
@@ -133,6 +185,28 @@ module.exports = {
       updated_at: now,
       department: ticket.department || "general",
       priority: ticket.priority || "medium",
+      aiModeEnabled: ticket.aiModeEnabled ? 1 : 0,
+      aiChannelId: ticket.aiChannelId || null,
+      aiType: ticket.aiType || null,
+      aiEnabledBy: ticket.aiEnabledBy || null,
+      aiEnabledAt: ticket.aiEnabledAt || null,
+      questionAnswers: JSON.stringify(ticket.questionAnswers || []),
+      ticketName: ticket.name || null,
+      ticketNumber: ticket.number || null,
+    });
+  },
+
+  updateTicketQuestionAnswers(ticketId, questionAnswers = []) {
+    db.prepare(
+      `
+      UPDATE tickets
+      SET questionAnswers=@questionAnswers, updated_at=@updatedAt
+      WHERE ticket_id=@ticketId
+    `,
+    ).run({
+      ticketId,
+      questionAnswers: JSON.stringify(questionAnswers),
+      updatedAt: Date.now(),
     });
   },
 
@@ -192,18 +266,103 @@ module.exports = {
     });
   },
 
+  setTicketAIState(ticketId, aiState = {}) {
+    db.prepare(
+      `
+      UPDATE tickets
+      SET
+        aiModeEnabled=@aiModeEnabled,
+        aiChannelId=@aiChannelId,
+        aiType=@aiType,
+        aiEnabledBy=@aiEnabledBy,
+        aiEnabledAt=@aiEnabledAt,
+        updated_at=@updatedAt
+      WHERE ticket_id=@ticketId
+    `,
+    ).run({
+      ticketId,
+      aiModeEnabled: aiState.enabled ? 1 : 0,
+      aiChannelId: aiState.aiChannelId || null,
+      aiType: aiState.aiType || null,
+      aiEnabledBy: aiState.enabledBy || null,
+      aiEnabledAt: aiState.enabledAt
+        ? new Date(aiState.enabledAt).getTime()
+        : aiState.enabled
+          ? Date.now()
+          : null,
+      updatedAt: Date.now(),
+    });
+  },
+
+  enableTicketAI(
+    ticketId,
+    aiChannelId = null,
+    aiType = null,
+    enabledBy = null,
+  ) {
+    db.prepare(
+      `
+      UPDATE tickets
+      SET
+        aiModeEnabled=1,
+        aiChannelId=@aiChannelId,
+        aiType=@aiType,
+        aiEnabledBy=@aiEnabledBy,
+        aiEnabledAt=@aiEnabledAt,
+        updated_at=@updatedAt
+      WHERE ticket_id=@ticketId
+    `,
+    ).run({
+      ticketId,
+      aiChannelId,
+      aiType,
+      aiEnabledBy,
+      aiEnabledAt: Date.now(),
+      updatedAt: Date.now(),
+    });
+  },
+
+  disableTicketAI(ticketId) {
+    db.prepare(
+      `
+      UPDATE tickets
+      SET
+        aiModeEnabled=0,
+        updated_at=@updatedAt
+      WHERE ticket_id=@ticketId
+    `,
+    ).run({
+      ticketId,
+      updatedAt: Date.now(),
+    });
+  },
+
   getTicket(ticketId) {
-    return db
+    const row = db
       .prepare(
         `
       SELECT * FROM tickets WHERE ticket_id=@ticketId
     `,
       )
       .get({ ticketId });
+
+    return normaliseTicketRow(row);
+  },
+
+  getTicketByAIChannel(aiChannelId) {
+    const row = db
+      .prepare(
+        `
+      SELECT * FROM tickets WHERE aiChannelId=@aiChannelId LIMIT 1
+    `,
+      )
+      .get({ aiChannelId });
+
+    return normaliseTicketRow(row);
   },
 
   getAllTickets() {
-    return db.prepare(`SELECT * FROM tickets`).all();
+    return db.prepare(`SELECT * FROM tickets`).all().map(normaliseTicketRow);
   },
 
   saveTicketPanel(messageId, channelId) {
@@ -267,9 +426,13 @@ module.exports = {
   getProfile(userId) {
     ensureProfile(userId);
 
-    const row = db.prepare(`
+    const row = db
+      .prepare(
+        `
       SELECT * FROM profiles WHERE user_id = ?
-    `).get(userId);
+    `,
+      )
+      .get(userId);
 
     if (!row) {
       return {
@@ -289,11 +452,13 @@ module.exports = {
   setClockedIn(userId, clockedIn) {
     ensureProfile(userId);
 
-    db.prepare(`
+    db.prepare(
+      `
       UPDATE profiles
       SET clockedIn = ?
       WHERE user_id = ?
-    `).run(clockedIn ? 1 : 0, userId);
+    `,
+    ).run(clockedIn ? 1 : 0, userId);
   },
 
   saveSettings(obj) {

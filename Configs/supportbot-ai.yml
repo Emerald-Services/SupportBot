@@ -8,32 +8,58 @@
 Enabled: true
 
 General:
+  Provider: "openai" 
+  Model: "gpt-5.4" 
+  Model_API_Key: "MODEL_API_KEY"
+  # Providers Available:
+  # "openai" - Use OpenAI's GPT models. Example: "gpt-5.4" "gpt-5-mini"
+  # "groq" - Use Groq's GroqAI models. Example: "meta-llama/llama-4-scout-17b-16e-instruct"
+
+  Tokens: 1200
+  
+  Temperature: 0.4
   Name: "SupportBot AI"
-  # What would you like to call your AI
-  Model: "gpt-5.4"
-  # You can see a list of OpenAI Models here: https://platform.openai.com/docs/models
-
-  Tokens: 400
-  # Max tokens you can set is 400
-  # For more information about tokens, go to https://openai.com/api/pricing/
-  OpenAI_Key: "OPEN_AI_API_KEY"
-  # To create an OpenAI API key, go to https://platform.openai.com/api-keys
-
 
   PastebinAPI_Key: "PASTEBIN_API_KEY"
-  # You can get your Pastebin API Key from https://pastebin.com
-  PastebinAPI_URL: "https://pastebin.com/api/api_post.php" 
+  PastebinAPI_URL: "https://pastebin.com/api/api_post.php"
+
+Style:
+  MessageType: "text" 
+  # Available Styles for AI:
+  # "embed" - AI responses will be sent as Discord embeds.
+  # "text" - AI responses will be sent as plain messages.
+  # "components_v2" - AI responses will be sent with the new components style.
+
+Features:
+  SuggestTickets: true # Should SupportBot AI suggest creating a ticket if the user needs more help?
 
 Channels:
-  AIChannel: "AI_BOT_CHANNEL"
-  # This is the channel where AI will respond in without needing to mention the bot.
+  AIChannel: "CHANNEL_ID"
 
 Embed:
-  Color: 0x0cc559  # 0x<hexcode>
-  Footer: "SupportBot | Developed by Emerald Development"
+  Color: "#45b463"
+  Footer: "SupportBot AI"
+
+Memory:
+  Enabled: true
+  StoreFacts: true
+  StoreSummaries: true
+  MaxRecentMessages: 15
+
+CustomInstructions:
+  - "You are SupportBot AI made by Emerald Services"
+  - "You are built with DiscordJS/NodeJS and currently running on dev build 26.0 build 2"
+  - "You're current build can be found here https://github.com/Emerald-Services/SupportBot/tree/26.0"
+  - "You're main build can be found here https://builtbybit.com/resources/supportbot-free-advanced-ticket-bot.8940/ and Polymart at https://polymart.org/product/518/supportbot-1-discord-ticket-bot which is version 8.4"
+  - "dev build 26.0 build 2 includes all-new AI features for SupportBot such as memory system that allows you to remember facts and summaries of conversations, which can be used to provide better responses."
+  - "SupportBot AI also have a new tickets AI Mode which is enabled in supportbot.ymll, which allows you to assist users in support tickets and provide better responses based on the context of the ticket."
+  - "Your main purpose is to assist users in the support server and provide helpful responses to their questions and issues. Always be accurate and if you do not have answer then simply ask the person to create a ticket if they need more help."
+  #- "Add custom instructions here"
 
 Messages:
-  MessageTooLong: "The response was too long, so I've posted it here: {pastebin}"
-  ErrorResponse: "I didn't receive a proper response from OpenAI. Please try again later."
-  OpenAIError: "I'm having some trouble talking to SupportBot AI's Model, OpenAI. Please try again later."
-  AIDisabled: "I am disabled, You have enable me in `supportbot-ai.yml`"
+  ErrorResponse: "I couldn't generate a response."
+  AIError: "There was an error contacting the AI provider."
+  AIDisabled: "AI is currently disabled."
+  MessageTooLong: "My response was too long, so I uploaded it here: {pastebin}"
+  SuggestTicketText: "-# Need more help? React with 🎫 to open a ticket."
+  SuggestTicketReaction : "🎫"

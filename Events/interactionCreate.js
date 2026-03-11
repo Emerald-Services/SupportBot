@@ -479,6 +479,127 @@ module.exports = new Event("interactionCreate", async (client, interaction) => {
   }
 
   if (interaction.isButton()) {
+    if (interaction.customId.startsWith("ticket_ai_enable:")) {
+      const ticketId = interaction.customId.split(":")[1];
+      const ticket = db.getTicket(ticketId);
+
+      if (!ticket) {
+        return interaction.reply({
+          content: msgconfig.Ticket.AIMode.TicketNotFound,
+          flags: Discord.MessageFlags.Ephemeral,
+        });
+      }
+
+      try {
+        const usingThreads = supportbot.Ticket.TicketType === "threads";
+
+        if (usingThreads) {
+          db.setTicketAIState(ticketId, {
+            enabled: true,
+            aiChannelId: interaction.channel.id,
+            aiType: "thread",
+            enabledBy: interaction.user.id,
+            enabledAt: new Date().toISOString(),
+          });
+
+          const embed = new Discord.EmbedBuilder()
+            .setDescription(msgconfig.Ticket.AIMode.EnabledMessage)
+            .setColor(supportbot.Embed.Colours.Success);
+
+          return interaction.reply({
+            embeds: [embed],
+            flags: Discord.MessageFlags.Ephemeral,
+          });
+        }
+
+        let aiChannelId = ticket.aiChannelId;
+
+        if (!aiChannelId) {
+          const threadName =
+            supportbot.Ticket.AIMode?.ThreadName || "Chat with SupportBot AI";
+
+          const aiThread = await interaction.channel.threads.create({
+            name: threadName,
+            autoArchiveDuration: 60,
+            reason: "ticket ai mode thread",
+          });
+
+          await aiThread.members.add(interaction.user.id).catch(() => {});
+
+          aiChannelId = aiThread.id;
+
+          const welcomeEmbed = new Discord.EmbedBuilder()
+            .setTitle(msgconfig.Ticket.AIMode.ThreadWelcomeTitle)
+            .setDescription(msgconfig.Ticket.AIMode.ThreadWelcomeMessage)
+            .setColor(supportbot.Embed.Colours.General);
+
+          await aiThread.send({ embeds: [welcomeEmbed] });
+        }
+
+        db.setTicketAIState(ticketId, {
+          enabled: true,
+          aiChannelId,
+          aiType: "thread",
+          enabledBy: interaction.user.id,
+          enabledAt: new Date().toISOString(),
+        });
+
+        const embed = new Discord.EmbedBuilder()
+          .setDescription(msgconfig.Ticket.AIMode.EnabledMessage)
+          .setColor(supportbot.Embed.Colours.Success);
+
+        return interaction.reply({
+          embeds: [embed],
+          flags: Discord.MessageFlags.Ephemeral,
+        });
+      } catch (error) {
+        console.error("Error enabling ticket AI:", error);
+
+        return interaction.reply({
+          content: msgconfig.Ticket.AIMode.EnableError,
+          flags: Discord.MessageFlags.Ephemeral,
+        });
+      }
+    }
+
+    if (interaction.customId.startsWith("ticket_ai_disable:")) {
+      const ticketId = interaction.customId.split(":")[1];
+      const ticket = db.getTicket(ticketId);
+
+      if (!ticket) {
+        return interaction.reply({
+          content: msgconfig.Ticket.AIMode.TicketNotFound,
+          flags: Discord.MessageFlags.Ephemeral,
+        });
+      }
+
+      try {
+        db.setTicketAIState(ticketId, {
+          enabled: false,
+          aiChannelId: null,
+          aiType: null,
+          enabledBy: interaction.user.id,
+          enabledAt: null,
+        });
+
+        const embed = new Discord.EmbedBuilder()
+          .setDescription(msgconfig.Ticket.AIMode.DisabledMessage)
+          .setColor(supportbot.Embed.Colours.Success);
+
+        return interaction.reply({
+          embeds: [embed],
+          flags: Discord.MessageFlags.Ephemeral,
+        });
+      } catch (error) {
+        console.error("Error disabling ticket AI:", error);
+
+        return interaction.reply({
+          content: msgconfig.Ticket.AIMode.DisableError,
+          flags: Discord.MessageFlags.Ephemeral,
+        });
+      }
+    }
+
     if (interaction.customId === "unarchiveTicket") {
       if (supportbot.Ticket.TicketType === "threads") {
         await interaction.channel.setArchived(false);

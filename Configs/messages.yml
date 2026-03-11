@@ -173,6 +173,22 @@ Ticket:
       Title: "Ticket Details"
       Description: "Questions by <@%user%>" # Use <@%user%> to display the username.
 
+  AIMode:
+    Title: "SupportBot AI"
+    Description: "Use the buttons below to enable or disable AI chat in this ticket."
+    EnabledMessage: "AI Mode has been enabled for this ticket."
+    DisabledMessage: "AI Mode has been disabled for this ticket."
+
+    ThreadWelcomeTitle: "SupportBot AI"
+    ThreadWelcomeMessage: "Hi! I’m SupportBot AI. You can chat with me here about your issue."
+    
+    EnableButton: "Enable AI Mode"
+    DisableButton: "Disable AI Mode"
+
+    TicketNotFound: "Ticket not found."
+    EnableError: "There was an error enabling SupportBot AI."
+    DisableError: "There was an error disabling SupportBot AI."
+
 # ----------------------------
 # Review Messages
 # ----------------------------
@@ -201,17 +217,6 @@ ReviewSystem:
     ReviewedByTitle: "Reviewed By:"
     ReviewEmoji: "⭐"
     Color: "#f7a943"
-
-# ----------------------------
-# Profile Messages
-# ----------------------------
-
-TicketStats: 
-  OpenTickets: "✅ Open Tickets"
-  TotalTickets: "🎫 Total Tickets"
-  ResponseTime: "⏱️ Average Response Time"
-
-  Title: "Your Ticket Stats"
 
 # ----------------------------
 # Mod Command Messages
