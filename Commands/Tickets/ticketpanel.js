@@ -1,16 +1,19 @@
+// SupportBot | Emerald Services
+// Ticket Panel Command
+
 const fs = require("fs");
 const {
-  EmbedBuilder,
   ApplicationCommandType,
   ActionRowBuilder,
   ButtonBuilder,
+  ButtonStyle,
   MessageFlags,
   ContainerBuilder,
   TextDisplayBuilder,
   MediaGalleryBuilder,
   SeparatorBuilder,
-  ThumbnailBuilder,
-  SectionBuilder
+  SectionBuilder,
+  StringSelectMenuBuilder,
 } = require("discord.js");
 const yaml = require("js-yaml");
 
@@ -20,6 +23,25 @@ const cmdconfig = yaml.load(fs.readFileSync("./Configs/commands.yml", "utf8"));
 
 const Command = require("../../Structures/Command.js");
 const db = require("../../Structures/Database.js");
+
+function parseButtonStyle(style) {
+  switch (String(style || "1")) {
+    case "1":
+      return ButtonStyle.Primary;
+    case "2":
+      return ButtonStyle.Secondary;
+    case "3":
+      return ButtonStyle.Danger;
+    case "4":
+      return ButtonStyle.Success;
+    default:
+      return ButtonStyle.Primary;
+  }
+}
+
+function getPanelMessage(key, fallback) {
+  return panelconfig.Messages?.[key] || fallback;
+}
 
 module.exports = new Command({
   name: cmdconfig.TicketPanel.Command,
@@ -34,26 +56,33 @@ module.exports = new Command({
         "\u001b[31m",
         `[TICKET PANEL]`,
         "\u001b[33m",
-        "Ticket Panel is not setup, You can set this in", `\u001b[31m`, '/Configs/ticket-panel.yml', `\n  `,
+        "Ticket Panel is not setup, You can set this in",
+        `\u001b[31m`,
+        "/Configs/ticket-panel.yml",
+        `\n  `,
       );
+
       return interaction.reply({
-        content: "Ticket Panel is not set up. Please configure it in `/Configs/ticket-panel.yml`.",
-        flags: MessageFlags.Ephemeral 
+        content: getPanelMessage(
+          "NotConfigured",
+          "Ticket Panel is not set up. Please configure it in `/Configs/ticket-panel.yml`.",
+        ),
+        flags: MessageFlags.Ephemeral,
       });
     }
 
     const { getChannel } = interaction.client;
 
-    const channel = await getChannel(
-      supportbot.Ticket.TicketHome,
-      interaction.guild
-    );
+    const channel = await getChannel(supportbot.Ticket.TicketHome, interaction.guild);
 
     if (!channel) {
-      console.log(`[TICKET PANEL] ${channelName} channel not found. Please check your config file.`);
+      console.log(`[TICKET PANEL] TicketHome channel not found. Please check your config file.`);
       return interaction.reply({
-        content: `${channelName} channel not found. Please check your config file.`,
-        flags: MessageFlags.Ephemeral 
+        content: getPanelMessage(
+          "InvalidChannel",
+          "TicketHome channel not found. Please check your config file.",
+        ),
+        flags: MessageFlags.Ephemeral,
       });
     }
 
@@ -61,101 +90,178 @@ module.exports = new Command({
 
     if (panelRow) {
       try {
-        await channel.messages.fetch(panelRow.message_id);
-        return interaction.reply({
-          content: "Ticket panel message already exists.",
-          flags: MessageFlags.Ephemeral 
-        });
-      } catch (err) {}
+        const oldMessage = await channel.messages.fetch(panelRow.message_id);
+        if (oldMessage) {
+          await oldMessage.delete().catch(() => {});
+        }
+      } catch (err) {
+        console.log(`[TICKET PANEL] Previous panel message not found, creating a new one.`);
+      }
     }
 
-    const panelContainer = new ContainerBuilder()
+    const departmentSystem = supportbot.Ticket?.DepartmentSystem || {};
+    const prioritySystem = supportbot.Ticket?.PrioritySystem || {};
+    const usingThreads = supportbot.Ticket?.TicketType === "threads";
 
-    if (panelconfig.Style.Color) {
-      panelContainer.setAccentColor(
-        parseInt(panelconfig.Style.Color.replace("#", ""), 16)
-      )
+    const departmentsEnabled = departmentSystem.Enabled === true && !usingThreads;
+    const prioritiesEnabled = prioritySystem.Enabled === true && !usingThreads;
+    const departments = departmentSystem.Departments || {};
+
+    if (usingThreads && (departmentSystem.Enabled || prioritySystem.Enabled)) {
+      console.log(
+        "[SupportBot] Departments and Priority are disabled because TicketType is set to 'threads'.",
+      );
     }
+
+    const departmentOptions = Object.entries(departments)
+      .slice(0, 25)
+      .map(([key, dept]) => ({
+        label: dept.Name || key,
+        description:
+          dept.PanelDescription ||
+          dept.Description ||
+          panelconfig.DepartmentMenu?.DefaultDescription ||
+          `Open a ${String(dept.Name || key).toLowerCase()} ticket`,
+        value: key,
+        emoji:
+          dept.Emoji ||
+          panelconfig.DepartmentMenu?.DefaultEmoji ||
+          panelconfig.Button?.Emoji ||
+          undefined,
+      }));
+
+    const shouldUseDepartments = departmentsEnabled && departmentOptions.length > 0;
+
+    let openerComponent;
+
+    if (shouldUseDepartments) {
+      openerComponent = new StringSelectMenuBuilder()
+        .setCustomId(panelconfig.DepartmentMenu?.CustomId || "ticketdepartmentselect")
+        .setPlaceholder(
+          panelconfig.DepartmentMenu?.Placeholder ||
+            departmentSystem.Placeholder ||
+            panelconfig.Button?.Text ||
+            "Choose a ticket department",
+        )
+        .addOptions(departmentOptions);
+    } else {
+      openerComponent = new ButtonBuilder()
+        .setCustomId(panelconfig.Button?.CustomId || "createticket")
+        .setLabel(panelconfig.Button?.Text || "Create Ticket")
+        .setStyle(parseButtonStyle(panelconfig.Button?.Color));
+
+      if (panelconfig.Button?.Emoji) {
+        openerComponent.setEmoji(panelconfig.Button.Emoji);
+      }
+    }
+
+    const panelContainer = new ContainerBuilder();
+
+    if (panelconfig.Style?.Color) {
+      panelContainer.setAccentColor(parseInt(String(panelconfig.Style.Color).replace("#", ""), 16));
+    }
+
+    const layout = String(panelconfig.Style?.Layout || "3");
+    const showImage = panelconfig.Settings?.Image === true && !!panelconfig.Style?.Image;
+    const showTopTitle = panelconfig.Settings?.TopTitle === true;
+    const showTopDivider = panelconfig.Settings?.TopDivider === true;
+    const showBottomTitle = panelconfig.Settings?.BottomTitle === true;
+    const showBottomDivider = panelconfig.Settings?.BottomDivider === true;
 
     const panelTitle = new TextDisplayBuilder().setContent(
-      panelconfig.Style.Title,
+      panelconfig.Style?.Title || "## SupportBot Ticket Creation",
     );
-
-    const topSeperator = new SeparatorBuilder()
-      .setDivider(true)
-
-    if (panelconfig.Settings.TopTitle) {
-      panelContainer.addTextDisplayComponents(panelTitle)
-    }
-
-    if (panelconfig.Settings.TopDivider) {
-      panelContainer.addSeparatorComponents(topSeperator)
-    }
 
     const panelDesc = new TextDisplayBuilder().setContent(
-      panelconfig.Style.Description,
+      panelconfig.Style?.Description || "Click on the button below to create a support ticket.",
     );
 
-    if (panelconfig.Style.Layout === "3") {
-      panelContainer.addTextDisplayComponents(panelDesc)
+    if (showTopTitle) {
+      panelContainer.addTextDisplayComponents(panelTitle);
     }
 
-    const createTicketButton = new ButtonBuilder()
-      .setCustomId("createticket")
-      .setLabel(panelconfig.Button.Text)
-      .setEmoji(panelconfig.Button.Emoji)
-      .setStyle(panelconfig.Button.Color);
-
-    const middleSection = new SectionBuilder()
-      .addTextDisplayComponents(panelDesc)
-      .setButtonAccessory(createTicketButton)
-
-    if (panelconfig.Style.Layout === "1") {
-      panelContainer.addSectionComponents(middleSection)
+    if (showTopDivider) {
+      panelContainer.addSeparatorComponents(new SeparatorBuilder().setDivider(true));
     }
 
-    const panelImage = new MediaGalleryBuilder()
-      .addItems([
+    if (layout === "1" || layout === "3") {
+      panelContainer.addTextDisplayComponents(panelDesc);
+    }
+
+    if (showImage && layout === "2") {
+      const panelImage = new MediaGalleryBuilder().addItems([
         {
           media: {
             url: panelconfig.Style.Image,
           },
-        }
-      ])
+        },
+      ]);
 
-    if (panelconfig.Settings.Image) {
-      panelContainer.addMediaGalleryComponents(panelImage)
+      panelContainer.addMediaGalleryComponents(panelImage);
     }
 
-    // START OF STYLE 2 - TEXT UNDER THE IMAGE
+    if (layout === "1") {
+      const middleSection = new SectionBuilder().addTextDisplayComponents(panelDesc);
 
-    const bottomSeperator = new SeparatorBuilder()
-      .setDivider(true)
-
-    if (panelconfig.Settings.BottomTitle) {
-      panelContainer.addTextDisplayComponents(panelTitle)
+      if (!shouldUseDepartments) {
+        middleSection.setButtonAccessory(openerComponent);
+        panelContainer.addSectionComponents(middleSection);
+      } else {
+        panelContainer.addSectionComponents(middleSection);
+        panelContainer.addActionRowComponents(
+          new ActionRowBuilder().addComponents(openerComponent),
+        );
+      }
     }
 
-    if (panelconfig.Settings.BottomDivider) {
-      panelContainer.addSeparatorComponents(bottomSeperator)
+    if (showImage && layout === "3") {
+      const panelImage = new MediaGalleryBuilder().addItems([
+        {
+          media: {
+            url: panelconfig.Style.Image,
+          },
+        },
+      ]);
+
+      panelContainer.addMediaGalleryComponents(panelImage);
     }
 
-    if (panelconfig.Style.Layout === "2") {
-      panelContainer.addSectionComponents(middleSection)
+    if (showBottomTitle) {
+      panelContainer.addTextDisplayComponents(panelTitle);
     }
 
-    // START OF STYLE 3
+    if (showBottomDivider) {
+      panelContainer.addSeparatorComponents(new SeparatorBuilder().setDivider(true));
+    }
 
-    const buttonRow = new ActionRowBuilder();
-      const ticketButtonRow = new ButtonBuilder()
-        .setCustomId("createticket")
-        .setLabel(panelconfig.Button.Text)
-        .setEmoji(panelconfig.Button.Emoji)
-        .setStyle(panelconfig.Button.Color);
-      buttonRow.addComponents(ticketButtonRow)
+    if (layout === "2") {
+      const middleSection = new SectionBuilder().addTextDisplayComponents(panelDesc);
 
-    if (panelconfig.Style.Layout === "3") {
-      panelContainer.addActionRowComponents(buttonRow)
+      if (!shouldUseDepartments) {
+        middleSection.setButtonAccessory(openerComponent);
+        panelContainer.addSectionComponents(middleSection);
+      } else {
+        panelContainer.addSectionComponents(middleSection);
+        panelContainer.addActionRowComponents(
+          new ActionRowBuilder().addComponents(openerComponent),
+        );
+      }
+    }
+
+    if (layout === "3") {
+      panelContainer.addActionRowComponents(new ActionRowBuilder().addComponents(openerComponent));
+    }
+
+    if (showImage && layout === "1") {
+      const panelImage = new MediaGalleryBuilder().addItems([
+        {
+          media: {
+            url: panelconfig.Style.Image,
+          },
+        },
+      ]);
+
+      panelContainer.addMediaGalleryComponents(panelImage);
     }
 
     try {
@@ -167,14 +273,22 @@ module.exports = new Command({
       db.saveTicketPanel(message.id, channel.id);
 
       return interaction.reply({
-        content: "Ticket panel message has been sent!",
-        flags: MessageFlags.Ephemeral 
+        content: shouldUseDepartments
+          ? getPanelMessage(
+              "PanelSentWithDepartments",
+              "Ticket panel message with department selection has been sent!",
+            )
+          : getPanelMessage("PanelSent", "Ticket panel message has been sent!"),
+        flags: MessageFlags.Ephemeral,
       });
     } catch (e) {
       console.log("Error sending message:", e);
       return interaction.reply({
-        content: "An error occurred while sending the ticket panel message.",
-        flags: MessageFlags.Ephemeral 
+        content: getPanelMessage(
+          "SendError",
+          "An error occurred while sending the ticket panel message.",
+        ),
+        flags: MessageFlags.Ephemeral,
       });
     }
   },

@@ -2,116 +2,205 @@
 // Translate Command
 
 const fs = require("fs");
-
 const Discord = require("discord.js");
 const yaml = require("js-yaml");
 
-const supportbot = yaml.load(
-  fs.readFileSync("./Configs/supportbot.yml", "utf8")
-);
+const { translate } = require("@vitalets/google-translate-api");
 
-const cmdconfig = yaml.load(
-  fs.readFileSync("./Configs/commands.yml", "utf8")
-);
-
-const msgconfig = yaml.load(
-  fs.readFileSync("./Configs/messages.yml", "utf8")
-)
+const supportbot = yaml.load(fs.readFileSync("./Configs/supportbot.yml", "utf8"));
+const cmdconfig = yaml.load(fs.readFileSync("./Configs/commands.yml", "utf8"));
+const msgconfig = yaml.load(fs.readFileSync("./Configs/messages.yml", "utf8"));
 
 const Command = require("../../Structures/Command.js");
-const translate = require("@vitalets/google-translate-api");
+
+const LANGUAGES = [
+  { name: "Auto Detect", value: "auto" },
+  { name: "English", value: "en" },
+  { name: "Spanish", value: "es" },
+  { name: "French", value: "fr" },
+  { name: "German", value: "de" },
+  { name: "Italian", value: "it" },
+  { name: "Portuguese", value: "pt" },
+  { name: "Dutch", value: "nl" },
+  { name: "Polish", value: "pl" },
+  { name: "Russian", value: "ru" },
+  { name: "Ukrainian", value: "uk" },
+  { name: "Turkish", value: "tr" },
+  { name: "Arabic", value: "ar" },
+  { name: "Hebrew", value: "he" },
+  { name: "Hindi", value: "hi" },
+  { name: "Japanese", value: "ja" },
+  { name: "Korean", value: "ko" },
+  { name: "Chinese (Simplified)", value: "zh-cn" },
+  { name: "Chinese (Traditional)", value: "zh-tw" },
+  { name: "Thai", value: "th" },
+  { name: "Vietnamese", value: "vi" },
+  { name: "Indonesian", value: "id" },
+  { name: "Greek", value: "el" },
+  { name: "Swedish", value: "sv" },
+  { name: "Romanian", value: "ro" },
+];
+
+function buildContainer(title, lines = [], color = null) {
+  const container = new Discord.ContainerBuilder();
+
+  if (color) {
+    container.setAccentColor(parseInt(color.replace("#", ""), 16));
+  }
+
+  container.addTextDisplayComponents(new Discord.TextDisplayBuilder().setContent(`## ${title}`));
+
+  container.addSeparatorComponents(new Discord.SeparatorBuilder().setDivider(true));
+
+  container.addTextDisplayComponents(new Discord.TextDisplayBuilder().setContent(lines.join("\n")));
+
+  return container;
+}
+
+function trim(text, max = 1800) {
+  if (text.length <= max) return text;
+  return text.substring(0, max) + "...";
+}
 
 module.exports = new Command({
   name: cmdconfig.Translate.Command,
   description: cmdconfig.Translate.Description,
   type: Discord.ApplicationCommandType.ChatInput,
+
   options: [
     {
       type: Discord.ApplicationCommandOptionType.String,
-      name: "language",
-      description: "A 2 letter language code",
+      name: "from",
+      description: "Language to translate FROM",
       required: true,
+      choices: LANGUAGES,
+    },
+    {
+      type: Discord.ApplicationCommandOptionType.String,
+      name: "to",
+      description: "Language to translate TO",
+      required: true,
+      choices: LANGUAGES.filter((l) => l.value !== "auto"),
     },
     {
       type: Discord.ApplicationCommandOptionType.String,
       name: "text",
-      description: "The text to translate",
+      description: "Text to translate",
       required: true,
-    }, // The input text for the translation
+    },
   ],
-  permissions: cmdconfig.Translate.Permission, // The permission the user/role at least requires
+
+  permissions: cmdconfig.Translate.Permission,
 
   async run(interaction) {
-    let disableCommand = true;
+    const { getRole, getChannel } = interaction.client;
 
-    const { getRole } = interaction.client;
-    let SupportStaff = await getRole(supportbot.Roles.StaffMember.Staff, interaction.guild);
-    let Admin = await getRole(supportbot.Roles.StaffMember.Admin, interaction.guild);
-    if (!SupportStaff || !Admin)
-    
-      return interaction.reply(
-        "Some roles seem to be missing!\nPlease check for errors when starting the bot."
-      );
+    const Staff = await getRole(supportbot.Roles.StaffMember.Staff, interaction.guild);
 
-      const NoPerms = new Discord.EmbedBuilder()
-      .setTitle("Invalid Permissions!")
-      .setDescription(
-        `${msgconfig.Error.IncorrectPerms}\n\nRole Required: \`${supportbot.Roles.StaffMember.Staff}\` or \`${supportbot.Roles.StaffMember.Admin}\``
-      )
-      .setColor(supportbot.Embed.Colours.Warn);
+    const Admin = await getRole(supportbot.Roles.StaffMember.Admin, interaction.guild);
+
+    if (!Staff || !Admin) {
+      return interaction.reply({
+        content: "Some roles seem to be missing!",
+        flags: Discord.MessageFlags.Ephemeral,
+      });
+    }
 
     if (
-      !interaction.member.roles.cache.has(SupportStaff.id) &&
+      !interaction.member.roles.cache.has(Staff.id) &&
       !interaction.member.roles.cache.has(Admin.id)
-    )
-      return interaction.reply({ embeds: [NoPerms] });
+    ) {
+      return interaction.reply({
+        flags: Discord.MessageFlags.IsComponentsV2 | Discord.MessageFlags.Ephemeral,
+        components: [
+          buildContainer(
+            "Invalid Permissions",
+            [
+              msgconfig.Error.IncorrectPerms,
+              "",
+              `Required role: \`${supportbot.Roles.StaffMember.Staff}\` or \`${supportbot.Roles.StaffMember.Admin}\``,
+            ],
+            supportbot.Embed.Colours.Warn,
+          ),
+        ],
+      });
+    }
 
-    const { getChannel } = interaction.client;
-    let lang = interaction.options.getString("language"); // Grab choice of language code by user
-    let url = "https://www.science.co.il/language/Codes.php"; // URL to all available language codes
-    let text = await interaction.options.getString("text"); // Grab the text to translate by the user
-    let translatelog = await getChannel(
-      supportbot.Translate.TranslateLog,
-      interaction.guild
-    ); // Grab the set logging channel for translations
+    await interaction.deferReply({ flags: Discord.MessageFlags.Ephemeral });
 
+    const fromLang = interaction.options.getString("from");
+    const toLang = interaction.options.getString("to");
+    const text = interaction.options.getString("text");
 
-    // Return message if user has provided an invalid language code
-    const result = await translate(text, { to: lang }).catch(async (err) => {
-      if (err && err.code == 400) {
-        await interaction.reply({
-          embeds: [
-            new Discord.EmbedBuilder()
-              .setColor(supportbot.Embed.Colours.Warn)
-              .setTitle("Valid Language Codes")
-              .setURL(url)
-              .setDescription(
-                "Click the title to see which 2 letter language codes are valid."
-              ),
-          ],
-          flags: Discord.MessageFlags.Ephemeral,
-        });
-      }
+    const translateLog = await getChannel(supportbot.Translate?.TranslateLog, interaction.guild);
+
+    let result;
+
+    try {
+      result = await translate(text, {
+        from: fromLang === "auto" ? undefined : fromLang,
+        to: toLang,
+      });
+    } catch (err) {
+      console.error("Translate error:", err);
+
+      return interaction.editReply({
+        flags: Discord.MessageFlags.IsComponentsV2,
+        components: [
+          buildContainer(
+            "Translation Failed",
+            ["The translation service returned an error."],
+            supportbot.Embed.Colours.Warn,
+          ),
+        ],
+      });
+    }
+
+    const detectedLanguage = result.from?.language?.iso || result.from?.language || "unknown";
+
+    const container = buildContainer(
+      "Translation",
+      [
+        `**Requested By:** <@${interaction.user.id}>`,
+        `**From:** \`${fromLang === "auto" ? detectedLanguage : fromLang}\``,
+        `**To:** \`${toLang}\``,
+        "",
+        "**Original Text**",
+        trim(text),
+        "",
+        "**Translated Text**",
+        trim(result.text),
+      ],
+      supportbot.Embed.Colours.Success,
+    );
+
+    await interaction.editReply({
+      flags: Discord.MessageFlags.IsComponentsV2,
+      components: [container],
     });
-    if (!result) return;
 
-    // Embed containing language code, original text and translated text
-    let transembed = new Discord.EmbedBuilder()
-      .setAuthor({ name: interaction.user.tag, iconURL: interaction.user.displayAvatarURL({ dynamic: true }) })
-      .setColor(supportbot.Embed.Colours.Success)
-      .setDescription(`**Translation to ${lang}**`)
-      .addFields(
-        { name: "Original text", value: text },
-        { name: "Translated text", value: result.text },
-      )
-      .setFooter({ text: `Author: ${interaction.user.id}` })
-      .setTimestamp();
+    if (translateLog) {
+      const logContainer = buildContainer(
+        "Translation Log",
+        [
+          `User: <@${interaction.user.id}>`,
+          `Channel: <#${interaction.channel.id}>`,
+          `From: ${fromLang}`,
+          `To: ${toLang}`,
+          "",
+          trim(text),
+          "",
+          trim(result.text),
+        ],
+        supportbot.Embed.Colours.General,
+      );
 
-    // Send embed [transembed] with translated message to channel
-    await interaction.reply({ embeds: [transembed] });
-
-    // Send embed [transembed] to logging channel
-    await translatelog.send({ embeds: [transembed] });
+      translateLog
+        .send({
+          flags: Discord.MessageFlags.IsComponentsV2,
+          components: [logContainer],
+        })
+        .catch(() => {});
+    }
   },
-  
-})
+});

@@ -37,36 +37,15 @@ Profile:
   Permission: ["SendMessages"]
   # Command is automatically disabled when the TicketClaims is disabled.
 
-
-
 OpenTicket:
   Command: "ticket"
   Description: "Create a support ticket."
   Permission: ["SendMessages"]
   Enabled: true
 
-TicketRename:
-  Command: "rename"
-  Description: "Rename a support ticket."
-  Permission: ["SendMessages"]
-  Enabled: true
-
-
 AddUser:
   Command: "add"
   Description: "Add a user to a support ticket."
-  Permission: ["SendMessages"]
-  Enabled: true
-
-ForceAddUser:
-  Command: "forceadd"
-  Description: "Add a user to a support ticket by bypassing the invite system."
-  Permission: ["SendMessages"]
-  Enabled: true
-
-RemoveUser:
-  Command: "remove"
-  Description: "Remove a user from a support ticket."
   Permission: ["SendMessages"]
   Enabled: true
   
@@ -75,6 +54,28 @@ CloseTicket:
   Description: "Close a support ticket"
   Permission: ["SendMessages"]
   Enabled: true
+
+TicketManage:
+  Command: "ticketmanage"
+  Description: "Manage an existing support ticket."
+  Permission: ["SendMessages"]
+  Enabled: true
+
+  Close:
+    Command: "close"
+    Description: "Close a support ticket."
+
+  ForceAdd:
+    Command: "forceadd"
+    Description: "Add a user to a support ticket by bypassing the invite system."
+
+  ForceRemove:
+    Command: "forceremove"
+    Description: "Remove a user from a support ticket by bypassing the normal restrictions."
+
+  Rename:
+    Command: "rename"
+    Description: "Rename a support ticket by bypassing the normal restrictions."
 
 Suggestion:
   Command: "suggest"
@@ -98,7 +99,7 @@ Translate:
   Command: "translate"
   Description: "Translate something to english"
   Permission: ["SendMessages"]
-  Enabled: false
+  Enabled: true
 
 UserInfo:
   Command: "userinfo"
@@ -164,3 +165,8 @@ HelpCommandDesc: "Get a list of all the commands."
 EmbedCommandDesc: "Send a message as an embed."
 SuggestCommandDesc: "Suggest a feature for the server."
 UserInfoCommandDesc: "Get info about a user."
+TicketManageDesc: "Manage an existing support ticket."
+TicketManageCloseDesc: "Close a support ticket."
+TicketManageForceAddDesc: "Add a user to a support ticket by bypassing the invite system."
+TicketManageForceRemoveDesc: "Remove a user from a support ticket by bypassing the normal restrictions."
+TicketManageForceRenameDesc: "Rename a support ticket by bypassing the normal restrictions."
