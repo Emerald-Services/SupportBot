@@ -1,8 +1,8 @@
 # -------------------------
 #   SupportBot AI
 #
-# In order to use the SupportBot AI, You need to setup an OpenAI Account. 
-# this can be done at https://platform.openai.com/
+# In order to use the SupportBot AI, You need to setup an OpenAI or Groq Developer Account. 
+# this can be done at https://platform.openai.com/ or https://groq.com/
 # -------------------------
 
 Enabled: true
