@@ -8,12 +8,11 @@
 #           Installed with MIT License
 #
 #           Discord Support: https://discord.gg/emeraldsrv
-#           Official Documentation: https://docs.emeraldsrv.dev
-#           Addons Marketplace: https://community.emeraldsrv.dev
+#           Website: https://emeraldsrv.dev
 #
 #           SupportBot Configuration (supportbot.yml)
 
-SupportBot_Version: "v26.0.0-prerelease-2"
+SupportBot_Version: "v26.0.0"
 
 # -------------------------
 #   General
