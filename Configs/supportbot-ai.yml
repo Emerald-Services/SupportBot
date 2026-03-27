@@ -10,7 +10,7 @@ Enabled: true
 General:
   Provider: "openai" 
   Model: "gpt-5.4" 
-  Model_API_Key: "MODEL_API_KEY"
+  Model_API_Key: "AI_API_KEY"
   # Providers Available:
   # "openai" - Use OpenAI's GPT models. Example: "gpt-5.4" "gpt-5-mini"
   # "groq" - Use Groq's GroqAI models. Example: "meta-llama/llama-4-scout-17b-16e-instruct"
@@ -43,8 +43,18 @@ Embed:
 Memory:
   Enabled: true
   StoreFacts: true
+  # StoreFacts - Enables saving important facts the AI learns.
+
   StoreSummaries: true
+  # StoreSummaries - Enables saving conversation summaries.
+
   MaxRecentMessages: 15
+  # MaxRecentMessages - Number of recent messages used for context.
+
+  Scope: "guild" # channel | guild
+  # Available Scopes for Memory:
+  # "channel" - Memory is per channel only.
+  # "guild" - Memory is shared across the server.
 
 CustomInstructions:
   - "You are SupportBot AI made by Emerald Services"

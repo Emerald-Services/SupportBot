@@ -113,10 +113,11 @@ function buildSystemPrompt(message) {
   return sections.join("\n- ").replace(/^/, "- ");
 }
 
-function buildConversationFromMemory(channelId, currentMessage) {
+function buildConversationFromMemory(currentMessage) {
   const memoryConfig = supportbotai.Memory || {};
   const memoryEnabled = memoryConfig.Enabled !== false;
   const maxRecentMessages = memoryConfig.MaxRecentMessages || 15;
+  const memoryScope = String(memoryConfig.Scope || "guild").toLowerCase();
 
   const conversation = [
     {
@@ -127,32 +128,61 @@ function buildConversationFromMemory(channelId, currentMessage) {
 
   if (!memoryEnabled) return conversation;
 
-  const recentMessages = AIDatabase.getRecentMessages(
-    channelId,
-    maxRecentMessages,
-  );
+  const recentMessages =
+    typeof AIDatabase.getRecentMessagesByScope === "function"
+      ? AIDatabase.getRecentMessagesByScope({
+          guildId: currentMessage.guild?.id || null,
+          channelId: currentMessage.channel?.id || null,
+          limit: maxRecentMessages,
+          scope: memoryScope,
+        })
+      : AIDatabase.getRecentMessages(
+          currentMessage.channel?.id,
+          maxRecentMessages,
+        );
 
   const latestSummary =
     memoryConfig.StoreSummaries !== false
-      ? AIDatabase.getLatestSummary(channelId)
+      ? typeof AIDatabase.getLatestSummaryByScope === "function"
+        ? AIDatabase.getLatestSummaryByScope({
+            guildId: currentMessage.guild?.id || null,
+            channelId: currentMessage.channel?.id || null,
+            scope: memoryScope,
+          })
+        : AIDatabase.getLatestSummary(currentMessage.channel?.id)
       : null;
 
   const facts =
-    memoryConfig.StoreFacts !== false ? AIDatabase.getFacts(channelId) : [];
+    memoryConfig.StoreFacts !== false
+      ? typeof AIDatabase.getFactsByScope === "function"
+        ? AIDatabase.getFactsByScope({
+            guildId: currentMessage.guild?.id || null,
+            channelId: currentMessage.channel?.id || null,
+            scope: memoryScope,
+          })
+        : AIDatabase.getFacts(currentMessage.channel?.id)
+      : [];
 
   const userFacts =
     memoryConfig.StoreFacts !== false &&
-    typeof AIDatabase.getUserFacts === "function"
-      ? AIDatabase.getUserFacts(
-          currentMessage.guild?.id,
-          currentMessage.author?.id,
-        )
-      : [];
+    typeof AIDatabase.getUserFactsByScope === "function"
+      ? AIDatabase.getUserFactsByScope({
+          guildId: currentMessage.guild?.id || null,
+          userId: currentMessage.author?.id || null,
+          scope: memoryScope,
+        })
+      : memoryConfig.StoreFacts !== false &&
+          typeof AIDatabase.getUserFacts === "function"
+        ? AIDatabase.getUserFacts(
+            currentMessage.guild?.id,
+            currentMessage.author?.id,
+          )
+        : [];
 
   if (latestSummary?.summary) {
     conversation.push({
       role: "system",
-      content: `Conversation summary:\n${latestSummary.summary}`,
+      content: `Shared memory summary (${memoryScope} scope):\n${latestSummary.summary}`,
     });
   }
 
@@ -165,7 +195,7 @@ function buildConversationFromMemory(channelId, currentMessage) {
 
     conversation.push({
       role: "system",
-      content: `Known facts in this chat:\n${factText}`,
+      content: `Known shared facts (${memoryScope} scope):\n${factText}`,
     });
   }
 
@@ -422,10 +452,7 @@ module.exports = new Event("messageCreate", async (client, message) => {
 
     const ticket = getTicketContextForMessage(message);
 
-    const conversation = buildConversationFromMemory(
-      message.channel.id,
-      message,
-    );
+    const conversation = buildConversationFromMemory(message);
 
     if (ticket) {
       conversation.push({

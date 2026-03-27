@@ -85,7 +85,6 @@ try {
 }
 
 module.exports = {
-
   saveUserFact({ guildId, userId, factType, factKey, factValue }) {
     const existing = db
       .prepare(
@@ -138,6 +137,32 @@ module.exports = {
       .all(guildId || null, userId || null);
   },
 
+  getUserFactsByScope({ guildId = null, userId = null, scope = "guild" }) {
+    if (!userId) return [];
+
+    if (scope === "global") {
+      return db
+        .prepare(
+          `
+        SELECT * FROM ai_facts
+        WHERE user_id IS ?
+        ORDER BY updated_at DESC
+      `,
+        )
+        .all(userId || null);
+    }
+
+    return db
+      .prepare(
+        `
+      SELECT * FROM ai_facts
+      WHERE guild_id IS ? AND user_id IS ?
+      ORDER BY updated_at DESC
+    `,
+      )
+      .all(guildId || null, userId || null);
+  },
+
   addMessage({ guildId, channelId, userId, role, content }) {
     db.prepare(
       `
@@ -166,6 +191,47 @@ module.exports = {
     `,
       )
       .all(channelId, limit)
+      .reverse();
+  },
+
+  getRecentMessagesByScope({ guildId = null, channelId = null, limit = 15, scope = "guild" }) {
+    if (scope === "channel") {
+      return db
+        .prepare(
+          `
+        SELECT * FROM ai_conversations
+        WHERE channel_id = ?
+        ORDER BY created_at DESC
+        LIMIT ?
+      `,
+        )
+        .all(channelId || null, limit)
+        .reverse();
+    }
+
+    if (scope === "global") {
+      return db
+        .prepare(
+          `
+        SELECT * FROM ai_conversations
+        ORDER BY created_at DESC
+        LIMIT ?
+      `,
+        )
+        .all(limit)
+        .reverse();
+    }
+
+    return db
+      .prepare(
+        `
+      SELECT * FROM ai_conversations
+      WHERE guild_id IS ?
+      ORDER BY created_at DESC
+      LIMIT ?
+    `,
+      )
+      .all(guildId || null, limit)
       .reverse();
   },
 
@@ -212,6 +278,44 @@ module.exports = {
     `,
       )
       .get(channelId);
+  },
+
+  getLatestSummaryByScope({ guildId = null, channelId = null, scope = "guild" }) {
+    if (scope === "channel") {
+      return db
+        .prepare(
+          `
+        SELECT * FROM ai_summaries
+        WHERE channel_id = ?
+        ORDER BY updated_at DESC
+        LIMIT 1
+      `,
+        )
+        .get(channelId || null);
+    }
+
+    if (scope === "global") {
+      return db
+        .prepare(
+          `
+        SELECT * FROM ai_summaries
+        ORDER BY updated_at DESC
+        LIMIT 1
+      `,
+        )
+        .get();
+    }
+
+    return db
+      .prepare(
+        `
+      SELECT * FROM ai_summaries
+      WHERE guild_id IS ?
+      ORDER BY updated_at DESC
+      LIMIT 1
+    `,
+      )
+      .get(guildId || null);
   },
 
   saveFact({ guildId, channelId, factType, factKey, factValue }) {
@@ -263,6 +367,42 @@ module.exports = {
     `,
       )
       .all(channelId);
+  },
+
+  getFactsByScope({ guildId = null, channelId = null, scope = "guild" }) {
+    if (scope === "channel") {
+      return db
+        .prepare(
+          `
+        SELECT * FROM ai_facts
+        WHERE channel_id = ? AND user_id IS NULL
+        ORDER BY updated_at DESC
+      `,
+        )
+        .all(channelId || null);
+    }
+
+    if (scope === "global") {
+      return db
+        .prepare(
+          `
+        SELECT * FROM ai_facts
+        WHERE user_id IS NULL
+        ORDER BY updated_at DESC
+      `,
+        )
+        .all();
+    }
+
+    return db
+      .prepare(
+        `
+      SELECT * FROM ai_facts
+      WHERE guild_id IS ? AND user_id IS NULL
+      ORDER BY updated_at DESC
+    `,
+      )
+      .all(guildId || null);
   },
 
   addKnowledge({ sourceType, sourceName, title, content }) {
