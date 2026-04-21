@@ -1,0 +1,8 @@
+# -------------------------------
+#   API Server Configuration
+# -------------------------------
+
+API:
+  Enabled: true
+  Port: 3000 # PORT NUMBER FOR YOUR BOT
+  SecretKey: "PUT_RANDOM_STRING_HERE" # DO NOT SHARE THIS KEY WITH ANYONE

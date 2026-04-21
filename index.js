@@ -23,7 +23,14 @@ const client = new Client({
   intents: ['Guilds', 'GuildMembers', 'GuildMessages', 'MessageContent']
 });
 
+const APIServer = require("./API/server.js");
+
 client.start(supportbot.General.Token);
+
+client.once('ready', () => {
+    const api = new APIServer(client);
+    api.start();
+});
 
 // SupportBot - New Logging System
 

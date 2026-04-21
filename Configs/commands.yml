@@ -149,6 +149,30 @@ Settings:
   Permission: ["Administrator"]
   Enabled: true
 
+AI:
+  Command: "ai"
+  Description: "Manage SupportBot AI settings and memory."
+  Permission: ["Administrator"]
+  Enabled: true
+
+  Train:
+    Command: "train"
+    Description: "Train the AI by adding knowledge to its database."
+
+  Knowledge:
+    Command: "knowledge"
+    Description: "Manage the AI knowledge base."
+    Clear:
+      Command: "clear"
+      Description: "Clear all trained knowledge from the AI."
+
+  Memory:
+    Command: "memory"
+    Description: "Manage the AI conversational memory."
+    Clear:
+      Command: "clear"
+      Description: "Clear recent conversation memory for this channel."
+
 # ---------------------------------------
 #   Command Description Configuration
 # ---------------------------------------

@@ -595,8 +595,12 @@ module.exports = new Command({
 
   async run(interaction) {
     try {
+      if (!interaction.deferred && !interaction.replied) {
+        await interaction.deferReply({ flags: MessageFlags.Ephemeral }).catch(() => {});
+      }
+
       if (await isBlacklisted(interaction.user.id)) {
-        return interaction.reply({
+        return interaction.editReply({
           content: msgconfig.Ticket.Blacklisted,
           flags: MessageFlags.Ephemeral,
         });
@@ -620,7 +624,7 @@ module.exports = new Command({
           (t) => t.user === interaction.user.id && t.open,
         ).length >= supportbot.Ticket.TicketsPerUser
       ) {
-        return interaction.reply({
+        return interaction.editReply({
           embeds: [
             {
               title: "Too Many Tickets!",
@@ -668,7 +672,7 @@ module.exports = new Command({
           (ticketChannel) => ticketChannel.name === ticketChannelName,
         )
       ) {
-        return await interaction.reply({
+        return await interaction.editReply({
           embeds: [TicketExists],
           flags: MessageFlags.Ephemeral,
         });
@@ -691,7 +695,7 @@ module.exports = new Command({
         : null;
 
       if (!Staff || !Admin) {
-        return interaction.reply({
+        return interaction.editReply({
           content:
             "Some roles seem to be missing!\nPlease check for errors when starting the bot.",
           flags: MessageFlags.Ephemeral,
@@ -731,7 +735,7 @@ module.exports = new Command({
         );
 
         if (!category) {
-          return interaction.reply({
+          return interaction.editReply({
             content: "The ticket category does not exist!",
             flags: MessageFlags.Ephemeral,
           });
@@ -758,7 +762,7 @@ module.exports = new Command({
           if (secondaryCategory) {
             await ticketChannel.setParent(secondaryCategory.id);
           } else {
-            return interaction.reply({
+            return interaction.editReply({
               content: "The secondary ticket category does not exist!",
               flags: MessageFlags.Ephemeral,
             });
@@ -844,7 +848,7 @@ module.exports = new Command({
         )
         .setColor(supportbot.Embed.Colours.General);
 
-      await interaction.reply({
+      await interaction.editReply({
         embeds: [CreatedTicket],
         flags: MessageFlags.Ephemeral,
       });
@@ -1050,7 +1054,7 @@ module.exports = new Command({
       console.error("Error in run method:", error);
 
       if (!interaction.replied && !interaction.deferred) {
-        return interaction.reply({
+        return interaction.editReply({
           content: "An error occurred while creating the ticket.",
           flags: MessageFlags.Ephemeral,
         });

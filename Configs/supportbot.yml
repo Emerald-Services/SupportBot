@@ -12,7 +12,7 @@
 #
 #           SupportBot Configuration (supportbot.yml)
 
-SupportBot_Version: "v26.0.0"
+SupportBot_Version: "v26.1 DEV-2"
 
 # -------------------------
 #   General
@@ -154,7 +154,7 @@ Ticket:
     DMOnRemove: true # DM the user when they are removed from the ticket
     DMTranscript: true # DM the user a transcript of the ticket when it is closed
 
-  TicketHome: "CHANNEL_ID"
+  TicketHome: "1469028381638000725"
 
   # What is TicketHome?
   # - Channel where the Ticket creation panel is sent.
@@ -237,13 +237,14 @@ Ticket:
 # -------------------------
 
   DepartmentSystem:
-    Enabled: false
+    Enabled: true
     Placeholder: "Choose a ticket department"
     DefaultDepartment: "general"
 
     Departments:
       general:
         Name: "General Support"
+        Description: "Open a general support ticket"
         Emoji: "🎫"
         Category: "CATEGORY_ID"
         Role: "ROLE_ID"
@@ -255,6 +256,7 @@ Ticket:
 
       purchase:
         Name: "Purchase Support"
+        Description: "Get help with store purchases"
         Emoji: "💳"
         Category: "CATEGORY_ID"
         Role: "ROLE_ID"
@@ -267,6 +269,7 @@ Ticket:
 
       reports:
         Name: "Player Report"
+        Description: "Report a player for breaking the rules"
         Emoji: "🚨"
         Category: "CATEGORY_ID"
         Role: "ROLE_ID"
@@ -279,6 +282,7 @@ Ticket:
 
       appeals:
         Name: "Ban Appeals"
+        Description: "Appeal a server punishment"
         Emoji: "⚖️"
         Category: "CATEGORY_ID"
         Role: "ROLE_ID"
