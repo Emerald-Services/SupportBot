@@ -201,7 +201,7 @@ module.exports = new Command({
       if (
         !interaction.member.roles.cache.has(Admin.id) &&
         !interaction.member.roles.cache.has(Moderator.id) &&
-        (!supportbot.Mod.AllowSupportStaff || !interaction.member.roles.cache.has(SupportStaff.id))
+        (!supportbot.Roles?.Mod?.AllowSupportStaff || !interaction.member.roles.cache.has(SupportStaff.id))
       ) {
         return interaction.reply({
           embeds: [NoPerms],
@@ -270,7 +270,7 @@ module.exports = new Command({
         await interaction.channel.setParent(targetCategory.id);
 
         if (oldRoleId && oldRoleId !== targetRoleId) {
-          await interaction.channel.permissionOverwrites.delete(oldRoleId).catch(() => {});
+          await interaction.channel.permissionOverwrites.delete(oldRoleId).catch(() => { });
         }
 
         if (targetRoleId) {
@@ -298,7 +298,7 @@ module.exports = new Command({
         );
 
         if (interaction.channel.name !== newChannelName) {
-          await interaction.channel.setName(newChannelName).catch(() => {});
+          await interaction.channel.setName(newChannelName).catch(() => { });
         }
 
         const deptEmoji = departmentConfig.Emoji || "🎫";
@@ -354,7 +354,7 @@ module.exports = new Command({
         const newChannelName = buildTicketChannelName(ticketNumber, level, departmentConfig);
 
         if (interaction.channel.name !== newChannelName) {
-          await interaction.channel.setName(newChannelName).catch(() => {});
+          await interaction.channel.setName(newChannelName).catch(() => { });
         }
 
         const priorityEmoji = priorityConfig.Emoji || "🟡";
@@ -448,7 +448,7 @@ module.exports = new Command({
               )
               .setColor(supportbot.Embed.Colours.General);
 
-            await userToAdd.send({ embeds: [addedToTicketEmbed] }).catch(() => {});
+            await userToAdd.send({ embeds: [addedToTicketEmbed] }).catch(() => { });
           }
         } catch (err) {
           console.error("Error adding user to the ticket:", err);
@@ -517,7 +517,7 @@ module.exports = new Command({
               )
               .setColor(supportbot.Embed.Colours.General);
 
-            await userToRemove.send({ embeds: [removedFromTicketEmbed] }).catch(() => {});
+            await userToRemove.send({ embeds: [removedFromTicketEmbed] }).catch(() => { });
           }
         } catch (err) {
           console.error("Error removing user from the ticket:", err);
@@ -633,7 +633,7 @@ module.exports = new Command({
             flags: MessageFlags.Ephemeral,
           });
 
-          await interaction.channel.delete().catch(() => {});
+          await interaction.channel.delete().catch(() => { });
         } catch (err) {
           console.error("Error closing ticket:", err);
 

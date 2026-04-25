@@ -14,6 +14,8 @@ const {
   SeparatorBuilder,
   SectionBuilder,
   StringSelectMenuBuilder,
+  ThumbnailBuilder,
+  EmbedBuilder,
 } = require("discord.js");
 const yaml = require("js-yaml");
 
@@ -92,7 +94,7 @@ module.exports = new Command({
       try {
         const oldMessage = await channel.messages.fetch(panelRow.message_id);
         if (oldMessage) {
-          await oldMessage.delete().catch(() => {});
+          await oldMessage.delete().catch(() => { });
         }
       } catch (err) {
         console.log(`[TICKET PANEL] Previous panel message not found, creating a new one.`);
@@ -139,9 +141,9 @@ module.exports = new Command({
         .setCustomId(panelconfig.DepartmentMenu?.CustomId || "ticketdepartmentselect")
         .setPlaceholder(
           panelconfig.DepartmentMenu?.Placeholder ||
-            departmentSystem.Placeholder ||
-            panelconfig.Button?.Text ||
-            "Choose a ticket department",
+          departmentSystem.Placeholder ||
+          panelconfig.Button?.Text ||
+          "Choose a ticket department",
         )
         .addOptions(departmentOptions);
     } else {
@@ -171,6 +173,8 @@ module.exports = new Command({
     const panelTitle = new TextDisplayBuilder().setContent(
       panelconfig.Style?.Title || "## SupportBot Ticket Creation",
     );
+
+    const rawTitle = (panelconfig.Style?.Title || "SupportBot Ticket Creation").replace(/^#+\s*/, "");
 
     const panelDesc = new TextDisplayBuilder().setContent(
       panelconfig.Style?.Description || "Click on the button below to create a support ticket.",
@@ -252,6 +256,49 @@ module.exports = new Command({
       panelContainer.addActionRowComponents(new ActionRowBuilder().addComponents(openerComponent));
     }
 
+    if (layout === "4") {
+      // Create a classic Discord Embed for Layout 4
+      const oldEmbed = new EmbedBuilder()
+        .setTitle(rawTitle)
+        .setDescription(panelconfig.Style?.Description || "Click on the button below to create a support ticket.");
+
+      if (panelconfig.Style?.Color) {
+        oldEmbed.setColor(panelconfig.Style.Color);
+      }
+
+      if (showImage && panelconfig.Style?.Image) {
+        oldEmbed.setThumbnail(panelconfig.Style.Image);
+      }
+
+      try {
+        const message = await channel.send({
+          embeds: [oldEmbed],
+          components: [new ActionRowBuilder().addComponents(openerComponent)],
+        });
+
+        db.saveTicketPanel(message.id, channel.id);
+
+        return interaction.reply({
+          content: shouldUseDepartments
+            ? getPanelMessage(
+              "PanelSentWithDepartments",
+              "Ticket panel message with department selection has been sent!",
+            )
+            : getPanelMessage("PanelSent", "Ticket panel message has been sent!"),
+          flags: MessageFlags.Ephemeral,
+        });
+      } catch (e) {
+        console.log("Error sending message:", e);
+        return interaction.reply({
+          content: getPanelMessage(
+            "SendError",
+            "An error occurred while sending the ticket panel message.",
+          ),
+          flags: MessageFlags.Ephemeral,
+        });
+      }
+    }
+
     if (showImage && layout === "1") {
       const panelImage = new MediaGalleryBuilder().addItems([
         {
@@ -275,9 +322,9 @@ module.exports = new Command({
       return interaction.reply({
         content: shouldUseDepartments
           ? getPanelMessage(
-              "PanelSentWithDepartments",
-              "Ticket panel message with department selection has been sent!",
-            )
+            "PanelSentWithDepartments",
+            "Ticket panel message with department selection has been sent!",
+          )
           : getPanelMessage("PanelSent", "Ticket panel message has been sent!"),
         flags: MessageFlags.Ephemeral,
       });

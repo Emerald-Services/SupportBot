@@ -8,12 +8,13 @@
 Enabled: true
 
 General:
-  Provider: "openai" 
-  Model: "gpt-5.4" 
-  Model_API_Key: "AI_API_KEY"
+  Provider: "claude" 
+  Model: "claude-sonnet-4-6" 
+  Model_API_Key: "MODEL_API_KEY"
   # Providers Available:
   # "openai" - Use OpenAI's GPT models. Example: "gpt-5.4" "gpt-5-mini"
   # "groq" - Use Groq's GroqAI models. Example: "meta-llama/llama-4-scout-17b-16e-instruct"
+  # "claude" - Use Anthropic's Claude models. Example: "claude-sonnet-4-6"
 
   Tokens: 1200
   
@@ -34,7 +35,7 @@ Features:
   SuggestTickets: true # Should SupportBot AI suggest creating a ticket if the user needs more help?
 
 Channels:
-  AIChannel: "CHANNEL_ID"
+  AIChannel: "1469028791312715902"
 
 Embed:
   Color: "#45b463"

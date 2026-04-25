@@ -16,6 +16,7 @@ const db = require("../Structures/Database.js");
 
 const openai = require("./Models/openai.js");
 const groq = require("./Models/groq.js");
+const claude = require("./Models/claude.js");
 
 const PASTEBIN_API_KEY = supportbotai.General.PastebinAPI_Key;
 const PASTEBIN_API_URL = supportbotai.General.PastebinAPI_URL;
@@ -56,6 +57,9 @@ function getProvider() {
 
     case "groq":
       return groq;
+
+    case "claude":
+      return claude;
 
     default:
       throw new Error(`Unsupported AI provider: ${provider}`);
@@ -104,6 +108,9 @@ function buildSystemPrompt(message) {
   }
 
   sections.push(
+    `I am currently powered by the ${supportbotai.General.Provider || "Unknown"} provider, running the ${supportbotai.General.Model || "Unknown"} model.`,
+  );
+  sections.push(
     `The current guild is: ${message.guild?.name || "Unknown Guild"}`,
   );
   sections.push(
@@ -131,24 +138,24 @@ function buildConversationFromMemory(currentMessage) {
   const recentMessages =
     typeof AIDatabase.getRecentMessagesByScope === "function"
       ? AIDatabase.getRecentMessagesByScope({
-          guildId: currentMessage.guild?.id || null,
-          channelId: currentMessage.channel?.id || null,
-          limit: maxRecentMessages,
-          scope: memoryScope,
-        })
+        guildId: currentMessage.guild?.id || null,
+        channelId: currentMessage.channel?.id || null,
+        limit: maxRecentMessages,
+        scope: memoryScope,
+      })
       : AIDatabase.getRecentMessages(
-          currentMessage.channel?.id,
-          maxRecentMessages,
-        );
+        currentMessage.channel?.id,
+        maxRecentMessages,
+      );
 
   const latestSummary =
     memoryConfig.StoreSummaries !== false
       ? typeof AIDatabase.getLatestSummaryByScope === "function"
         ? AIDatabase.getLatestSummaryByScope({
-            guildId: currentMessage.guild?.id || null,
-            channelId: currentMessage.channel?.id || null,
-            scope: memoryScope,
-          })
+          guildId: currentMessage.guild?.id || null,
+          channelId: currentMessage.channel?.id || null,
+          scope: memoryScope,
+        })
         : AIDatabase.getLatestSummary(currentMessage.channel?.id)
       : null;
 
@@ -156,28 +163,32 @@ function buildConversationFromMemory(currentMessage) {
     memoryConfig.StoreFacts !== false
       ? typeof AIDatabase.getFactsByScope === "function"
         ? AIDatabase.getFactsByScope({
-            guildId: currentMessage.guild?.id || null,
-            channelId: currentMessage.channel?.id || null,
-            scope: memoryScope,
-          })
+          guildId: currentMessage.guild?.id || null,
+          channelId: currentMessage.channel?.id || null,
+          scope: memoryScope,
+        })
         : AIDatabase.getFacts(currentMessage.channel?.id)
       : [];
 
   const userFacts =
     memoryConfig.StoreFacts !== false &&
-    typeof AIDatabase.getUserFactsByScope === "function"
+      typeof AIDatabase.getUserFactsByScope === "function"
       ? AIDatabase.getUserFactsByScope({
-          guildId: currentMessage.guild?.id || null,
-          userId: currentMessage.author?.id || null,
-          scope: memoryScope,
-        })
+        guildId: currentMessage.guild?.id || null,
+        userId: currentMessage.author?.id || null,
+        scope: memoryScope,
+      })
       : memoryConfig.StoreFacts !== false &&
-          typeof AIDatabase.getUserFacts === "function"
+        typeof AIDatabase.getUserFacts === "function"
         ? AIDatabase.getUserFacts(
-            currentMessage.guild?.id,
-            currentMessage.author?.id,
-          )
+          currentMessage.guild?.id,
+          currentMessage.author?.id,
+        )
         : [];
+
+  const knowledgeBase = typeof AIDatabase.getKnowledge === "function"
+    ? AIDatabase.getKnowledge(25)
+    : [];
 
   if (latestSummary?.summary) {
     conversation.push({
@@ -209,6 +220,17 @@ function buildConversationFromMemory(currentMessage) {
     conversation.push({
       role: "system",
       content: `Known facts about this user across chats:\n${userFactText}`,
+    });
+  }
+
+  if (knowledgeBase.length > 0) {
+    const knowledgeText = knowledgeBase
+      .map((k) => `- ${k.content}`)
+      .join("\n");
+
+    conversation.push({
+      role: "system",
+      content: `Server Knowledge Base (use this to answer questions):\n${knowledgeText}`,
     });
   }
 
@@ -431,7 +453,7 @@ module.exports = new Event("messageCreate", async (client, message) => {
   }
 
   const typingInterval = setInterval(() => {
-    message.channel.sendTyping().catch(() => {});
+    message.channel.sendTyping().catch(() => { });
   }, 5000);
 
   try {
@@ -475,7 +497,7 @@ module.exports = new Event("messageCreate", async (client, message) => {
       const embed = new Discord.EmbedBuilder()
         .setDescription(
           supportbotai.Messages?.ErrorResponse ||
-            "I couldn't generate a response.",
+          "I couldn't generate a response.",
         )
         .setColor(supportbotai.Embed.Color);
 
@@ -530,16 +552,16 @@ module.exports = new Event("messageCreate", async (client, message) => {
     ) {
       const hintMessage = await message.channel.send(
         supportbotai.Messages?.SuggestTicketText ||
-          "Need more help? React with 🎫 to open a ticket.",
+        "Need more help? React with 🎫 to open a ticket.",
       );
 
       await hintMessage
         .react(supportbotai.Messages?.SuggestTicketReaction || "🎫")
-        .catch(() => {});
+        .catch(() => { });
 
       setTimeout(
         () => {
-          hintMessage.delete().catch(() => {});
+          hintMessage.delete().catch(() => { });
         },
         5 * 60 * 1000,
       );
@@ -552,11 +574,11 @@ module.exports = new Event("messageCreate", async (client, message) => {
     const embed = new Discord.EmbedBuilder()
       .setDescription(
         supportbotai.Messages?.AIError ||
-          supportbotai.Messages?.ErrorResponse ||
-          "There was an error contacting the AI provider.",
+        supportbotai.Messages?.ErrorResponse ||
+        "There was an error contacting the AI provider.",
       )
       .setColor(supportbot.Embed.Colours.Error);
 
-    message.reply({ embeds: [embed] }).catch(() => {});
+    message.reply({ embeds: [embed] }).catch(() => { });
   }
 });

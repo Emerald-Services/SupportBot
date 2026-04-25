@@ -426,4 +426,13 @@ module.exports = {
       )
       .all(limit);
   },
+
+  clearKnowledge() {
+    db.prepare(`DELETE FROM ai_knowledge`).run();
+  },
+
+  clearConversations(channelId) {
+    if (!channelId) return;
+    db.prepare(`DELETE FROM ai_conversations WHERE channel_id = ?`).run(channelId);
+  },
 };

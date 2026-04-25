@@ -119,28 +119,39 @@ class Client extends Discord.Client {
     if (supportbot.General.Addons.Enabled) {
       const addonFiles = fs.readdirSync("./Addons").filter((file) => file.endsWith(".js"));
 
-      const addons = addonFiles.map((file) => {
-        const addon = require(`../Addons/${file}`);
-        addon.name = file.split(".")[0];
-        return addon;
-      });
-
       section("Addons");
 
-      addons.forEach((addon) => {
-        console.log(`${c.green}✓${c.reset} ${c.white}${addon.name}${c.reset}`);
+      addonFiles.forEach((file) => {
+        let addon = require(`../Addons/${file}`);
+        
+        // Handle single or multiple addons per file
+        const addonArray = Array.isArray(addon) ? addon : [addon];
+        
+        addonArray.forEach((item, index) => {
+          // If name is missing, use filename (handling index for arrays)
+          if (!item.name) {
+             item.name = index === 0 ? file.split(".")[0] : `${file.split(".")[0]}_${index}`;
+          }
 
-        if (addon instanceof Command) {
-          this.commands.set(addon.name, addon);
-        }
+          console.log(`${c.green}✓${c.reset} ${c.white}${item.name}${c.reset}`);
 
-        if (addon.events && Array.isArray(addon.events)) {
-          addon.events.forEach((event) => {
-            if (event instanceof Event) {
-              this.on(event.event, (...args) => event.run(this, ...args));
-            }
-          });
-        }
+          if (item instanceof Command) {
+            this.commands.set(item.name, item);
+          }
+
+          if (item.events && Array.isArray(item.events)) {
+            item.events.forEach((event) => {
+              if (event instanceof Event) {
+                this.on(event.event, (...args) => event.run(this, ...args));
+              }
+            });
+          }
+          
+          // If it's a direct Event instance
+          if (item instanceof Event) {
+            this.on(item.event, (...args) => item.run(this, ...args));
+          }
+        });
       });
     }
 
