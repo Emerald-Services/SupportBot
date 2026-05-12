@@ -60,26 +60,29 @@ class Client extends Discord.Client {
 
   async getChannel(channel, guild) {
     if (!channel) return null;
+    const channelStr = String(channel).toLowerCase();
     return guild.channels.cache.find(
       (c) =>
         (c.type === Discord.ChannelType.GuildText || c.type === Discord.ChannelType.GuildNews) &&
-        (c.id === channel || (c.name && c.name.toLowerCase() === channel.toLowerCase())),
+        (c.id === channel || (c.name && c.name.toLowerCase() === channelStr)),
     );
   }
 
   async getRole(role, guild) {
     if (!role) return null;
+    const roleStr = String(role).toLowerCase();
     return guild.roles.cache.find(
-      (r) => r.id === role || (r.name && r.name.toLowerCase() === role.toLowerCase()),
+      (r) => r.id === role || (r.name && r.name.toLowerCase() === roleStr),
     );
   }
 
   async getCategory(category, guild) {
     if (!category) return null;
+    const catStr = String(category).toLowerCase();
     return guild.channels.cache.find(
       (c) =>
         c.type === Discord.ChannelType.GuildCategory &&
-        (c.id === category || (c.name && c.name.toLowerCase() === category.toLowerCase())),
+        (c.id === category || (c.name && c.name.toLowerCase() === catStr)),
     );
   }
 
