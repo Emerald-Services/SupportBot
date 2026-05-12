@@ -27,7 +27,7 @@ const APIServer = require("./API/server.js");
 
 client.start(supportbot.General.Token);
 
-client.once('ready', () => {
+client.once('clientReady', () => {
     const api = new APIServer(client);
     api.start();
 });
@@ -77,14 +77,3 @@ process.on("unhandledRejection", (reason) => {
 process.on("uncaughtException", (err) => {
   console.error("Uncaught Exception:", err);
 });
-
-
-
-
-
-
-
-
-
-
-
