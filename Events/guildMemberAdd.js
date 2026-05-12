@@ -8,7 +8,7 @@ const {
     TextDisplayBuilder,
     SectionBuilder,
     ThumbnailBuilder,
-    AttachmentBuilder
+    MediaGalleryBuilder
 } = require("discord.js");
 const fs = require("fs");
 const yaml = require("js-yaml");
@@ -35,12 +35,12 @@ function getWelcomeThumbnail(client, member, iconCfg) {
 }
 
 function buildModernComponents(client, member) {
-    const container = new ContainerBuilder()
+    const container = new ContainerBuilder();
 
     if (msgconfig.Welcome.Modern.Colour) {
-        container .setAccentColor(parseInt(msgconfig.Welcome.Modern.Colour.replace("#", ""), 16));
+        container.setAccentColor(parseInt(msgconfig.Welcome.Modern.Colour.replace("#", ""), 16));
     }
-    
+
     const section = new SectionBuilder().addTextDisplayComponents(
         new TextDisplayBuilder().setContent(
             msgconfig.Welcome.Modern.Title.replace(/%joined_user%/g, member.user)
@@ -60,11 +60,16 @@ function buildModernComponents(client, member) {
 
     container.addSectionComponents(section);
 
+    // FIXED: Using MediaGalleryBuilder instead of TextDisplayBuilder for images
     if (msgconfig.Welcome.Modern.Image?.Enabled && msgconfig.Welcome.Modern.Image.URL) {
-        container.addTextDisplayComponents(
-            new TextDisplayBuilder().setContent(
-                `![image](${msgconfig.Welcome.Modern.Image.URL})`
-            )
+        container.addMediaGalleryComponents(
+            new MediaGalleryBuilder().addItems([
+                {
+                    media: {
+                        url: msgconfig.Welcome.Modern.Image.URL
+                    }
+                }
+            ])
         );
     }
 
@@ -81,7 +86,6 @@ function buildModernComponents(client, member) {
         });
 
         container.addActionRowComponents(row);
-        
     }
 
     return [container];
@@ -150,5 +154,4 @@ module.exports = new Event("guildMemberAdd", async (client, member) => {
     }
 
     console.log("\u001b[32m", "[+]", "\u001b[33m", `${member.user.username} joined the server!`);
-    
 });
