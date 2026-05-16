@@ -63,6 +63,7 @@ const {
     clearGuildResourcesCache,
 } = require('../Structures/GuildManager.js');
 const { withTimeout } = require('../Structures/asyncTimeout.js');
+const transcriptTemplate = require('../Structures/TranscriptTemplate.js');
 const {
     listCatalogAddons,
     listInstalledAddons,
@@ -1078,24 +1079,87 @@ h1{font-size:1.25rem}a{color:#a78bfa}</style></head><body>
         });
 
         // --- Transcript API ---
+        const transcriptDir = path.join(__dirname, '../Data/Transcripts');
+
+        const readTranscriptFile = (rawId) => {
+            const id = String(rawId).replace(/[^0-9]/g, '');
+            if (!id) return null;
+            const filePath = path.join(transcriptDir, `${id}-transcript.html`);
+            if (!fs.existsSync(filePath)) return null;
+            const content = fs.readFileSync(filePath, 'utf8');
+            const titleMatch = content.match(/<title>\s*Transcript\s*-\s*([^<]+)\s*<\/title>/i);
+            return {
+                id,
+                filePath,
+                filename: `${id}-transcript.html`,
+                content,
+                ticketName: titleMatch ? titleMatch[1].trim() : null,
+            };
+        };
+
+        const canEditTranscriptTemplate = (req) => {
+            if (req.dashboardService) return true;
+            if (!hasPermission(req.dashboardPermissions, 'transcripts')) return false;
+            if (req.dashboardRole === 'viewer') return false;
+            return true;
+        };
+
+        app.get('/system/transcript-template', p('transcripts'), (req, res) => {
+            try {
+                res.json({ success: true, data: transcriptTemplate.getTemplate() });
+            } catch (err) {
+                res.status(500).json({ success: false, error: 'Failed to load transcript template' });
+            }
+        });
+
+        app.put('/system/transcript-template', p('transcripts'), (req, res) => {
+            if (!canEditTranscriptTemplate(req)) {
+                return forbid(res);
+            }
+            try {
+                const saved = transcriptTemplate.saveTemplate(req.body);
+                res.json({
+                    success: true,
+                    data: saved,
+                    message: 'Transcript appearance saved. New transcripts will use this design.',
+                });
+            } catch (err) {
+                res.status(500).json({ success: false, error: err.message || 'Failed to save template' });
+            }
+        });
+
+        app.post('/system/transcript-template/preview', p('transcripts'), (req, res) => {
+            try {
+                const html = transcriptTemplate.renderPreview(req.body);
+                res.setHeader('Content-Type', 'text/html; charset=utf-8');
+                res.setHeader('Cache-Control', 'no-store');
+                res.send(html);
+            } catch (err) {
+                res.status(500).type('html').send('<!DOCTYPE html><body><h1>Preview failed</h1></body>');
+            }
+        });
+
         app.get('/system/transcripts', p('transcripts'), (req, res) => {
-            const transcriptDir = './Data/Transcripts';
             try {
                 if (!fs.existsSync(transcriptDir)) {
                     return res.json({ success: true, data: [] });
                 }
                 const files = fs.readdirSync(transcriptDir);
                 const transcripts = files
-                    .filter(f => f.endsWith('-transcript.html'))
-                    .map(f => {
-                        const stats = fs.statSync(`${transcriptDir}/${f}`);
+                    .filter((f) => f.endsWith('-transcript.html'))
+                    .map((f) => {
+                        const id = f.replace('-transcript.html', '');
+                        const stats = fs.statSync(path.join(transcriptDir, f));
+                        const parsed = readTranscriptFile(id);
                         return {
-                            id: f.replace('-transcript.html', ''),
+                            id,
                             filename: f,
-                            createdAt: stats.mtime
+                            createdAt: stats.mtime.toISOString(),
+                            size: stats.size,
+                            ticketName: parsed?.ticketName ?? null,
                         };
                     })
-                    .sort((a, b) => b.createdAt - a.createdAt);
+                    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                 res.json({ success: true, data: transcripts });
             } catch (err) {
                 res.status(500).json({ success: false, error: 'Failed to list transcripts' });
@@ -1103,16 +1167,49 @@ h1{font-size:1.25rem}a{color:#a78bfa}</style></head><body>
         });
 
         app.get('/system/transcripts/:id', p('transcripts'), (req, res) => {
-            const id = req.params.id.replace(/[^0-9]/g, ''); // Sanitize ID
-            const filePath = `./Data/Transcripts/${id}-transcript.html`;
             try {
-                if (!fs.existsSync(filePath)) {
+                const transcript = readTranscriptFile(req.params.id);
+                if (!transcript) {
                     return res.status(404).json({ success: false, error: 'Transcript not found' });
                 }
-                const content = fs.readFileSync(filePath, 'utf8');
-                res.json({ success: true, data: content });
+                res.json({ success: true, data: transcript.content });
             } catch (err) {
                 res.status(500).json({ success: false, error: 'Failed to read transcript' });
+            }
+        });
+
+        app.get('/system/transcripts/:id/view', p('transcripts'), (req, res) => {
+            try {
+                const transcript = readTranscriptFile(req.params.id);
+                if (!transcript) {
+                    return res.status(404).type('html').send(
+                        '<!DOCTYPE html><body style="font-family:sans-serif;padding:2rem;background:#0b0f14;color:#e6edf3"><h1>Transcript not found</h1></body>',
+                    );
+                }
+                res.setHeader('Content-Type', 'text/html; charset=utf-8');
+                res.setHeader('Cache-Control', 'private, max-age=60');
+                res.send(transcript.content);
+            } catch (err) {
+                res.status(500).type('html').send(
+                    '<!DOCTYPE html><body style="font-family:sans-serif;padding:2rem"><h1>Failed to load transcript</h1></body>',
+                );
+            }
+        });
+
+        app.get('/system/transcripts/:id/download', p('transcripts'), (req, res) => {
+            try {
+                const transcript = readTranscriptFile(req.params.id);
+                if (!transcript) {
+                    return res.status(404).json({ success: false, error: 'Transcript not found' });
+                }
+                res.setHeader('Content-Type', 'text/html; charset=utf-8');
+                res.setHeader(
+                    'Content-Disposition',
+                    `attachment; filename="${transcript.filename}"`,
+                );
+                res.send(transcript.content);
+            } catch (err) {
+                res.status(500).json({ success: false, error: 'Failed to download transcript' });
             }
         });
     }

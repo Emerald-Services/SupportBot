@@ -63,12 +63,12 @@ Embed:
 Roles:
   AutoRole:
     Enabled: true
-    Role: "ROLE_ID"
+    Role: "1491881628065337404"
 
   StaffMember:
-    Staff: "ROLE_ID"
-    Admin: "ROLE_ID"
-    Moderator: "ROLE_ID"
+    Staff: "1198299671576195213"
+    Admin: "1198295676128329799"
+    Moderator: "1198299671576195213"
 
   Mod:
     AllowSupportStaff: false
@@ -79,11 +79,11 @@ Roles:
   # ----------------------------
 
 Welcome:
-  Enabled: true
+  Enabled: false
   Channel: "CHANNEL_ID"
 
 Leave:
-  Enabled: true
+  Enabled: false
   Channel: "CHANNEL_ID"
 
 # ----------------------------
@@ -150,16 +150,16 @@ Ticket:
     DMOnRemove: true # DM the user when they are removed from the ticket
     DMTranscript: true # DM the user a transcript of the ticket when it is closed
 
-  TicketHome: "1469028381638000725"
+  TicketHome: "1290752269880660079"
 
   # What is TicketHome?
   # - Channel where the Ticket creation panel is sent.
   # - Channel where ticket threads are made. (only if ticket threads is enabled above.)
 
   # For TicketType: channels
-  TicketChannelsCategory: "CATEGORY_ID"
+  TicketChannelsCategory: "1505240336736452809"
   TicketChannelsCategory2: "CATEGORY_ID" # This will be used if the first category has reached the max channel limit.
-  TicketArchiveCategory: "CATEGORY_ID"
+  TicketArchiveCategory: "1505240336736452809"
   # ---
 
   Channel: "ticket-" # The prefix for ticket channel names
@@ -186,7 +186,7 @@ Ticket:
 
   ClaimTickets:
     Enabled: false
-    Channel: "CHANNEL_ID"
+    Channel: "1290752269880660079"
     # Channel where the ticket assignments are sent for staff to claim.
 
     ClaimAcceptTime: 120000
@@ -220,12 +220,12 @@ Ticket:
       - "Have you tried resolving the issue yourself?"
 
   Log:
-    TicketDataLog: "CHANNEL_ID"
+    TicketDataLog: "1290752269880660079"
     TickeDataTitle: "Ticket Data"
-    TicketBlacklistLog: "CHANNEL_ID"
+    TicketBlacklistLog: "1290752269880660079"
 
   AIMode:
-    Enabled: true
+    Enabled: false
     ThreadName: "Chat with SupportBot AI"
     WelcomeMessage: "Hi! I’m SupportBot AI. You can chat with me here about your issue."
 
@@ -234,7 +234,7 @@ Ticket:
   # -------------------------
 
   DepartmentSystem:
-    Enabled: true
+    Enabled: false
     Placeholder: "Choose a ticket department"
     DefaultDepartment: "general"
 
@@ -358,12 +358,12 @@ SelectMenus:
 # -------------------------
 
 MessageDelete:
-  Channel: "CHANNEL_ID"
+  Channel: "1290752269880660079"
   Colour: "#d92525"
 
 MessageUpdate:
-  Channel: "CHANNEL_ID"
+  Channel: "1290752269880660079"
   Colour: "#f2a024"
 
 Translate:
-  TranslateLog: "CHANNEL_ID"
+  TranslateLog: "1290752269880660079"

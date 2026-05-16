@@ -1,0 +1,323 @@
+[2026-05-16T16:05:18.835Z] [API] Server running on port 3000
+[2026-05-16T16:05:19.572Z] [90m────────────────────────────────────────────────────────[0m
+[2026-05-16T16:05:19.573Z] [1m[32mSupportBot[0m
+[2026-05-16T16:05:19.573Z] [90mEmerald Services[0m
+[2026-05-16T16:05:19.574Z] [90m────────────────────────────────────────────────────────[0m
+[2026-05-16T16:05:19.574Z] 
+[32mSystem[0m
+[2026-05-16T16:05:19.575Z] [90m------[0m
+[2026-05-16T16:05:19.576Z] [90mBot Name      [0m SupportBo
+[2026-05-16T16:05:19.576Z] [90mVersion       [0m v26.1.1
+[2026-05-16T16:05:19.576Z] [90mNode.js       [0m v24.14.1
+[2026-05-16T16:05:19.577Z] [90mDiscord.js    [0m v14.26.4
+[2026-05-16T16:05:19.577Z] [90mLogged in as  [0m BLITZ#7183
+[2026-05-16T16:05:19.578Z] [90mGuilds        [0m 1
+[2026-05-16T16:05:19.578Z] 
+[32mLinks[0m
+[2026-05-16T16:05:19.579Z] [90m-----[0m
+[2026-05-16T16:05:19.580Z] [90mDocs          [0m https://emerald-services.gitbook.io/
+[2026-05-16T16:05:19.580Z] [90mDiscord       [0m https://dsc.gg/emerald-dev
+[2026-05-16T16:05:19.581Z] [90mInvite        [0m https://discord.com/api/oauth2/authorize?client_id=1289713673123922032&permissions=8&scope=bot%20applications.commands
+[2026-05-16T16:05:19.581Z] 
+[2026-05-16T16:05:19.582Z] [Dashboard] Discord bot is ready — full stats and guild tools are available
+[2026-05-16T16:05:19.584Z] 
+[32mConfig Check[0m
+[2026-05-16T16:05:19.585Z] [90m------------[0m
+[2026-05-16T16:05:19.587Z]  [33m![0m Missing roles (ROLE_ID, ROLE_ID, ROLE_ID)
+[2026-05-16T16:05:19.587Z]  [33m![0m Missing channels (1469028381638000725)
+[2026-05-16T16:05:19.588Z] 
+[2026-05-16T16:05:19.975Z] 
+[32m✓[0m [37mSlash Commands Registered[0m [90mfor Char's Test Server[0m
+[2026-05-16T16:06:05.176Z] [32m [Executed] [37;1m ch_ar. has executed ticketpanel
+[2026-05-16T16:06:05.178Z] [TICKET PANEL] TicketHome channel not found. Please check your config file.
+[2026-05-16T16:06:40.773Z] [BotReload] Restarting Discord bot after config change…
+[2026-05-16T16:06:41.788Z] [90m────────────────────────────────────────────────────────[0m
+[2026-05-16T16:06:41.788Z] [1m[32mSupportBot[0m
+[2026-05-16T16:06:41.789Z] [90mEmerald Services[0m
+[2026-05-16T16:06:41.789Z] [90m────────────────────────────────────────────────────────[0m
+[2026-05-16T16:06:41.789Z] 
+[32mSystem[0m
+[2026-05-16T16:06:41.789Z] [90m------[0m
+[2026-05-16T16:06:41.790Z] [90mBot Name      [0m SupportBo
+[2026-05-16T16:06:41.790Z] [90mVersion       [0m v26.1.1
+[2026-05-16T16:06:41.790Z] [90mNode.js       [0m v24.14.1
+[2026-05-16T16:06:41.791Z] [90mDiscord.js    [0m v14.26.4
+[2026-05-16T16:06:41.791Z] [90mLogged in as  [0m BLITZ#7183
+[2026-05-16T16:06:41.792Z] [90mGuilds        [0m 1
+[2026-05-16T16:06:41.792Z] 
+[32mLinks[0m
+[2026-05-16T16:06:41.792Z] [90m-----[0m
+[2026-05-16T16:06:41.793Z] [90mDocs          [0m https://emerald-services.gitbook.io/
+[2026-05-16T16:06:41.794Z] [90mDiscord       [0m https://dsc.gg/emerald-dev
+[2026-05-16T16:06:41.796Z] [90mInvite        [0m https://discord.com/api/oauth2/authorize?client_id=1289713673123922032&permissions=8&scope=bot%20applications.commands
+[2026-05-16T16:06:41.797Z] 
+[2026-05-16T16:06:41.798Z] 
+[32mConfig Check[0m
+[2026-05-16T16:06:41.799Z] [90m------------[0m
+[2026-05-16T16:06:41.799Z]  [33m![0m Missing roles (ROLE_ID, ROLE_ID, ROLE_ID)
+[2026-05-16T16:06:41.800Z] 
+[2026-05-16T16:06:42.207Z] 
+[32m✓[0m [37mSlash Commands Registered[0m [90mfor Char's Test Server[0m
+[2026-05-16T16:06:42.208Z] [BotReload] Bot restarted successfully
+[2026-05-16T16:06:46.079Z] [32m [Executed] [37;1m ch_ar. has executed ticketpanel
+[2026-05-16T16:07:13.971Z] [BotReload] Restarting Discord bot after config change…
+[2026-05-16T16:07:14.625Z] [90m────────────────────────────────────────────────────────[0m
+[2026-05-16T16:07:14.626Z] [1m[32mSupportBot[0m
+[2026-05-16T16:07:14.626Z] [90mEmerald Services[0m
+[2026-05-16T16:07:14.627Z] [90m────────────────────────────────────────────────────────[0m
+[2026-05-16T16:07:14.627Z] 
+[32mSystem[0m
+[2026-05-16T16:07:14.629Z] [90m------[0m
+[2026-05-16T16:07:14.629Z] [90mBot Name      [0m SupportBo
+[2026-05-16T16:07:14.630Z] [90mVersion       [0m v26.1.1
+[2026-05-16T16:07:14.630Z] [90mNode.js       [0m v24.14.1
+[2026-05-16T16:07:14.630Z] [90mDiscord.js    [0m v14.26.4
+[2026-05-16T16:07:14.631Z] [90mLogged in as  [0m BLITZ#7183
+[2026-05-16T16:07:14.631Z] [90mGuilds        [0m 1
+[2026-05-16T16:07:14.632Z] 
+[32mLinks[0m
+[2026-05-16T16:07:14.632Z] [90m-----[0m
+[2026-05-16T16:07:14.633Z] [90mDocs          [0m https://emerald-services.gitbook.io/
+[2026-05-16T16:07:14.634Z] [90mDiscord       [0m https://dsc.gg/emerald-dev
+[2026-05-16T16:07:14.634Z] [90mInvite        [0m https://discord.com/api/oauth2/authorize?client_id=1289713673123922032&permissions=8&scope=bot%20applications.commands
+[2026-05-16T16:07:14.635Z] 
+[2026-05-16T16:07:14.636Z] 
+[32mConfig Check[0m
+[2026-05-16T16:07:14.637Z] [90m------------[0m
+[2026-05-16T16:07:14.638Z]  [32m✓[0m All configurations validated successfully
+[2026-05-16T16:07:14.639Z] 
+[2026-05-16T16:07:14.949Z] 
+[32m✓[0m [37mSlash Commands Registered[0m [90mfor Char's Test Server[0m
+[2026-05-16T16:07:14.950Z] [BotReload] Bot restarted successfully
+[2026-05-16T16:07:53.691Z] [BotReload] Restarting Discord bot after config change…
+[2026-05-16T16:07:54.472Z] [90m────────────────────────────────────────────────────────[0m
+[2026-05-16T16:07:54.473Z] [1m[32mSupportBot[0m
+[2026-05-16T16:07:54.473Z] [90mEmerald Services[0m
+[2026-05-16T16:07:54.473Z] [90m────────────────────────────────────────────────────────[0m
+[2026-05-16T16:07:54.474Z] 
+[32mSystem[0m
+[2026-05-16T16:07:54.474Z] [90m------[0m
+[2026-05-16T16:07:54.474Z] [90mBot Name      [0m SupportBo
+[2026-05-16T16:07:54.475Z] [90mVersion       [0m v26.1.1
+[2026-05-16T16:07:54.475Z] [90mNode.js       [0m v24.14.1
+[2026-05-16T16:07:54.476Z] [90mDiscord.js    [0m v14.26.4
+[2026-05-16T16:07:54.476Z] [90mLogged in as  [0m BLITZ#7183
+[2026-05-16T16:07:54.476Z] [90mGuilds        [0m 1
+[2026-05-16T16:07:54.477Z] 
+[32mLinks[0m
+[2026-05-16T16:07:54.477Z] [90m-----[0m
+[2026-05-16T16:07:54.478Z] [90mDocs          [0m https://emerald-services.gitbook.io/
+[2026-05-16T16:07:54.479Z] [90mDiscord       [0m https://dsc.gg/emerald-dev
+[2026-05-16T16:07:54.479Z] [90mInvite        [0m https://discord.com/api/oauth2/authorize?client_id=1289713673123922032&permissions=8&scope=bot%20applications.commands
+[2026-05-16T16:07:54.480Z] 
+[2026-05-16T16:07:54.480Z] 
+[32mConfig Check[0m
+[2026-05-16T16:07:54.481Z] [90m------------[0m
+[2026-05-16T16:07:54.481Z]  [32m✓[0m All configurations validated successfully
+[2026-05-16T16:07:54.482Z] 
+[2026-05-16T16:07:54.774Z] 
+[32m✓[0m [37mSlash Commands Registered[0m [90mfor Char's Test Server[0m
+[2026-05-16T16:07:54.774Z] [BotReload] Bot restarted successfully
+[2026-05-16T16:09:08.559Z] [BotReload] Restarting Discord bot after config change…
+[2026-05-16T16:09:09.098Z] [90m────────────────────────────────────────────────────────[0m
+[2026-05-16T16:09:09.099Z] [1m[32mSupportBot[0m
+[2026-05-16T16:09:09.101Z] [90mEmerald Services[0m
+[2026-05-16T16:09:09.101Z] [90m────────────────────────────────────────────────────────[0m
+[2026-05-16T16:09:09.102Z] 
+[32mSystem[0m
+[2026-05-16T16:09:09.102Z] [90m------[0m
+[2026-05-16T16:09:09.103Z] [90mBot Name      [0m SupportBo
+[2026-05-16T16:09:09.103Z] [90mVersion       [0m v26.1.1
+[2026-05-16T16:09:09.104Z] [90mNode.js       [0m v24.14.1
+[2026-05-16T16:09:09.104Z] [90mDiscord.js    [0m v14.26.4
+[2026-05-16T16:09:09.105Z] [90mLogged in as  [0m BLITZ#7183
+[2026-05-16T16:09:09.105Z] [90mGuilds        [0m 1
+[2026-05-16T16:09:09.105Z] 
+[32mLinks[0m
+[2026-05-16T16:09:09.106Z] [90m-----[0m
+[2026-05-16T16:09:09.107Z] [90mDocs          [0m https://emerald-services.gitbook.io/
+[2026-05-16T16:09:09.107Z] [90mDiscord       [0m https://dsc.gg/emerald-dev
+[2026-05-16T16:09:09.108Z] [90mInvite        [0m https://discord.com/api/oauth2/authorize?client_id=1289713673123922032&permissions=8&scope=bot%20applications.commands
+[2026-05-16T16:09:09.109Z] 
+[2026-05-16T16:09:09.110Z] 
+[32mConfig Check[0m
+[2026-05-16T16:09:09.111Z] [90m------------[0m
+[2026-05-16T16:09:09.112Z]  [32m✓[0m All configurations validated successfully
+[2026-05-16T16:09:09.112Z] 
+[2026-05-16T16:09:09.434Z] 
+[32m✓[0m [37mSlash Commands Registered[0m [90mfor Char's Test Server[0m
+[2026-05-16T16:09:09.435Z] [BotReload] Bot restarted successfully
+[2026-05-16T16:10:24.089Z] [BotReload] Restarting Discord bot after config change…
+[2026-05-16T16:10:24.662Z] [90m────────────────────────────────────────────────────────[0m
+[2026-05-16T16:10:24.662Z] [1m[32mSupportBot[0m
+[2026-05-16T16:10:24.663Z] [90mEmerald Services[0m
+[2026-05-16T16:10:24.663Z] [90m────────────────────────────────────────────────────────[0m
+[2026-05-16T16:10:24.664Z] 
+[32mSystem[0m
+[2026-05-16T16:10:24.664Z] [90m------[0m
+[2026-05-16T16:10:24.664Z] [90mBot Name      [0m SupportBo
+[2026-05-16T16:10:24.665Z] [90mVersion       [0m v26.1.1
+[2026-05-16T16:10:24.665Z] [90mNode.js       [0m v24.14.1
+[2026-05-16T16:10:24.666Z] [90mDiscord.js    [0m v14.26.4
+[2026-05-16T16:10:24.666Z] [90mLogged in as  [0m BLITZ#7183
+[2026-05-16T16:10:24.666Z] [90mGuilds        [0m 1
+[2026-05-16T16:10:24.667Z] 
+[32mLinks[0m
+[2026-05-16T16:10:24.667Z] [90m-----[0m
+[2026-05-16T16:10:24.668Z] [90mDocs          [0m https://emerald-services.gitbook.io/
+[2026-05-16T16:10:24.670Z] [90mDiscord       [0m https://dsc.gg/emerald-dev
+[2026-05-16T16:10:24.671Z] [90mInvite        [0m https://discord.com/api/oauth2/authorize?client_id=1289713673123922032&permissions=8&scope=bot%20applications.commands
+[2026-05-16T16:10:24.671Z] 
+[2026-05-16T16:10:24.672Z] 
+[32mConfig Check[0m
+[2026-05-16T16:10:24.673Z] [90m------------[0m
+[2026-05-16T16:10:24.674Z]  [32m✓[0m All configurations validated successfully
+[2026-05-16T16:10:24.675Z] 
+[2026-05-16T16:10:24.951Z] 
+[32m✓[0m [37mSlash Commands Registered[0m [90mfor Char's Test Server[0m
+[2026-05-16T16:10:24.952Z] [BotReload] Bot restarted successfully
+[2026-05-16T16:21:37.767Z] [API] Server running on port 3000
+[2026-05-16T16:21:38.731Z] [90m────────────────────────────────────────────────────────[0m
+[2026-05-16T16:21:38.731Z] [1m[32mSupportBot[0m
+[2026-05-16T16:21:38.732Z] [90mEmerald Services[0m
+[2026-05-16T16:21:38.732Z] [90m────────────────────────────────────────────────────────[0m
+[2026-05-16T16:21:38.733Z] 
+[32mSystem[0m
+[2026-05-16T16:21:38.733Z] [90m------[0m
+[2026-05-16T16:21:38.733Z] [90mBot Name      [0m SupportBo
+[2026-05-16T16:21:38.734Z] [90mVersion       [0m v26.1.1
+[2026-05-16T16:21:38.734Z] [90mNode.js       [0m v24.14.1
+[2026-05-16T16:21:38.735Z] [90mDiscord.js    [0m v14.26.4
+[2026-05-16T16:21:38.735Z] [90mLogged in as  [0m BLITZ#7183
+[2026-05-16T16:21:38.736Z] [90mGuilds        [0m 1
+[2026-05-16T16:21:38.736Z] 
+[32mLinks[0m
+[2026-05-16T16:21:38.737Z] [90m-----[0m
+[2026-05-16T16:21:38.737Z] [90mDocs          [0m https://emerald-services.gitbook.io/
+[2026-05-16T16:21:38.738Z] [90mDiscord       [0m https://dsc.gg/emerald-dev
+[2026-05-16T16:21:38.738Z] [90mInvite        [0m https://discord.com/api/oauth2/authorize?client_id=1289713673123922032&permissions=8&scope=bot%20applications.commands
+[2026-05-16T16:21:38.739Z] 
+[2026-05-16T16:21:38.740Z] [Dashboard] Discord bot is ready — full stats and guild tools are available
+[2026-05-16T16:21:38.741Z] 
+[32mConfig Check[0m
+[2026-05-16T16:21:38.741Z] [90m------------[0m
+[2026-05-16T16:21:38.743Z]  [32m✓[0m All configurations validated successfully
+[2026-05-16T16:21:38.745Z] 
+[2026-05-16T16:21:38.986Z] 
+[32m✓[0m [37mSlash Commands Registered[0m [90mfor Char's Test Server[0m
+[2026-05-16T16:22:10.150Z] [BotReload] Restarting Discord bot after config change…
+[2026-05-16T16:22:10.821Z] [90m────────────────────────────────────────────────────────[0m
+[2026-05-16T16:22:10.821Z] [1m[32mSupportBot[0m
+[2026-05-16T16:22:10.822Z] [90mEmerald Services[0m
+[2026-05-16T16:22:10.822Z] [90m────────────────────────────────────────────────────────[0m
+[2026-05-16T16:22:10.822Z] 
+[32mSystem[0m
+[2026-05-16T16:22:10.823Z] [90m------[0m
+[2026-05-16T16:22:10.823Z] [90mBot Name      [0m SupportBo
+[2026-05-16T16:22:10.823Z] [90mVersion       [0m v26.1.1
+[2026-05-16T16:22:10.824Z] [90mNode.js       [0m v24.14.1
+[2026-05-16T16:22:10.825Z] [90mDiscord.js    [0m v14.26.4
+[2026-05-16T16:22:10.826Z] [90mLogged in as  [0m BLITZ#7183
+[2026-05-16T16:22:10.827Z] [90mGuilds        [0m 1
+[2026-05-16T16:22:10.827Z] 
+[32mLinks[0m
+[2026-05-16T16:22:10.828Z] [90m-----[0m
+[2026-05-16T16:22:10.828Z] [90mDocs          [0m https://emerald-services.gitbook.io/
+[2026-05-16T16:22:10.829Z] [90mDiscord       [0m https://dsc.gg/emerald-dev
+[2026-05-16T16:22:10.829Z] [90mInvite        [0m https://discord.com/api/oauth2/authorize?client_id=1289713673123922032&permissions=8&scope=bot%20applications.commands
+[2026-05-16T16:22:10.830Z] 
+[2026-05-16T16:22:10.831Z] 
+[32mConfig Check[0m
+[2026-05-16T16:22:10.831Z] [90m------------[0m
+[2026-05-16T16:22:10.832Z]  [32m✓[0m All configurations validated successfully
+[2026-05-16T16:22:10.832Z] 
+[2026-05-16T16:22:11.140Z] 
+[32m✓[0m [37mSlash Commands Registered[0m [90mfor Char's Test Server[0m
+[2026-05-16T16:22:11.140Z] [BotReload] Bot restarted successfully
+[2026-05-16T16:28:25.190Z] [API] Server running on port 3000
+[2026-05-16T16:28:26.233Z] [90m────────────────────────────────────────────────────────[0m
+[2026-05-16T16:28:26.234Z] [1m[32mSupportBot[0m
+[2026-05-16T16:28:26.234Z] [90mEmerald Services[0m
+[2026-05-16T16:28:26.235Z] [90m────────────────────────────────────────────────────────[0m
+[2026-05-16T16:28:26.235Z] 
+[32mSystem[0m
+[2026-05-16T16:28:26.236Z] [90m------[0m
+[2026-05-16T16:28:26.236Z] [90mBot Name      [0m SupportBo
+[2026-05-16T16:28:26.237Z] [90mVersion       [0m v26.1.1
+[2026-05-16T16:28:26.237Z] [90mNode.js       [0m v24.14.1
+[2026-05-16T16:28:26.238Z] [90mDiscord.js    [0m v14.26.4
+[2026-05-16T16:28:26.238Z] [90mLogged in as  [0m BLITZ#7183
+[2026-05-16T16:28:26.240Z] [90mGuilds        [0m 1
+[2026-05-16T16:28:26.241Z] 
+[32mLinks[0m
+[2026-05-16T16:28:26.241Z] [90m-----[0m
+[2026-05-16T16:28:26.242Z] [90mDocs          [0m https://emerald-services.gitbook.io/
+[2026-05-16T16:28:26.243Z] [90mDiscord       [0m https://dsc.gg/emerald-dev
+[2026-05-16T16:28:26.243Z] [90mInvite        [0m https://discord.com/api/oauth2/authorize?client_id=1289713673123922032&permissions=8&scope=bot%20applications.commands
+[2026-05-16T16:28:26.244Z] 
+[2026-05-16T16:28:26.244Z] [Dashboard] Discord bot is ready — full stats and guild tools are available
+[2026-05-16T16:28:26.248Z] 
+[32mConfig Check[0m
+[2026-05-16T16:28:26.250Z] [90m------------[0m
+[2026-05-16T16:28:26.252Z]  [32m✓[0m All configurations validated successfully
+[2026-05-16T16:28:26.252Z] 
+[2026-05-16T16:28:26.661Z] 
+[32m✓[0m [37mSlash Commands Registered[0m [90mfor Char's Test Server[0m
+[2026-05-16T16:32:06.353Z] [API] Server running on port 3000
+[2026-05-16T16:32:07.061Z] [90m────────────────────────────────────────────────────────[0m
+[2026-05-16T16:32:07.062Z] [1m[32mSupportBot[0m
+[2026-05-16T16:32:07.063Z] [90mEmerald Services[0m
+[2026-05-16T16:32:07.063Z] [90m────────────────────────────────────────────────────────[0m
+[2026-05-16T16:32:07.064Z] 
+[32mSystem[0m
+[2026-05-16T16:32:07.065Z] [90m------[0m
+[2026-05-16T16:32:07.065Z] [90mBot Name      [0m SupportBo
+[2026-05-16T16:32:07.065Z] [90mVersion       [0m v26.1.1
+[2026-05-16T16:32:07.066Z] [90mNode.js       [0m v24.14.1
+[2026-05-16T16:32:07.066Z] [90mDiscord.js    [0m v14.26.4
+[2026-05-16T16:32:07.067Z] [90mLogged in as  [0m BLITZ#7183
+[2026-05-16T16:32:07.067Z] [90mGuilds        [0m 1
+[2026-05-16T16:32:07.067Z] 
+[32mLinks[0m
+[2026-05-16T16:32:07.068Z] [90m-----[0m
+[2026-05-16T16:32:07.068Z] [90mDocs          [0m https://emerald-services.gitbook.io/
+[2026-05-16T16:32:07.069Z] [90mDiscord       [0m https://dsc.gg/emerald-dev
+[2026-05-16T16:32:07.070Z] [90mInvite        [0m https://discord.com/api/oauth2/authorize?client_id=1289713673123922032&permissions=8&scope=bot%20applications.commands
+[2026-05-16T16:32:07.070Z] 
+[2026-05-16T16:32:07.071Z] [Dashboard] Discord bot is ready — full stats and guild tools are available
+[2026-05-16T16:32:07.073Z] 
+[32mConfig Check[0m
+[2026-05-16T16:32:07.074Z] [90m------------[0m
+[2026-05-16T16:32:07.076Z]  [32m✓[0m All configurations validated successfully
+[2026-05-16T16:32:07.076Z] 
+[2026-05-16T16:32:07.631Z] 
+[32m✓[0m [37mSlash Commands Registered[0m [90mfor Char's Test Server[0m
+[2026-05-16T16:34:35.063Z] [BotReload] Restarting Discord bot after config change…
+[2026-05-16T16:34:35.633Z] [90m────────────────────────────────────────────────────────[0m
+[2026-05-16T16:34:35.633Z] [1m[32mSupportBot[0m
+[2026-05-16T16:34:35.634Z] [90mEmerald Services[0m
+[2026-05-16T16:34:35.634Z] [90m────────────────────────────────────────────────────────[0m
+[2026-05-16T16:34:35.634Z] 
+[32mSystem[0m
+[2026-05-16T16:34:35.635Z] [90m------[0m
+[2026-05-16T16:34:35.635Z] [90mBot Name      [0m SupportBo
+[2026-05-16T16:34:35.636Z] [90mVersion       [0m v26.1.1
+[2026-05-16T16:34:35.636Z] [90mNode.js       [0m v24.14.1
+[2026-05-16T16:34:35.636Z] [90mDiscord.js    [0m v14.26.4
+[2026-05-16T16:34:35.637Z] [90mLogged in as  [0m BLITZ#7183
+[2026-05-16T16:34:35.637Z] [90mGuilds        [0m 1
+[2026-05-16T16:34:35.637Z] 
+[32mLinks[0m
+[2026-05-16T16:34:35.638Z] [90m-----[0m
+[2026-05-16T16:34:35.638Z] [90mDocs          [0m https://emerald-services.gitbook.io/
+[2026-05-16T16:34:35.639Z] [90mDiscord       [0m https://dsc.gg/emerald-dev
+[2026-05-16T16:34:35.639Z] [90mInvite        [0m https://discord.com/api/oauth2/authorize?client_id=1289713673123922032&permissions=8&scope=bot%20applications.commands
+[2026-05-16T16:34:35.639Z] 
+[2026-05-16T16:34:35.640Z] 
+[32mConfig Check[0m
+[2026-05-16T16:34:35.641Z] [90m------------[0m
+[2026-05-16T16:34:35.642Z]  [32m✓[0m All configurations validated successfully
+[2026-05-16T16:34:35.642Z] 
+[2026-05-16T16:34:35.923Z] 
+[32m✓[0m [37mSlash Commands Registered[0m [90mfor Char's Test Server[0m
+[2026-05-16T16:34:35.924Z] [BotReload] Bot restarted successfully
