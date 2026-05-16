@@ -1,0 +1,19 @@
+# -------------------------------
+#   API Server Configuration
+# -------------------------------
+# Copy to api.yml and fill in your values (api.yml is not committed with real secrets).
+
+API:
+  Enabled: true
+  Port: 3000
+
+  SecretKey: "CHANGE_ME"
+
+  OAuth:
+    Enabled: true
+    ClientId: "DISCORD_CLIENT_ID"
+    ClientSecret: "DISCORD_CLIENT_SECRET"
+    RedirectUri: "http://localhost:3000/api/auth/discord/callback"
+    OwnerUserIds:
+      - "YOUR_DISCORD_USER_ID"
+    AllowedUserIds: []

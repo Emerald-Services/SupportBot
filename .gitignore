@@ -3,5 +3,8 @@ node_modules
 # Dashboard UI source (local only — publish public/dashboard/ instead)
 dashboard/
 
-.githooks
-scripts
+# Local git hooks + secret-stripping scripts (run npm run git:setup)
+scripts/
+
+# Local secrets — use *.example as templates
+Configs/api.yml

@@ -271,22 +271,59 @@ class APIServer {
         });
     }
 
+    resolveDashboardDir() {
+        const candidates = [
+            DASHBOARD_DIR,
+            path.join(process.cwd(), 'public', 'dashboard'),
+        ];
+        for (const dir of candidates) {
+            if (fs.existsSync(path.join(dir, 'index.html'))) {
+                return dir;
+            }
+        }
+        return null;
+    }
+
     setupDashboard() {
-        if (!fs.existsSync(DASHBOARD_DIR)) {
-            console.warn('[API] Dashboard UI missing. Ensure public/dashboard/ is present in your install.');
+        const dashboardDir = this.resolveDashboardDir();
+        const port = this.config.Port || 3000;
+
+        if (!dashboardDir) {
+            console.warn(
+                '[API] Dashboard UI missing — add the public/dashboard/ folder from the repository (index.html + assets/).',
+            );
+            this.app.get('/', (req, res) => {
+                res.status(503).type('html').send(`<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><title>SupportBot Dashboard</title>
+<style>body{font-family:system-ui,sans-serif;max-width:36rem;margin:3rem auto;padding:0 1rem;color:#e8e8f0;background:#0c0c10}
+h1{font-size:1.25rem}a{color:#a78bfa}</style></head><body>
+<h1>Dashboard files not found</h1>
+<p>The API is running, but <code>public/dashboard/</code> is missing from this install (no <code>index.html</code>).</p>
+<p>Clone or download the repo including <strong>public/dashboard/</strong>, then restart the bot.</p>
+<p><a href="/api/health">Check API health</a></p>
+</body></html>`);
+            });
             return;
         }
 
-        this.app.use(express.static(DASHBOARD_DIR));
+        console.log(`[API] Serving dashboard from ${dashboardDir}`);
 
-        this.app.get(/^(?!\/api).*/, (req, res, next) => {
-            if (req.method !== 'GET') return next();
-            res.sendFile(path.join(DASHBOARD_DIR, 'index.html'), (err) => {
+        this.app.use(
+            express.static(dashboardDir, {
+                index: 'index.html',
+                fallthrough: true,
+            }),
+        );
+
+        this.app.use((req, res, next) => {
+            if (req.method !== 'GET' && req.method !== 'HEAD') return next();
+            if (req.path.startsWith('/api')) return next();
+            res.sendFile(path.join(dashboardDir, 'index.html'), (err) => {
                 if (err) next(err);
             });
         });
 
-        console.log('[API] Dashboard available at http://localhost:' + (this.config.Port || 3000));
+        console.log('[API] Dashboard available at http://localhost:' + port);
     }
 
     start(port) {
@@ -981,7 +1018,7 @@ class APIServer {
                 });
 
                 // 4. Overwrite core folders (keep Configs + Data)
-                const coreFolders = ['API', 'Commands', 'Events', 'Structures', 'public', 'scripts'];
+                const coreFolders = ['API', 'Commands', 'Events', 'Structures', 'public'];
                 coreFolders.forEach(folder => {
                     const src = path.join(sourcePath, folder);
                     if (fs.existsSync(src)) {

@@ -6,7 +6,7 @@
   "scripts": {
     "setup": "npm i && node index.js",
     "start": "node index.js",
-    "prepare": "node scripts/setup-git-security.js"
+    "git:setup": "node scripts/setup-git-security.js"
   },
   "repository": {
     "type": "git",
