@@ -2,7 +2,7 @@ const Discord = require("discord.js");
 const fs = require("fs");
 const yaml = require("js-yaml");
 const { Command } = require('../Structures/Addon.js'); // Adjust the path as needed
-const supportbot = yaml.load(fs.readFileSync("./Configs/supportbot.yml", "utf8"));
+const supportbot = require("../Structures/ConfigStore").supportbot;
 
 module.exports = new Command({
     name: "addon",

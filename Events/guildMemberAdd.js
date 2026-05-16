@@ -10,16 +10,10 @@ const {
     ThumbnailBuilder,
     MediaGalleryBuilder
 } = require("discord.js");
-const fs = require("fs");
-const yaml = require("js-yaml");
 const Event = require("../Structures/Event.js");
 
-const supportbot = yaml.load(
-    fs.readFileSync("./Configs/supportbot.yml", "utf8")
-);
-const msgconfig = yaml.load(
-    fs.readFileSync("./Configs/messages.yml", "utf8")
-);
+const supportbot = require("../Structures/ConfigStore").supportbot;
+const msgconfig = require("../Structures/ConfigStore").messages;
 
 function getWelcomeThumbnail(client, member, iconCfg) {
     switch ((iconCfg?.Mode || "").toUpperCase()) {

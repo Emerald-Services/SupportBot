@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "users": {
+    "829112572816130058": {
+      "id": "829112572816130058",
+      "username": "Char",
+      "globalName": "Char",
+      "avatar": null,
+      "role": "owner",
+      "permissions": null,
+      "enabled": true,
+      "createdAt": 1778938759443,
+      "updatedAt": 1778939228361,
+      "createdBy": "system"
+    }
+  }
+}

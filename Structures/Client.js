@@ -2,11 +2,12 @@ const fs = require("fs");
 const path = require("path");
 const Discord = require("discord.js");
 const { GatewayIntentBits, Partials } = require("discord.js");
-const yaml = require("js-yaml");
 const { Command, Event } = require("./Addon.js");
+const configStore = require("./ConfigStore.js");
+const { getPrimaryGuild } = require("./GuildManager.js");
 
-const supportbot = yaml.load(fs.readFileSync("./Configs/supportbot.yml", "utf8"));
-const cmdconfig = yaml.load(fs.readFileSync("./Configs/commands.yml", "utf8"));
+const supportbot = configStore.supportbot;
+const cmdconfig = configStore.commands;
 
 const c = {
   reset: "\x1b[0m",
@@ -158,12 +159,12 @@ class Client extends Discord.Client {
       });
     }
 
-    this.once("clientReady", async () => {
-      await this.guilds.cache.first()?.commands.set(this.commands);
-
-      console.log(
-        `\n${c.green}✓${c.reset} ${c.white}Slash Commands Registered${c.reset} ${c.gray}for ${this.guilds.cache.first().name}${c.reset}`,
-      );
+    this.on("clientReady", async () => {
+      const guild = getPrimaryGuild(this);
+      if (!guild) return;
+      await guild.commands.set(this.commands);
+      const { logSlashCommandsRegistered } = require("./BotStartup.js");
+      logSlashCommandsRegistered(this);
     });
 
     section("Events");

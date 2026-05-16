@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "setup": "npm i && node index.js",
-    "start": "node index.js"
+    "start": "node index.js",
+    "prepare": "node scripts/setup-git-security.js"
   },
   "repository": {
     "type": "git",
@@ -21,6 +22,7 @@
     "@vitalets/google-translate-api": "^9.2.1",
     "axios": "^1.7.2",
     "better-sqlite3": "^12.2.0",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
     "discord.js": "^14.13.0",
     "express": "^5.2.1",

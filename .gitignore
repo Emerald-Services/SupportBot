@@ -1,0 +1,7 @@
+node_modules
+
+# Dashboard UI source (local only — publish public/dashboard/ instead)
+dashboard/
+
+.githooks
+scripts

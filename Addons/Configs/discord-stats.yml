@@ -1,0 +1,11 @@
+
+# SupportBot | Emerald Services
+# Discord Stats addon | Created by Xiled Emerald
+
+Guild_ID: "GUILD_ID_HERE"
+
+StatsCategory: "Server Statistics"
+
+UserCount_Name: "Total Members:"
+ChannelCount_Name: "Total Channels:"
+RoleCount_Name: "Total Roles:"

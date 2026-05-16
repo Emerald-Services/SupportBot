@@ -4,8 +4,8 @@ const fs = require("fs");
 const yaml = require("js-yaml");
 const db = require("../../Structures/Database.js");
 
-const supportbot = yaml.load(fs.readFileSync("./Configs/supportbot.yml", "utf8"));
-const cmdconfig = yaml.load(fs.readFileSync("./Configs/commands.yml", "utf8"));
+const supportbot = require("../../Structures/ConfigStore").supportbot;
+const cmdconfig = require("../../Structures/ConfigStore").commands;
 
 async function loadSettings() {
   return new Promise((resolve, reject) => {

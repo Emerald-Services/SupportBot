@@ -21,7 +21,8 @@ Panel: true
 
 Style:
   Title: "## SupportBot Ticket Creation"
-  Description: "Click on the button to file a `Ticket` and our team will try their best to assist you in the best way we can!"
+  Description: "Click on the button to file a `Ticket` and our team will try their
+    best to assist you in the best way we can!"
   Image: "https://i.imgur.com/dejQvkg.png"
   Color: "#45b463"
   Layout: "4"
@@ -45,7 +46,7 @@ Button:
 # 4 - Green
 
 DepartmentMenu:
-  CustomId: "ticketdepartmentselect" 
+  CustomId: "ticketdepartmentselect"
   Placeholder: "Choose a ticket department"
   DefaultDescription: "Open a support ticket"
   DefaultEmoji: "🎫"
@@ -58,7 +59,8 @@ Settings:
   BottomDivider: false
 
 Messages:
-  NotConfigured: "Ticket Panel is not set up. Please configure it in `/Configs/ticket-panel.yml`."
+  NotConfigured: "Ticket Panel is not set up. Please configure it in
+    `/Configs/ticket-panel.yml`."
   InvalidChannel: "TicketHome channel not found. Please check your config file."
   PanelSent: "Ticket panel message has been sent!"
   PanelSentWithDepartments: "Ticket panel message with department selection has been sent!"

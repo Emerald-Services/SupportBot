@@ -4,8 +4,8 @@ const Discord = require("discord.js");
 const yaml = require("js-yaml");
 const db = require("./Database.js");
 
-const supportbot = yaml.load(fs.readFileSync("./Configs/supportbot.yml", "utf8"));
-const msgconfig = yaml.load(fs.readFileSync("./Configs/messages.yml", "utf8"));
+const supportbot = require("./ConfigStore").supportbot;
+const msgconfig = require("./ConfigStore").messages;
 
 function escapeHtml(str = "") {
   return String(str)

@@ -1,14 +1,8 @@
-const fs = require("fs");
 const Discord = require("discord.js");
-const yaml = require("js-yaml");
 const axios = require("axios");
 
-const supportbotai = yaml.load(
-  fs.readFileSync("./Configs/supportbot-ai.yml", "utf8"),
-);
-const supportbot = yaml.load(
-  fs.readFileSync("./Configs/supportbot.yml", "utf8"),
-);
+const supportbotai = require("../Structures/ConfigStore").supportbotAi;
+const supportbot = require("../Structures/ConfigStore").supportbot;
 
 const Event = require("../Structures/Event.js");
 const AIDatabase = require("../Structures/AIDatabase.js");

@@ -5,4 +5,19 @@
 API:
   Enabled: true
   Port: 3000 # PORT NUMBER FOR YOUR BOT
-  SecretKey: "PUT_RANDOM_STRING_HERE" # DO NOT SHARE THIS KEY WITH ANYONE
+
+  # Used to sign dashboard login sessions (keep random; do not share)
+  SecretKey: "fuiesdfioewefioesfioiosnd"
+
+  # Discord OAuth2 — create an app at https://discord.com/developers/applications
+  # Add redirect URL exactly matching RedirectUri below (OAuth2 → Redirects)
+  OAuth:
+    Enabled: true
+    ClientId: "1289713673123922032"
+    ClientSecret: "KwSoar0SLeHXWl5oePGNTb9J5q5NVKAV"
+    RedirectUri: "http://localhost:3000/api/auth/discord/callback"
+    # Permanent owners (full access, manage users). Add more dashboard users in the Users page.
+    OwnerUserIds:
+      - "829112572816130058"
+    # Legacy alias for OwnerUserIds (optional)
+    AllowedUserIds: []

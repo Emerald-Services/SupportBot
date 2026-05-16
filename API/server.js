@@ -1,10 +1,81 @@
 const express = require('express');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 const fs = require('fs');
 const os = require('os');
+const path = require('path');
 const yaml = require('js-yaml');
 const YAML = require('yaml'); 
 const db = require('../Structures/Database.js');
+const configStore = require('../Structures/ConfigStore.js');
+const { reloadBot, restartDiscordBot } = require('../Structures/BotReload.js');
+const { LOG_TYPES, fetchLogs, getLogMeta } = require('../Structures/LogReader.js');
+const { evaluateAllModules } = require('../Structures/ModuleStatus.js');
+const { getBotInviteUrl } = require('../Structures/BotInvite.js');
+const notificationStore = require('../Structures/NotificationStore.js');
+const {
+    notifyBotRestart,
+    notifyUpdateInstalled,
+    runUpdateCheck,
+} = require('../Structures/NotificationService.js');
+const {
+    SESSION_COOKIE,
+    signSession,
+    verifySession,
+    createSessionPayload,
+    sessionCookieOptions,
+} = require('../Structures/DashboardSession.js');
+const {
+    OAUTH_STATE_COOKIE,
+    buildAuthorizeUrl,
+    exchangeCode,
+    fetchDiscordUser,
+    createOAuthState,
+    oauthStateCookieOptions,
+    isOAuthConfigured,
+    discordAvatarUrl,
+} = require('../Structures/DiscordOAuth.js');
+const {
+    bootstrapFromOAuth,
+    getAccess,
+    canLogin,
+    formatPublicUser,
+    syncDiscordProfile,
+    listUsers,
+    addUser,
+    updateUser,
+    removeUser,
+    hasPermission,
+    canAccessConfig,
+    ROLES,
+    CONFIG_FILES,
+} = require('../Structures/DashboardUserStore.js');
+const {
+    grantServiceAccess,
+    forbid,
+    assertConfigFilesEditable,
+    fullPermissions,
+} = require('../Structures/DashboardAuth.js');
+const {
+    syncGuildHealth,
+    leaveGuild,
+    fetchGuildResources,
+    clearGuildResourcesCache,
+} = require('../Structures/GuildManager.js');
+const { withTimeout } = require('../Structures/asyncTimeout.js');
+const {
+    listCatalogAddons,
+    listInstalledAddons,
+    installAddonFromCatalog,
+    listLocalAddonConfigs,
+    readAddonConfig,
+    writeAddonConfig,
+} = require('../Structures/AddonCatalog.js');
+
+const DASHBOARD_DIR = path.join(__dirname, '../public/dashboard');
+const UPDATE_REPO = 'C-h-a-r/SupportBot-Dashboard';
+const UPDATE_BRANCH = 'release';
+const UPDATE_ZIP_URL = `https://github.com/${UPDATE_REPO}/archive/refs/heads/${UPDATE_BRANCH}.zip`;
 
 class APIServer {
     constructor(client) {
@@ -21,30 +92,405 @@ class APIServer {
 
         if (!this.config.Enabled) return;
 
-        this.app.use(cors());
+        this.oauth = this.config.OAuth || {};
+        bootstrapFromOAuth(this.oauth);
+
+        this.app.use(cors({ origin: true, credentials: true }));
+        this.app.use(cookieParser());
         this.app.use(express.json());
 
-        this.app.use((req, res, next) => {
-            const authHeader = req.headers.authorization;
-            if (!authHeader || authHeader !== `Bearer ${this.config.SecretKey}`) {
-                return res.status(401).json({ error: 'Unauthorized. Invalid Secret Key.' });
-            }
-            next();
+        this.app.get('/api/health', (req, res) => {
+            const guild =
+                this.client?.user ? syncGuildHealth(this.client) : null;
+            res.json({
+                success: true,
+                dashboard: fs.existsSync(DASHBOARD_DIR),
+                botReady: Boolean(this.client?.user) && !this.client?.__restarting,
+                botRestarting: Boolean(this.client?.__restarting),
+                oauthEnabled: isOAuthConfigured(this.oauth),
+                guild,
+            });
         });
 
+        this.setupAuthRoutes();
+
+        const api = express.Router();
+        api.use((req, res, next) => this.authenticate(req, res, next));
+        this.apiRouter = api;
         this.setupRoutes();
+        this.app.use('/api', api);
+
+        this.setupDashboard();
+
+        this.app.use((err, req, res, next) => {
+            if (res.headersSent) return next(err);
+            console.error('[API] Unhandled error:', err);
+            res.status(500).json({
+                success: false,
+                error: err.message || 'Internal server error',
+            });
+        });
+    }
+
+    authenticate(req, res, next) {
+        const secret = this.config.SecretKey;
+        const session = verifySession(req.cookies?.[SESSION_COOKIE], secret);
+
+        if (session?.userId) {
+            const access = getAccess(session.userId, this.oauth);
+            if (access) {
+                req.dashboardUser = session;
+                req.dashboardPermissions = access.permissions;
+                req.dashboardRole = access.role;
+                req.dashboardIsOwner = access.isOwner;
+                return next();
+            }
+        }
+
+        const authHeader = req.headers.authorization;
+        if (authHeader === `Bearer ${secret}`) {
+            grantServiceAccess(req);
+            return next();
+        }
+
+        return res.status(401).json({
+            error: 'Unauthorized. Sign in with Discord.',
+        });
+    }
+
+    requirePermission(permission) {
+        return (req, res, next) => {
+            if (req.dashboardService) return next();
+            if (hasPermission(req.dashboardPermissions, permission)) return next();
+            return forbid(res);
+        };
+    }
+
+    requireConfigAccess(mode = 'view') {
+        return (req, res, next) => {
+            if (req.dashboardService) return next();
+            const file = req.params?.file || req.body?.filename;
+            if (!file) return next();
+            if (!canAccessConfig(req.dashboardPermissions, file, mode)) {
+                return forbid(res);
+            }
+            return next();
+        };
+    }
+
+    respondAuthUser(req, res, session) {
+        const access = getAccess(session.userId, this.oauth);
+        if (!access) {
+            return res.status(401).json({ success: false, error: 'Not signed in' });
+        }
+
+        return res.json({
+            success: true,
+            data: formatPublicUser(
+                access.entry,
+                access,
+                {
+                    id: session.userId,
+                    username: session.username,
+                    global_name: session.globalName,
+                    avatar: session.avatar,
+                },
+            ),
+        });
+    }
+
+    setupAuthRoutes() {
+        const secret = this.config.SecretKey;
+        const oauth = this.oauth;
+
+        this.app.get('/api/auth/discord', (req, res) => {
+            if (!isOAuthConfigured(oauth)) {
+                return res.redirect('/login?error=oauth_not_configured');
+            }
+
+            const state = createOAuthState();
+            res.cookie(OAUTH_STATE_COOKIE, state, oauthStateCookieOptions());
+            res.redirect(buildAuthorizeUrl(oauth, state));
+        });
+
+        this.app.get('/api/auth/discord/callback', async (req, res) => {
+            if (!isOAuthConfigured(oauth)) {
+                return res.redirect('/login?error=oauth_not_configured');
+            }
+
+            const { code, state, error } = req.query;
+            if (error) {
+                return res.redirect(`/login?error=${encodeURIComponent(String(error))}`);
+            }
+            if (!code || !state) {
+                return res.redirect('/login?error=missing_code');
+            }
+
+            const savedState = req.cookies?.[OAUTH_STATE_COOKIE];
+            res.clearCookie(OAUTH_STATE_COOKIE, { path: '/' });
+
+            if (!savedState || savedState !== state) {
+                return res.redirect('/login?error=invalid_state');
+            }
+
+            try {
+                const accessToken = await exchangeCode(oauth, String(code));
+                const user = await fetchDiscordUser(accessToken);
+
+                if (!canLogin(user.id, oauth)) {
+                    return res.redirect('/login?error=not_allowed');
+                }
+
+                syncDiscordProfile(user.id, {
+                    username: user.username,
+                    globalName: user.global_name || null,
+                    avatar: user.avatar || null,
+                });
+
+                const payload = createSessionPayload(user);
+                const token = signSession(payload, secret);
+                res.cookie(SESSION_COOKIE, token, sessionCookieOptions());
+                res.redirect('/');
+            } catch (err) {
+                console.error('[API] Discord OAuth callback failed:', err.message);
+                res.redirect('/login?error=oauth_failed');
+            }
+        });
+
+        this.app.get('/api/auth/me', (req, res) => {
+            const session = verifySession(req.cookies?.[SESSION_COOKIE], secret);
+            if (!session?.userId) {
+                return res.status(401).json({ success: false, error: 'Not signed in' });
+            }
+            return this.respondAuthUser(req, res, session);
+        });
+
+        this.app.post('/api/auth/logout', (req, res) => {
+            res.clearCookie(SESSION_COOKIE, { path: '/' });
+            res.json({ success: true });
+        });
+    }
+
+    setupDashboard() {
+        if (!fs.existsSync(DASHBOARD_DIR)) {
+            console.warn('[API] Dashboard UI missing. Ensure public/dashboard/ is present in your install.');
+            return;
+        }
+
+        this.app.use(express.static(DASHBOARD_DIR));
+
+        this.app.get(/^(?!\/api).*/, (req, res, next) => {
+            if (req.method !== 'GET') return next();
+            res.sendFile(path.join(DASHBOARD_DIR, 'index.html'), (err) => {
+                if (err) next(err);
+            });
+        });
+
+        console.log('[API] Dashboard available at http://localhost:' + (this.config.Port || 3000));
     }
 
     start(port) {
+        if (this._httpServer) {
+            return this._httpServer;
+        }
+
         const listenPort = port || this.config.Port || 3000;
-        this.app.listen(listenPort, () => {
+        this._httpServer = this.app.listen(listenPort, () => {
             console.log(`[API] Server running on port ${listenPort}`);
+            this.startNotificationJobs();
         });
+
+        this._httpServer.on('error', (err) => {
+            if (err.code === 'EADDRINUSE') {
+                console.error(
+                    `[API] Port ${listenPort} is already in use. Change Port in Configs/api.yml.`,
+                );
+            } else {
+                console.error('[API] Server error:', err);
+            }
+        });
+
+        return this._httpServer;
+    }
+
+    async restartBotAfterConfigSave() {
+        if (!this.client) {
+            return { success: false, error: 'Bot client not available' };
+        }
+        if (this.client.__restarting) {
+            return {
+                success: false,
+                error: 'Bot restart already in progress. Try again in a moment.',
+            };
+        }
+
+        try {
+            const result = await withTimeout(
+                restartDiscordBot(this.client),
+                90_000,
+                'Bot restart timed out after 90 seconds',
+            );
+            clearGuildResourcesCache();
+            return {
+                success: true,
+                commands: result.commands?.count ?? 0,
+            };
+        } catch (err) {
+            console.error('[API] Bot restart failed:', err);
+            return { success: false, error: err.message };
+        }
+    }
+
+    startNotificationJobs() {
+        const FIRST_MS = 60 * 1000;
+        const INTERVAL_MS = 6 * 60 * 60 * 1000;
+
+        const run = async () => {
+            try {
+                await runUpdateCheck();
+            } catch (err) {
+                console.warn('[Notifications] Update check failed:', err.message);
+            }
+        };
+
+        this._notificationTimers = [
+            setTimeout(run, FIRST_MS),
+            setInterval(run, INTERVAL_MS),
+        ];
     }
 
     setupRoutes() {
-        this.app.get('/api/stats', async (req, res) => {
+        const app = this.apiRouter;
+        const oauth = this.oauth;
+        const p = (permission) => this.requirePermission(permission);
+        const cv = (mode) => this.requireConfigAccess(mode);
+
+        app.get('/dashboard-users', p('users.view'), (req, res) => {
             try {
+                res.json({
+                    success: true,
+                    data: {
+                        users: listUsers(oauth),
+                        roles: ROLES,
+                        configFiles: CONFIG_FILES,
+                    },
+                });
+            } catch (err) {
+                res.status(500).json({ success: false, error: err.message });
+            }
+        });
+
+        app.post('/dashboard-users', p('users.manage'), (req, res) => {
+            try {
+                const actorId = req.dashboardUser?.userId || 'service';
+                const user = addUser(req.body, actorId, oauth);
+                res.json({ success: true, data: user });
+            } catch (err) {
+                res.status(400).json({ success: false, error: err.message });
+            }
+        });
+
+        app.patch('/dashboard-users/:id', p('users.manage'), (req, res) => {
+            try {
+                const actorId = req.dashboardUser?.userId || 'service';
+                const user = updateUser(req.params.id, req.body, actorId, oauth);
+                res.json({ success: true, data: user });
+            } catch (err) {
+                res.status(400).json({ success: false, error: err.message });
+            }
+        });
+
+        app.delete('/dashboard-users/:id', p('users.manage'), (req, res) => {
+            try {
+                removeUser(req.params.id, oauth);
+                res.json({ success: true });
+            } catch (err) {
+                res.status(400).json({ success: false, error: err.message });
+            }
+        });
+
+        app.get('/guild/status', p('overview'), (req, res) => {
+            try {
+                if (!this.client?.user) {
+                    return res.json({
+                        success: true,
+                        data: {
+                            status: 'offline',
+                            configuredGuildId: null,
+                            message: 'Bot is not connected to Discord.',
+                            configuredGuild: null,
+                            extraGuilds: [],
+                        },
+                    });
+                }
+                res.json({
+                    success: true,
+                    data: syncGuildHealth(this.client),
+                });
+            } catch (err) {
+                res.status(500).json({ success: false, error: err.message });
+            }
+        });
+
+        app.get('/guild/resources', (req, res, next) => {
+            if (req.dashboardService) return next();
+            const canAny = CONFIG_FILES.some((f) =>
+                canAccessConfig(req.dashboardPermissions, f, 'view'),
+            );
+            if (!canAny && !hasPermission(req.dashboardPermissions, 'overview')) {
+                return forbid(res);
+            }
+            return next();
+        }, async (req, res) => {
+            try {
+                if (this.client?.__restarting) {
+                    return res.status(503).json({
+                        success: false,
+                        error: 'Bot is restarting. Channel and role lists will be back shortly.',
+                    });
+                }
+                if (!this.client?.user) {
+                    return res.status(503).json({
+                        success: false,
+                        error: 'Bot is not connected.',
+                    });
+                }
+                const data = await fetchGuildResources(this.client);
+                if (!data) {
+                    return res.status(400).json({
+                        success: false,
+                        error: 'Bot is not in the configured server. Set General.GuildId and invite the bot.',
+                    });
+                }
+                res.json({ success: true, data });
+            } catch (err) {
+                res.status(500).json({ success: false, error: err.message });
+            }
+        });
+
+        app.post('/guild/:guildId/leave', p('settings.update'), async (req, res) => {
+            try {
+                if (!this.client?.user) {
+                    return res.status(503).json({
+                        success: false,
+                        error: 'Bot is not connected.',
+                    });
+                }
+                const health = await leaveGuild(this.client, req.params.guildId);
+                res.json({ success: true, data: health });
+            } catch (err) {
+                res.status(400).json({ success: false, error: err.message });
+            }
+        });
+
+        app.get('/stats', p('overview'), async (req, res) => {
+            try {
+                if (this.client.__restarting) {
+                    return res.json({
+                        success: false,
+                        error: 'Bot is restarting after a config change. Try again shortly.',
+                    });
+                }
                 if (!this.client.user) {
                     return res.json({ success: false, error: 'Bot is still starting up.' });
                 }
@@ -55,8 +501,20 @@ class APIServer {
                 });
 
                 const allTickets = db.getAllTickets() || [];
-                const openTickets = allTickets.filter(t => t.open).length;
-                const closedTickets = allTickets.filter(t => !t.open).length;
+                const openTickets = allTickets.filter(t => t.status === 'open').length;
+                const closedTickets = allTickets.filter(t => t.status !== 'open').length;
+
+                const transcriptDir = path.join(__dirname, '../Data/Transcripts');
+                let transcriptCount = 0;
+                if (fs.existsSync(transcriptDir)) {
+                    transcriptCount = fs
+                        .readdirSync(transcriptDir)
+                        .filter((f) => f.endsWith('-transcript.html')).length;
+                }
+
+                const modules = evaluateAllModules(configStore, {
+                    transcriptCount,
+                });
 
                 const totalMem = os.totalmem();
                 const freeMem = os.freemem();
@@ -71,6 +529,7 @@ class APIServer {
                             username: this.client.user.username,
                             id: this.client.user.id,
                             avatar: this.client.user.displayAvatarURL(),
+                            inviteUrl: getBotInviteUrl(this.client.user.id),
                             version: require('../package.json').version,
                             ping: this.client.ws.ping,
                             uptime: process.uptime(),
@@ -82,6 +541,7 @@ class APIServer {
                             open: openTickets,
                             closed: closedTickets
                         },
+                        modules,
                         hosting: {
                             ram_used: (usedMem / 1024 / 1024 / 1024).toFixed(2) + ' GB',
                             ram_total: (totalMem / 1024 / 1024 / 1024).toFixed(2) + ' GB',
@@ -97,7 +557,7 @@ class APIServer {
             }
         });
 
-        this.app.get('/api/configs/:file', (req, res) => {
+        app.get('/configs/:file', cv('view'), (req, res) => {
             const validFiles = ['supportbot', 'ticket-panel', 'commands', 'messages', 'supportbot-ai'];
             const file = req.params.file;
             if (!validFiles.includes(file)) return res.status(400).json({ success: false, error: 'Invalid file' });
@@ -109,20 +569,47 @@ class APIServer {
             }
         });
 
-        this.app.put('/api/configs/raw', (req, res) => {
+        app.put('/configs/raw', cv('edit'), async (req, res) => {
             const validFiles = ['supportbot', 'ticket-panel', 'commands', 'messages', 'supportbot-ai'];
             const file = req.body.filename;
-            const content = req.body.content;
+            let content = req.body.content;
             if (!validFiles.includes(file)) return res.status(400).json({ success: false, error: 'Invalid file' });
             try {
+                if (file === 'supportbot' && /^\s*Token:\s*["']BOT_TOKEN["']/m.test(content)) {
+                    const currentPath = `./Configs/${file}.yml`;
+                    if (fs.existsSync(currentPath)) {
+                        const current = fs.readFileSync(currentPath, 'utf8');
+                        const tokenMatch = current.match(/^(\s*Token:\s*)["']([^"']+)["']/m);
+                        if (tokenMatch && tokenMatch[2] !== 'BOT_TOKEN') {
+                            content = content.replace(
+                                /^(\s*Token:\s*)["']BOT_TOKEN["']/m,
+                                `$1"${tokenMatch[2]}"`,
+                            );
+                        }
+                    }
+                }
                 fs.writeFileSync(`./Configs/${file}.yml`, content);
-                res.json({ success: true });
+                configStore.reloadFile(file);
+
+                let botRestart = { success: false, error: 'Bot client not available' };
+                if (this.client) {
+                    botRestart = await this.restartBotAfterConfigSave();
+                    notifyBotRestart(botRestart.success, botRestart.error);
+                }
+
+                res.json({
+                    success: true,
+                    botRestart,
+                    message: botRestart.success
+                        ? 'Config saved and bot restarted. API and dashboard stayed online.'
+                        : 'Config saved but the bot could not restart. Check server logs.',
+                });
             } catch (err) {
                 res.status(500).json({ success: false, error: 'Failed to write config' });
             }
         });
 
-        this.app.get('/api/configs/json/:file', (req, res) => {
+        app.get('/configs/json/:file', cv('view'), (req, res) => {
             const validFiles = ['supportbot', 'ticket-panel', 'commands', 'messages', 'supportbot-ai'];
             const file = req.params.file;
             if (!validFiles.includes(file)) return res.status(400).json({ success: false, error: 'Invalid file' });
@@ -134,82 +621,299 @@ class APIServer {
             }
         });
 
-        this.app.post('/api/configs/update-fields/multi', (req, res) => {
+        app.post('/configs/update-fields/multi', async (req, res) => {
             const updates = req.body;
             if (!updates || typeof updates !== 'object') return res.status(400).json({ success: false, error: 'Invalid updates' });
+
+            const touchedFiles = new Set();
+            for (const keyPath of Object.keys(updates)) {
+                touchedFiles.add(keyPath.split(':')[0]);
+            }
+            if (!req.dashboardService) {
+                const denied = assertConfigFilesEditable(
+                    req.dashboardPermissions,
+                    [...touchedFiles],
+                    res,
+                );
+                if (denied) return;
+            }
+
             try {
+                const touched = new Set();
                 for (const [keyPath, value] of Object.entries(updates)) {
-                    const [fileName, path] = keyPath.split(':');
+                    const [fileName, fieldPath] = keyPath.split(':');
                     const fileContent = fs.readFileSync(`./Configs/${fileName}.yml`, 'utf8');
                     const doc = YAML.parseDocument(fileContent);
-                    const keys = path.split('.');
+                    const keys = fieldPath.split('.');
                     doc.setIn(keys, value);
                     fs.writeFileSync(`./Configs/${fileName}.yml`, doc.toString());
+                    touched.add(fileName);
                 }
-                res.json({ success: true });
+
+                const reloadFiles = [...touched].filter((f) => f !== 'api');
+
+                let botRestart = { success: false, error: 'Bot client not available' };
+                if (reloadFiles.length && this.client) {
+                    botRestart = await this.restartBotAfterConfigSave();
+                    notifyBotRestart(botRestart.success, botRestart.error);
+                }
+
+                res.json({
+                    success: true,
+                    reloaded: reloadFiles,
+                    botRestart,
+                    message: botRestart.success
+                        ? 'Config saved and bot restarted. API and dashboard stayed online.'
+                        : 'Config saved but the bot could not restart. Check server logs.',
+                });
             } catch (err) {
                 console.error('[API] Update failed:', err);
                 res.status(500).json({ success: false, error: err.message });
             }
         });
 
-        this.app.post('/api/addons/install', async (req, res) => {
-            const { url, filename } = req.body;
-            if (!url || !filename) return res.status(400).json({ success: false, error: 'Missing url or filename' });
+        app.get('/notifications', p('overview'), (req, res) => {
+            res.json({
+                success: true,
+                data: {
+                    items: notificationStore.list(),
+                    unreadCount: notificationStore.unreadCount(),
+                },
+            });
+        });
 
+        app.post('/notifications/read', p('overview'), (req, res) => {
+            const { ids } = req.body || {};
+            if (ids === 'all') {
+                notificationStore.markRead('all');
+            } else if (Array.isArray(ids)) {
+                notificationStore.markRead(ids);
+            } else if (typeof ids === 'string') {
+                notificationStore.markRead([ids]);
+            }
+            res.json({
+                success: true,
+                data: { unreadCount: notificationStore.unreadCount() },
+            });
+        });
+
+        app.delete('/notifications/:id', p('overview'), (req, res) => {
+            notificationStore.dismiss(req.params.id);
+            res.json({
+                success: true,
+                data: { unreadCount: notificationStore.unreadCount() },
+            });
+        });
+
+        app.post('/system/reload-configs', p('settings.update'), async (req, res) => {
             try {
-                const axios = require('axios');
-                const response = await axios({
-                    method: 'get',
-                    url: url,
-                    responseType: 'stream'
-                });
-
-                // Ensure Addons directory exists
-                if (!fs.existsSync('./Addons')) {
-                    fs.mkdirSync('./Addons');
+                const file = req.body?.file;
+                const valid = ['supportbot', 'ticket-panel', 'commands', 'messages', 'supportbot-ai'];
+                if (file && !valid.includes(file)) {
+                    return res.status(400).json({ success: false, error: 'Invalid config file' });
                 }
-
-                const writer = fs.createWriteStream(`./Addons/${filename}`);
-                response.data.pipe(writer);
-
-                writer.on('finish', () => {
-                    res.json({ success: true, message: `Addon ${filename} installed successfully.` });
+                const result = await reloadBot(this.client, {
+                    fileKey: file || null,
+                    refreshCommands: !file || file === 'commands',
                 });
-
-                writer.on('error', (err) => {
-                    console.error('[API] Download failed:', err);
-                    res.status(500).json({ success: false, error: 'Failed to write addon file' });
+                res.json({
+                    success: true,
+                    reloaded: result.reloaded,
+                    commands: result.commands,
                 });
-
             } catch (err) {
-                console.error('[API] Addon install failed:', err);
-                res.status(500).json({ success: false, error: 'Failed to download addon' });
+                console.error('[API] Reload failed:', err);
+                res.status(500).json({ success: false, error: err.message });
             }
         });
 
-        this.app.post('/api/addons/push', (req, res) => {
-            const { filename, content } = req.body;
-            if (!filename || !content) return res.status(400).json({ success: false, error: 'Missing filename or content' });
-            
-            const sanitizedFilename = filename.replace(/[^a-z0-9_.-]/gi, '_');
-            
+        app.get('/system/logs/meta', p('logs'), (req, res) => {
             try {
-                if (!fs.existsSync('./Addons')) {
-                    fs.mkdirSync('./Addons');
-                }
-                fs.writeFileSync(`./Addons/${sanitizedFilename}`, content);
-                res.json({ success: true, message: `Addon ${sanitizedFilename} deployed successfully.` });
+                res.json({ success: true, data: { types: LOG_TYPES, files: getLogMeta() } });
             } catch (err) {
-                console.error('[API] Push failed:', err);
-                res.status(500).json({ success: false, error: 'Failed to write addon file' });
+                console.error('[API] Log meta failed:', err);
+                res.status(500).json({ success: false, error: err.message });
+            }
+        });
+
+        app.get('/system/logs', p('logs'), (req, res) => {
+            try {
+                const typesParam = req.query.types;
+                const types = typesParam
+                    ? String(typesParam).split(',').map((t) => t.trim())
+                    : LOG_TYPES;
+
+                let cursor = {};
+                if (req.query.cursor) {
+                    try {
+                        cursor = JSON.parse(String(req.query.cursor));
+                    } catch {
+                        return res.status(400).json({ success: false, error: 'Invalid cursor' });
+                    }
+                }
+
+                const hasCursor = Object.keys(cursor).length > 0;
+                const tailParam = req.query.tail;
+                const initialLines = hasCursor
+                    ? 0
+                    : Math.min(
+                          1000,
+                          Math.max(0, parseInt(tailParam, 10) || 400),
+                      );
+
+                const { entries, cursor: nextCursor } = fetchLogs(types, cursor, initialLines);
+
+                res.json({
+                    success: true,
+                    data: {
+                        entries,
+                        cursor: nextCursor,
+                    },
+                });
+            } catch (err) {
+                console.error('[API] Logs fetch failed:', err);
+                res.status(500).json({ success: false, error: err.message });
+            }
+        });
+
+        app.get('/system/update-check', p('settings.view'), async (req, res) => {
+            try {
+                const info = await runUpdateCheck();
+                res.json({ success: true, data: info });
+            } catch (err) {
+                console.error('[API] Update check failed:', err);
+                res.status(500).json({ success: false, error: 'Could not check for updates. Try again later.' });
+            }
+        });
+
+        app.get('/addons/catalog', p('settings.view'), async (req, res) => {
+            try {
+                const catalog = await listCatalogAddons();
+                const installed = await listInstalledAddons(catalog);
+                const installedIds = new Set(installed.map((a) => a.id));
+                res.json({
+                    success: true,
+                    data: {
+                        repository: `https://github.com/Emerald-Services/Addons`,
+                        addons: catalog.map((addon) => ({
+                            ...addon,
+                            installed: installedIds.has(addon.id),
+                        })),
+                    },
+                });
+            } catch (err) {
+                console.error('[API] Addon catalog failed:', err);
+                res.status(500).json({
+                    success: false,
+                    error: err.message || 'Could not load addon catalog from GitHub',
+                });
+            }
+        });
+
+        app.get('/addons/installed', p('settings.view'), async (req, res) => {
+            try {
+                let catalog = [];
+                try {
+                    catalog = await listCatalogAddons();
+                } catch {
+                    catalog = [];
+                }
+                const installed = await listInstalledAddons(catalog);
+                const configs = listLocalAddonConfigs();
+                res.json({ success: true, data: { installed, configs } });
+            } catch (err) {
+                res.status(500).json({ success: false, error: err.message });
+            }
+        });
+
+        app.post('/addons/install', p('settings.update'), async (req, res) => {
+            const name = req.body?.name || req.body?.id;
+            if (!name) {
+                return res.status(400).json({ success: false, error: 'Missing addon name' });
+            }
+
+            try {
+                const result = await installAddonFromCatalog(name);
+                let botRestart = { success: false, error: 'Bot client not available' };
+                if (this.client) {
+                    botRestart = await this.restartBotAfterConfigSave();
+                    notifyBotRestart(botRestart.success, botRestart.error);
+                }
+
+                res.json({
+                    success: true,
+                    data: result,
+                    botRestart,
+                    message: botRestart.success
+                        ? `${result.addon.name} installed and bot restarted. Enable addons in Bot config if needed.`
+                        : `${result.addon.name} installed but the bot could not restart. Check server logs.`,
+                });
+            } catch (err) {
+                console.error('[API] Addon install failed:', err);
+                res.status(500).json({ success: false, error: err.message });
+            }
+        });
+
+        app.get('/addons/configs', p('settings.view'), (req, res) => {
+            try {
+                const files = listLocalAddonConfigs();
+                res.json({ success: true, data: files });
+            } catch (err) {
+                res.status(500).json({ success: false, error: err.message });
+            }
+        });
+
+        app.get('/addons/configs/json/:file', (req, res, next) => {
+            if (req.dashboardService) return next();
+            if (!canAccessConfig(req.dashboardPermissions, 'supportbot', 'view')) {
+                return forbid(res);
+            }
+            return next();
+        }, (req, res) => {
+            try {
+                const parsed = readAddonConfig(req.params.file);
+                res.json({ success: true, data: parsed.data, filename: parsed.filename });
+            } catch (err) {
+                res.status(404).json({ success: false, error: err.message });
+            }
+        });
+
+        app.put('/addons/configs', (req, res, next) => {
+            if (req.dashboardService) return next();
+            if (!canAccessConfig(req.dashboardPermissions, 'supportbot', 'edit')) {
+                return forbid(res);
+            }
+            return next();
+        }, async (req, res) => {
+            const { filename, data } = req.body || {};
+            if (!filename || !data || typeof data !== 'object') {
+                return res.status(400).json({ success: false, error: 'Missing filename or data' });
+            }
+
+            try {
+                writeAddonConfig(filename, data);
+                let botRestart = { success: false, error: 'Bot client not available' };
+                if (this.client) {
+                    botRestart = await this.restartBotAfterConfigSave();
+                    notifyBotRestart(botRestart.success, botRestart.error);
+                }
+                res.json({
+                    success: true,
+                    botRestart,
+                    message: botRestart.success
+                        ? 'Addon config saved and bot restarted.'
+                        : 'Addon config saved but the bot could not restart.',
+                });
+            } catch (err) {
+                console.error('[API] Addon config save failed:', err);
+                res.status(500).json({ success: false, error: err.message });
             }
         });
 
         // --- Nexus Updater API ---
-        this.app.post('/api/system/update', async (req, res) => {
+        app.post('/system/update', p('settings.update'), async (req, res) => {
             const { url, version } = req.body;
-            if (!url) return res.status(400).json({ success: false, error: 'Missing update URL' });
+            const downloadUrl = url || UPDATE_ZIP_URL;
 
             try {
                 const axios = require('axios');
@@ -220,7 +924,7 @@ class APIServer {
 
                 // 1. Download
                 const tempZip = `./update_${Date.now()}.zip`;
-                const response = await axios({ method: 'get', url: url, responseType: 'stream' });
+                const response = await axios({ method: 'get', url: downloadUrl, responseType: 'stream' });
                 const writer = fs.createWriteStream(tempZip);
                 response.data.pipe(writer);
 
@@ -276,8 +980,8 @@ class APIServer {
                     }
                 });
 
-                // 4. Overwrite Core Folders
-                const coreFolders = ['API', 'Commands', 'Events', 'Structures'];
+                // 4. Overwrite core folders (keep Configs + Data)
+                const coreFolders = ['API', 'Commands', 'Events', 'Structures', 'public', 'scripts'];
                 coreFolders.forEach(folder => {
                     const src = path.join(sourcePath, folder);
                     if (fs.existsSync(src)) {
@@ -305,19 +1009,39 @@ class APIServer {
                     execSync(`rm -rf "${tempDir}"`);
                 }
 
-                res.json({ success: true, message: 'Update installed successfully. Bot is restarting...' });
-                
-                // Reboot
-                setTimeout(() => process.exit(0), 1000);
+                if (fs.existsSync(path.join(sourcePath, 'index.js'))) {
+                    fs.copyFileSync(path.join(sourcePath, 'index.js'), './index.js');
+                }
+
+                configStore.reloadBotConfigs();
+                if (this.client) {
+                    await reloadBot(this.client, { refreshCommands: true });
+                }
+
+                const updateMessage =
+                    'Update installed. Please restart your server (stop and run npm start again) to apply all file changes.';
+                notifyUpdateInstalled(updateMessage);
+
+                res.json({
+                    success: true,
+                    message: updateMessage,
+                    restartRequired: true,
+                });
 
             } catch (err) {
                 console.error('[Updater] Update failed:', err);
+                notificationStore.add({
+                    type: 'error',
+                    title: 'Update failed',
+                    message: err.message,
+                    href: '/settings',
+                });
                 res.status(500).json({ success: false, error: err.message });
             }
         });
 
         // --- Transcript API ---
-        this.app.get('/api/system/transcripts', (req, res) => {
+        app.get('/system/transcripts', p('transcripts'), (req, res) => {
             const transcriptDir = './Data/Transcripts';
             try {
                 if (!fs.existsSync(transcriptDir)) {
@@ -341,7 +1065,7 @@ class APIServer {
             }
         });
 
-        this.app.get('/api/system/transcripts/:id', (req, res) => {
+        app.get('/system/transcripts/:id', p('transcripts'), (req, res) => {
             const id = req.params.id.replace(/[^0-9]/g, ''); // Sanitize ID
             const filePath = `./Data/Transcripts/${id}-transcript.html`;
             try {
