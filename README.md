@@ -125,11 +125,11 @@ API:
 **Discord Developer Portal**
 
 1. Create an application at [discord.com/developers/applications](https://discord.com/developers/applications)
-2. Under **OAuth2 → Redirects**, add the exact `RedirectUri` (e.g. `http://localhost:3000/api/auth/discord/callback`)
+2. Under **OAuth2 → Redirects**, add your callback URL(s). If users may sign in over **both** HTTP and HTTPS, register **both** (same host/path, different protocol), e.g. `http://bot.example.com/api/auth/discord/callback` and `https://bot.example.com/api/auth/discord/callback`.
 3. Use the same app’s **Client ID** and **Client Secret** in `api.yml`
 4. Put your Discord user ID in `OwnerUserIds` for full dashboard access
 
-For production, change `RedirectUri` to your public URL (e.g. `https://bot.example.com/api/auth/discord/callback`) and use HTTPS.
+Set `RedirectUri` to your usual URL (host and path). By default, `UseRequestOrigin` keeps the **same protocol** as the page you opened (http vs https). Behind a reverse proxy, set `TrustProxy: 1` so forwarded `X-Forwarded-Proto` is respected.
 
 ### 4. Start the bot
 

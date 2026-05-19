@@ -27,11 +27,16 @@ const {
 } = require('../Structures/DashboardSession.js');
 const {
     OAUTH_STATE_COOKIE,
+    OAUTH_REDIRECT_COOKIE,
+    getTrustProxySetting,
+    resolveOAuthRedirectUri,
+    isSecureRequest,
     buildAuthorizeUrl,
     exchangeCode,
     fetchDiscordUser,
     createOAuthState,
     oauthStateCookieOptions,
+    oauthRedirectCookieOptions,
     isOAuthConfigured,
     discordAvatarUrl,
 } = require('../Structures/DiscordOAuth.js');
@@ -64,6 +69,8 @@ const {
 } = require('../Structures/GuildManager.js');
 const { withTimeout } = require('../Structures/asyncTimeout.js');
 const transcriptTemplate = require('../Structures/TranscriptTemplate.js');
+const transcriptStore = require('../Structures/TranscriptStore.js');
+const dashboardBranding = require('../Structures/DashboardBranding.js');
 const {
     listCatalogAddons,
     listInstalledAddons,
@@ -96,9 +103,40 @@ class APIServer {
         this.oauth = this.config.OAuth || {};
         bootstrapFromOAuth(this.oauth);
 
+        const trustProxy = getTrustProxySetting(this.config);
+        if (trustProxy !== false) {
+            this.app.set('trust proxy', trustProxy);
+        }
+
         this.app.use(cors({ origin: true, credentials: true }));
         this.app.use(cookieParser());
-        this.app.use(express.json());
+        this.app.use(express.json({ limit: '2mb' }));
+
+        this.app.get('/api/branding', (req, res) => {
+            try {
+                const branding = dashboardBranding.readBranding();
+                res.json({
+                    success: true,
+                    data: dashboardBranding.publicPayload(branding),
+                });
+            } catch (err) {
+                res.status(500).json({ success: false, error: 'Failed to load branding' });
+            }
+        });
+
+        this.app.get('/api/branding/favicon', (req, res) => {
+            try {
+                const favicon = dashboardBranding.getFaviconPath();
+                if (!favicon) {
+                    return res.status(404).end();
+                }
+                res.setHeader('Cache-Control', 'public, max-age=300');
+                res.type(favicon.mime);
+                return res.sendFile(favicon.filePath);
+            } catch (err) {
+                return res.status(500).end();
+            }
+        });
 
         this.app.get('/api/health', (req, res) => {
             const guild =
@@ -114,6 +152,10 @@ class APIServer {
         });
 
         this.setupAuthRoutes();
+
+        this.app.get('/transcripts/:id', (req, res) => {
+            transcriptStore.servePublicTranscript(req, res);
+        });
 
         const api = express.Router();
         api.use((req, res, next) => this.authenticate(req, res, next));
@@ -203,15 +245,20 @@ class APIServer {
     setupAuthRoutes() {
         const secret = this.config.SecretKey;
         const oauth = this.oauth;
+        const apiConfig = this.config;
 
         this.app.get('/api/auth/discord', (req, res) => {
             if (!isOAuthConfigured(oauth)) {
                 return res.redirect('/login?error=oauth_not_configured');
             }
 
+            const redirectUri = resolveOAuthRedirectUri(req, oauth, apiConfig);
             const state = createOAuthState();
-            res.cookie(OAUTH_STATE_COOKIE, state, oauthStateCookieOptions());
-            res.redirect(buildAuthorizeUrl(oauth, state));
+            const cookieOpts = oauthStateCookieOptions(req, oauth, apiConfig);
+
+            res.cookie(OAUTH_STATE_COOKIE, state, cookieOpts);
+            res.cookie(OAUTH_REDIRECT_COOKIE, redirectUri, oauthRedirectCookieOptions(req, oauth, apiConfig));
+            res.redirect(buildAuthorizeUrl(oauth, state, redirectUri));
         });
 
         this.app.get('/api/auth/discord/callback', async (req, res) => {
@@ -228,14 +275,21 @@ class APIServer {
             }
 
             const savedState = req.cookies?.[OAUTH_STATE_COOKIE];
-            res.clearCookie(OAUTH_STATE_COOKIE, { path: '/' });
+            const savedRedirect = req.cookies?.[OAUTH_REDIRECT_COOKIE];
+            const cookieOpts = oauthStateCookieOptions(req, oauth, apiConfig);
+
+            res.clearCookie(OAUTH_STATE_COOKIE, { path: '/', secure: cookieOpts.secure });
+            res.clearCookie(OAUTH_REDIRECT_COOKIE, { path: '/', secure: cookieOpts.secure });
 
             if (!savedState || savedState !== state) {
                 return res.redirect('/login?error=invalid_state');
             }
 
+            const redirectUri =
+                savedRedirect || resolveOAuthRedirectUri(req, oauth, apiConfig);
+
             try {
-                const accessToken = await exchangeCode(oauth, String(code));
+                const accessToken = await exchangeCode(oauth, String(code), redirectUri);
                 const user = await fetchDiscordUser(accessToken);
 
                 if (!canLogin(user.id, oauth)) {
@@ -250,7 +304,13 @@ class APIServer {
 
                 const payload = createSessionPayload(user);
                 const token = signSession(payload, secret);
-                res.cookie(SESSION_COOKIE, token, sessionCookieOptions());
+                res.cookie(
+                    SESSION_COOKIE,
+                    token,
+                    sessionCookieOptions(undefined, {
+                        secure: isSecureRequest(req, oauth, apiConfig),
+                    }),
+                );
                 res.redirect('/');
             } catch (err) {
                 console.error('[API] Discord OAuth callback failed:', err.message);
@@ -333,6 +393,7 @@ h1{font-size:1.25rem}a{color:#a78bfa}</style></head><body>
         }
 
         const listenPort = port || this.config.Port || 3000;
+        transcriptStore.startAutoDeleteScheduler();
         this._httpServer = this.app.listen(listenPort, () => {
             console.log(`[API] Server running on port ${listenPort}`);
             this.startNotificationJobs();
@@ -402,6 +463,61 @@ h1{font-size:1.25rem}a{color:#a78bfa}</style></head><body>
         const oauth = this.oauth;
         const p = (permission) => this.requirePermission(permission);
         const cv = (mode) => this.requireConfigAccess(mode);
+
+        app.put('/branding', p('settings.update'), (req, res) => {
+            try {
+                const branding = dashboardBranding.updateBranding({
+                    title: req.body?.title,
+                    pageTitle: req.body?.pageTitle,
+                });
+                res.json({
+                    success: true,
+                    data: dashboardBranding.publicPayload(branding),
+                    message: 'Branding saved.',
+                });
+            } catch (err) {
+                res.status(400).json({ success: false, error: err.message });
+            }
+        });
+
+        app.post('/branding/favicon', p('settings.update'), (req, res) => {
+            try {
+                const branding = dashboardBranding.saveFaviconFromBase64(req.body?.dataUrl);
+                res.json({
+                    success: true,
+                    data: dashboardBranding.publicPayload(branding),
+                    message: 'Favicon updated.',
+                });
+            } catch (err) {
+                res.status(400).json({ success: false, error: err.message });
+            }
+        });
+
+        app.delete('/branding/favicon', p('settings.update'), (req, res) => {
+            try {
+                const branding = dashboardBranding.clearFavicon();
+                res.json({
+                    success: true,
+                    data: dashboardBranding.publicPayload(branding),
+                    message: 'Favicon removed.',
+                });
+            } catch (err) {
+                res.status(400).json({ success: false, error: err.message });
+            }
+        });
+
+        app.post('/branding/reset', p('settings.update'), (req, res) => {
+            try {
+                const branding = dashboardBranding.resetBranding();
+                res.json({
+                    success: true,
+                    data: dashboardBranding.publicPayload(branding),
+                    message: 'Branding reset to defaults.',
+                });
+            } catch (err) {
+                res.status(400).json({ success: false, error: err.message });
+            }
+        });
 
         app.get('/dashboard-users', p('users.view'), (req, res) => {
             try {
@@ -1079,22 +1195,11 @@ h1{font-size:1.25rem}a{color:#a78bfa}</style></head><body>
         });
 
         // --- Transcript API ---
-        const transcriptDir = path.join(__dirname, '../Data/Transcripts');
-
-        const readTranscriptFile = (rawId) => {
-            const id = String(rawId).replace(/[^0-9]/g, '');
-            if (!id) return null;
-            const filePath = path.join(transcriptDir, `${id}-transcript.html`);
-            if (!fs.existsSync(filePath)) return null;
-            const content = fs.readFileSync(filePath, 'utf8');
-            const titleMatch = content.match(/<title>\s*Transcript\s*-\s*([^<]+)\s*<\/title>/i);
-            return {
-                id,
-                filePath,
-                filename: `${id}-transcript.html`,
-                content,
-                ticketName: titleMatch ? titleMatch[1].trim() : null,
-            };
+        const canManageTranscripts = (req) => {
+            if (req.dashboardService) return true;
+            if (!hasPermission(req.dashboardPermissions, 'transcripts')) return false;
+            if (req.dashboardRole === 'viewer') return false;
+            return true;
         };
 
         const canEditTranscriptTemplate = (req) => {
@@ -1139,36 +1244,86 @@ h1{font-size:1.25rem}a{color:#a78bfa}</style></head><body>
             }
         });
 
+        app.get('/system/transcript-settings', p('transcripts'), (req, res) => {
+            try {
+                const settings = transcriptStore.getSettings();
+                res.json({
+                    success: true,
+                    data: {
+                        ...settings,
+                        publicBasePath: '/transcripts',
+                    },
+                });
+            } catch (err) {
+                res.status(500).json({ success: false, error: 'Failed to load transcript settings' });
+            }
+        });
+
+        app.put('/system/transcript-settings', p('transcripts'), (req, res) => {
+            if (!canManageTranscripts(req)) {
+                return forbid(res);
+            }
+            try {
+                const saved = transcriptStore.saveSettings(req.body);
+                res.json({
+                    success: true,
+                    data: {
+                        ...saved,
+                        publicBasePath: '/transcripts',
+                    },
+                    message: 'Transcript settings saved.',
+                });
+            } catch (err) {
+                res.status(500).json({ success: false, error: err.message || 'Failed to save settings' });
+            }
+        });
+
+        app.post('/system/transcripts/purge', p('transcripts'), (req, res) => {
+            if (!canManageTranscripts(req)) {
+                return forbid(res);
+            }
+            try {
+                const result = transcriptStore.purgeExpiredTranscripts();
+                res.json({
+                    success: true,
+                    data: result,
+                    message: result.skipped
+                        ? 'Auto-delete is disabled. Enable it in settings to purge old transcripts.'
+                        : `Removed ${result.deleted} transcript(s).`,
+                });
+            } catch (err) {
+                res.status(500).json({ success: false, error: err.message || 'Purge failed' });
+            }
+        });
+
         app.get('/system/transcripts', p('transcripts'), (req, res) => {
             try {
-                if (!fs.existsSync(transcriptDir)) {
-                    return res.json({ success: true, data: [] });
-                }
-                const files = fs.readdirSync(transcriptDir);
-                const transcripts = files
-                    .filter((f) => f.endsWith('-transcript.html'))
-                    .map((f) => {
-                        const id = f.replace('-transcript.html', '');
-                        const stats = fs.statSync(path.join(transcriptDir, f));
-                        const parsed = readTranscriptFile(id);
-                        return {
-                            id,
-                            filename: f,
-                            createdAt: stats.mtime.toISOString(),
-                            size: stats.size,
-                            ticketName: parsed?.ticketName ?? null,
-                        };
-                    })
-                    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                transcriptStore.purgeExpiredTranscripts();
+                const transcripts = transcriptStore.listTranscripts();
                 res.json({ success: true, data: transcripts });
             } catch (err) {
                 res.status(500).json({ success: false, error: 'Failed to list transcripts' });
             }
         });
 
+        app.delete('/system/transcripts/:id', p('transcripts'), (req, res) => {
+            if (!canManageTranscripts(req)) {
+                return forbid(res);
+            }
+            try {
+                const removed = transcriptStore.deleteTranscript(req.params.id);
+                if (!removed) {
+                    return res.status(404).json({ success: false, error: 'Transcript not found' });
+                }
+                res.json({ success: true, message: 'Transcript deleted.' });
+            } catch (err) {
+                res.status(500).json({ success: false, error: 'Failed to delete transcript' });
+            }
+        });
+
         app.get('/system/transcripts/:id', p('transcripts'), (req, res) => {
             try {
-                const transcript = readTranscriptFile(req.params.id);
+                const transcript = transcriptStore.readTranscriptFile(req.params.id);
                 if (!transcript) {
                     return res.status(404).json({ success: false, error: 'Transcript not found' });
                 }
@@ -1180,7 +1335,7 @@ h1{font-size:1.25rem}a{color:#a78bfa}</style></head><body>
 
         app.get('/system/transcripts/:id/view', p('transcripts'), (req, res) => {
             try {
-                const transcript = readTranscriptFile(req.params.id);
+                const transcript = transcriptStore.readTranscriptFile(req.params.id);
                 if (!transcript) {
                     return res.status(404).type('html').send(
                         '<!DOCTYPE html><body style="font-family:sans-serif;padding:2rem;background:#0b0f14;color:#e6edf3"><h1>Transcript not found</h1></body>',
@@ -1198,7 +1353,7 @@ h1{font-size:1.25rem}a{color:#a78bfa}</style></head><body>
 
         app.get('/system/transcripts/:id/download', p('transcripts'), (req, res) => {
             try {
-                const transcript = readTranscriptFile(req.params.id);
+                const transcript = transcriptStore.readTranscriptFile(req.params.id);
                 if (!transcript) {
                     return res.status(404).json({ success: false, error: 'Transcript not found' });
                 }

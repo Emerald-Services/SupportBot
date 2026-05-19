@@ -51,10 +51,14 @@ function createSessionPayload(user) {
   };
 }
 
-function sessionCookieOptions(maxAgeMs = SESSION_MAX_AGE_MS) {
+function sessionCookieOptions(maxAgeMs = SESSION_MAX_AGE_MS, opts = {}) {
+  const secure =
+    opts.secure !== undefined
+      ? Boolean(opts.secure)
+      : process.env.NODE_ENV === "production";
   return {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure,
     sameSite: "lax",
     maxAge: maxAgeMs,
     path: "/",
