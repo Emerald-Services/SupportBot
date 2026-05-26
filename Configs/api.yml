@@ -1,23 +1,29 @@
 # -------------------------------
 #   API Server Configuration
 # -------------------------------
+# Copy to api.yml and fill in your values (api.yml is not committed with real secrets).
 
 API:
   Enabled: true
-  Port: 3000 # PORT NUMBER FOR YOUR BOT
+  Port: 3000
 
-  # Used to sign dashboard login sessions (keep random; do not share)
-  SecretKey: "fuiesdfioewefioesfioiosnd"
+  SecretKey: "CHANGE_ME"
+  # Set to 1 when the dashboard is behind nginx, Cloudflare, Pterodactyl proxy, etc.
+  # so http/https is detected from X-Forwarded-Proto.
+  TrustProxy: false
 
-  # Discord OAuth2 — create an app at https://discord.com/developers/applications
-  # Add redirect URL exactly matching RedirectUri below (OAuth2 → Redirects)
   OAuth:
     Enabled: true
-    ClientId: "1289713673123922032"
-    ClientSecret: "KwSoar0SLeHXWl5oePGNTb9J5q5NVKAV"
+    ClientId: "DISCORD_CLIENT_ID"
+    ClientSecret: "DISCORD_CLIENT_SECRET"
+    # Canonical callback URL (host + path). Protocol (http/https) can follow the
+    # browser when UseRequestOrigin is true (default).
     RedirectUri: "http://localhost:3000/api/auth/discord/callback"
-    # Permanent owners (full access, manage users). Add more dashboard users in the Users page.
+    # Optional: register extra callback URLs in Discord and list them here.
+    # RedirectUris:
+    #   - "https://bot.example.com/api/auth/discord/callback"
+    # UseRequestOrigin: true
+    # CookieSecure: false
     OwnerUserIds:
-      - "829112572816130058"
-    # Legacy alias for OwnerUserIds (optional)
+      - "YOUR_DISCORD_USER_ID"
     AllowedUserIds: []

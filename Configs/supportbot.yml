@@ -23,7 +23,7 @@ General:
   Token: "BOT_TOKEN"
   Addons:
     Enabled: true
-  GuildId: "1198017820093599856"
+  GuildId: ""
 
 # -------------------------
 #  Activity
@@ -63,12 +63,12 @@ Embed:
 Roles:
   AutoRole:
     Enabled: true
-    Role: "1491881628065337404"
+    Role: "ROLE_ID"
 
   StaffMember:
-    Staff: "1198299671576195213"
-    Admin: "1198295676128329799"
-    Moderator: "1198299671576195213"
+    Staff: "ROLE_ID"
+    Admin: "ROLE_ID"
+    Moderator: "ROLE_ID"
 
   Mod:
     AllowSupportStaff: false
@@ -150,16 +150,16 @@ Ticket:
     DMOnRemove: true # DM the user when they are removed from the ticket
     DMTranscript: true # DM the user a transcript of the ticket when it is closed
 
-  TicketHome: "1290752269880660079"
+  TicketHome: "CHANNEL_ID"
 
   # What is TicketHome?
   # - Channel where the Ticket creation panel is sent.
   # - Channel where ticket threads are made. (only if ticket threads is enabled above.)
 
   # For TicketType: channels
-  TicketChannelsCategory: "1505240336736452809"
+  TicketChannelsCategory: "CATEGORY_ID"
   TicketChannelsCategory2: "CATEGORY_ID" # This will be used if the first category has reached the max channel limit.
-  TicketArchiveCategory: "1505240336736452809"
+  TicketArchiveCategory: "CATEGORY_ID"
   # ---
 
   Channel: "ticket-" # The prefix for ticket channel names
@@ -186,7 +186,7 @@ Ticket:
 
   ClaimTickets:
     Enabled: false
-    Channel: "1290752269880660079"
+    Channel: "CHANNEL_ID"
     # Channel where the ticket assignments are sent for staff to claim.
 
     ClaimAcceptTime: 120000
@@ -220,9 +220,9 @@ Ticket:
       - "Have you tried resolving the issue yourself?"
 
   Log:
-    TicketDataLog: "1290752269880660079"
+    TicketDataLog: "CHANNEL_ID"
     TickeDataTitle: "Ticket Data"
-    TicketBlacklistLog: "1290752269880660079"
+    TicketBlacklistLog: "CHANNEL_ID"
 
   AIMode:
     Enabled: false
@@ -358,12 +358,12 @@ SelectMenus:
 # -------------------------
 
 MessageDelete:
-  Channel: "1290752269880660079"
+  Channel: "CHANNEL_ID"
   Colour: "#d92525"
 
 MessageUpdate:
-  Channel: "1290752269880660079"
+  Channel: "CHANNEL_ID"
   Colour: "#f2a024"
 
 Translate:
-  TranslateLog: "1290752269880660079"
+  TranslateLog: "CHANNEL_ID"

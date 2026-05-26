@@ -3,7 +3,9 @@ const configStore = require("./ConfigStore.js");
 const { withTimeout } = require("./asyncTimeout.js");
 
 const RESOURCES_CACHE_MS = 90 * 1000;
-let resourcesCache = { guildId: null, data: null, at: 0 };
+/** Bump when resource payload shape changes (e.g. added emojis). */
+const RESOURCES_CACHE_VERSION = 2;
+let resourcesCache = { guildId: null, data: null, at: 0, version: 0 };
 let resourcesInflight = null;
 
 function getConfiguredGuildId() {
@@ -160,12 +162,28 @@ function buildResourcesFromGuild(guild) {
       name: c.name,
     }));
 
+  const emojis = [...guild.emojis.cache.values()]
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .map((e) => {
+      const animated = Boolean(e.animated);
+      const ext = animated ? "gif" : "png";
+      return {
+        id: e.id,
+        name: e.name,
+        animated,
+        url:
+          e.imageURL({ extension: ext, size: 64 }) ||
+          `https://cdn.discordapp.com/emojis/${e.id}.${ext}?size=64`,
+      };
+    });
+
   return {
     guildId: guild.id,
     guildName: guild.name,
     roles,
     channels,
     categories,
+    emojis,
   };
 }
 
@@ -189,6 +207,12 @@ async function fetchGuildResourcesFromDiscord(client, guildId) {
     }
   }
 
+  try {
+    await withTimeout(guild.emojis.fetch(), 12_000, "Discord emoji fetch timed out");
+  } catch (err) {
+    console.warn("[Guild] Failed to fetch guild emojis:", err.message);
+  }
+
   return buildResourcesFromGuild(guild);
 }
 
@@ -199,6 +223,7 @@ async function fetchGuildResources(client, guildId) {
   const now = Date.now();
   if (
     resourcesCache.data &&
+    resourcesCache.version === RESOURCES_CACHE_VERSION &&
     resourcesCache.guildId === id &&
     now - resourcesCache.at < RESOURCES_CACHE_MS
   ) {
@@ -216,7 +241,12 @@ async function fetchGuildResources(client, guildId) {
   resourcesInflight = (async () => {
     const data = await fetchGuildResourcesFromDiscord(client, id);
     if (data) {
-      resourcesCache = { guildId: id, data, at: Date.now() };
+      resourcesCache = {
+        guildId: id,
+        data,
+        at: Date.now(),
+        version: RESOURCES_CACHE_VERSION,
+      };
     }
     return data;
   })();
@@ -229,7 +259,7 @@ async function fetchGuildResources(client, guildId) {
 }
 
 function clearGuildResourcesCache() {
-  resourcesCache = { guildId: null, data: null, at: 0 };
+  resourcesCache = { guildId: null, data: null, at: 0, version: 0 };
   resourcesInflight = null;
 }
 

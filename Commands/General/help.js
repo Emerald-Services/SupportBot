@@ -54,7 +54,7 @@ module.exports = new Command({
       iconURL: interaction.user.displayAvatarURL(),
     });
 
-    interaction.reply({
+    await interaction.reply({
       flags: Discord.MessageFlags.Ephemeral,
       embeds: [HelpEmbed1],
     });

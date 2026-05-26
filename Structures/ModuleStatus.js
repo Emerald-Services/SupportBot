@@ -122,11 +122,12 @@ function evaluateTranscripts(supportbot, transcriptCount) {
   const ticketReady = isConfiguredId(supportbot?.Ticket?.TicketHome);
 
   if (!ticketReady) {
+    // Ticket setup is tracked by the tickets module — avoid a misleading transcripts alert.
     return {
-      status: "todo",
-      subtitle: "Set up tickets first",
+      status: "done",
+      subtitle: "Available after ticket channels are configured",
       passed: 0,
-      total: 2,
+      total: 0,
     };
   }
 
@@ -134,16 +135,16 @@ function evaluateTranscripts(supportbot, transcriptCount) {
     return {
       status: "done",
       subtitle: `${transcriptCount} transcript${transcriptCount === 1 ? "" : "s"} saved`,
-      passed: 2,
-      total: 2,
+      passed: 1,
+      total: 1,
     };
   }
 
   return {
-    status: "progress",
-    subtitle: "Close tickets to generate transcripts",
+    status: "done",
+    subtitle: "No transcripts yet — they are created when tickets close",
     passed: 1,
-    total: 2,
+    total: 1,
   };
 }
 

@@ -65,6 +65,7 @@ module.exports = new Event("interactionCreate", async (client, interaction) => {
           "\u001b[37;1m",
           `${interaction.user.username} has executed ${command.name}`,
         );
+
         await command.run(interaction);
       }
     } catch (error) {

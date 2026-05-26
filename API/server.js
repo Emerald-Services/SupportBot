@@ -11,6 +11,7 @@ const configStore = require('../Structures/ConfigStore.js');
 const { reloadBot, restartDiscordBot } = require('../Structures/BotReload.js');
 const { LOG_TYPES, fetchLogs, getLogMeta } = require('../Structures/LogReader.js');
 const { evaluateAllModules } = require('../Structures/ModuleStatus.js');
+const { evaluateDashboardAlerts } = require('../Structures/DashboardAlerts.js');
 const { getBotInviteUrl } = require('../Structures/BotInvite.js');
 const notificationStore = require('../Structures/NotificationStore.js');
 const {
@@ -70,6 +71,13 @@ const {
 const { withTimeout } = require('../Structures/asyncTimeout.js');
 const transcriptTemplate = require('../Structures/TranscriptTemplate.js');
 const transcriptStore = require('../Structures/TranscriptStore.js');
+const { refreshSlashCommands } = require('../Structures/BotReload.js');
+const {
+    isSetupComplete,
+    getSetupStatus,
+    validateSetupPayload,
+    applySetup,
+} = require('../Structures/DashboardSetup.js');
 const dashboardBranding = require('../Structures/DashboardBranding.js');
 const {
     listCatalogAddons,
@@ -147,10 +155,12 @@ class APIServer {
                 botReady: Boolean(this.client?.user) && !this.client?.__restarting,
                 botRestarting: Boolean(this.client?.__restarting),
                 oauthEnabled: isOAuthConfigured(this.oauth),
+                setupComplete: isSetupComplete(),
                 guild,
             });
         });
 
+        this.setupOnboardingRoutes();
         this.setupAuthRoutes();
 
         this.app.get('/transcripts/:id', (req, res) => {
@@ -242,14 +252,83 @@ class APIServer {
         });
     }
 
+    setupOnboardingRoutes() {
+        this.app.get('/api/setup/status', (req, res) => {
+            try {
+                res.json({ success: true, data: getSetupStatus(req) });
+            } catch (err) {
+                res.status(500).json({ success: false, error: err.message });
+            }
+        });
+
+        this.app.post('/api/setup/validate', async (req, res) => {
+            if (isSetupComplete()) {
+                return res.status(403).json({
+                    success: false,
+                    error: 'Setup is already complete.',
+                });
+            }
+            try {
+                const data = await validateSetupPayload(req.body || {});
+                res.json({ success: true, data });
+            } catch (err) {
+                res.status(500).json({ success: false, error: err.message });
+            }
+        });
+
+        this.app.post('/api/setup/complete', async (req, res) => {
+            if (isSetupComplete()) {
+                return res.status(403).json({
+                    success: false,
+                    error: 'Setup is already complete.',
+                });
+            }
+
+            try {
+                const body = req.body || {};
+                const validation = await validateSetupPayload(body);
+                if (!validation.ok) {
+                    return res.status(400).json({
+                        success: false,
+                        error: 'Fix validation errors before saving.',
+                        data: validation,
+                    });
+                }
+
+                applySetup(body);
+                this.config = configStore.api?.API || configStore.api;
+                this.oauth = this.config.OAuth || {};
+                bootstrapFromOAuth(this.oauth);
+
+                let botRestart = { success: false, error: 'Bot client not available' };
+                if (this.client) {
+                    try {
+                        botRestart = await restartDiscordBot(this.client);
+                    } catch (restartErr) {
+                        botRestart = { success: false, error: restartErr.message };
+                    }
+                }
+
+                res.json({
+                    success: true,
+                    message: 'Setup saved. Restart the server for changes to take effect, then sign in with Discord.',
+                    data: { setupComplete: true, botRestart },
+                });
+            } catch (err) {
+                console.error('[API] Setup failed:', err);
+                res.status(400).json({ success: false, error: err.message });
+            }
+        });
+    }
+
     setupAuthRoutes() {
         const secret = this.config.SecretKey;
         const oauth = this.oauth;
         const apiConfig = this.config;
 
         this.app.get('/api/auth/discord', (req, res) => {
-            if (!isOAuthConfigured(oauth)) {
-                return res.redirect('/login?error=oauth_not_configured');
+            if (!isSetupComplete() || !isOAuthConfigured(oauth)) {
+                return res.redirect('/setup');
             }
 
             const redirectUri = resolveOAuthRedirectUri(req, oauth, apiConfig);
@@ -262,8 +341,8 @@ class APIServer {
         });
 
         this.app.get('/api/auth/discord/callback', async (req, res) => {
-            if (!isOAuthConfigured(oauth)) {
-                return res.redirect('/login?error=oauth_not_configured');
+            if (!isSetupComplete() || !isOAuthConfigured(oauth)) {
+                return res.redirect('/setup');
             }
 
             const { code, state, error } = req.query;
@@ -586,6 +665,29 @@ h1{font-size:1.25rem}a{color:#a78bfa}</style></head><body>
             }
         });
 
+        app.get('/alerts', p('overview'), async (req, res) => {
+            try {
+                const transcriptDir = path.join(__dirname, '../Data/Transcripts');
+                let transcriptCount = 0;
+                if (fs.existsSync(transcriptDir)) {
+                    transcriptCount = fs
+                        .readdirSync(transcriptDir)
+                        .filter((f) => f.endsWith('-transcript.html')).length;
+                }
+
+                const data = await evaluateDashboardAlerts({
+                    client: this.client,
+                    configStore,
+                    transcriptCount,
+                });
+
+                res.json({ success: true, data });
+            } catch (err) {
+                console.error('[API] Error fetching alerts:', err);
+                res.status(500).json({ success: false, error: err.message });
+            }
+        });
+
         app.get('/guild/resources', (req, res, next) => {
             if (req.dashboardService) return next();
             const canAny = CONFIG_FILES.some((f) =>
@@ -608,6 +710,9 @@ h1{font-size:1.25rem}a{color:#a78bfa}</style></head><body>
                         success: false,
                         error: 'Bot is not connected.',
                     });
+                }
+                if (req.query.refresh === '1') {
+                    clearGuildResourcesCache();
                 }
                 const data = await fetchGuildResources(this.client);
                 if (!data) {
