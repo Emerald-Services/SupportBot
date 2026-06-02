@@ -35,7 +35,7 @@ Features:
   SuggestTickets: true # Should SupportBot AI suggest creating a ticket if the user needs more help?
 
 Channels:
-  AIChannel: "1469028791312715902"
+  AIChannel: "CHANNEL_ID"
 
 Embed:
   Color: "#45b463"

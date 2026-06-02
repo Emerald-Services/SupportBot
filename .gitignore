@@ -1,0 +1,10 @@
+node_modules
+
+# Dashboard UI source at repo root only (do not ignore public/dashboard/)
+/dashboard/
+
+# Local git hooks + secret-stripping scripts (run npm run git:setup)
+scripts/
+
+# Local secrets — use *.example as templates
+Configs/api.yml

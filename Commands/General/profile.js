@@ -20,9 +20,9 @@ const yaml = require("js-yaml");
 const db = require("../../Structures/Database.js");
 const Command = require("../../Structures/Command.js");
 
-const supportbot = yaml.load(fs.readFileSync("./Configs/supportbot.yml", "utf8"));
-const cmdconfig = yaml.load(fs.readFileSync("./Configs/commands.yml", "utf8"));
-const msgconfig = yaml.load(fs.readFileSync("./Configs/messages.yml", "utf8"));
+const supportbot = require("../../Structures/ConfigStore").supportbot;
+const cmdconfig = require("../../Structures/ConfigStore").commands;
+const msgconfig = require("../../Structures/ConfigStore").messages;
 
 const clockedInUsers = new Set();
 

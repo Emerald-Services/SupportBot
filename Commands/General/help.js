@@ -2,8 +2,8 @@ const fs = require("fs");
 const Discord = require("discord.js");
 const yaml = require("js-yaml");
 
-const supportbot = yaml.load(fs.readFileSync("./Configs/supportbot.yml", "utf8"));
-const cmdconfig = yaml.load(fs.readFileSync("./Configs/commands.yml", "utf8"));
+const supportbot = require("../../Structures/ConfigStore").supportbot;
+const cmdconfig = require("../../Structures/ConfigStore").commands;
 
 const Command = require("../../Structures/Command.js");
 
@@ -54,7 +54,7 @@ module.exports = new Command({
       iconURL: interaction.user.displayAvatarURL(),
     });
 
-    interaction.reply({
+    await interaction.reply({
       flags: Discord.MessageFlags.Ephemeral,
       embeds: [HelpEmbed1],
     });

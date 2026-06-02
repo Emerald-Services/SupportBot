@@ -1,0 +1,33 @@
+Theme:
+  Background: '#0e0e0e'
+  Panel: '#1d1d1d'
+  PanelSecondary: '#222222'
+  PanelTertiary: '#1d2938'
+  Border: '#2e2e2e'
+  Text: '#e6edf3'
+  Muted: '#606060'
+  Accent: '#396ff8'
+  AccentSoft: rgba(34, 197, 94, 0.12)
+  AccentBorder: rgba(34, 197, 94, 0.25)
+  AccentText: '#8df0ad'
+  Link: '#396ff8'
+  AttachmentLink: '#396ff8'
+  CodeBackground: '#0e0e0e'
+Typography:
+  FontFamily: Poppins
+Header:
+  Title: Ticket Transcript
+  Subtitle: Exported conversation log for support ticket **{{ticketName}}**
+  Badge: Closed Transcript
+  ShowMetaCards: true
+Meta:
+  ChannelLabel: Ticket Name
+  TicketIdLabel: Ticket ID
+  MessageCountLabel: Message Count
+  CloseReasonLabel: Close Reason
+  DefaultCloseReason: No Reason Provided.
+Messages:
+  SectionTitle: Messages
+  EmptyState: No messages were found in this ticket.
+Advanced:
+  CustomCss: ''

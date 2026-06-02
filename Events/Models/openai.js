@@ -5,9 +5,7 @@ const fs = require("fs");
 const yaml = require("js-yaml");
 const OpenAI = require("openai");
 
-const supportbotai = yaml.load(
-  fs.readFileSync("./Configs/supportbot-ai.yml", "utf8"),
-);
+const supportbotai = require("../../Structures/ConfigStore").supportbotAi;
 
 const client = new OpenAI({
   apiKey: supportbotai.General.Model_API_Key,

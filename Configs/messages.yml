@@ -38,7 +38,7 @@ Welcome:
   Embed:
     Colour: "#45b463"
     Title: "Welcome to ServerName"
-    Message: ":smile: %joined_user% has just landed!\n\n🔨 **Server Rules:** <#1202667199853232129>"
+    Message: ":smile: %joined_user% has just landed!\n\n🔨 **Server Rules:** <#CHANNEL_ID>"
     Icon:
       Mode: "USER" # USER | BOT | CUSTOM
       CustomURL: "https://example.com/custom.png"
@@ -64,7 +64,7 @@ Welcome:
   Modern:
     Colour: "#45b463"
     Title: "**Welcome to ServerName**"
-    Body: ":smile: %joined_user% has just landed!\n\n🔨 **Server Rules:** <#1202667199853232129>"
+    Body: ":smile: %joined_user% has just landed!\n\n🔨 **Server Rules:** <#CHANNEL_ID>"
     Icon:
       Mode: "BOT" # USER | BOT | CUSTOM
       CustomURL: "https://example.com/custom-icon.png"

@@ -5,9 +5,9 @@ const fs = require("fs");
 const { ApplicationCommandOptionType, ApplicationCommandType, EmbedBuilder, MessageFlags } = require("discord.js");
 const yaml = require("js-yaml");
 
-const supportbot = yaml.load(fs.readFileSync("./Configs/supportbot.yml", "utf8"));
-const cmdconfig = yaml.load(fs.readFileSync("./Configs/commands.yml", "utf8"));
-const supportbotai = yaml.load(fs.readFileSync("./Configs/supportbot-ai.yml", "utf8"));
+const supportbot = require("../../Structures/ConfigStore").supportbot;
+const cmdconfig = require("../../Structures/ConfigStore").commands;
+const supportbotai = require("../../Structures/ConfigStore").supportbotAi;
 
 const Command = require("../../Structures/Command.js");
 const AIDatabase = require("../../Structures/AIDatabase.js");

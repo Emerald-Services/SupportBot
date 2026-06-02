@@ -1,9 +1,31 @@
 const Event = require("../Structures/Event.js");
-module.exports = new Event("guildCreate", async (client) => {
-  console.log(
-    `\u001b[31m`,
-    `${client.user.username} is not in the correct server set in your config. Please leave all other servers and restart the bot.`
+const {
+  getConfiguredGuildId,
+  syncGuildHealth,
+  logGuildWarning,
+} = require("../Structures/GuildManager.js");
+
+module.exports = new Event("guildCreate", async (client, guild) => {
+  const configuredId = getConfiguredGuildId();
+
+  if (!configuredId) {
+    logGuildWarning(
+      client,
+      `Joined "${guild.name}" (${guild.id}). Set General.GuildId in config to lock the bot to one server.`,
+    );
+    syncGuildHealth(client);
+    return;
+  }
+
+  if (guild.id === configuredId) {
+    syncGuildHealth(client);
+    return;
+  }
+
+  logGuildWarning(
+    client,
+    `Joined unauthorized server "${guild.name}" (${guild.id}). Leave it from the dashboard or remove the invite.`,
   );
-  console.log(`\u001b[31m`, `${client.user.username} will now exit.`);
-  return process.exit(1);
+
+  syncGuildHealth(client);
 });
