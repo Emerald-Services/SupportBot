@@ -1,14 +1,43 @@
-<p align="center">
-  <a href="https://github.com/C-h-a-r/SupportBot-Dashboard">
-    <img src="docs/readme-header.png" alt="SupportBot Dashboard — manage tickets, monitor activity, and keep your server running great" width="100%">
-  </a>
-</p>
+<h1 align="center">
+    <br>
+    <a href="https://github.com/Emerald-Services/SupportBot"><img src="https://i.imgur.com/cuadAYv.png"></a>
+    <br>
+    SupportBot
+    <br>
+</h1>
 
-<h1 align="center">SupportBot Dashboard</h1>
+<div align="center">
 
-<p align="center">
-  <strong>An unofficial fork of <a href="https://github.com/Emerald-Services/SupportBot">Emerald-Services/SupportBot</a> with a built-in, self-hosted web dashboard.</strong>
-</p>
+<a href="https://opensource.org/licenses/MIT">
+    <img src="https://img.shields.io/badge/license-MIT-green?style=for-the-badge" alt="shield.png">
+</a>
+
+<a href="https://github.com/discordjs">
+    <img src="https://img.shields.io/badge/DISCORD.JS%20-%20v14-blue?style=for-the-badge" alt="shield.png">
+</a>
+
+<a href="https://github.com/nodejs/node">
+    <img src="https://img.shields.io/badge/NODE.JS%20-%20v20.x-green?style=for-the-badge" alt="shield.png">
+</a>
+
+<a href="https://github.com/Emerald-Services/SupportBot/releases">
+    <img src="https://img.shields.io/github/downloads/Emerald-Services/SupportBot/total?style=for-the-badge" alt="shield.png">
+</a>
+
+## Supported Versions
+
+| SupportBot | Node.JS | Discord.JS |  Supported |
+|------------|---------|------------|------------|
+|    26.x    |   22.x  |    14.x.   | ✅ Yes
+|    8.x     |   22.x  |    14.x.   | ✅ Yes
+|    7.7.3   |   16.x  |    13.x.   | ❌ No
+|    7.x     |   16.x  |    13.x.   | ❌ No
+|    6.x     |   14.x  |    13.x.   | ❌ No
+|    5.x     |   12.x  |    13.x.   | ❌ No
+|    4.x     |   11.x  |    13.x.   | ❌ No
+|    Older   | 10.x    |    13.x.   | ❌ No
+
+</div>
 
 <p align="center">
   <a href="https://opensource.org/licenses/MIT">
