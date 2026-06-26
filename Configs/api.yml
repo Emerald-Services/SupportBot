@@ -10,6 +10,7 @@ API:
   SecretKey: "CHANGE_ME"
   # Set to 1 when the dashboard is behind nginx, Cloudflare, Pterodactyl proxy, etc.
   # so http/https is detected from X-Forwarded-Proto.
+  
   TrustProxy: false
 
   OAuth:
@@ -18,12 +19,14 @@ API:
     ClientSecret: "DISCORD_CLIENT_SECRET"
     # Canonical callback URL (host + path). Protocol (http/https) can follow the
     # browser when UseRequestOrigin is true (default).
+
     RedirectUri: "http://localhost:3000/api/auth/discord/callback"
     # Optional: register extra callback URLs in Discord and list them here.
     # RedirectUris:
     #   - "https://bot.example.com/api/auth/discord/callback"
     # UseRequestOrigin: true
     # CookieSecure: false
+
     OwnerUserIds:
       - "YOUR_DISCORD_USER_ID"
     AllowedUserIds: []
