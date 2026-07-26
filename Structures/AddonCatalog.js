@@ -2,13 +2,22 @@ const fs = require("fs");
 const path = require("path");
 const axios = require("axios");
 const { withTimeout } = require("./asyncTimeout.js");
+const AdmZip = require("adm-zip");
+const yaml = require("js-yaml");
 
-const ADDONS_REPO = "Emerald-Services/Addons";
-const ADDONS_BRANCH = "main";
-const GITHUB_API = `https://api.github.com/repos/${ADDONS_REPO}/contents`;
-const GITHUB_RAW = `https://raw.githubusercontent.com/${ADDONS_REPO}/${ADDONS_BRANCH}`;
+const EMERALD_API = "https://emeraldsrv.dev/api/v1";
 
-const README_PATTERN = /^readme\.md$/i;
+function getApiKey() {
+  try {
+    if (fs.existsSync("./Configs/api.yml")) {
+      const config = yaml.load(fs.readFileSync("./Configs/api.yml", "utf8"));
+      return config?.API?.EmeraldAPIKey || "";
+    }
+  } catch (e) {
+    console.error("Failed to read api.yml:", e);
+  }
+  return "";
+}
 
 function ensureAddonDirs() {
   if (!fs.existsSync("./Addons")) {
@@ -19,104 +28,45 @@ function ensureAddonDirs() {
   }
 }
 
-async function githubList(dirPath = "") {
-  const url = dirPath
-    ? `${GITHUB_API}/${encodeURIComponent(dirPath)}?ref=${ADDONS_BRANCH}`
-    : `${GITHUB_API}?ref=${ADDONS_BRANCH}`;
+async function listCatalogAddons() {
+  const key = getApiKey();
+  if (!key) throw new Error("EmeraldAPIKey not configured in api.yml");
 
   const res = await withTimeout(
-    axios.get(url, {
-      headers: { Accept: "application/vnd.github+json" },
+    axios.get(`${EMERALD_API}/resources`, {
+      headers: { Authorization: `Bearer ${key}` },
       timeout: 15_000,
     }),
     18_000,
-    "GitHub API request timed out",
+    "Emerald API request timed out",
   );
 
-  return res.data;
-}
-
-async function listCatalogAddons() {
-  const root = await githubList("");
-  const dirs = root.filter((entry) => entry.type === "dir");
-
-  const addons = [];
-  for (const dir of dirs) {
-    const summary = await summarizeAddon(dir.name);
-    if (summary) addons.push(summary);
+  if (res.data.status !== "success") {
+    throw new Error(res.data.message || "Failed to fetch catalog");
   }
 
-  return addons.sort((a, b) => a.name.localeCompare(b.name));
+  return res.data.data.map(item => ({
+    id: item.id.toString(),
+    name: item.title,
+    slug: item.slug,
+    description: `Emerald Services Resource - ${item.slug}`,
+    price: item.price,
+    is_external: item.is_external,
+    external_store: item.external_store,
+    repositoryUrl: item.external_url || `https://emeraldsrv.dev`,
+    jsFiles: [],
+    configFiles: []
+  })).sort((a, b) => a.name.localeCompare(b.name));
 }
 
-async function summarizeAddon(name) {
-  const files = await listAddonRepoFiles(name);
-  const jsFiles = files.filter((f) => f.name.endsWith(".js"));
-  if (jsFiles.length === 0) return null;
-
-  const configFiles = files
-    .filter((f) => f.relativePath.startsWith("Configs/"))
-    .map((f) => f.name);
-
-  const readme = files.find((f) => README_PATTERN.test(f.name));
-
-  return {
-    id: name,
-    name,
-    description: readme
-      ? `Community addon from Emerald-Services/Addons`
-      : `Addon from ${name}`,
-    repositoryUrl: `https://github.com/${ADDONS_REPO}/tree/${ADDONS_BRANCH}/${name}`,
-    jsFiles: jsFiles.map((f) => f.name),
-    configFiles,
-    fileCount: files.length,
-  };
-}
-
-async function listAddonRepoFiles(addonName) {
-  const files = [];
-  const queue = [addonName];
-
-  while (queue.length) {
-    const dir = queue.shift();
-    const entries = await githubList(dir);
-
-    for (const entry of entries) {
-      if (entry.type === "dir") {
-        queue.push(entry.path);
-        continue;
-      }
-      if (entry.type !== "file") continue;
-      if (README_PATTERN.test(entry.name)) continue;
-
-      const relativePath = entry.path.slice(`${addonName}/`.length);
-      files.push({
-        name: entry.name,
-        path: entry.path,
-        relativePath,
-        downloadUrl: entry.download_url,
-        size: entry.size,
-      });
-    }
-  }
-
-  return files;
-}
-
-function mapRepoFileToLocal(addonName, relativePath) {
-  const parts = relativePath.split("/").filter(Boolean);
-  if (parts[0] === "Configs") {
-    return path.join("Addons", "Configs", ...parts.slice(1));
-  }
-  if (parts.length === 1 && parts[0].endsWith(".js")) {
-    return path.join("Addons", parts[0]);
-  }
-  return path.join("Addons", ...parts);
-}
-
-async function downloadFile(url) {
+async function downloadFile(id) {
+  const key = getApiKey();
   const res = await withTimeout(
-    axios.get(url, { responseType: "arraybuffer", timeout: 30_000 }),
+    axios.get(`${EMERALD_API}/download?id=${id}`, {
+      headers: { Authorization: `Bearer ${key}` },
+      responseType: "arraybuffer", 
+      timeout: 30_000 
+    }),
     35_000,
     "Addon file download timed out",
   );
@@ -141,78 +91,45 @@ function listLocalAddonConfigs() {
 
 function isAddonInstalled(catalogEntry) {
   const localJs = listLocalAddonJs();
-  return catalogEntry.jsFiles.every((file) => localJs.includes(file));
+  return localJs.some(f => f.includes(catalogEntry.slug) || f.includes(catalogEntry.id.toString()) || f.includes(catalogEntry.name.replace(/ /g, '')));
 }
 
 async function listInstalledAddons(catalog) {
   const localJs = listLocalAddonJs();
   const installed = [];
 
-  for (const entry of catalog) {
-    const allPresent = entry.jsFiles.every((file) => localJs.includes(file));
-    if (allPresent) {
-      installed.push({
-        id: entry.id,
-        name: entry.name,
-        jsFiles: entry.jsFiles,
-        configFiles: entry.configFiles.filter((f) => {
-          const local = listLocalAddonConfigs();
-          return local.includes(f);
-        }),
-      });
-    }
-  }
-
-  const orphanJs = localJs.filter(
-    (file) => !installed.some((a) => a.jsFiles.includes(file)),
-  );
-  for (const file of orphanJs) {
+  for (const file of localJs) {
+    const name = file.replace(/\.js$/, "");
+    const match = catalog.find(c => c.slug === name || c.id.toString() === name || c.name.replace(/ /g, '') === name);
+    
     installed.push({
-      id: file.replace(/\.js$/, ""),
-      name: file.replace(/\.js$/, ""),
+      id: match ? match.id : name,
+      name: match ? match.name : name,
       jsFiles: [file],
-      configFiles: [],
-      custom: true,
+      configFiles: listLocalAddonConfigs().filter(f => f.startsWith(name)),
+      custom: !match
     });
   }
-
   return installed;
 }
 
-async function installAddonFromCatalog(addonName) {
-  const safeName = String(addonName).replace(/[^a-zA-Z0-9_-]/g, "");
-  if (!safeName) {
-    throw new Error("Invalid addon name");
-  }
-
-  const summary = await summarizeAddon(safeName);
-  if (!summary) {
-    throw new Error(`Addon "${safeName}" was not found in the catalog`);
-  }
-
-  const files = await listAddonRepoFiles(safeName);
-  if (files.length === 0) {
-    throw new Error(`Addon "${safeName}" has no installable files`);
+async function installAddonFromCatalog(addonId) {
+  const catalog = await listCatalogAddons();
+  const addon = catalog.find(c => c.id === addonId.toString());
+  
+  if (!addon) {
+    throw new Error(`Addon not found in catalog`);
   }
 
   ensureAddonDirs();
-  const written = [];
-
-  for (const file of files) {
-    const localPath = mapRepoFileToLocal(safeName, file.relativePath);
-    const dir = path.dirname(localPath);
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
-
-    const content = await downloadFile(file.downloadUrl);
-    fs.writeFileSync(localPath, content);
-    written.push(localPath.replace(/\\/g, "/"));
-  }
+  const content = await downloadFile(addon.id);
+  
+  const zip = new AdmZip(content);
+  zip.extractAllTo("./Addons", true);
 
   return {
-    addon: summary,
-    filesWritten: written,
+    addon: addon,
+    filesWritten: [],
   };
 }
 
@@ -258,7 +175,6 @@ function writeAddonConfig(filename, data) {
 }
 
 module.exports = {
-  ADDONS_REPO,
   listCatalogAddons,
   listInstalledAddons,
   isAddonInstalled,
@@ -266,5 +182,4 @@ module.exports = {
   listLocalAddonConfigs,
   readAddonConfig,
   writeAddonConfig,
-  mapRepoFileToLocal,
 };

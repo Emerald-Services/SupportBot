@@ -1,0 +1,111 @@
+Command:
+  Name: "applicationsetup"
+  Description: "Posts the application panel"
+  Permission:
+    - "ManageGuild"
+
+Application:
+  ReviewChannelId: "1481380207305691287"
+  CooldownHours: 24
+  OneOpenApplicationPerUserPerType: true
+
+Panel:
+  Title: "Applications"
+  Description: "Choose an application type from the dropdown below."
+  Placeholder: "Select an application type"
+
+Review:
+  Title: "New Application"
+  AcceptLabel: "Accept"
+  RejectLabel: "Reject"
+
+Applications:
+  staff:
+    Name: "Staff Team"
+    Description: "Apply for the staff team"
+    AcceptedRoleId: "" # Leave "" blank to disable
+    Questions:
+      Username:
+        Label: "What is your Discord username?"
+        Placeholder: "ExampleUser"
+        Required: true
+        Style: "Short"
+        MinLength: 2
+        MaxLength: 50
+
+      Age:
+        Label: "How old are you?"
+        Placeholder: "18"
+        Required: true
+        Style: "Short"
+        MinLength: 1
+        MaxLength: 3
+
+      Timezone:
+        Label: "What is your timezone?"
+        Placeholder: "GMT / BST / EST"
+        Required: true
+        Style: "Short"
+        MinLength: 2
+        MaxLength: 30
+
+      Experience:
+        Label: "What experience do you have?"
+        Placeholder: "Tell us about your experience"
+        Required: true
+        Style: "Paragraph"
+        MinLength: 10
+        MaxLength: 1000
+
+      Reason:
+        Label: "Why should we accept you?"
+        Placeholder: "Tell us why"
+        Required: true
+        Style: "Paragraph"
+        MinLength: 10
+        MaxLength: 1000
+
+  developer:
+    Name: "Developer"
+    Description: "Apply for the development team"
+    AcceptedRoleId: ""
+    Questions:
+      Username:
+        Label: "What is your Discord username?"
+        Placeholder: "ExampleUser"
+        Required: true
+        Style: "Short"
+        MinLength: 2
+        MaxLength: 50
+
+      Languages:
+        Label: "What languages do you know?"
+        Placeholder: "JavaScript, Python, Lua"
+        Required: true
+        Style: "Paragraph"
+        MinLength: 3
+        MaxLength: 500
+
+      Projects:
+        Label: "What projects have you worked on?"
+        Placeholder: "Describe your work"
+        Required: true
+        Style: "Paragraph"
+        MinLength: 10
+        MaxLength: 1000
+
+      Availability:
+        Label: "How active can you be?"
+        Placeholder: "How much time can you commit?"
+        Required: true
+        Style: "Paragraph"
+        MinLength: 5
+        MaxLength: 500
+
+      Reason:
+        Label: "Why do you want this role?"
+        Placeholder: "Tell us why"
+        Required: true
+        Style: "Paragraph"
+        MinLength: 10
+        MaxLength: 1000

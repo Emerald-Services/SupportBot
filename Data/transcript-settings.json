@@ -1,9 +1,0 @@
-{
-  "autoDelete": {
-    "enabled": false,
-    "afterDays": 30
-  },
-  "publicAccess": {
-    "enabled": false
-  }
-}

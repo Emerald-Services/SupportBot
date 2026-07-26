@@ -119,6 +119,12 @@ function buildSteps(apiRoot, supportbot) {
       description: "Discord user IDs that can sign in and manage the dashboard (at least one).",
       complete: getOwnerIds(oauth).length > 0 && getOwnerIds(oauth).every(isDiscordSnowflake),
     },
+    {
+      id: "emeraldApi",
+      title: "Emerald API",
+      description: "Optional. Used for the one-click addon installer.",
+      complete: true,
+    },
   ];
 }
 
@@ -350,6 +356,16 @@ async function validateSetupPayload(payload) {
   if (payload.ownerUserIds != null) {
     results.owners = await validateOwnerUserIds(payload.ownerUserIds, payload.botToken);
   }
+  if (payload.emeraldApiKey != null) {
+    const key = String(payload.emeraldApiKey).trim();
+    if (key === "") {
+      results.emeraldApi = { ok: true };
+    } else if (key.length < 10) {
+      results.emeraldApi = { ok: false, error: "Invalid API key." };
+    } else {
+      results.emeraldApi = { ok: true };
+    }
+  }
 
   const allOk = Object.values(results).every((r) => r?.ok);
   return { ok: allOk, results };
@@ -381,6 +397,9 @@ function applySetup(payload) {
 
   apiDoc.setIn(["API", "Enabled"], true);
   apiDoc.setIn(["API", "SecretKey"], String(payload.secretKey).trim());
+  if (payload.emeraldApiKey != null) {
+    apiDoc.setIn(["API", "EmeraldAPIKey"], String(payload.emeraldApiKey).trim());
+  }
   if (payload.port != null && payload.port !== "") {
     apiDoc.setIn(["API", "Port"], Number(payload.port) || 3000);
   }

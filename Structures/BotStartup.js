@@ -91,6 +91,12 @@ async function logStartup(client, options = {}) {
   section("Links");
   info("Docs", "https://emerald-services.gitbook.io/");
   info("Discord", "https://dsc.gg/emerald-dev");
+  
+  if (configStore.api?.API?.Enabled) {
+    const port = configStore.api?.API?.Port || 3000;
+    info("Dashboard", `http://localhost:${port}`);
+  }
+
   info("Invite", inviteUrl);
 
   console.log("");

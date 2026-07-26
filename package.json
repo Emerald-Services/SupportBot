@@ -1,6 +1,6 @@
 {
   "name": "supportbot",
-  "version": "26.3.0",
+  "version": "26.2",
   "description": "SupportBot is an open-sourced support system for discord. It's completely free to use with high amounts of customization to match your own brand.",
   "main": "index.js",
   "scripts": {
@@ -20,6 +20,7 @@
   "homepage": "https://community.emeraldsrv.dev",
   "dependencies": {
     "@vitalets/google-translate-api": "^9.2.1",
+    "adm-zip": "^0.6.0",
     "axios": "^1.7.2",
     "better-sqlite3": "^12.2.0",
     "cookie-parser": "^1.4.7",

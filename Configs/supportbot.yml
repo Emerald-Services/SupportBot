@@ -12,25 +12,25 @@
 #
 #           SupportBot Configuration (supportbot.yml)
 
-SupportBot_Version: "v26.3.0"
+SupportBot_Version: "v26.2-pre1"
 
 # -------------------------
 #   General
 # -------------------------
 
 General:
-  Name: "SupportBo"
+  Name: "SupportBot"
   Token: "BOT_TOKEN"
   Addons:
     Enabled: true
-  GuildId: ""
+  GuildId: "GUILD_ID"
 
 # -------------------------
 #  Activity
 # -------------------------
 
 Activity:
-  Status: "Char"
+  Status: "SupportBot"
   Type: "Watching"
   StreamingURL: "https://www.twitch.tv/YOUR_TWITCH_NAME"
   # Available Types:

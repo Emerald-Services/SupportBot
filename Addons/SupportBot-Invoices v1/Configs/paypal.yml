@@ -1,0 +1,14 @@
+PayPal:
+  ClientID: "clientID_Here"
+  ClientSecret: "ClientSecret_Here"
+  Mode: "live" # or "live"
+  Email: "Email_Here" # Add your PayPal email here
+Embed:
+  Colours:
+    General: "#0099ff"
+    Success: "#00ff00" # Add more colors if needed
+    Error: "#ff0000"   # Add more colors if needed
+  Footer: "PayPal Invoice" # Add footer text here
+  Logo: "https://your-logo-url.com/logo.png" # Add logo URL if used in invoice
+  Note: "Thank you for your business!" # Add a note if used in invoice
+  TOS: "Please review our terms and conditions. https://domain.com/tos" # Add terms of service if used in invoice

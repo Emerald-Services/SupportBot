@@ -4,6 +4,7 @@ const CONFIG_FILES = [
   "commands",
   "messages",
   "supportbot-ai",
+  "api",
 ];
 
 const ROLES = ["owner", "admin", "moderator", "editor", "viewer", "custom"];

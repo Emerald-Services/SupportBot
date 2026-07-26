@@ -1,8 +1,10 @@
 const fs = require("fs");
 const path = require("path");
 
-const UPDATE_REPO = "C-h-a-r/SupportBot-Dashboard";
-const UPDATE_BRANCH = "release";
+const REPOSITORIES = [
+  { id: "bot", name: "SupportBot", repo: "Emerald-Services/SupportBot", branch: "release" },
+  { id: "dashboard", name: "SupportBot Dashboard", repo: "Emerald-Services/SupportBot-Dashboard", branch: "release" }
+];
 
 function compareVersions(a, b) {
   const pa = String(a)
@@ -24,32 +26,48 @@ async function fetchUpdateInfo() {
   const axios = require("axios");
   const pkgPath = path.join(__dirname, "../package.json");
   const currentPkg = JSON.parse(fs.readFileSync(pkgPath, "utf8"));
-  const current = currentPkg.version;
+  const currentVersion = currentPkg.version;
 
-  const remoteRes = await axios.get(
-    `https://raw.githubusercontent.com/${UPDATE_REPO}/${UPDATE_BRANCH}/package.json`,
-    {
-      timeout: 15000,
-      headers: { "User-Agent": "SupportBot-Dashboard" },
-    },
-  );
+  const checks = [];
 
-  const latest = remoteRes.data?.version || current;
-  const updateAvailable = compareVersions(latest, current) > 0;
+  for (const target of REPOSITORIES) {
+    let installedVersion = target.id === "bot" ? currentPkg.version : (currentPkg.dashboardVersion || "1.0.0");
+    let latest = installedVersion;
+    try {
+      const pkgUrl = target.id === 'dashboard' 
+        ? `https://raw.githubusercontent.com/${target.repo}/${target.branch}/dashboard/package.json`
+        : `https://raw.githubusercontent.com/${target.repo}/${target.branch}/package.json`;
+        
+      const remoteRes = await axios.get(pkgUrl, {
+        timeout: 15000,
+        headers: { "User-Agent": "SupportBot-Updater" },
+      });
+      if (remoteRes.data && remoteRes.data.version) {
+        latest = remoteRes.data.version;
+      }
+    } catch (e) {
+      console.warn(`[Updater] Failed to check ${target.repo} for updates.`);
+    }
 
-  return {
-    current,
-    latest,
-    updateAvailable,
-    repository: `https://github.com/${UPDATE_REPO}`,
-    branch: UPDATE_BRANCH,
-    zipUrl: `https://github.com/${UPDATE_REPO}/archive/refs/heads/${UPDATE_BRANCH}.zip`,
-  };
+    const updateAvailable = compareVersions(latest, installedVersion) > 0;
+
+    checks.push({
+      id: target.id,
+      name: target.name,
+      current: installedVersion,
+      latest,
+      updateAvailable,
+      repository: `https://github.com/${target.repo}`,
+      branch: target.branch,
+      zipUrl: `https://github.com/${target.repo}/archive/refs/heads/${target.branch}.zip`,
+    });
+  }
+
+  return checks;
 }
 
 module.exports = {
   compareVersions,
   fetchUpdateInfo,
-  UPDATE_REPO,
-  UPDATE_BRANCH,
+  REPOSITORIES,
 };

@@ -7,16 +7,18 @@ API:
   Enabled: true
   Port: 3000
 
-  SecretKey: "CHANGE_ME"
+  SecretKey: "SECRET_KEY"
   # Set to 1 when the dashboard is behind nginx, Cloudflare, Pterodactyl proxy, etc.
   # so http/https is detected from X-Forwarded-Proto.
-  
+
   TrustProxy: false
+
+  EmeraldAPIKey: "EMERALDSRV_API_KEY"
 
   OAuth:
     Enabled: true
-    ClientId: "DISCORD_CLIENT_ID"
-    ClientSecret: "DISCORD_CLIENT_SECRET"
+    ClientId: "1530910674551574580"
+    ClientSecret: "GIWdonM3bdFILhkg_1XWWeVQRlGf_npu"
     # Canonical callback URL (host + path). Protocol (http/https) can follow the
     # browser when UseRequestOrigin is true (default).
 
@@ -28,5 +30,5 @@ API:
     # CookieSecure: false
 
     OwnerUserIds:
-      - "YOUR_DISCORD_USER_ID"
+      - "OWNER_ID"
     AllowedUserIds: []

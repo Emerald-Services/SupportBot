@@ -598,6 +598,34 @@ h1{font-size:1.25rem}a{color:#a78bfa}</style></head><body>
             }
         });
 
+        app.post('/setup/reset', p('settings.update'), (req, res) => {
+            try {
+                const apiPath = path.join(__dirname, '../Configs/api.yml');
+                if (fs.existsSync(apiPath)) {
+                    const raw = fs.readFileSync(apiPath, 'utf8');
+                    const parsed = yaml.load(raw) || {};
+                    if (parsed.API && parsed.API.OAuth) {
+                        parsed.API.OAuth.Enabled = false;
+                        parsed.API.OAuth.ClientId = 'YOUR_CLIENT_ID';
+                        parsed.API.OAuth.ClientSecret = 'YOUR_CLIENT_SECRET';
+                        parsed.API.OAuth.OwnerUserIds = [];
+                        const doc = new YAML.Document(parsed);
+                        fs.writeFileSync(apiPath, doc.toString(), 'utf8');
+                        configStore.reloadFile('api');
+                    }
+                }
+                res.json({
+                    success: true,
+                    message: 'Dashboard reset to setup mode. Restarting...',
+                    restartRequired: true
+                });
+                
+                setTimeout(() => restartDiscordBot(), 500);
+            } catch (err) {
+                res.status(400).json({ success: false, error: err.message });
+            }
+        });
+
         app.get('/dashboard-users', p('users.view'), (req, res) => {
             try {
                 res.json({
@@ -817,7 +845,7 @@ h1{font-size:1.25rem}a{color:#a78bfa}</style></head><body>
         });
 
         app.get('/configs/:file', cv('view'), (req, res) => {
-            const validFiles = ['supportbot', 'ticket-panel', 'commands', 'messages', 'supportbot-ai'];
+            const validFiles = ['supportbot', 'ticket-panel', 'commands', 'messages', 'supportbot-ai', 'api'];
             const file = req.params.file;
             if (!validFiles.includes(file)) return res.status(400).json({ success: false, error: 'Invalid file' });
             try {
@@ -829,7 +857,7 @@ h1{font-size:1.25rem}a{color:#a78bfa}</style></head><body>
         });
 
         app.put('/configs/raw', cv('edit'), async (req, res) => {
-            const validFiles = ['supportbot', 'ticket-panel', 'commands', 'messages', 'supportbot-ai'];
+            const validFiles = ['supportbot', 'ticket-panel', 'commands', 'messages', 'supportbot-ai', 'api'];
             const file = req.body.filename;
             let content = req.body.content;
             if (!validFiles.includes(file)) return res.status(400).json({ success: false, error: 'Invalid file' });
@@ -869,7 +897,7 @@ h1{font-size:1.25rem}a{color:#a78bfa}</style></head><body>
         });
 
         app.get('/configs/json/:file', cv('view'), (req, res) => {
-            const validFiles = ['supportbot', 'ticket-panel', 'commands', 'messages', 'supportbot-ai'];
+            const validFiles = ['supportbot', 'ticket-panel', 'commands', 'messages', 'supportbot-ai', 'api'];
             const file = req.params.file;
             if (!validFiles.includes(file)) return res.status(400).json({ success: false, error: 'Invalid file' });
             try {
@@ -1053,7 +1081,7 @@ h1{font-size:1.25rem}a{color:#a78bfa}</style></head><body>
                 res.json({
                     success: true,
                     data: {
-                        repository: `https://github.com/Emerald-Services/Addons`,
+                        repository: `https://emeraldsrv.dev`,
                         addons: catalog.map((addon) => ({
                             ...addon,
                             installed: installedIds.has(addon.id),
@@ -1064,7 +1092,7 @@ h1{font-size:1.25rem}a{color:#a78bfa}</style></head><body>
                 console.error('[API] Addon catalog failed:', err);
                 res.status(500).json({
                     success: false,
-                    error: err.message || 'Could not load addon catalog from GitHub',
+                    error: err.message || 'Could not load addon catalog from Emerald API',
                 });
             }
         });
@@ -1110,6 +1138,65 @@ h1{font-size:1.25rem}a{color:#a78bfa}</style></head><body>
             } catch (err) {
                 console.error('[API] Addon install failed:', err);
                 res.status(500).json({ success: false, error: err.message });
+            }
+        });
+
+        app.post('/addons/build', p('settings.update'), async (req, res) => {
+            try {
+                const { name, description, permission, embed } = req.body;
+                if (!name || !name.match(/^[a-z0-9_-]+$/i)) {
+                    return res.status(400).json({ success: false, error: "Invalid addon name" });
+                }
+
+                const safeName = name.toLowerCase();
+                const addonPath = path.join(process.cwd(), 'Addons', `${safeName}.js`);
+
+                if (fs.existsSync(addonPath)) {
+                    return res.status(400).json({ success: false, error: "An addon with this name already exists" });
+                }
+
+                const jsContent = `const Discord = require("discord.js");
+const { Command } = require('../Structures/Addon.js');
+const supportbot = require("../Structures/ConfigStore").supportbot;
+
+module.exports = new Command({
+    name: "${safeName}",
+    description: ${JSON.stringify(description || "Custom command")},
+    options: [],
+    permissions: ${permission && permission !== "none" ? `["${permission}"]` : "[]"},
+  
+    async run(interaction) {
+      const CustomEmbed = new Discord.EmbedBuilder()
+        ${embed?.title ? `.setTitle(${JSON.stringify(embed.title)})` : ""}
+        .setDescription(${JSON.stringify(embed?.description || "Hello!")})
+        .setColor(supportbot.Embed.Colours.${embed?.color || "General"});
+  
+      interaction.reply({
+        embeds: [CustomEmbed],
+      });
+    },
+});
+`;
+                if (!fs.existsSync(path.join(process.cwd(), 'Addons'))) {
+                    fs.mkdirSync(path.join(process.cwd(), 'Addons'), { recursive: true });
+                }
+
+                fs.writeFileSync(addonPath, jsContent);
+                
+                let botRestart = { success: false, error: 'Bot client not available' };
+                if (this.client) {
+                    botRestart = await this.restartBotAfterConfigSave();
+                    notifyBotRestart(botRestart.success, botRestart.error);
+                }
+                
+                res.json({
+                    success: true,
+                    message: botRestart.success ? "Bot restarted automatically to load your new addon." : "Restart the bot to load your new command.",
+                    botRestart
+                });
+            } catch (err) {
+                console.error("[API] Addon build failed:", err);
+                res.status(500).json({ success: false, error: "Failed to build addon" });
             }
         });
 
@@ -1253,11 +1340,20 @@ h1{font-size:1.25rem}a{color:#a78bfa}</style></head><body>
                 });
 
                 // 5. Update package.json (version only)
-                const newPkgPath = path.join(sourcePath, 'package.json');
+                const reqRepoId = req.body.repoId;
+                let newPkgPath = path.join(sourcePath, 'package.json');
+                if (reqRepoId === 'dashboard') {
+                    newPkgPath = path.join(sourcePath, 'dashboard', 'package.json');
+                }
+                
                 if (fs.existsSync(newPkgPath)) {
                     const currentPkg = JSON.parse(fs.readFileSync('./package.json', 'utf8'));
                     const newPkg = JSON.parse(fs.readFileSync(newPkgPath, 'utf8'));
-                    currentPkg.version = newPkg.version;
+                    if (reqRepoId === 'dashboard') {
+                        currentPkg.dashboardVersion = newPkg.version;
+                    } else {
+                        currentPkg.version = newPkg.version;
+                    }
                     fs.writeFileSync('./package.json', JSON.stringify(currentPkg, null, 2));
                 }
 
@@ -1470,6 +1566,27 @@ h1{font-size:1.25rem}a{color:#a78bfa}</style></head><body>
                 res.send(transcript.content);
             } catch (err) {
                 res.status(500).json({ success: false, error: 'Failed to download transcript' });
+            }
+        });
+
+        app.get('/system/tickets/open', p('overview'), (req, res) => {
+            try {
+                const db = require('../Structures/Database.js');
+                const configStore = require('../Structures/ConfigStore.js');
+                const guildId = configStore.supportbot.General.GuildId;
+                
+                const openTickets = db.getAllTickets().filter(t => t.status === 'open');
+                
+                res.json({
+                    success: true,
+                    data: {
+                        guildId,
+                        tickets: openTickets
+                    }
+                });
+            } catch (err) {
+                console.error("Open tickets API error:", err);
+                res.status(500).json({ success: false, error: 'Failed to fetch open tickets' });
             }
         });
     }
