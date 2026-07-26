@@ -5,7 +5,7 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 const yaml = require('js-yaml');
-const YAML = require('yaml'); 
+const YAML = require('yaml');
 const db = require('../Structures/Database.js');
 const configStore = require('../Structures/ConfigStore.js');
 const { reloadBot, restartDiscordBot } = require('../Structures/BotReload.js');
@@ -89,7 +89,7 @@ const {
 } = require('../Structures/AddonCatalog.js');
 
 const DASHBOARD_DIR = path.join(__dirname, '../public/dashboard');
-const UPDATE_REPO = 'C-h-a-r/SupportBot-Dashboard';
+const UPDATE_REPO = 'Emerald-Services/SupportBot-Dashboard';
 const UPDATE_BRANCH = 'release';
 const UPDATE_ZIP_URL = `https://github.com/${UPDATE_REPO}/archive/refs/heads/${UPDATE_BRANCH}.zip`;
 
@@ -1016,9 +1016,9 @@ h1{font-size:1.25rem}a{color:#a78bfa}</style></head><body>
                 const initialLines = hasCursor
                     ? 0
                     : Math.min(
-                          1000,
-                          Math.max(0, parseInt(tailParam, 10) || 400),
-                      );
+                        1000,
+                        Math.max(0, parseInt(tailParam, 10) || 400),
+                    );
 
                 const { entries, cursor: nextCursor } = fetchLogs(types, cursor, initialLines);
 
