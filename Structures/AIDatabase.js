@@ -1,438 +1,167 @@
-const Database = require("better-sqlite3");
-const path = require("path");
+const fs = require('fs');
+const path = require('path');
 
-const db = new Database(path.join(__dirname, "../Data/ai-memory.db"));
+const DB_PATH = path.join(__dirname, '../Data/ai-memory.json');
 
-db.pragma("journal_mode = WAL");
+function load() {
+  try {
+    const raw = fs.readFileSync(DB_PATH, 'utf8');
+    return JSON.parse(raw);
+  } catch (e) {
+    return {
+      ai_conversations: [],
+      ai_summaries: [],
+      ai_facts: [],
+      ai_knowledge: [],
+      ai_sessions: [],
+    };
+  }
+}
 
-db.prepare(
-  `
-  CREATE TABLE IF NOT EXISTS ai_conversations (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    guild_id TEXT,
-    channel_id TEXT,
-    user_id TEXT,
-    role TEXT NOT NULL,
-    content TEXT NOT NULL,
-    created_at INTEGER NOT NULL
-  )
-`,
-).run();
+function save(state) {
+  try {
+    fs.mkdirSync(path.dirname(DB_PATH), { recursive: true });
+    fs.writeFileSync(DB_PATH, JSON.stringify(state, null, 2), 'utf8');
+  } catch (e) {
+    console.error('Failed to persist ai-memory:', e);
+  }
+}
 
-db.prepare(
-  `
-  CREATE TABLE IF NOT EXISTS ai_summaries (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    guild_id TEXT,
-    channel_id TEXT,
-    summary TEXT NOT NULL,
-    created_at INTEGER NOT NULL,
-    updated_at INTEGER NOT NULL
-  )
-`,
-).run();
+const state = load();
 
-db.prepare(
-  `
-  CREATE TABLE IF NOT EXISTS ai_facts (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    guild_id TEXT,
-    channel_id TEXT,
-    user_id TEXT,
-    fact_type TEXT NOT NULL,
-    fact_key TEXT NOT NULL,
-    fact_value TEXT NOT NULL,
-    created_at INTEGER NOT NULL,
-    updated_at INTEGER NOT NULL
-  )
-`,
-).run();
-
-db.prepare(
-  `
-  CREATE TABLE IF NOT EXISTS ai_knowledge (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    source_type TEXT NOT NULL,
-    source_name TEXT NOT NULL,
-    title TEXT NOT NULL,
-    content TEXT NOT NULL,
-    created_at INTEGER NOT NULL,
-    updated_at INTEGER NOT NULL
-  )
-`,
-).run();
-
-db.prepare(
-  `
-  CREATE TABLE IF NOT EXISTS ai_sessions (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    guild_id TEXT,
-    channel_id TEXT,
-    user_id TEXT,
-    model TEXT,
-    mode TEXT,
-    last_message_at INTEGER,
-    created_at INTEGER NOT NULL,
-    updated_at INTEGER NOT NULL
-  )
-`,
-).run();
-
-try {
-  db.prepare(`ALTER TABLE ai_facts ADD COLUMN user_id TEXT`).run();
-} catch (e) {
-  if (!String(e).includes("duplicate column name")) throw e;
+function nextId(arr) {
+  return arr.length === 0 ? 1 : Math.max(...arr.map(a => a.id || 0)) + 1;
 }
 
 module.exports = {
   saveUserFact({ guildId, userId, factType, factKey, factValue }) {
-    const existing = db
-      .prepare(
-        `
-      SELECT id FROM ai_facts
-      WHERE guild_id IS ? AND user_id IS ? AND fact_type = ? AND fact_key = ?
-      LIMIT 1
-    `,
-      )
-      .get(guildId || null, userId || null, factType, factKey);
-
+    const existing = state.ai_facts.find(f => f.guild_id === (guildId || null) && f.user_id === (userId || null) && f.fact_type === factType && f.fact_key === factKey);
     if (existing) {
-      db.prepare(
-        `
-        UPDATE ai_facts
-        SET fact_value = ?, updated_at = ?
-        WHERE id = ?
-      `,
-      ).run(factValue, Date.now(), existing.id);
+      existing.fact_value = factValue;
+      existing.updated_at = Date.now();
+      save(state);
       return;
     }
 
-    db.prepare(
-      `
-      INSERT INTO ai_facts (
-        guild_id, channel_id, user_id, fact_type, fact_key, fact_value, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    `,
-    ).run(
-      guildId || null,
-      null,
-      userId || null,
-      factType,
-      factKey,
-      factValue,
-      Date.now(),
-      Date.now(),
-    );
+    const id = nextId(state.ai_facts);
+    state.ai_facts.push({ id, guild_id: guildId || null, channel_id: null, user_id: userId || null, fact_type: factType, fact_key: factKey, fact_value: factValue, created_at: Date.now(), updated_at: Date.now() });
+    save(state);
   },
 
   getUserFacts(guildId, userId) {
-    return db
-      .prepare(
-        `
-      SELECT * FROM ai_facts
-      WHERE guild_id IS ? AND user_id IS ?
-      ORDER BY updated_at DESC
-    `,
-      )
-      .all(guildId || null, userId || null);
+    return state.ai_facts.filter(f => f.guild_id === (guildId || null) && f.user_id === (userId || null)).sort((a,b) => b.updated_at - a.updated_at);
   },
 
   getUserFactsByScope({ guildId = null, userId = null, scope = "guild" }) {
     if (!userId) return [];
-
     if (scope === "global") {
-      return db
-        .prepare(
-          `
-        SELECT * FROM ai_facts
-        WHERE user_id IS ?
-        ORDER BY updated_at DESC
-      `,
-        )
-        .all(userId || null);
+      return state.ai_facts.filter(f => f.user_id === (userId || null)).sort((a,b) => b.updated_at - a.updated_at);
     }
 
-    return db
-      .prepare(
-        `
-      SELECT * FROM ai_facts
-      WHERE guild_id IS ? AND user_id IS ?
-      ORDER BY updated_at DESC
-    `,
-      )
-      .all(guildId || null, userId || null);
+    return state.ai_facts.filter(f => f.guild_id === (guildId || null) && f.user_id === (userId || null)).sort((a,b) => b.updated_at - a.updated_at);
   },
 
   addMessage({ guildId, channelId, userId, role, content }) {
-    db.prepare(
-      `
-      INSERT INTO ai_conversations (
-        guild_id, channel_id, user_id, role, content, created_at
-      ) VALUES (?, ?, ?, ?, ?, ?)
-    `,
-    ).run(
-      guildId || null,
-      channelId || null,
-      userId || null,
-      role,
-      content,
-      Date.now(),
-    );
+    const id = nextId(state.ai_conversations);
+    state.ai_conversations.push({ id, guild_id: guildId || null, channel_id: channelId || null, user_id: userId || null, role, content, created_at: Date.now() });
+    save(state);
   },
 
   getRecentMessages(channelId, limit = 15) {
-    return db
-      .prepare(
-        `
-      SELECT * FROM ai_conversations
-      WHERE channel_id = ?
-      ORDER BY created_at DESC
-      LIMIT ?
-    `,
-      )
-      .all(channelId, limit)
-      .reverse();
+    const msgs = state.ai_conversations.filter(m => m.channel_id === channelId).sort((a,b) => b.created_at - a.created_at).slice(0, limit).reverse();
+    return msgs;
   },
 
   getRecentMessagesByScope({ guildId = null, channelId = null, limit = 15, scope = "guild" }) {
     if (scope === "channel") {
-      return db
-        .prepare(
-          `
-        SELECT * FROM ai_conversations
-        WHERE channel_id = ?
-        ORDER BY created_at DESC
-        LIMIT ?
-      `,
-        )
-        .all(channelId || null, limit)
-        .reverse();
+      return state.ai_conversations.filter(m => m.channel_id === (channelId || null)).sort((a,b) => b.created_at - a.created_at).slice(0, limit).reverse();
     }
 
     if (scope === "global") {
-      return db
-        .prepare(
-          `
-        SELECT * FROM ai_conversations
-        ORDER BY created_at DESC
-        LIMIT ?
-      `,
-        )
-        .all(limit)
-        .reverse();
+      return state.ai_conversations.sort((a,b) => b.created_at - a.created_at).slice(0, limit).reverse();
     }
 
-    return db
-      .prepare(
-        `
-      SELECT * FROM ai_conversations
-      WHERE guild_id IS ?
-      ORDER BY created_at DESC
-      LIMIT ?
-    `,
-      )
-      .all(guildId || null, limit)
-      .reverse();
+    return state.ai_conversations.filter(m => m.guild_id === (guildId || null)).sort((a,b) => b.created_at - a.created_at).slice(0, limit).reverse();
   },
 
   saveSummary({ guildId, channelId, summary }) {
-    const existing = db
-      .prepare(
-        `
-      SELECT id FROM ai_summaries
-      WHERE guild_id IS ? AND channel_id IS ?
-      ORDER BY updated_at DESC
-      LIMIT 1
-    `,
-      )
-      .get(guildId || null, channelId || null);
-
+    const existing = state.ai_summaries.find(s => s.guild_id === (guildId || null) && s.channel_id === (channelId || null));
     if (existing) {
-      db.prepare(
-        `
-        UPDATE ai_summaries
-        SET summary = ?, updated_at = ?
-        WHERE id = ?
-      `,
-      ).run(summary, Date.now(), existing.id);
+      existing.summary = summary;
+      existing.updated_at = Date.now();
+      save(state);
       return;
     }
-
-    db.prepare(
-      `
-      INSERT INTO ai_summaries (
-        guild_id, channel_id, summary, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?)
-    `,
-    ).run(guildId || null, channelId || null, summary, Date.now(), Date.now());
+    const id = nextId(state.ai_summaries);
+    state.ai_summaries.push({ id, guild_id: guildId || null, channel_id: channelId || null, summary, created_at: Date.now(), updated_at: Date.now() });
+    save(state);
   },
 
   getLatestSummary(channelId) {
-    return db
-      .prepare(
-        `
-      SELECT * FROM ai_summaries
-      WHERE channel_id = ?
-      ORDER BY updated_at DESC
-      LIMIT 1
-    `,
-      )
-      .get(channelId);
+    const arr = state.ai_summaries.filter(s => s.channel_id === channelId).sort((a,b) => b.updated_at - a.updated_at);
+    return arr.length ? arr[0] : null;
   },
 
   getLatestSummaryByScope({ guildId = null, channelId = null, scope = "guild" }) {
     if (scope === "channel") {
-      return db
-        .prepare(
-          `
-        SELECT * FROM ai_summaries
-        WHERE channel_id = ?
-        ORDER BY updated_at DESC
-        LIMIT 1
-      `,
-        )
-        .get(channelId || null);
+      const arr = state.ai_summaries.filter(s => s.channel_id === (channelId || null)).sort((a,b) => b.updated_at - a.updated_at);
+      return arr.length ? arr[0] : null;
     }
-
     if (scope === "global") {
-      return db
-        .prepare(
-          `
-        SELECT * FROM ai_summaries
-        ORDER BY updated_at DESC
-        LIMIT 1
-      `,
-        )
-        .get();
+      const arr = state.ai_summaries.sort((a,b) => b.updated_at - a.updated_at);
+      return arr.length ? arr[0] : null;
     }
 
-    return db
-      .prepare(
-        `
-      SELECT * FROM ai_summaries
-      WHERE guild_id IS ?
-      ORDER BY updated_at DESC
-      LIMIT 1
-    `,
-      )
-      .get(guildId || null);
+    const arr = state.ai_summaries.filter(s => s.guild_id === (guildId || null)).sort((a,b) => b.updated_at - a.updated_at);
+    return arr.length ? arr[0] : null;
   },
 
   saveFact({ guildId, channelId, factType, factKey, factValue }) {
-    const existing = db
-      .prepare(
-        `
-      SELECT id FROM ai_facts
-      WHERE guild_id IS ? AND channel_id IS ? AND fact_type = ? AND fact_key = ?
-      LIMIT 1
-    `,
-      )
-      .get(guildId || null, channelId || null, factType, factKey);
-
+    const existing = state.ai_facts.find(f => f.guild_id === (guildId || null) && f.channel_id === (channelId || null) && f.fact_type === factType && f.fact_key === factKey);
     if (existing) {
-      db.prepare(
-        `
-        UPDATE ai_facts
-        SET fact_value = ?, updated_at = ?
-        WHERE id = ?
-      `,
-      ).run(factValue, Date.now(), existing.id);
+      existing.fact_value = factValue;
+      existing.updated_at = Date.now();
+      save(state);
       return;
     }
-
-    db.prepare(
-      `
-      INSERT INTO ai_facts (
-        guild_id, channel_id, fact_type, fact_key, fact_value, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?)
-    `,
-    ).run(
-      guildId || null,
-      channelId || null,
-      factType,
-      factKey,
-      factValue,
-      Date.now(),
-      Date.now(),
-    );
+    const id = nextId(state.ai_facts);
+    state.ai_facts.push({ id, guild_id: guildId || null, channel_id: channelId || null, user_id: null, fact_type: factType, fact_key: factKey, fact_value: factValue, created_at: Date.now(), updated_at: Date.now() });
+    save(state);
   },
 
   getFacts(channelId) {
-    return db
-      .prepare(
-        `
-      SELECT * FROM ai_facts
-      WHERE channel_id = ?
-      ORDER BY updated_at DESC
-    `,
-      )
-      .all(channelId);
+    return state.ai_facts.filter(f => f.channel_id === channelId).sort((a,b) => b.updated_at - a.updated_at);
   },
 
   getFactsByScope({ guildId = null, channelId = null, scope = "guild" }) {
     if (scope === "channel") {
-      return db
-        .prepare(
-          `
-        SELECT * FROM ai_facts
-        WHERE channel_id = ? AND user_id IS NULL
-        ORDER BY updated_at DESC
-      `,
-        )
-        .all(channelId || null);
+      return state.ai_facts.filter(f => f.channel_id === (channelId || null) && f.user_id == null).sort((a,b) => b.updated_at - a.updated_at);
     }
-
     if (scope === "global") {
-      return db
-        .prepare(
-          `
-        SELECT * FROM ai_facts
-        WHERE user_id IS NULL
-        ORDER BY updated_at DESC
-      `,
-        )
-        .all();
+      return state.ai_facts.filter(f => f.user_id == null).sort((a,b) => b.updated_at - a.updated_at);
     }
 
-    return db
-      .prepare(
-        `
-      SELECT * FROM ai_facts
-      WHERE guild_id IS ? AND user_id IS NULL
-      ORDER BY updated_at DESC
-    `,
-      )
-      .all(guildId || null);
+    return state.ai_facts.filter(f => f.guild_id === (guildId || null) && f.user_id == null).sort((a,b) => b.updated_at - a.updated_at);
   },
 
   addKnowledge({ sourceType, sourceName, title, content }) {
-    db.prepare(
-      `
-      INSERT INTO ai_knowledge (
-        source_type, source_name, title, content, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?)
-    `,
-    ).run(sourceType, sourceName, title, content, Date.now(), Date.now());
+    const id = nextId(state.ai_knowledge);
+    state.ai_knowledge.push({ id, source_type: sourceType, source_name: sourceName, title, content, created_at: Date.now(), updated_at: Date.now() });
+    save(state);
   },
 
   getKnowledge(limit = 25) {
-    return db
-      .prepare(
-        `
-      SELECT * FROM ai_knowledge
-      ORDER BY updated_at DESC
-      LIMIT ?
-    `,
-      )
-      .all(limit);
+    return state.ai_knowledge.sort((a,b) => b.updated_at - a.updated_at).slice(0, limit);
   },
 
   clearKnowledge() {
-    db.prepare(`DELETE FROM ai_knowledge`).run();
+    state.ai_knowledge = [];
+    save(state);
   },
 
   clearConversations(channelId) {
     if (!channelId) return;
-    db.prepare(`DELETE FROM ai_conversations WHERE channel_id = ?`).run(channelId);
+    state.ai_conversations = state.ai_conversations.filter(c => c.channel_id !== channelId);
+    save(state);
   },
 };

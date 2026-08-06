@@ -1,120 +1,46 @@
-// SupportBot | Emerald Services
-const Database = require("better-sqlite3");
+// SupportBot | JSON fallback adapter for environments without native addons (Pterodactyl)
+const fs = require("fs");
 const path = require("path");
 
-const db = new Database(path.join(__dirname, "../Data/supportbot.db"));
+const DB_PATH = path.join(__dirname, "../Data/supportbot.json");
 
-db.prepare(
-  `
-  CREATE TABLE IF NOT EXISTS suggestions (
-    thread_id TEXT PRIMARY KEY,
-    author_id TEXT,
-    text TEXT,
-    status TEXT DEFAULT 'Created'
-  )
-`,
-).run();
-
-db.prepare(
-  `
-  CREATE TABLE IF NOT EXISTS profiles (
-    user_id TEXT PRIMARY KEY,
-    bio TEXT,
-    timezone TEXT,
-    clockedIn INTEGER DEFAULT 0
-  )
-`,
-).run();
-
-db.prepare(
-  `
-  CREATE TABLE IF NOT EXISTS tickets (
-    ticket_id TEXT PRIMARY KEY,
-    user_id TEXT,
-    status TEXT DEFAULT 'open',
-    created_at INTEGER,
-    updated_at INTEGER,
-    subject TEXT,
-    description TEXT
-  )
-`,
-).run();
-
-// Safe column upgrades
-const safeAlter = (sql) => {
+function load() {
   try {
-    db.prepare(sql).run();
+    const raw = fs.readFileSync(DB_PATH, "utf8");
+    return JSON.parse(raw);
   } catch (e) {
-    if (!String(e).includes("duplicate column name")) throw e;
+    return {
+      suggestions: {},
+      profiles: {},
+      tickets: {},
+      ticket_panel: [],
+      ticket_users: {},
+      settings: {},
+    };
   }
-};
+}
 
-safeAlter(`ALTER TABLE tickets ADD COLUMN voiceChannelId TEXT`);
-safeAlter(`ALTER TABLE tickets ADD COLUMN department TEXT DEFAULT 'general'`);
-safeAlter(`ALTER TABLE tickets ADD COLUMN priority TEXT DEFAULT 'medium'`);
-safeAlter(`ALTER TABLE tickets ADD COLUMN aiModeEnabled INTEGER DEFAULT 0`);
-safeAlter(`ALTER TABLE tickets ADD COLUMN aiChannelId TEXT`);
-safeAlter(`ALTER TABLE tickets ADD COLUMN aiType TEXT`);
-safeAlter(`ALTER TABLE tickets ADD COLUMN aiEnabledBy TEXT`);
-safeAlter(`ALTER TABLE tickets ADD COLUMN aiEnabledAt INTEGER`);
-safeAlter(`ALTER TABLE tickets ADD COLUMN questionAnswers TEXT`);
-safeAlter(`ALTER TABLE tickets ADD COLUMN ticketName TEXT`);
-safeAlter(`ALTER TABLE tickets ADD COLUMN ticketNumber TEXT`);
+function save(state) {
+  try {
+    fs.mkdirSync(path.dirname(DB_PATH), { recursive: true });
+    fs.writeFileSync(DB_PATH, JSON.stringify(state, null, 2), "utf8");
+  } catch (e) {
+    console.error("Failed to persist database:", e);
+  }
+}
 
-db.prepare(
-  `
-  CREATE TABLE IF NOT EXISTS ticket_panel (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    message_id TEXT,
-    channel_id TEXT,
-    created_at INTEGER
-  )
-`,
-).run();
-
-db.prepare(
-  `
-  CREATE TABLE IF NOT EXISTS ticket_users (
-    ticket_id TEXT,
-    user_id TEXT,
-    PRIMARY KEY(ticket_id, user_id)
-  )
-`,
-).run();
-
-db.prepare(
-  `
-  CREATE TABLE IF NOT EXISTS settings (
-    id INTEGER PRIMARY KEY,
-    data TEXT
-  )
-`,
-).run();
+const state = load();
 
 function ensureProfile(userId) {
-  const existing = db
-    .prepare(
-      `
-    SELECT user_id FROM profiles WHERE user_id = ?
-  `,
-    )
-    .get(userId);
-
-  if (!existing) {
-    db.prepare(
-      `
-      INSERT INTO profiles (user_id, bio, timezone, clockedIn)
-      VALUES (?, '', '', 0)
-    `,
-    ).run(userId);
+  if (!state.profiles[userId]) {
+    state.profiles[userId] = { user_id: userId, bio: "", timezone: "", clockedIn: 0 };
+    save(state);
   }
 }
 
 function normaliseTicketRow(row) {
   if (!row) return null;
-
   let questionAnswers = [];
-
   if (row.questionAnswers) {
     try {
       questionAnswers = JSON.parse(row.questionAnswers);
@@ -126,8 +52,7 @@ function normaliseTicketRow(row) {
   return {
     ...row,
     aiModeEnabled: Boolean(row.aiModeEnabled),
-    clockedIn:
-      row.clockedIn !== undefined ? Boolean(row.clockedIn) : row.clockedIn,
+    clockedIn: row.clockedIn !== undefined ? Boolean(row.clockedIn) : row.clockedIn,
     questionAnswers,
   };
 }
@@ -135,53 +60,16 @@ function normaliseTicketRow(row) {
 module.exports = {
   addTicket(ticket) {
     const now = Date.now();
+    const id = ticket.id;
+    state.tickets[id] = state.tickets[id] || {};
+    const existing = state.tickets[id];
 
-    db.prepare(
-      `
-      INSERT INTO tickets (
-        ticket_id,
-        user_id,
-        subject,
-        description,
-        created_at,
-        updated_at,
-        department,
-        priority,
-        aiModeEnabled,
-        aiChannelId,
-        aiType,
-        aiEnabledBy,
-        aiEnabledAt,
-        questionAnswers,
-        ticketName,
-        ticketNumber
-      )
-      VALUES (
-        @ticket_id,
-        @user_id,
-        @subject,
-        @description,
-        @created_at,
-        @updated_at,
-        @department,
-        @priority,
-        @aiModeEnabled,
-        @aiChannelId,
-        @aiType,
-        @aiEnabledBy,
-        @aiEnabledAt,
-        @questionAnswers,
-        @ticketName,
-        @ticketNumber
-      )
-      ON CONFLICT(ticket_id) DO NOTHING
-    `,
-    ).run({
-      ticket_id: ticket.id,
+    state.tickets[id] = {
+      ticket_id: id,
       user_id: ticket.user,
       subject: ticket.reason || "",
       description: ticket.description || "",
-      created_at: now,
+      created_at: existing.created_at || now,
       updated_at: now,
       department: ticket.department || "general",
       priority: ticket.priority || "medium",
@@ -193,61 +81,46 @@ module.exports = {
       questionAnswers: JSON.stringify(ticket.questionAnswers || []),
       ticketName: ticket.name || null,
       ticketNumber: ticket.number || null,
-    });
+      status: existing.status || "open",
+    };
+
+    save(state);
 
     if (global.apiServer) {
       global.apiServer.broadcast("ticket_created", {
-        ticket_id: ticket.id,
+        ticket_id: id,
         user_id: ticket.user,
         subject: ticket.reason || "",
         description: ticket.description || "",
         department: ticket.department || "general",
         priority: ticket.priority || "medium",
-        created_at: now
+        created_at: now,
       });
     }
   },
 
   updateTicketQuestionAnswers(ticketId, questionAnswers = []) {
-    db.prepare(
-      `
-      UPDATE tickets
-      SET questionAnswers=@questionAnswers, updated_at=@updatedAt
-      WHERE ticket_id=@ticketId
-    `,
-    ).run({
-      ticketId,
-      questionAnswers: JSON.stringify(questionAnswers),
-      updatedAt: Date.now(),
-    });
+    const t = state.tickets[ticketId];
+    if (!t) return;
+    t.questionAnswers = JSON.stringify(questionAnswers);
+    t.updated_at = Date.now();
+    save(state);
   },
 
   updateTicketVoice(ticketId, voiceChannelId) {
-    db.prepare(
-      `
-      UPDATE tickets
-      SET voiceChannelId=@voiceChannelId, updated_at=@updatedAt
-      WHERE ticket_id=@ticketId
-    `,
-    ).run({
-      ticketId,
-      voiceChannelId,
-      updatedAt: Date.now(),
-    });
+    const t = state.tickets[ticketId];
+    if (!t) return;
+    t.voiceChannelId = voiceChannelId;
+    t.updated_at = Date.now();
+    save(state);
   },
 
   updateTicketStatus(ticketId, status) {
-    db.prepare(
-      `
-      UPDATE tickets
-      SET status=@status, updated_at=@updatedAt
-      WHERE ticket_id=@ticketId
-    `,
-    ).run({
-      status,
-      updatedAt: Date.now(),
-      ticketId,
-    });
+    const t = state.tickets[ticketId];
+    if (!t) return;
+    t.status = status;
+    t.updated_at = Date.now();
+    save(state);
 
     if (global.apiServer && status === "closed") {
       global.apiServer.broadcast("ticket_closed", { ticket_id: ticketId });
@@ -255,236 +128,120 @@ module.exports = {
   },
 
   updateTicketDepartment(ticketId, department) {
-    db.prepare(
-      `
-      UPDATE tickets
-      SET department=@department, updated_at=@updatedAt
-      WHERE ticket_id=@ticketId
-    `,
-    ).run({
-      ticketId,
-      department,
-      updatedAt: Date.now(),
-    });
+    const t = state.tickets[ticketId];
+    if (!t) return;
+    t.department = department;
+    t.updated_at = Date.now();
+    save(state);
   },
 
   updateTicketPriority(ticketId, priority) {
-    db.prepare(
-      `
-      UPDATE tickets
-      SET priority=@priority, updated_at=@updatedAt
-      WHERE ticket_id=@ticketId
-    `,
-    ).run({
-      ticketId,
-      priority,
-      updatedAt: Date.now(),
-    });
+    const t = state.tickets[ticketId];
+    if (!t) return;
+    t.priority = priority;
+    t.updated_at = Date.now();
+    save(state);
   },
 
   setTicketAIState(ticketId, aiState = {}) {
-    db.prepare(
-      `
-      UPDATE tickets
-      SET
-        aiModeEnabled=@aiModeEnabled,
-        aiChannelId=@aiChannelId,
-        aiType=@aiType,
-        aiEnabledBy=@aiEnabledBy,
-        aiEnabledAt=@aiEnabledAt,
-        updated_at=@updatedAt
-      WHERE ticket_id=@ticketId
-    `,
-    ).run({
-      ticketId,
-      aiModeEnabled: aiState.enabled ? 1 : 0,
-      aiChannelId: aiState.aiChannelId || null,
-      aiType: aiState.aiType || null,
-      aiEnabledBy: aiState.enabledBy || null,
-      aiEnabledAt: aiState.enabledAt
-        ? new Date(aiState.enabledAt).getTime()
-        : aiState.enabled
-          ? Date.now()
-          : null,
-      updatedAt: Date.now(),
-    });
+    const t = state.tickets[ticketId];
+    if (!t) return;
+    t.aiModeEnabled = aiState.enabled ? 1 : 0;
+    t.aiChannelId = aiState.aiChannelId || null;
+    t.aiType = aiState.aiType || null;
+    t.aiEnabledBy = aiState.enabledBy || null;
+    t.aiEnabledAt = aiState.enabledAt ? new Date(aiState.enabledAt).getTime() : aiState.enabled ? Date.now() : null;
+    t.updated_at = Date.now();
+    save(state);
   },
 
-  enableTicketAI(
-    ticketId,
-    aiChannelId = null,
-    aiType = null,
-    enabledBy = null,
-  ) {
-    db.prepare(
-      `
-      UPDATE tickets
-      SET
-        aiModeEnabled=1,
-        aiChannelId=@aiChannelId,
-        aiType=@aiType,
-        aiEnabledBy=@aiEnabledBy,
-        aiEnabledAt=@aiEnabledAt,
-        updated_at=@updatedAt
-      WHERE ticket_id=@ticketId
-    `,
-    ).run({
-      ticketId,
-      aiChannelId,
-      aiType,
-      aiEnabledBy,
-      aiEnabledAt: Date.now(),
-      updatedAt: Date.now(),
-    });
+  enableTicketAI(ticketId, aiChannelId = null, aiType = null, enabledBy = null) {
+    const t = state.tickets[ticketId];
+    if (!t) return;
+    t.aiModeEnabled = 1;
+    t.aiChannelId = aiChannelId;
+    t.aiType = aiType;
+    t.aiEnabledBy = enabledBy;
+    t.aiEnabledAt = Date.now();
+    t.updated_at = Date.now();
+    save(state);
   },
 
   disableTicketAI(ticketId) {
-    db.prepare(
-      `
-      UPDATE tickets
-      SET
-        aiModeEnabled=0,
-        updated_at=@updatedAt
-      WHERE ticket_id=@ticketId
-    `,
-    ).run({
-      ticketId,
-      updatedAt: Date.now(),
-    });
+    const t = state.tickets[ticketId];
+    if (!t) return;
+    t.aiModeEnabled = 0;
+    t.updated_at = Date.now();
+    save(state);
   },
 
   getTicket(ticketId) {
-    const row = db
-      .prepare(
-        `
-      SELECT * FROM tickets WHERE ticket_id=@ticketId
-    `,
-      )
-      .get({ ticketId });
-
-    return normaliseTicketRow(row);
+    return normaliseTicketRow(state.tickets[ticketId]);
   },
 
   getTicketByAIChannel(aiChannelId) {
-    const row = db
-      .prepare(
-        `
-      SELECT * FROM tickets WHERE aiChannelId=@aiChannelId LIMIT 1
-    `,
-      )
-      .get({ aiChannelId });
-
-    return normaliseTicketRow(row);
+    const keys = Object.keys(state.tickets);
+    for (const k of keys) {
+      const t = state.tickets[k];
+      if (t && t.aiChannelId === aiChannelId) return normaliseTicketRow(t);
+    }
+    return null;
   },
 
   getAllTickets() {
-    return db.prepare(`SELECT * FROM tickets`).all().map(normaliseTicketRow);
+    return Object.values(state.tickets).map(normaliseTicketRow);
   },
 
   saveTicketPanel(messageId, channelId) {
-    db.prepare(
-      `
-      INSERT INTO ticket_panel (message_id, channel_id, created_at)
-      VALUES (@messageId, @channelId, @createdAt)
-    `,
-    ).run({ messageId, channelId, createdAt: Date.now() });
+    state.ticket_panel.push({ id: Date.now(), message_id: messageId, channel_id: channelId, created_at: Date.now() });
+    save(state);
   },
 
   getTicketPanel() {
-    return db
-      .prepare(
-        `
-      SELECT * FROM ticket_panel ORDER BY id DESC LIMIT 1
-    `,
-      )
-      .get();
+    const arr = state.ticket_panel;
+    if (!arr || arr.length === 0) return null;
+    return arr[arr.length - 1];
   },
 
   addUserToTicket(ticketId, userId) {
-    db.prepare(
-      `
-      INSERT INTO ticket_users (ticket_id, user_id)
-      VALUES (?, ?)
-      ON CONFLICT(ticket_id, user_id) DO NOTHING
-    `,
-    ).run(ticketId, userId);
+    state.ticket_users[ticketId] = state.ticket_users[ticketId] || new Set();
+    // Sets cannot be serialized directly; store as array
+    const arr = new Set(state.ticket_users[ticketId]);
+    arr.add(userId);
+    state.ticket_users[ticketId] = Array.from(arr);
+    save(state);
   },
 
   removeUserFromTicket(ticketId, userId) {
-    db.prepare(
-      `
-      DELETE FROM ticket_users WHERE ticket_id=? AND user_id=?
-    `,
-    ).run(ticketId, userId);
+    const arr = new Set(state.ticket_users[ticketId] || []);
+    arr.delete(userId);
+    state.ticket_users[ticketId] = Array.from(arr);
+    save(state);
   },
 
   getTicketUsers(ticketId) {
-    return db
-      .prepare(
-        `
-      SELECT user_id FROM ticket_users WHERE ticket_id=?
-    `,
-      )
-      .all(ticketId)
-      .map((r) => r.user_id);
+    return (state.ticket_users[ticketId] || []).slice();
   },
 
   getSettings() {
-    const row = db.prepare(`SELECT data FROM settings WHERE id=1`).get();
-    if (!row) return {};
-    try {
-      return JSON.parse(row.data);
-    } catch {
-      return {};
-    }
+    return state.settings || {};
   },
 
   getProfile(userId) {
     ensureProfile(userId);
-
-    const row = db
-      .prepare(
-        `
-      SELECT * FROM profiles WHERE user_id = ?
-    `,
-      )
-      .get(userId);
-
-    if (!row) {
-      return {
-        user_id: userId,
-        bio: "",
-        timezone: "",
-        clockedIn: false,
-      };
-    }
-
-    return {
-      ...row,
-      clockedIn: Boolean(row.clockedIn),
-    };
+    const row = state.profiles[userId];
+    if (!row) return { user_id: userId, bio: "", timezone: "", clockedIn: false };
+    return { ...row, clockedIn: Boolean(row.clockedIn) };
   },
 
   setClockedIn(userId, clockedIn) {
     ensureProfile(userId);
-
-    db.prepare(
-      `
-      UPDATE profiles
-      SET clockedIn = ?
-      WHERE user_id = ?
-    `,
-    ).run(clockedIn ? 1 : 0, userId);
+    state.profiles[userId].clockedIn = clockedIn ? 1 : 0;
+    save(state);
   },
 
   saveSettings(obj) {
-    const data = JSON.stringify(obj);
-    db.prepare(
-      `
-      INSERT INTO settings (id, data)
-      VALUES (1, @data)
-      ON CONFLICT(id) DO UPDATE SET data = excluded.data
-    `,
-    ).run({ data });
+    state.settings = obj || {};
+    save(state);
   },
 };
