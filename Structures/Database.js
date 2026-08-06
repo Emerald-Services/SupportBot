@@ -194,6 +194,18 @@ module.exports = {
       ticketName: ticket.name || null,
       ticketNumber: ticket.number || null,
     });
+
+    if (global.apiServer) {
+      global.apiServer.broadcast("ticket_created", {
+        ticket_id: ticket.id,
+        user_id: ticket.user,
+        subject: ticket.reason || "",
+        description: ticket.description || "",
+        department: ticket.department || "general",
+        priority: ticket.priority || "medium",
+        created_at: now
+      });
+    }
   },
 
   updateTicketQuestionAnswers(ticketId, questionAnswers = []) {
@@ -236,6 +248,10 @@ module.exports = {
       updatedAt: Date.now(),
       ticketId,
     });
+
+    if (global.apiServer && status === "closed") {
+      global.apiServer.broadcast("ticket_closed", { ticket_id: ticketId });
+    }
   },
 
   updateTicketDepartment(ticketId, department) {

@@ -20,6 +20,7 @@ function configMap(view, edit) {
 function fullPermissions() {
   return {
     overview: true,
+    tickets: true,
     logs: true,
     transcripts: true,
     settings: { view: true, update: true },
@@ -36,6 +37,7 @@ function permissionsFromRole(role, customPermissions) {
     case "moderator":
       return {
         overview: true,
+        tickets: true,
         logs: true,
         transcripts: true,
         settings: { view: true, update: false },
@@ -45,6 +47,7 @@ function permissionsFromRole(role, customPermissions) {
     case "editor":
       return {
         overview: true,
+        tickets: true,
         logs: true,
         transcripts: false,
         settings: { view: true, update: false },
@@ -54,6 +57,7 @@ function permissionsFromRole(role, customPermissions) {
     case "viewer":
       return {
         overview: true,
+        tickets: true,
         logs: true,
         transcripts: true,
         settings: { view: true, update: false },
@@ -73,6 +77,7 @@ function normalizePermissions(input) {
 
   return {
     overview: input.overview ?? base.overview,
+    tickets: input.tickets ?? input.overview ?? base.tickets,
     logs: input.logs ?? base.logs,
     transcripts: input.transcripts ?? base.transcripts,
     settings: {
@@ -97,6 +102,7 @@ function hasPermission(permissions, check) {
   if (!permissions) return false;
 
   if (check === "overview") return Boolean(permissions.overview);
+  if (check === "tickets") return Boolean(permissions.tickets ?? permissions.overview);
   if (check === "logs") return Boolean(permissions.logs);
   if (check === "transcripts") return Boolean(permissions.transcripts);
   if (check === "settings.view") return Boolean(permissions.settings?.view);

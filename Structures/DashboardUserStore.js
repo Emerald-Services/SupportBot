@@ -89,19 +89,23 @@ function syncDiscordProfile(userId, profile) {
   writeStore(store);
 }
 
+const { getGroup } = require("./DashboardGroupStore.js");
+
 function resolvePermissions(entry, oauth, userId) {
   if (isYamlOwner(userId, oauth)) {
-    return { permissions: fullPermissions(), role: "owner", isOwner: true };
+    return { permissions: fullPermissions(), role: "owner", isOwner: true, groupId: "owner" };
   }
   if (!entry?.enabled) return null;
 
-  const role = entry.role || "viewer";
-  const permissions =
-    role === "custom"
-      ? permissionsFromRole("custom", entry.permissions)
-      : permissionsFromRole(role);
+  const groupId = entry.groupId || entry.role || "support";
+  const group = getGroup(groupId);
 
-  return { permissions, role, isOwner: false };
+  if (entry.role === "custom" && entry.permissions) {
+    return { permissions: normalizePermissions(entry.permissions), role: "custom", isOwner: false, groupId };
+  }
+
+  const permissions = group ? group.permissions : permissionsFromRole(entry.role || "viewer");
+  return { permissions, role: entry.role || groupId, isOwner: false, groupId };
 }
 
 function getAccess(userId, oauth) {
@@ -175,7 +179,8 @@ function listUsers(oauth) {
       avatar: entry.avatar
         ? discordAvatarUrl({ id: entry.id, avatar: entry.avatar })
         : discordAvatarUrl({ id: entry.id, avatar: null }),
-      role: yamlOwners.has(String(entry.id)) ? "owner" : entry.role,
+      role: yamlOwners.has(String(entry.id)) ? "owner" : entry.role || entry.groupId || "support",
+      groupId: entry.groupId || entry.role || "support",
       permissions:
         entry.role === "custom"
           ? normalizePermissions(entry.permissions)
@@ -195,11 +200,8 @@ function addUser(payload, actorId, oauth) {
     throw new Error("Invalid Discord user ID");
   }
 
-  const role = payload.role || "viewer";
-  if (!ROLES.includes(role)) throw new Error("Invalid role");
-  if (role === "owner" && !isYamlOwner(actorId, oauth)) {
-    throw new Error("Only api.yml owners can assign the owner role");
-  }
+  const role = payload.role || payload.groupId || "support";
+  const groupId = payload.groupId || payload.role || "support";
 
   const store = readStore();
   if (store.users[id]) throw new Error("User already exists");
@@ -210,6 +212,7 @@ function addUser(payload, actorId, oauth) {
     globalName: payload.globalName || null,
     avatar: null,
     role,
+    groupId,
     permissions:
       role === "custom" ? normalizePermissions(payload.permissions) : null,
     enabled: payload.enabled !== false,
@@ -231,15 +234,14 @@ function updateUser(id, payload, actorId, oauth) {
     throw new Error("Cannot disable an owner defined in api.yml");
   }
 
+  if (payload.groupId) {
+    entry.groupId = payload.groupId;
+    if (!payload.role) entry.role = payload.groupId;
+  }
+
   if (payload.role) {
-    if (!ROLES.includes(payload.role)) throw new Error("Invalid role");
-    if (payload.role === "owner" && !isYamlOwner(actorId, oauth)) {
-      throw new Error("Only api.yml owners can assign the owner role");
-    }
-    if (isYamlOwner(id, oauth) && payload.role !== "owner") {
-      throw new Error("Cannot change role of an api.yml owner");
-    }
     entry.role = payload.role;
+    if (!payload.groupId) entry.groupId = payload.role;
   }
 
   if (payload.enabled !== undefined) entry.enabled = Boolean(payload.enabled);

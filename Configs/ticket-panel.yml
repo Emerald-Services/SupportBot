@@ -8,8 +8,7 @@
 #           Installed with MIT License
 #
 #           Discord Support: https://discord.gg/emeraldsrv
-#           Official Documentation: https://docs.emeraldsrv.com
-#           Addons Marketplace: https://community.emeraldsrv.com
+#           Official Website & Marketplace: https://emeraldsrv.com
 #
 #           Ticket Creation Panel Configuration (ticket-panel.yml)
 
@@ -20,12 +19,11 @@
 Panel: true
 
 Style:
-  Title: "## SupportBot Ticket Creation"
-  Description: "Click on the button to file a `Ticket` and our team will try their
-    best to assist you in the best way we can!"
-  Image: "https://i.imgur.com/dejQvkg.png"
+  Title: "## 📬 Open Ticket"
+  Description: "Tap the button to open a support ticket, Our team will respond as soon as possible."
+  Image: "https://cdn.1tzemerald.space/Emerald%20Services/SBPoster.png"
   Color: "#45b463"
-  Layout: "4"
+  Layout: "3"
 
 # Available Layout Styles
 # "1" - Style 1 - Title & Text, Button at the top -- Image at the bottom
@@ -34,8 +32,8 @@ Style:
 # "4" - Style 4 - Classic Embed (Title & Text, Image on right, Button at bottom)
 
 Button:
-  Text: "Create Ticket"
-  Emoji: "🎫"
+  Text: "Open"
+  Emoji: "🛟"
   Color: "2"
   CustomId: "createticket"
 

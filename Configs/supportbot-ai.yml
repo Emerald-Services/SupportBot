@@ -1,3 +1,15 @@
+#      ___                            _    ___        _
+#    / __> _ _  ___  ___  ___  _ _ _| |_ | . > ___ _| |_
+#     \__ \| | || . \| . \/ . \| '_> | |  | . \/ . \ | |
+#     <___/`___||  _/|  _/\___/|_|   |_|  |___/\___/ |_|
+#                |_|  |_|
+#
+#           SupportBot created by Emerald Services
+#           Installed with MIT License
+#
+#           Discord Support: https://discord.gg/emeraldsrv
+#           Official Website & Marketplace: https://emeraldsrv.com
+
 # -------------------------
 #   SupportBot AI
 #
@@ -8,8 +20,8 @@
 Enabled: true
 
 General:
-  Provider: "claude" 
-  Model: "claude-sonnet-4-6" 
+  Provider: "groq"
+  Model: "MODEL_NAME"
   Model_API_Key: "MODEL_API_KEY"
   # Providers Available:
   # "openai" - Use OpenAI's GPT models. Example: "gpt-5.4" "gpt-5-mini"
@@ -17,7 +29,7 @@ General:
   # "claude" - Use Anthropic's Claude models. Example: "claude-sonnet-4-6"
 
   Tokens: 1200
-  
+
   Temperature: 0.4
   Name: "SupportBot AI"
 
@@ -25,7 +37,7 @@ General:
   PastebinAPI_URL: "https://pastebin.com/api/api_post.php"
 
 Style:
-  MessageType: "text" 
+  MessageType: "components_v2"
   # Available Styles for AI:
   # "embed" - AI responses will be sent as Discord embeds.
   # "text" - AI responses will be sent as plain messages.
@@ -59,12 +71,25 @@ Memory:
 
 CustomInstructions:
   - "You are SupportBot AI made by Emerald Services"
-  - "You are built with DiscordJS/NodeJS and currently running on dev build 26.0 build 2"
-  - "You're current build can be found here https://github.com/Emerald-Services/SupportBot/tree/26.0"
-  - "You're main build can be found here https://builtbybit.com/resources/supportbot-free-advanced-ticket-bot.8940/ and Polymart at https://polymart.org/product/518/supportbot-1-discord-ticket-bot which is version 8.4"
-  - "dev build 26.0 build 2 includes all-new AI features for SupportBot such as memory system that allows you to remember facts and summaries of conversations, which can be used to provide better responses."
-  - "SupportBot AI also have a new tickets AI Mode which is enabled in supportbot.ymll, which allows you to assist users in support tickets and provide better responses based on the context of the ticket."
-  - "Your main purpose is to assist users in the support server and provide helpful responses to their questions and issues. Always be accurate and if you do not have answer then simply ask the person to create a ticket if they need more help."
+  - "You are built with DiscordJS/NodeJS and currently running on dev build 26.0
+    build 2"
+  - "You're current build can be found here
+    https://github.com/Emerald-Services/SupportBot/tree/26.0"
+  - "You're main build can be found here
+    https://builtbybit.com/resources/supportbot-free-advanced-ticket-bot.8940/
+    and Polymart at
+    https://polymart.org/product/518/supportbot-1-discord-ticket-bot which is
+    version 8.4"
+  - "dev build 26.0 build 2 includes all-new AI features for SupportBot such as
+    memory system that allows you to remember facts and summaries of
+    conversations, which can be used to provide better responses."
+  - "SupportBot AI also have a new tickets AI Mode which is enabled in
+    supportbot.ymll, which allows you to assist users in support tickets and
+    provide better responses based on the context of the ticket."
+  - "Your main purpose is to assist users in the support server and provide
+    helpful responses to their questions and issues. Always be accurate and if
+    you do not have answer then simply ask the person to create a ticket if they
+    need more help."
   #- "Add custom instructions here"
 
 Messages:
@@ -73,4 +98,4 @@ Messages:
   AIDisabled: "AI is currently disabled."
   MessageTooLong: "My response was too long, so I uploaded it here: {pastebin}"
   SuggestTicketText: "-# Need more help? React with 🎫 to open a ticket."
-  SuggestTicketReaction : "🎫"
+  SuggestTicketReaction: "🎫"

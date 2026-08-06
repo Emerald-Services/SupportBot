@@ -98,6 +98,9 @@ class APIServer {
         this.client = client;
         this.app = express();
 
+        this.sseClients = new Set();
+        global.apiServer = this;
+
         try {
             const apiCfg = yaml.load(fs.readFileSync('./Configs/api.yml', 'utf8')).API;
             this.config = apiCfg;
@@ -196,12 +199,25 @@ class APIServer {
                 req.dashboardPermissions = access.permissions;
                 req.dashboardRole = access.role;
                 req.dashboardIsOwner = access.isOwner;
+
+                // --- Impersonation / View as Group Mode ---
+                const impersonateGroupId = req.headers['x-impersonate-group'];
+                if (impersonateGroupId && (access.isOwner || hasPermission(access.permissions, 'users.manage'))) {
+                    const groupStore = require('../Structures/DashboardGroupStore.js');
+                    const group = groupStore.getGroup(impersonateGroupId);
+                    if (group) {
+                        req.dashboardPermissions = group.permissions;
+                        req.dashboardImpersonatingGroup = group;
+                    }
+                }
+
                 return next();
             }
         }
 
         const authHeader = req.headers.authorization;
-        if (authHeader === `Bearer ${secret}`) {
+        const tokenQuery = req.query.token;
+        if (authHeader === `Bearer ${secret}` || (tokenQuery && tokenQuery === secret)) {
             grantServiceAccess(req);
             return next();
         }
@@ -211,9 +227,22 @@ class APIServer {
         });
     }
 
+    broadcast(event, data) {
+        if (!this.sseClients || this.sseClients.size === 0) return;
+        const payload = `event: ${event}\ndata: ${JSON.stringify(data)}\n\n`;
+        for (const clientRes of this.sseClients) {
+            try {
+                clientRes.write(payload);
+            } catch (e) {
+                this.sseClients.delete(clientRes);
+            }
+        }
+    }
+
     requirePermission(permission) {
         return (req, res, next) => {
             if (req.dashboardService) return next();
+            if (req.dashboardIsOwner || req.dashboardImpersonatingGroup) return next();
             if (hasPermission(req.dashboardPermissions, permission)) return next();
             return forbid(res);
         };
@@ -222,6 +251,7 @@ class APIServer {
     requireConfigAccess(mode = 'view') {
         return (req, res, next) => {
             if (req.dashboardService) return next();
+            if (req.dashboardIsOwner || req.dashboardImpersonatingGroup) return next();
             const file = req.params?.file || req.body?.filename;
             if (!file) return next();
             if (!canAccessConfig(req.dashboardPermissions, file, mode)) {
@@ -478,6 +508,26 @@ h1{font-size:1.25rem}a{color:#a78bfa}</style></head><body>
             this.startNotificationJobs();
         });
 
+        // Periodic system metrics broadcast every 2 seconds to SSE clients
+        setInterval(() => {
+            if (!this.sseClients || this.sseClients.size === 0) return;
+            const totalMem = os.totalmem();
+            const freeMem = os.freemem();
+            const usedMem = totalMem - freeMem;
+            const ramPercent = Math.round((usedMem / totalMem) * 100);
+            const cpuLoad = parseFloat(os.loadavg()[0].toFixed(2));
+
+            this.broadcast('metrics', {
+                timestamp: Date.now(),
+                ping: this.client?.ws?.ping ?? 0,
+                ram_percent: ramPercent,
+                ram_used_mb: Math.round(usedMem / 1024 / 1024),
+                ram_total_mb: Math.round(totalMem / 1024 / 1024),
+                cpu_load: cpuLoad,
+                uptime: process.uptime()
+            });
+        }, 2000);
+
         this._httpServer.on('error', (err) => {
             if (err.code === 'EADDRINUSE') {
                 console.error(
@@ -542,6 +592,376 @@ h1{font-size:1.25rem}a{color:#a78bfa}</style></head><body>
         const oauth = this.oauth;
         const p = (permission) => this.requirePermission(permission);
         const cv = (mode) => this.requireConfigAccess(mode);
+
+        // --- Real-time SSE Stream ---
+        app.get('/stream', (req, res) => {
+            res.writeHead(200, {
+                'Content-Type': 'text/event-stream',
+                'Cache-Control': 'no-cache',
+                'Connection': 'keep-alive',
+                'Access-Control-Allow-Origin': '*'
+            });
+            res.write('event: connected\ndata: {"connected": true}\n\n');
+            this.sseClients.add(res);
+
+            req.on('close', () => {
+                this.sseClients.delete(res);
+            });
+        });
+
+        // --- Ticket Chat & Management API ---
+        app.get('/system/tickets/open', p('tickets'), async (req, res) => {
+            try {
+                const allTickets = db.getAllTickets() || [];
+                const openTickets = allTickets.filter(t => t.status === 'open' || t.status === undefined || t.open);
+                const guildId = this.client?.guilds?.cache?.first()?.id || "";
+
+                res.json({
+                    success: true,
+                    data: {
+                        guildId,
+                        tickets: openTickets.map(t => ({
+                            ticket_id: t.ticket_id,
+                            user_id: t.user_id,
+                            subject: t.subject || t.reason || 'Untitled Ticket',
+                            description: t.description || '',
+                            department: t.department || 'general',
+                            priority: t.priority || 'medium',
+                            created_at: t.created_at
+                        }))
+                    }
+                });
+            } catch (err) {
+                console.error('[API] Error fetching open tickets:', err);
+                res.status(500).json({ success: false, error: 'Failed to fetch open tickets' });
+            }
+        });
+
+        app.get('/system/tickets/:ticketId/messages', p('tickets'), async (req, res) => {
+            const { ticketId } = req.params;
+            try {
+                const channel = await this.client.channels.fetch(ticketId).catch(() => null);
+                if (!channel || !channel.isTextBased()) {
+                    return res.status(404).json({ success: false, error: 'Ticket channel not found or inactive.' });
+                }
+
+                const fetchedMessages = await channel.messages.fetch({ limit: 50 });
+                const messages = Array.from(fetchedMessages.values())
+                    .reverse()
+                    .map(m => ({
+                        id: m.id,
+                        author: {
+                            id: m.author.id,
+                            username: m.author.username,
+                            globalName: m.author.globalName || m.author.username,
+                            avatar: m.author.displayAvatarURL({ extension: 'png', size: 64 }),
+                            bot: m.author.bot
+                        },
+                        content: (() => {
+                            if (m.content && m.content.trim()) return m.content;
+                            if (Array.isArray(m.components) && m.components.length > 0) {
+                                const texts = [];
+                                for (const comp of m.components) {
+                                    const data = typeof comp.toJSON === 'function' ? comp.toJSON() : comp;
+                                    if (data.content) texts.push(data.content);
+                                    if (Array.isArray(data.components)) {
+                                        for (const child of data.components) {
+                                            const childData = typeof child.toJSON === 'function' ? child.toJSON() : child;
+                                            if (childData.content) texts.push(childData.content);
+                                            if (childData.label && (childData.type === 10 || childData.type === 'TEXT_DISPLAY')) {
+                                                texts.push(childData.label);
+                                            }
+                                        }
+                                    }
+                                }
+                                if (texts.length > 0) return texts.join('\n');
+                            }
+                            return m.content || '';
+                        })(),
+                        containerColor: (() => {
+                            if (Array.isArray(m.components)) {
+                                for (const comp of m.components) {
+                                    const data = typeof comp.toJSON === 'function' ? comp.toJSON() : comp;
+                                    if (data.accent_color) {
+                                        return `#${data.accent_color.toString(16).padStart(6, '0')}`;
+                                    }
+                                }
+                            }
+                            return null;
+                        })(),
+                        embeds: m.embeds.map(e => ({
+                            title: e.title || null,
+                            description: e.description || null,
+                            color: e.color ? `#${e.color.toString(16).padStart(6, '0')}` : '#5865F2',
+                            author: e.author ? { name: e.author.name, iconURL: e.author.iconURL } : null,
+                            fields: (e.fields || []).map(f => ({ name: f.name, value: f.value, inline: f.inline })),
+                            footer: e.footer ? { text: e.footer.text, iconURL: e.footer.iconURL } : null,
+                            thumbnail: e.thumbnail?.url ? { url: e.thumbnail.url } : null,
+                            image: e.image?.url ? { url: e.image.url } : null,
+                            timestamp: e.timestamp || null
+                        })),
+                        components: (m.components || []).map(c => {
+                            const data = typeof c.toJSON === 'function' ? c.toJSON() : c;
+                            return {
+                                type: data.type,
+                                components: (data.components || []).map(sub => {
+                                    const subData = typeof sub.toJSON === 'function' ? sub.toJSON() : sub;
+                                    return {
+                                        type: subData.type,
+                                        label: subData.label || subData.content || null,
+                                        style: subData.style || null,
+                                        url: subData.url || null,
+                                        customId: subData.custom_id || subData.customId || null,
+                                        emoji: subData.emoji ? (subData.emoji.name || subData.emoji.id) : null
+                                    };
+                                })
+                            };
+                        }),
+                        attachments: Array.from(m.attachments.values()).map(a => ({
+                            id: a.id,
+                            name: a.name,
+                            url: a.url,
+                            contentType: a.contentType
+                        })),
+                        createdAt: m.createdTimestamp
+                    }));
+
+                res.json({ success: true, data: { ticketId, messages } });
+            } catch (err) {
+                console.error('[API] Error fetching ticket messages:', err);
+                res.status(500).json({ success: false, error: 'Failed to fetch ticket messages' });
+            }
+        });
+
+        app.post('/system/tickets/:ticketId/reply', p('tickets'), async (req, res) => {
+            const { ticketId } = req.params;
+            const { message, staffName, attachments } = req.body;
+
+            const hasText = message && message.trim();
+            const hasAttachments = Array.isArray(attachments) && attachments.length > 0;
+
+            if (!hasText && !hasAttachments) {
+                return res.status(400).json({ success: false, error: 'Message content or attachment is required.' });
+            }
+
+            try {
+                const channel = await this.client.channels.fetch(ticketId).catch(() => null);
+                if (!channel || !channel.isTextBased()) {
+                    return res.status(404).json({ success: false, error: 'Ticket channel not found or inactive.' });
+                }
+
+                const { AttachmentBuilder } = require('discord.js');
+                const files = (attachments || []).map(att => {
+                    const base64Data = att.data.includes(',') ? att.data.split(',')[1] : att.data;
+                    const buffer = Buffer.from(base64Data, 'base64');
+                    return new AttachmentBuilder(buffer, { name: att.filename || 'attachment.png' });
+                });
+
+                const apiConfig = require('../Structures/ConfigStore').api;
+                const liveChatMode = (apiConfig?.API?.LiveChat?.Mode || 'webhook').toLowerCase();
+
+                const staffTag = staffName ? staffName.trim() : (req.dashboardUser?.username || 'Staff');
+                const contentText = hasText ? message.trim() : '';
+
+                let sentMsg;
+                if (liveChatMode === 'webhook') {
+                    let webhook;
+                    try {
+                        const webhooks = await channel.fetchWebhooks();
+                        webhook = webhooks.find(wh => wh.name === 'SupportBot WebChat' || wh.owner?.id === this.client.user.id);
+                        if (!webhook) {
+                            webhook = await channel.createWebhook({
+                                name: 'SupportBot WebChat',
+                                avatar: this.client.user.displayAvatarURL()
+                            });
+                        }
+                    } catch (whErr) {
+                        console.warn('[API] Could not fetch/create webhook for channel, falling back to bot send:', whErr.message);
+                    }
+
+                    if (webhook) {
+                        let avatarURL = this.client.user.displayAvatarURL({ extension: 'png' });
+
+                        if (req.dashboardUser?.id && req.dashboardUser?.avatar) {
+                            avatarURL = `https://cdn.discordapp.com/avatars/${req.dashboardUser.id}/${req.dashboardUser.avatar}.png`;
+                        } else {
+                            try {
+                                const guild = channel.guild;
+                                if (guild) {
+                                    const members = await guild.members.fetch().catch(() => null);
+                                    const member = members?.find(m =>
+                                        m.user.username.toLowerCase() === staffTag.toLowerCase() ||
+                                        m.displayName.toLowerCase() === staffTag.toLowerCase() ||
+                                        m.user.tag.toLowerCase() === staffTag.toLowerCase()
+                                    );
+                                    if (member) {
+                                        avatarURL = member.displayAvatarURL({ extension: 'png', size: 256 });
+                                    }
+                                }
+                            } catch (e) {
+                                // fallback to bot avatar
+                            }
+                        }
+
+                        sentMsg = await webhook.send({
+                            content: contentText || undefined,
+                            username: staffTag,
+                            avatarURL,
+                            files
+                        });
+                    } else {
+                        const formattedContent = contentText ? `**[${staffTag}]** ${contentText}` : `**[${staffTag}]**`;
+                        sentMsg = await channel.send({ content: formattedContent, files });
+                    }
+                } else if (liveChatMode === 'bot_noprefix' || liveChatMode === 'bot_no_prefix' || liveChatMode === 'noprefix') {
+                    // Bot mode without [Username] prefix
+                    sentMsg = await channel.send({ content: contentText || undefined, files });
+                } else {
+                    // Bot mode with [Username] prefix
+                    const formattedContent = contentText ? `**[${staffTag}]** ${contentText}` : `**[${staffTag}]**`;
+                    sentMsg = await channel.send({ content: formattedContent, files });
+                }
+
+                const sentAttachments = Array.from(sentMsg.attachments.values()).map(a => ({
+                    id: a.id,
+                    name: a.name,
+                    url: a.url,
+                    contentType: a.contentType
+                }));
+
+                const messageData = {
+                    id: sentMsg.id,
+                    author: {
+                        id: sentMsg.author.id,
+                        username: staffTag,
+                        globalName: `${staffTag} (via Dashboard)`,
+                        avatar: sentMsg.author.displayAvatarURL({ extension: 'png', size: 64 }),
+                        bot: false,
+                        isDashboard: true
+                    },
+                    content: contentText,
+                    embeds: [],
+                    attachments: sentAttachments,
+                    createdAt: sentMsg.createdTimestamp
+                };
+
+                this.broadcast('ticket_message', {
+                    ticketId,
+                    message: messageData
+                });
+
+                res.json({ success: true, data: messageData });
+            } catch (err) {
+                console.error('[API] Error sending ticket reply:', err);
+                res.status(500).json({ success: false, error: 'Failed to send message to Discord.' });
+            }
+        });
+
+        app.delete('/system/tickets/:ticketId/messages/:messageId', p('tickets'), async (req, res) => {
+            const { ticketId, messageId } = req.params;
+            try {
+                const channel = await this.client.channels.fetch(ticketId).catch(() => null);
+                if (!channel || !channel.isTextBased()) {
+                    return res.status(404).json({ success: false, error: 'Ticket channel not found.' });
+                }
+
+                const targetMsg = await channel.messages.fetch(messageId).catch(() => null);
+                if (!targetMsg) {
+                    return res.status(404).json({ success: false, error: 'Message not found in Discord.' });
+                }
+
+                await targetMsg.delete();
+
+                this.broadcast('ticket_message_deleted', {
+                    ticketId,
+                    messageId
+                });
+
+                res.json({ success: true, message: 'Message deleted successfully.' });
+            } catch (err) {
+                console.error('[API] Error deleting message:', err);
+                res.status(500).json({ success: false, error: 'Failed to delete message in Discord.' });
+            }
+        });
+
+        app.patch('/system/tickets/:ticketId/messages/:messageId', p('tickets'), async (req, res) => {
+            const { ticketId, messageId } = req.params;
+            const { content } = req.body;
+            if (!content || !content.trim()) {
+                return res.status(400).json({ success: false, error: 'Content cannot be empty.' });
+            }
+
+            try {
+                const channel = await this.client.channels.fetch(ticketId).catch(() => null);
+                if (!channel || !channel.isTextBased()) {
+                    return res.status(404).json({ success: false, error: 'Ticket channel not found.' });
+                }
+
+                const targetMsg = await channel.messages.fetch(messageId).catch(() => null);
+                if (!targetMsg) {
+                    return res.status(404).json({ success: false, error: 'Message not found in Discord.' });
+                }
+
+                const updatedMsg = await targetMsg.edit({ content: content.trim() });
+
+                this.broadcast('ticket_message_updated', {
+                    ticketId,
+                    messageId,
+                    content: content.trim()
+                });
+
+                res.json({ success: true, data: { id: updatedMsg.id, content: content.trim() } });
+            } catch (err) {
+                console.error('[API] Error editing message:', err);
+                res.status(500).json({ success: false, error: 'Failed to edit message in Discord.' });
+            }
+        });
+
+        app.post('/system/tickets/:ticketId/close', p('tickets'), async (req, res) => {
+            const { ticketId } = req.params;
+            const { reason } = req.body || {};
+            const staffTag = req.dashboardUser?.username || 'Staff';
+
+            try {
+                const channel = await this.client.channels.fetch(ticketId).catch(() => null);
+                if (!channel || !channel.isTextBased()) {
+                    db.updateTicketStatus(ticketId, 'closed');
+                    this.broadcast('ticket_closed', { ticket_id: ticketId });
+                    return res.json({ success: true, message: 'Ticket marked as closed.' });
+                }
+
+                try {
+                    const ticketManager = require('../Structures/TicketManager');
+                    if (typeof ticketManager.createTranscript === 'function') {
+                        const fakeInteraction = {
+                            channel,
+                            guild: channel.guild,
+                            user: {
+                                id: req.dashboardUser?.id || this.client.user.id,
+                                tag: staffTag,
+                                displayAvatarURL: () => this.client.user.displayAvatarURL()
+                            },
+                            client: this.client
+                        };
+                        await ticketManager.createTranscript(fakeInteraction, reason || 'Closed via Web Dashboard').catch(() => null);
+                    }
+                } catch (trErr) {
+                    console.warn('[API] Transcript generation on close skipped:', trErr.message);
+                }
+
+                db.updateTicketStatus(ticketId, 'closed');
+                this.broadcast('ticket_closed', { ticket_id: ticketId });
+
+                setTimeout(async () => {
+                    await channel.delete(`Ticket closed by ${staffTag} via Web Dashboard`).catch(() => null);
+                }, 1500);
+
+                res.json({ success: true, message: 'Ticket closed successfully.' });
+            } catch (err) {
+                console.error('[API] Error closing ticket:', err);
+                res.status(500).json({ success: false, error: 'Failed to close ticket.' });
+            }
+        });
 
         app.put('/branding', p('settings.update'), (req, res) => {
             try {
@@ -664,6 +1084,49 @@ h1{font-size:1.25rem}a{color:#a78bfa}</style></head><body>
         app.delete('/dashboard-users/:id', p('users.manage'), (req, res) => {
             try {
                 removeUser(req.params.id, oauth);
+                res.json({ success: true });
+            } catch (err) {
+                res.status(400).json({ success: false, error: err.message });
+            }
+        });
+
+        // --- Custom Dashboard Groups API ---
+        const groupStore = require('../Structures/DashboardGroupStore.js');
+
+        app.get('/dashboard-groups', p('users.view'), (req, res) => {
+            try {
+                res.json({
+                    success: true,
+                    data: {
+                        groups: groupStore.listGroups(),
+                    },
+                });
+            } catch (err) {
+                res.status(500).json({ success: false, error: err.message });
+            }
+        });
+
+        app.post('/dashboard-groups', p('users.manage'), (req, res) => {
+            try {
+                const group = groupStore.createGroup(req.body);
+                res.json({ success: true, data: group });
+            } catch (err) {
+                res.status(400).json({ success: false, error: err.message });
+            }
+        });
+
+        app.put('/dashboard-groups/:id', p('users.manage'), (req, res) => {
+            try {
+                const group = groupStore.updateGroup(req.params.id, req.body);
+                res.json({ success: true, data: group });
+            } catch (err) {
+                res.status(400).json({ success: false, error: err.message });
+            }
+        });
+
+        app.delete('/dashboard-groups/:id', p('users.manage'), (req, res) => {
+            try {
+                groupStore.deleteGroup(req.params.id);
                 res.json({ success: true });
             } catch (err) {
                 res.status(400).json({ success: false, error: err.message });

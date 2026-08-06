@@ -23,9 +23,14 @@ function parseMarkdown(content = "") {
 
   safe = safe.replace(/```([\s\S]*?)```/g, "<pre><code>$1</code></pre>");
   safe = safe.replace(/`(.*?)`/g, "<code>$1</code>");
+  safe = safe.replace(/\|\|(.*?)\|\|/g, '<span class="spoiler">$1</span>');
   safe = safe.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
   safe = safe.replace(/\*(.*?)\*/g, "<em>$1</em>");
   safe = safe.replace(/_(.*?)_/g, "<em>$1</em>");
+  safe = safe.replace(/~~(.*?)~~/g, "<del>$1</del>");
+  safe = safe.replace(/__(.*?)__/g, "<u>$1</u>");
+  safe = safe.replace(/&lt;@!?(\d+)&gt;/g, '<span class="mention">@User</span>');
+  safe = safe.replace(/&lt;@&amp;(\d+)&gt;/g, '<span class="mention">@Role</span>');
   safe = safe.replace(
     /\[(.*?)\]\((.*?)\)/g,
     '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>',
@@ -112,10 +117,11 @@ function renderAttachment(att) {
 function renderEmbeds(embeds = []) {
   return embeds
     .map((embed) => {
+      const color = embed.color || "#5865F2";
       const fields = (embed.fields || [])
         .map(
           (field) => `
-            <div class="embed-field">
+            <div class="embed-field ${field.inline ? 'inline-field' : ''}">
               <div class="embed-field-name">${escapeHtml(field.name || "Field")}</div>
               <div class="embed-field-value">${parseMarkdown(field.value || "")}</div>
             </div>
@@ -123,11 +129,37 @@ function renderEmbeds(embeds = []) {
         )
         .join("");
 
+      const author = embed.author ? `
+        <div class="embed-author">
+          ${embed.author.iconURL ? `<img src="${escapeHtml(embed.author.iconURL)}" class="embed-author-icon" />` : ''}
+          <span>${escapeHtml(embed.author.name || '')}</span>
+        </div>
+      ` : '';
+
+      const thumbnail = embed.thumbnail?.url ? `
+        <img src="${escapeHtml(embed.thumbnail.url)}" class="embed-thumbnail" />
+      ` : '';
+
+      const image = embed.image?.url ? `
+        <div class="embed-image"><img src="${escapeHtml(embed.image.url)}" /></div>
+      ` : '';
+
+      const footer = (embed.footer || embed.timestamp) ? `
+        <div class="embed-footer">
+          ${embed.footer?.iconURL ? `<img src="${escapeHtml(embed.footer.iconURL)}" class="embed-footer-icon" />` : ''}
+          ${embed.footer?.text ? `<span>${escapeHtml(embed.footer.text)}</span>` : ''}
+        </div>
+      ` : '';
+
       return `
-        <div class="discord-embed">
-          ${embed.title ? `<div class="discord-embed-title">${escapeHtml(embed.title)}</div>` : ""}
+        <div class="discord-embed" style="border-left-color: ${escapeHtml(color)}; border-left-width: 4px; border-left-style: solid; position: relative;">
+          ${author}
+          ${thumbnail}
+          ${embed.title ? `<div class="discord-embed-title">${parseMarkdown(embed.title)}</div>` : ""}
           ${embed.description ? `<div class="discord-embed-description">${parseMarkdown(embed.description)}</div>` : ""}
-          ${fields}
+          ${fields ? `<div class="embed-fields-grid">${fields}</div>` : ""}
+          ${image}
+          ${footer}
         </div>
       `;
     })
@@ -451,13 +483,22 @@ function buildStyles(template) {
     .discord-embed-title { font-weight: 800; margin-bottom: 6px; }
     .discord-embed-description { color: var(--text); line-height: 1.5; }
 
+    .embed-author { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 0.9em; margin-bottom: 6px; }
+    .embed-author-icon { width: 18px; height: 18px; border-radius: 50%; }
+    .embed-fields-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.06); }
+    .embed-thumbnail { position: absolute; top: 12px; right: 12px; width: 44px; height: 44px; border-radius: 6px; object-fit: cover; }
+    .embed-image img { width: 100%; max-height: 300px; object-fit: cover; border-radius: 8px; margin-top: 10px; }
+    .embed-footer { display: flex; align-items: center; gap: 6px; font-size: 0.8em; color: var(--muted); margin-top: 8px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.04); }
+    .embed-footer-icon { width: 14px; height: 14px; border-radius: 50%; }
+    .mention { background: rgba(88, 101, 242, 0.2); color: #5865F2; padding: 2px 6px; border-radius: 4px; font-weight: 600; font-size: 0.9em; }
+    .spoiler { background: #202225; color: transparent; border-radius: 4px; padding: 0 4px; cursor: pointer; }
+    .spoiler:hover { color: inherit; background: rgba(255,255,255,0.1); }
+
     .embed-field {
-      margin-top: 10px;
-      padding-top: 10px;
-      border-top: 1px solid rgba(255,255,255,0.06);
+      margin-top: 6px;
     }
 
-    .embed-field-name { font-weight: 700; margin-bottom: 4px; }
+    .embed-field-name { font-weight: 700; margin-bottom: 4px; font-size: 0.85em; text-transform: uppercase; color: var(--muted); }
     .embed-field-value { color: var(--text); line-height: 1.5; }
 
     .attachment {

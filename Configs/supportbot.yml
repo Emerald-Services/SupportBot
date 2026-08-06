@@ -8,7 +8,7 @@
 #           Installed with MIT License
 #
 #           Discord Support: https://discord.gg/emeraldsrv
-#           Website: https://emeraldsrv.dev
+#           Official Website & Marketplace: https://emeraldsrv.com
 #
 #           SupportBot Configuration (supportbot.yml)
 
@@ -20,7 +20,7 @@ SupportBot_Version: "v26.2-pre1"
 
 General:
   Name: "SupportBot"
-  Token: "BOT_TOKEN"
+  Token: "DISCORD_BOT_TOKEN"
   Addons:
     Enabled: true
   GuildId: "GUILD_ID"
@@ -33,12 +33,12 @@ Activity:
   Status: "SupportBot"
   Type: "Watching"
   StreamingURL: "https://www.twitch.tv/YOUR_TWITCH_NAME"
-  # Available Types:
-  # Playing
-  # Watching
-  # Listening
-  # Competing
-  # Streaming (URL required)
+  # Available Activity Types:
+  # - Playing
+  # - Watching
+  # - Listening
+  # - Competing
+  # - Streaming (URL required)
 
   # You can also update the activity via Discord using: /settings
 
@@ -54,7 +54,6 @@ Embed:
     Warn: "#fca117"
 
   Footer: "SupportBot | Developed by Emerald Development"
-  # Use 0x<hexcode>  to change the colour of the embeds.
 
   # -------------------------
   #  Roles
@@ -71,7 +70,7 @@ Roles:
     Moderator: "ROLE_ID"
 
   Mod:
-    AllowSupportStaff: false
+    AllowSupportStaff: true
   # Allow Support Staff to use the /mod command. (More in detail customisation in commands.yml)
 
   # ----------------------------
@@ -225,7 +224,7 @@ Ticket:
     TicketBlacklistLog: "CHANNEL_ID"
 
   AIMode:
-    Enabled: false
+    Enabled: true
     ThreadName: "Chat with SupportBot AI"
     WelcomeMessage: "Hi! I’m SupportBot AI. You can chat with me here about your issue."
 

@@ -59,7 +59,16 @@ logTypes.forEach((type) => {
 function logToFile(type, data) {
   const date = new Date().toISOString().split("T")[0];
   const file = path.join(`./Logs/${type}`, `${type}-${date}.log`);
-  fs.appendFileSync(file, `[${new Date().toISOString()}] ${data}\n`);
+  const timestamp = new Date().toISOString();
+  fs.appendFileSync(file, `[${timestamp}] ${data}\n`);
+
+  if (global.apiServer) {
+    global.apiServer.broadcast("log", {
+      type,
+      timestamp,
+      message: String(data)
+    });
+  }
 }
 
 const origLog = console.log;

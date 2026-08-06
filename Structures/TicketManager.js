@@ -1,4 +1,4 @@
-﻿const fs = require("fs");
+const fs = require("fs");
 const path = require("path");
 const Discord = require("discord.js");
 const yaml = require("js-yaml");
@@ -135,7 +135,14 @@ function renderEmbeds(embeds = []) {
     .join("");
 }
 
-async function createTranscript(interaction, ticket, reason) {
+async function createTranscript(interaction, ticketInput, reasonInput) {
+  let ticketRecord = typeof ticketInput === "object" && ticketInput !== null ? ticketInput : null;
+  let closeReason = typeof ticketInput === "string" ? ticketInput : reasonInput;
+
+  if (!ticketRecord && typeof db.getTicket === "function") {
+    ticketRecord = db.getTicket(interaction.channel.id) || {};
+  }
+
   const { getChannel } = interaction.client;
 
   const transcriptChannel = await getChannel(
@@ -188,12 +195,27 @@ async function createTranscript(interaction, ticket, reason) {
     db.updateTicketStatus(interaction.channel.id, "closed");
   }
 
-  const ticketUserId = ticket.user_id || ticket.user;
+  let ticketUserId = ticketRecord?.user_id || ticketRecord?.user || ticketRecord?.author_id;
+
+  if (!ticketUserId && interaction.channel.permissionOverwrites) {
+    const memberOverwrite = interaction.channel.permissionOverwrites.cache.find(
+      (pow) => pow.type === 1 && pow.id !== interaction.client.user.id
+    );
+    if (memberOverwrite) {
+      ticketUserId = memberOverwrite.id;
+    }
+  }
+
+  if (!ticketUserId && allMessages.length > 0) {
+    const firstNonBotMsg = allMessages.find((m) => !m.author.bot);
+    if (firstNonBotMsg) {
+      ticketUserId = firstNonBotMsg.author.id;
+    }
+  }
+
   const tUser =
-    interaction.client.users.cache.get(ticketUserId) ||
-    (ticketUserId
-      ? await interaction.client.users.fetch(ticketUserId).catch(() => null)
-      : null);
+    (ticketUserId ? interaction.client.users.cache.get(ticketUserId) : null) ||
+    (ticketUserId ? await interaction.client.users.fetch(ticketUserId).catch(() => null) : null);
 
   const transcriptEmbed = new Discord.EmbedBuilder()
     .setTitle(msgconfig.TicketLog.Title)
@@ -204,15 +226,36 @@ async function createTranscript(interaction, ticket, reason) {
     })
     .setDescription(
       `> **Ticket:** ${interaction.channel.name} (\`${interaction.channel.id}\`)\n` +
-        `> **User:** ${tUser?.tag || "Unknown User"} (\`${tUser?.id || ticketUserId || "Unknown"}\`)\n` +
+        `> **User:** ${tUser ? `<@${tUser.id}> (\`${tUser.tag}\`)` : "Unknown User"}\n` +
         `> **Closed by:** <@${interaction.user.id}>\n` +
         `> **Message Count:** ${transcriptData.length}`,
     )
     .addFields({
       name: "Reason",
-      value: `\`\`\`${reason || "No Reason Provided."}\`\`\``,
+      value: `\`\`\`${closeReason || "No Reason Provided."}\`\`\``,
       inline: false,
     });
+
+  try {
+    const configStore = require("./ConfigStore");
+    const transcriptStore = require("./TranscriptStore");
+    const apiConfig = configStore.api?.API;
+    const tSettings = transcriptStore.getSettings();
+
+    if (apiConfig?.Enabled !== false) {
+      const port = apiConfig?.Port || 3000;
+      const isPublic = Boolean(tSettings?.publicAccess?.enabled);
+      const transcriptUrl = `http://localhost:${port}/transcripts/${interaction.channel.id}`;
+
+      transcriptEmbed.addFields({
+        name: isPublic ? "Public Web Transcript" : "Dashboard Transcript",
+        value: `[${isPublic ? "Click here to view public transcript" : "Click here to view in Dashboard"}](${transcriptUrl})`,
+        inline: false,
+      });
+    }
+  } catch (err) {
+    console.warn("[TicketManager] Could not add web transcript URL:", err.message);
+  }
 
   const transcriptDir = path.join(process.cwd(), "./Data/Transcripts");
   if (!fs.existsSync(transcriptDir)) {
@@ -228,7 +271,7 @@ async function createTranscript(interaction, ticket, reason) {
       name: interaction.channel.name,
       messages: transcriptData,
     },
-    reason,
+    closeReason,
   );
 
   fs.writeFileSync(htmlPath, html, "utf8");
