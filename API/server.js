@@ -242,7 +242,7 @@ class APIServer {
     requirePermission(permission) {
         return (req, res, next) => {
             if (req.dashboardService) return next();
-            if (req.dashboardIsOwner || req.dashboardImpersonatingGroup) return next();
+            if (req.dashboardIsOwner && !req.dashboardImpersonatingGroup) return next();
             if (hasPermission(req.dashboardPermissions, permission)) return next();
             return forbid(res);
         };
@@ -251,7 +251,7 @@ class APIServer {
     requireConfigAccess(mode = 'view') {
         return (req, res, next) => {
             if (req.dashboardService) return next();
-            if (req.dashboardIsOwner || req.dashboardImpersonatingGroup) return next();
+            if (req.dashboardIsOwner && !req.dashboardImpersonatingGroup) return next();
             const file = req.params?.file || req.body?.filename;
             if (!file) return next();
             if (!canAccessConfig(req.dashboardPermissions, file, mode)) {
@@ -634,6 +634,68 @@ h1{font-size:1.25rem}a{color:#a78bfa}</style></head><body>
             } catch (err) {
                 console.error('[API] Error fetching open tickets:', err);
                 res.status(500).json({ success: false, error: 'Failed to fetch open tickets' });
+            }
+        });
+
+        app.post('/system/tickets/create', p('tickets'), async (req, res) => {
+            try {
+                const { department, subject, reason, userId } = req.body;
+                if (!this.client?.user) {
+                    return res.status(503).json({ success: false, error: 'Bot is not connected to Discord.' });
+                }
+
+                const guild = this.client.guilds.cache.first();
+                if (!guild) {
+                    return res.status(404).json({ success: false, error: 'No connected Discord server found.' });
+                }
+
+                const deptKey = department || supportbot.Ticket?.DepartmentSystem?.DefaultDepartment || 'general';
+                const deptConfig = supportbot.Ticket?.DepartmentSystem?.Departments?.[deptKey];
+                if (deptConfig && deptConfig.Enabled === false) {
+                    return res.status(400).json({ success: false, error: `Ticket department '${deptKey}' is currently disabled.` });
+                }
+
+                const targetUserId = userId || req.dashboardUser?.id || guild.ownerId;
+                let targetUser = await this.client.users.fetch(targetUserId).catch(() => null);
+                if (!targetUser) {
+                    targetUser = this.client.user;
+                }
+
+                const openCmd = this.client.commands.get(cmdconfig.OpenTicket?.Command || "new");
+                if (!openCmd) {
+                    return res.status(500).json({ success: false, error: 'Open ticket command not found in bot.' });
+                }
+
+                const fakeInteraction = {
+                    guild,
+                    user: targetUser,
+                    member: await guild.members.fetch(targetUser.id).catch(() => null),
+                    channel: guild.channels.cache.first(),
+                    department: deptKey,
+                    reason: subject || reason || "Opened via Web Dashboard",
+                    priority: deptConfig?.DefaultPriority || supportbot.Ticket?.PrioritySystem?.DefaultPriority || "medium",
+                    isCommand: () => false,
+                    isChatInputCommand: () => false,
+                    isButton: () => false,
+                    isStringSelectMenu: () => false,
+                    isModalSubmit: () => false,
+                    deferred: false,
+                    replied: false,
+                    deferReply: async () => {},
+                    reply: async (payload) => { fakeInteraction.repliedPayload = payload; },
+                    followUp: async (payload) => { fakeInteraction.followUpPayload = payload; },
+                    editReply: async (payload) => { fakeInteraction.editReplyPayload = payload; }
+                };
+
+                await openCmd.run(fakeInteraction);
+
+                res.json({
+                    success: true,
+                    message: `Ticket successfully created for department: ${deptConfig?.Name || deptKey}!`,
+                });
+            } catch (err) {
+                console.error('[API] Error creating ticket:', err);
+                res.status(500).json({ success: false, error: err.message || 'Failed to create ticket' });
             }
         });
 
@@ -1051,7 +1113,7 @@ h1{font-size:1.25rem}a{color:#a78bfa}</style></head><body>
                 res.json({
                     success: true,
                     data: {
-                        users: listUsers(oauth),
+                        users: listUsers(oauth, this.client),
                         roles: ROLES,
                         configFiles: CONFIG_FILES,
                     },
@@ -1320,6 +1382,9 @@ h1{font-size:1.25rem}a{color:#a78bfa}</style></head><body>
         });
 
         app.put('/configs/raw', cv('edit'), async (req, res) => {
+            if (!hasPermission(req.dashboardUser?.permissions, 'configs.raw_yaml')) {
+                return res.status(403).json({ success: false, error: 'Forbidden: Raw YAML editing requires the Raw YAML Editor permission.' });
+            }
             const validFiles = ['supportbot', 'ticket-panel', 'commands', 'messages', 'supportbot-ai', 'api'];
             const file = req.body.filename;
             let content = req.body.content;

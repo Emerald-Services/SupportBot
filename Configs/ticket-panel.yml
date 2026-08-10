@@ -8,7 +8,8 @@
 #           Installed with MIT License
 #
 #           Discord Support: https://discord.gg/emeraldsrv
-#           Official Website & Marketplace: https://emeraldsrv.com
+#           Official Documentation: https://docs.emeraldsrv.com
+#           Addons Marketplace: https://community.emeraldsrv.com
 #
 #           Ticket Creation Panel Configuration (ticket-panel.yml)
 
@@ -20,7 +21,8 @@ Panel: true
 
 Style:
   Title: "## 📬 Open Ticket"
-  Description: "Tap the button to open a support ticket, Our team will respond as soon as possible."
+  Description: "Tap the button to open a support ticket, Our team will respond as
+    soon as possible."
   Image: "https://cdn.1tzemerald.space/Emerald%20Services/SBPoster.png"
   Color: "#45b463"
   Layout: "3"

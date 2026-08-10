@@ -140,6 +140,13 @@ module.exports = new Event("interactionCreate", async (client, interaction) => {
   if (interaction.isStringSelectMenu()) {
     if (interaction.customId === "ticketdepartmentselect") {
       const selectedDepartment = interaction.values[0];
+      const deptConfig = supportbot.Ticket?.DepartmentSystem?.Departments?.[selectedDepartment];
+      if (deptConfig && deptConfig.Enabled === false) {
+        return interaction.reply({
+          content: "Ticket creation for this department is currently disabled.",
+          flags: Discord.MessageFlags.Ephemeral,
+        });
+      }
 
       if (supportbot.Ticket.TicketReason) {
         const modal = new Discord.ModalBuilder()
@@ -680,7 +687,15 @@ module.exports = new Event("interactionCreate", async (client, interaction) => {
       });
     }
 
-    if (interaction.customId === "createticket") {
+    if (interaction.customId === "createticket" || interaction.customId === "openticket") {
+      const panelDisabled = panelconfig.Panel === false || supportbot.Ticket?.Enabled === false;
+      if (panelDisabled) {
+        return interaction.reply({
+          content: "Ticket creation is currently disabled.",
+          flags: Discord.MessageFlags.Ephemeral,
+        });
+      }
+
       if (supportbot.Ticket.TicketReason) {
         const modal = new Discord.ModalBuilder()
           .setCustomId("ticketReasonModal")

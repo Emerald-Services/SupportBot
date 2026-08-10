@@ -85,6 +85,14 @@ async function logStartup(client, options = {}) {
   info("Version", botVersion);
   info("Node.js", process.version);
   info("Discord.js", `v${Discord.version}`);
+  const db = require("./Database.js");
+  const dbInfo = db.getDatabaseInfo ? db.getDatabaseInfo() : null;
+  if (dbInfo) {
+    const dbDisplay = dbInfo.type === "mysql"
+      ? `${dbInfo.driver} (${dbInfo.host}:${dbInfo.port}/${dbInfo.database})`
+      : `${dbInfo.driver} (${dbInfo.file})`;
+    info("Database", dbDisplay);
+  }
   info("Logged in as", client.user.tag);
   info("Guilds", `${client.guilds.cache.size}`);
 
@@ -100,6 +108,16 @@ async function logStartup(client, options = {}) {
   info("Invite", inviteUrl);
 
   console.log("");
+}
+
+function checkSetup() {
+  const { isSetupComplete } = require("./DashboardSetup.js");
+  if (!isSetupComplete()) {
+    const port = configStore.api?.API?.Port || 25575;
+    section("Setup Required");
+    status("Onboarding setup incomplete", false, `http://localhost:${port}/setup`);
+    console.log("");
+  }
 }
 
 async function checkConfigs(client) {
@@ -169,6 +187,8 @@ async function runBotReady(client, options = {}) {
   if (logCommands) {
     logSlashCommandsRegistered(client);
   }
+
+  checkSetup();
 }
 
 module.exports = {

@@ -33,9 +33,10 @@ function buildContainer(title, lines = []) {
 
   container.addSeparatorComponents(new Discord.SeparatorBuilder().setDivider(true));
 
-  if (lines.length > 0) {
+  const textContent = lines.filter(Boolean).join("\n").trim();
+  if (textContent.length > 0) {
     container.addTextDisplayComponents(
-      new Discord.TextDisplayBuilder().setContent(lines.join("\n")),
+      new Discord.TextDisplayBuilder().setContent(textContent),
     );
   }
 

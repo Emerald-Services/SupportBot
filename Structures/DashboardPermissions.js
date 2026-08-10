@@ -17,29 +17,32 @@ function configMap(view, edit) {
   return configs;
 }
 
-function fullPermissions() {
+function fullPermissions(rawYaml = true, userManage = true) {
   return {
     overview: true,
     tickets: true,
     logs: true,
     transcripts: true,
+    rawYaml: Boolean(rawYaml),
     settings: { view: true, update: true },
     configs: configMap(true, true),
-    users: { view: true, manage: true },
+    users: { view: true, manage: Boolean(userManage) },
   };
 }
 
 function permissionsFromRole(role, customPermissions) {
   switch (role) {
     case "owner":
+      return fullPermissions(true, true);
     case "admin":
-      return fullPermissions();
+      return fullPermissions(false, false);
     case "moderator":
       return {
         overview: true,
         tickets: true,
         logs: true,
         transcripts: true,
+        rawYaml: false,
         settings: { view: true, update: false },
         configs: configMap(true, false),
         users: { view: false, manage: false },
@@ -50,6 +53,7 @@ function permissionsFromRole(role, customPermissions) {
         tickets: true,
         logs: true,
         transcripts: false,
+        rawYaml: false,
         settings: { view: true, update: false },
         configs: configMap(true, true),
         users: { view: false, manage: false },
@@ -60,6 +64,7 @@ function permissionsFromRole(role, customPermissions) {
         tickets: true,
         logs: true,
         transcripts: true,
+        rawYaml: false,
         settings: { view: true, update: false },
         configs: configMap(true, false),
         users: { view: false, manage: false },
@@ -80,6 +85,7 @@ function normalizePermissions(input) {
     tickets: input.tickets ?? input.overview ?? base.tickets,
     logs: input.logs ?? base.logs,
     transcripts: input.transcripts ?? base.transcripts,
+    rawYaml: Boolean(input.rawYaml ?? input.configs?.rawYaml ?? base.rawYaml),
     settings: {
       view: input.settings?.view ?? base.settings.view,
       update: input.settings?.update ?? base.settings.update,
@@ -105,6 +111,9 @@ function hasPermission(permissions, check) {
   if (check === "tickets") return Boolean(permissions.tickets ?? permissions.overview);
   if (check === "logs") return Boolean(permissions.logs);
   if (check === "transcripts") return Boolean(permissions.transcripts);
+  if (check === "configs.raw_yaml" || check === "configs.rawYaml" || check === "rawYaml") {
+    return Boolean(permissions.rawYaml ?? permissions.configs?.rawYaml ?? false);
+  }
   if (check === "settings.view") return Boolean(permissions.settings?.view);
   if (check === "settings.update") return Boolean(permissions.settings?.update);
   if (check === "users.view") return Boolean(permissions.users?.view);

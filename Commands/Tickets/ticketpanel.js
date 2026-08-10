@@ -116,6 +116,7 @@ module.exports = new Command({
     }
 
     const departmentOptions = Object.entries(departments)
+      .filter(([_, dept]) => dept && dept.Enabled !== false)
       .slice(0, 25)
       .map(([key, dept]) => ({
         label: dept.Name || key,

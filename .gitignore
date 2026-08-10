@@ -1,5 +1,19 @@
 node_modules
 
+# Local database, runtime data, and transcripts
+Data/*.db
+Data/*.db-shm
+Data/*.db-wal
+Data/Transcripts/*
+Data/dashboard-groups.json
+Data/dashboard-users.json
+Data/transcript-settings.json
+
+# Local log files
+Logs/Output/*
+Logs/Errors/*
+Logs/Warns/*
+
 # Dashboard UI source at repo root only (do not ignore public/dashboard/)
 /dashboard/
 

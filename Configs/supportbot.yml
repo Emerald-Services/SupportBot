@@ -8,11 +8,11 @@
 #           Installed with MIT License
 #
 #           Discord Support: https://discord.gg/emeraldsrv
-#           Official Website & Marketplace: https://emeraldsrv.com
+#           Website: https://emeraldsrv.dev
 #
 #           SupportBot Configuration (supportbot.yml)
 
-SupportBot_Version: "v26.2-pre1"
+SupportBot_Version: "v26.2-pre2"
 
 # -------------------------
 #   General
@@ -20,12 +20,32 @@ SupportBot_Version: "v26.2-pre1"
 
 General:
   Name: "SupportBot"
-  Token: "DISCORD_BOT_TOKEN"
+  Token: "YOUR_BOT_TOKEN_HERE"
   Addons:
     Enabled: true
-  GuildId: "GUILD_ID"
+  GuildId: "YOUR_GUILD_ID_HERE"
 
 # -------------------------
+#  Database Configuration
+# -------------------------
+
+Database:
+  # Driver options: "mysql" (works for MariaDB & MySQL) or "sqlite"
+  Driver: "mysql"
+
+  # Connection Settings for MariaDB / MySQL (used when Driver is "mysql" or "mariadb")
+  MySQL:
+    Host: "localhost"
+    Port: 3306
+    User: "root"
+    Password: "password"
+    Database: "supportbot"
+    ConnectionLimit: 10
+
+  # Connection Settings for SQLite (used when Driver is "sqlite")
+  SQLite:
+    File: "./Data/supportbot.db"
+
 #  Activity
 # -------------------------
 
@@ -33,12 +53,12 @@ Activity:
   Status: "SupportBot"
   Type: "Watching"
   StreamingURL: "https://www.twitch.tv/YOUR_TWITCH_NAME"
-  # Available Activity Types:
-  # - Playing
-  # - Watching
-  # - Listening
-  # - Competing
-  # - Streaming (URL required)
+  # Available Types:
+  # Playing
+  # Watching
+  # Listening
+  # Competing
+  # Streaming (URL required)
 
   # You can also update the activity via Discord using: /settings
 
@@ -54,6 +74,7 @@ Embed:
     Warn: "#fca117"
 
   Footer: "SupportBot | Developed by Emerald Development"
+  # Use 0x<hexcode>  to change the colour of the embeds.
 
   # -------------------------
   #  Roles

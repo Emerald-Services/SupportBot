@@ -20,27 +20,30 @@ const client = new Client({
   intents: ["Guilds", "GuildMembers", "GuildMessages", "MessageContent"],
 });
 
+const { isSetupComplete } = require("./Structures/DashboardSetup.js");
 const APIServer = require("./API/server.js");
 
-// Start dashboard API immediately — do not wait for Discord clientReady
 const api = new APIServer(client);
 client.apiServer = api;
 
+const port = api.config?.Port || 25575;
 if (api.config?.Enabled) {
-  const port = api.config.Port || 3000;
   api.start(port);
-  console.log(
-    `[Dashboard] API listening on http://localhost:${port} (bot may still be connecting)`,
-  );
+  if (!isSetupComplete()) {
+    console.log(`\n\x1b[33m\x1b[1m[Setup Required] Go to http://localhost:${port}/setup to set up your bot and dashboard.\x1b[0m\n`);
+  }
 } else {
   console.warn("[Dashboard] API disabled in Configs/api.yml");
 }
 
-client.start(configStore.supportbot.General.Token);
+const token = configStore.supportbot?.General?.Token;
+const isPlaceholderToken = !token || token.includes("BOT_TOKEN") || token.includes("CHANGE_ME") || token.length < 30;
 
-client.on("clientReady", () => {
-  console.log("[Dashboard] Discord bot is ready — full stats and guild tools are available");
-});
+if (isPlaceholderToken) {
+  console.warn(`\x1b[33m[SupportBot] Bot token is not configured yet. Complete setup at http://localhost:${port}/setup\x1b[0m`);
+} else {
+  client.start(token);
+}
 
 // SupportBot - New Logging System
 

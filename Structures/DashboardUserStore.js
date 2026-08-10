@@ -160,12 +160,24 @@ function formatPublicUser(entry, access, discordProfile) {
   };
 }
 
-function listUsers(oauth) {
+function listUsers(oauth, discordClient) {
   bootstrapFromOAuth(oauth);
   const store = readStore();
   const yamlOwners = getOwnerIds(oauth);
 
-  return Object.values(store.users).map((entry) => {
+  let updated = false;
+
+  const usersList = Object.values(store.users).map((entry) => {
+    if (discordClient?.users?.cache) {
+      const cached = discordClient.users.cache.get(String(entry.id));
+      if (cached && (!entry.username || !entry.avatar)) {
+        entry.username = cached.username || entry.username;
+        entry.globalName = cached.globalName || cached.username || entry.globalName;
+        entry.avatar = cached.avatar || entry.avatar;
+        updated = true;
+      }
+    }
+
     const access = resolvePermissions(entry, oauth, entry.id) || {
       permissions: permissionsFromRole("viewer"),
       role: entry.role,
@@ -174,8 +186,8 @@ function listUsers(oauth) {
 
     return {
       id: entry.id,
-      username: entry.username,
-      globalName: entry.globalName,
+      username: entry.username || (yamlOwners.has(String(entry.id)) ? "Owner" : "User"),
+      globalName: entry.globalName || entry.username || null,
       avatar: entry.avatar
         ? discordAvatarUrl({ id: entry.id, avatar: entry.avatar })
         : discordAvatarUrl({ id: entry.id, avatar: null }),
@@ -192,6 +204,12 @@ function listUsers(oauth) {
       updatedAt: entry.updatedAt,
     };
   });
+
+  if (updated) {
+    writeStore(store);
+  }
+
+  return usersList;
 }
 
 function addUser(payload, actorId, oauth) {

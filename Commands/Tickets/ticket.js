@@ -28,22 +28,7 @@ const Command = require("../../Structures/Command.js");
 const TicketNumberID = require("../../Structures/TicketID.js");
 
 async function isBlacklisted(userId) {
-  let blacklistData;
-  try {
-    blacklistData = JSON.parse(
-      fs.readFileSync("./Data/BlacklistedUsers.json", "utf8"),
-    );
-  } catch (error) {
-    console.error("Error reading BlacklistedUsers.json:", error);
-    return false;
-  }
-
-  if (!blacklistData || !Array.isArray(blacklistData.blacklistedUsers)) {
-    console.error("blacklistedUsers is not defined or is not an array");
-    return false;
-  }
-
-  return blacklistData.blacklistedUsers.includes(userId);
+  return typeof db.isUserBlacklisted === "function" ? db.isUserBlacklisted(userId) : false;
 }
 
 async function getClockedInUsers(guild) {

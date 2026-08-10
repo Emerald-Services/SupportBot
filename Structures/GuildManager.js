@@ -180,6 +180,7 @@ function buildResourcesFromGuild(guild) {
   return {
     guildId: guild.id,
     guildName: guild.name,
+    guildIcon: guild.iconURL({ extension: "png", size: 64 }) || null,
     roles,
     channels,
     categories,

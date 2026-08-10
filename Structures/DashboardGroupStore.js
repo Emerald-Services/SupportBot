@@ -22,7 +22,7 @@ const DEFAULT_GROUPS = [
     color: "#3B82F6", // Blue
     discordRoleId: null,
     isSystem: true,
-    permissions: fullPermissions(),
+    permissions: fullPermissions(false, false),
   },
   {
     id: "support",
@@ -151,6 +151,9 @@ function createGroup(payload = {}) {
 }
 
 function updateGroup(id, payload = {}) {
+  if (id === "owner") {
+    throw new Error('System group "Owner" cannot be modified.');
+  }
   const groups = loadStore();
   const index = groups.findIndex((g) => g.id === id);
   if (index === -1) {

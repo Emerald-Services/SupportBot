@@ -1,15 +1,3 @@
-#      ___                            _    ___        _
-#    / __> _ _  ___  ___  ___  _ _ _| |_ | . > ___ _| |_
-#     \__ \| | || . \| . \/ . \| '_> | |  | . \/ . \ | |
-#     <___/`___||  _/|  _/\___/|_|   |_|  |___/\___/ |_|
-#                |_|  |_|
-#
-#           SupportBot created by Emerald Services
-#           Installed with MIT License
-#
-#           Discord Support: https://discord.gg/emeraldsrv
-#           Official Website & Marketplace: https://emeraldsrv.com
-
 # -------------------------
 #   SupportBot AI
 #
@@ -20,8 +8,8 @@
 Enabled: true
 
 General:
-  Provider: "groq"
-  Model: "MODEL_NAME"
+  Provider: "openai"
+  Model: "MODEL"
   Model_API_Key: "MODEL_API_KEY"
   # Providers Available:
   # "openai" - Use OpenAI's GPT models. Example: "gpt-5.4" "gpt-5-mini"
@@ -33,7 +21,7 @@ General:
   Temperature: 0.4
   Name: "SupportBot AI"
 
-  PastebinAPI_Key: "PASTEBIN_API_KEY"
+  PastebinAPI_Key: "YOUR_PASTEBIN_API_KEY"
   PastebinAPI_URL: "https://pastebin.com/api/api_post.php"
 
 Style:

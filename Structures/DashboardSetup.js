@@ -84,6 +84,7 @@ function getOwnerIds(oauth) {
 function buildSteps(apiRoot, supportbot) {
   const oauth = apiRoot?.OAuth || {};
   const token = supportbot?.General?.Token;
+  const dbConfig = supportbot?.Database || {};
 
   return [
     {
@@ -91,6 +92,12 @@ function buildSteps(apiRoot, supportbot) {
       title: "Bot token",
       description: "From the Discord Developer Portal → your application → Bot → Reset Token.",
       complete: isValidBotToken(token),
+    },
+    {
+      id: "database",
+      title: "Database storage",
+      description: "Choose SQLite or MySQL database engine for storing bot data.",
+      complete: Boolean(dbConfig.Driver),
     },
     {
       id: "secretKey",
@@ -334,11 +341,57 @@ function validateSecretKey(secretKey) {
   return { ok: true };
 }
 
+async function validateDatabase(dbDriver, dbHost, dbPort, dbUser, dbPassword, dbDatabase) {
+  const driver = String(dbDriver || "sqlite").toLowerCase();
+  if (driver === "mysql" || driver === "mariadb") {
+    const host = String(dbHost || "").trim();
+    const port = Number(dbPort) || 3306;
+    const user = String(dbUser || "").trim();
+    const password = String(dbPassword || "");
+    const database = String(dbDatabase || "").trim();
+
+    if (isEmpty(host)) return { ok: false, error: "MySQL Host is required." };
+    if (isEmpty(user)) return { ok: false, error: "MySQL User is required." };
+    if (isEmpty(database)) return { ok: false, error: "MySQL Database Name is required." };
+
+    try {
+      const mysql = require("mysql2/promise");
+      const connection = await mysql.createConnection({
+        host,
+        port,
+        user,
+        password,
+        database,
+        connectTimeout: 5000,
+      });
+      await connection.end();
+      return { ok: true, driver: "mysql" };
+    } catch (err) {
+      return {
+        ok: false,
+        error: `MySQL Connection Failed: ${err.message || err.code || "Could not connect to database host."}`,
+      };
+    }
+  }
+
+  return { ok: true, driver: "sqlite" };
+}
+
 async function validateSetupPayload(payload) {
   const results = {};
 
   if (payload.botToken != null) {
     results.botToken = await validateBotToken(payload.botToken);
+  }
+  if (payload.dbDriver != null) {
+    results.database = await validateDatabase(
+      payload.dbDriver,
+      payload.dbHost,
+      payload.dbPort,
+      payload.dbUser,
+      payload.dbPassword,
+      payload.dbDatabase,
+    );
   }
   if (payload.secretKey != null) {
     results.secretKey = validateSecretKey(payload.secretKey);
@@ -415,7 +468,24 @@ function applySetup(payload) {
   fs.writeFileSync(API_FILE, apiDoc.toString());
 
   const sbDoc = YAML.parseDocument(fs.readFileSync(SUPPORTBOT_FILE, "utf8"));
-  sbDoc.setIn(["General", "Token"], String(payload.botToken).trim());
+  if (payload.botToken != null && String(payload.botToken).trim() !== "") {
+    sbDoc.setIn(["General", "Token"], String(payload.botToken).trim());
+  }
+
+  if (payload.dbDriver != null) {
+    const driver = String(payload.dbDriver).toLowerCase() === "mysql" ? "mysql" : "sqlite";
+    sbDoc.setIn(["Database", "Driver"], driver);
+    if (driver === "mysql") {
+      sbDoc.setIn(["Database", "MySQL", "Host"], String(payload.dbHost || "127.0.0.1").trim());
+      sbDoc.setIn(["Database", "MySQL", "Port"], Number(payload.dbPort) || 3306);
+      sbDoc.setIn(["Database", "MySQL", "User"], String(payload.dbUser || "").trim());
+      sbDoc.setIn(["Database", "MySQL", "Password"], String(payload.dbPassword || ""));
+      sbDoc.setIn(["Database", "MySQL", "Database"], String(payload.dbDatabase || "").trim());
+    } else {
+      sbDoc.setIn(["Database", "SQLite", "File"], "./Data/supportbot.db");
+    }
+  }
+
   fs.writeFileSync(SUPPORTBOT_FILE, sbDoc.toString());
 
   configStore.reloadFile("api");
