@@ -649,8 +649,11 @@ h1{font-size:1.25rem}a{color:#a78bfa}</style></head><body>
                     return res.status(404).json({ success: false, error: 'No connected Discord server found.' });
                 }
 
-                const deptKey = department || supportbot.Ticket?.DepartmentSystem?.DefaultDepartment || 'general';
-                const deptConfig = supportbot.Ticket?.DepartmentSystem?.Departments?.[deptKey];
+                const supportbot = configStore.supportbot;
+                const cmdconfig = configStore.commands;
+
+                const deptKey = department || supportbot?.Ticket?.DepartmentSystem?.DefaultDepartment || 'general';
+                const deptConfig = supportbot?.Ticket?.DepartmentSystem?.Departments?.[deptKey];
                 if (deptConfig && deptConfig.Enabled === false) {
                     return res.status(400).json({ success: false, error: `Ticket department '${deptKey}' is currently disabled.` });
                 }
@@ -661,19 +664,28 @@ h1{font-size:1.25rem}a{color:#a78bfa}</style></head><body>
                     targetUser = this.client.user;
                 }
 
-                const openCmd = this.client.commands.get(cmdconfig.OpenTicket?.Command || "new");
+                const openCmd = this.client.commands.get(cmdconfig?.OpenTicket?.Command || "new");
                 if (!openCmd) {
                     return res.status(500).json({ success: false, error: 'Open ticket command not found in bot.' });
                 }
 
                 const fakeInteraction = {
+                    client: this.client,
                     guild,
                     user: targetUser,
                     member: await guild.members.fetch(targetUser.id).catch(() => null),
                     channel: guild.channels.cache.first(),
                     department: deptKey,
                     reason: subject || reason || "Opened via Web Dashboard",
-                    priority: deptConfig?.DefaultPriority || supportbot.Ticket?.PrioritySystem?.DefaultPriority || "medium",
+                    priority: deptConfig?.DefaultPriority || supportbot?.Ticket?.PrioritySystem?.DefaultPriority || "medium",
+                    options: {
+                        getString: (name) => {
+                            if (name === "department") return deptKey;
+                            if (name === "reason") return subject || reason || "Opened via Web Dashboard";
+                            if (name === "priority") return deptConfig?.DefaultPriority || supportbot?.Ticket?.PrioritySystem?.DefaultPriority || "medium";
+                            return null;
+                        }
+                    },
                     isCommand: () => false,
                     isChatInputCommand: () => false,
                     isButton: () => false,

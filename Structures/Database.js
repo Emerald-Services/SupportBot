@@ -355,6 +355,13 @@ function initMySQL() {
       }
     } catch (err) {
       console.error("[Database] Error initializing MySQL tables or state:", err.message);
+      console.warn("[Database] Falling back to SQLite database.");
+      mysqlReady = false;
+      if (mysqlPool) {
+        try { mysqlPool.end(); } catch (e) {}
+        mysqlPool = null;
+      }
+      initSQLite();
     }
   })();
 }
@@ -449,7 +456,7 @@ function persistTicket(ticketId) {
   const t = state.tickets[ticketId];
   if (!t) return;
 
-  if (isMySQL && mysqlPool) {
+  if (isMySQL && mysqlReady && mysqlPool) {
     const sql = `
       INSERT INTO tickets (
         ticket_id, user_id, subject, description, department, priority, status,
@@ -526,7 +533,7 @@ function persistTicket(ticketId) {
 }
 
 function persistPanel(panelRow) {
-  if (isMySQL && mysqlPool) {
+  if (isMySQL && mysqlReady && mysqlPool) {
     mysqlPool.query(
       "INSERT INTO ticket_panels (id, message_id, channel_id, created_at) VALUES (?, ?, ?, ?)",
       [panelRow.id, panelRow.message_id, panelRow.channel_id, panelRow.created_at],
@@ -542,7 +549,7 @@ function persistPanel(panelRow) {
 
 function persistTicketUser(ticketId, userId, action = "add") {
   if (action === "add") {
-    if (isMySQL && mysqlPool) {
+    if (isMySQL && mysqlReady && mysqlPool) {
       mysqlPool.query("INSERT IGNORE INTO ticket_users (ticket_id, user_id) VALUES (?, ?)", [ticketId, userId], (err) => {
         if (err) console.error("[Database] MySQL persistTicketUser error:", err.message);
       });
@@ -550,7 +557,7 @@ function persistTicketUser(ticketId, userId, action = "add") {
       sqliteDb.prepare("INSERT OR IGNORE INTO ticket_users (ticket_id, user_id) VALUES (?, ?)").run(ticketId, userId);
     }
   } else {
-    if (isMySQL && mysqlPool) {
+    if (isMySQL && mysqlReady && mysqlPool) {
       mysqlPool.query("DELETE FROM ticket_users WHERE ticket_id = ? AND user_id = ?", [ticketId, userId], (err) => {
         if (err) console.error("[Database] MySQL deleteTicketUser error:", err.message);
       });
@@ -564,7 +571,7 @@ function persistProfile(userId) {
   const p = state.profiles[userId];
   if (!p) return;
 
-  if (isMySQL && mysqlPool) {
+  if (isMySQL && mysqlReady && mysqlPool) {
     const sql = `
       INSERT INTO profiles (user_id, bio, timezone, clocked_in) VALUES (?, ?, ?, ?)
       ON DUPLICATE KEY UPDATE bio=VALUES(bio), timezone=VALUES(timezone), clocked_in=VALUES(clocked_in);
@@ -600,13 +607,13 @@ function persistSettings() {
 }
 
 function persistBlacklistedUser(userId, action = "add") {
-  if (isMySQL && !mysqlReady) {
+  if (isMySQL && mysqlReady && !mysqlPool) {
     mysqlWriteQueue.push(() => persistBlacklistedUser(userId, action));
     return;
   }
   const b = state.blacklisted_users[userId];
   if (action === "add" && b) {
-    if (isMySQL && mysqlPool) {
+    if (isMySQL && mysqlReady && mysqlPool) {
       const sql = `
         INSERT INTO blacklisted_users (user_id, reason, added_by, created_at) VALUES (?, ?, ?, ?)
         ON DUPLICATE KEY UPDATE reason=VALUES(reason), added_by=VALUES(added_by), created_at=VALUES(created_at);
@@ -622,7 +629,7 @@ function persistBlacklistedUser(userId, action = "add") {
       stmt.run(b.user_id, b.reason || "", b.added_by || "", b.created_at || Date.now());
     }
   } else {
-    if (isMySQL && mysqlPool) {
+    if (isMySQL && mysqlReady && mysqlPool) {
       mysqlPool.query("DELETE FROM blacklisted_users WHERE user_id = ?", [userId], (err) => {
         if (err) console.error("[Database] MySQL removeBlacklistedUser error:", err.message);
       });
