@@ -37,6 +37,7 @@ const state = {
   profiles: {},
   settings: {},
   blacklisted_users: {},
+  suggestions: {},
 };
 
 // ----------------------------------------------------
@@ -114,6 +115,16 @@ function initSQLite() {
       added_by TEXT,
       created_at INTEGER
     );
+
+    CREATE TABLE IF NOT EXISTS suggestions (
+      id TEXT PRIMARY KEY,
+      author_id TEXT,
+      text TEXT,
+      status TEXT DEFAULT 'Created',
+      upvotes TEXT DEFAULT '[]',
+      downvotes TEXT DEFAULT '[]',
+      created_at INTEGER
+    );
   `);
 
   loadSQLiteState();
@@ -132,6 +143,10 @@ function loadSQLiteState() {
       department: r.department || "general",
       priority: r.priority || "medium",
       status: r.status || "open",
+      claimedBy: r.claimed_by || null,
+      claimed_by: r.claimed_by || null,
+      claimedAt: r.claimed_at || null,
+      claimed_at: r.claimed_at || null,
       aiModeEnabled: r.ai_mode_enabled,
       aiChannelId: r.ai_channel_id,
       aiType: r.ai_type,
@@ -188,6 +203,31 @@ function loadSQLiteState() {
       reason: b.reason || "",
       added_by: b.added_by || "",
       created_at: b.created_at,
+    };
+  }
+
+  const suggestions = sqliteDb.prepare("SELECT * FROM suggestions").all();
+  for (const s of suggestions) {
+    let upvotes = [];
+    let downvotes = [];
+    try {
+      upvotes = JSON.parse(s.upvotes || "[]");
+    } catch {
+      upvotes = [];
+    }
+    try {
+      downvotes = JSON.parse(s.downvotes || "[]");
+    } catch {
+      downvotes = [];
+    }
+    state.suggestions[s.id] = {
+      id: s.id,
+      author_id: s.author_id,
+      text: s.text,
+      status: s.status || "Created",
+      upvotes: Array.isArray(upvotes) ? upvotes : [],
+      downvotes: Array.isArray(downvotes) ? downvotes : [],
+      created_at: Number(s.created_at),
     };
   }
 }
@@ -275,6 +315,18 @@ function initMySQL() {
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
       `);
 
+      await poolPromise.query(`
+        CREATE TABLE IF NOT EXISTS suggestions (
+          id VARCHAR(255) PRIMARY KEY,
+          author_id VARCHAR(255),
+          text TEXT,
+          status VARCHAR(255) DEFAULT 'Created',
+          upvotes LONGTEXT,
+          downvotes LONGTEXT,
+          created_at BIGINT
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+      `);
+
       // Load initial state from MySQL
       const [tickets] = await poolPromise.query("SELECT * FROM tickets");
       for (const r of tickets) {
@@ -286,6 +338,10 @@ function initMySQL() {
           department: r.department || "general",
           priority: r.priority || "medium",
           status: r.status || "open",
+          claimedBy: r.claimed_by || null,
+          claimed_by: r.claimed_by || null,
+          claimedAt: r.claimed_at ? Number(r.claimed_at) : null,
+          claimed_at: r.claimed_at ? Number(r.claimed_at) : null,
           aiModeEnabled: r.ai_mode_enabled,
           aiChannelId: r.ai_channel_id,
           aiType: r.ai_type,
@@ -342,6 +398,31 @@ function initMySQL() {
           reason: b.reason || "",
           added_by: b.added_by || "",
           created_at: Number(b.created_at),
+        };
+      }
+
+      const [suggestions] = await poolPromise.query("SELECT * FROM suggestions");
+      for (const s of suggestions) {
+        let upvotes = [];
+        let downvotes = [];
+        try {
+          upvotes = JSON.parse(s.upvotes || "[]");
+        } catch {
+          upvotes = [];
+        }
+        try {
+          downvotes = JSON.parse(s.downvotes || "[]");
+        } catch {
+          downvotes = [];
+        }
+        state.suggestions[s.id] = {
+          id: s.id,
+          author_id: s.author_id,
+          text: s.text,
+          status: s.status || "Created",
+          upvotes: Array.isArray(upvotes) ? upvotes : [],
+          downvotes: Array.isArray(downvotes) ? downvotes : [],
+          created_at: Number(s.created_at),
         };
       }
 
@@ -639,6 +720,32 @@ function persistBlacklistedUser(userId, action = "add") {
   }
 }
 
+function persistSuggestion(id) {
+  const s = state.suggestions[id];
+  if (!s) return;
+
+  const upvotesStr = JSON.stringify(s.upvotes || []);
+  const downvotesStr = JSON.stringify(s.downvotes || []);
+
+  if (isMySQL && mysqlReady && mysqlPool) {
+    const sql = `
+      INSERT INTO suggestions (id, author_id, text, status, upvotes, downvotes, created_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
+      ON DUPLICATE KEY UPDATE text=VALUES(text), status=VALUES(status), upvotes=VALUES(upvotes), downvotes=VALUES(downvotes);
+    `;
+    mysqlPool.query(sql, [s.id, s.author_id || "", s.text || "", s.status || "Created", upvotesStr, downvotesStr, s.created_at || Date.now()], (err) => {
+      if (err) console.error("[Database] MySQL persistSuggestion error:", err.message);
+    });
+  } else if (sqliteDb) {
+    const stmt = sqliteDb.prepare(`
+      INSERT INTO suggestions (id, author_id, text, status, upvotes, downvotes, created_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
+      ON CONFLICT(id) DO UPDATE SET text=excluded.text, status=excluded.status, upvotes=excluded.upvotes, downvotes=excluded.downvotes;
+    `);
+    stmt.run(s.id, s.author_id || "", s.text || "", s.status || "Created", upvotesStr, downvotesStr, s.created_at || Date.now());
+  }
+}
+
 function ensureProfile(userId) {
   if (!state.profiles[userId]) {
     state.profiles[userId] = { user_id: userId, bio: "", timezone: "", clockedIn: 0 };
@@ -657,8 +764,15 @@ function normaliseTicketRow(row) {
     }
   }
 
+  const claimedBy = row.claimedBy || row.claimed_by || null;
+  const claimedAt = row.claimedAt || row.claimed_at || null;
+
   return {
     ...row,
+    claimedBy,
+    claimed_by: claimedBy,
+    claimedAt,
+    claimed_at: claimedAt,
     aiModeEnabled: Boolean(row.aiModeEnabled),
     clockedIn: row.clockedIn !== undefined ? Boolean(row.clockedIn) : row.clockedIn,
     questionAnswers,
@@ -880,6 +994,108 @@ const exportsModule = {
 
   getBlacklistedUserDetails() {
     return Object.values(state.blacklisted_users);
+  },
+
+  claimTicket(ticketId, userId) {
+    const t = state.tickets[ticketId];
+    if (!t) return;
+    t.claimedBy = userId;
+    t.claimed_by = userId;
+    t.claimedAt = Date.now();
+    t.claimed_at = Date.now();
+    t.updated_at = Date.now();
+    persistTicket(ticketId);
+  },
+
+  addSuggestion(id, authorId, text) {
+    state.suggestions[id] = {
+      id,
+      author_id: authorId,
+      text,
+      status: "Created",
+      upvotes: [],
+      downvotes: [],
+      created_at: Date.now(),
+    };
+    persistSuggestion(id);
+  },
+
+  add(id, authorId, text) {
+    this.addSuggestion(id, authorId, text);
+  },
+
+  getSuggestion(id) {
+    const s = state.suggestions[id];
+    if (!s) return null;
+    return {
+      ...s,
+      upvotes: Array.isArray(s.upvotes) ? s.upvotes : [],
+      downvotes: Array.isArray(s.downvotes) ? s.downvotes : [],
+    };
+  },
+
+  setSuggestionStatus(id, status) {
+    const s = state.suggestions[id];
+    if (!s) return;
+    s.status = status;
+    persistSuggestion(id);
+  },
+
+  setStatus(id, status) {
+    this.setSuggestionStatus(id, status);
+  },
+
+  voteSuggestion(id, userId, voteType) {
+    let s = state.suggestions[id];
+    if (!s) {
+      s = {
+        id,
+        author_id: "",
+        text: "",
+        status: "Created",
+        upvotes: [],
+        downvotes: [],
+        created_at: Date.now(),
+      };
+      state.suggestions[id] = s;
+    }
+
+    if (!Array.isArray(s.upvotes)) s.upvotes = [];
+    if (!Array.isArray(s.downvotes)) s.downvotes = [];
+
+    const hasUpvoted = s.upvotes.includes(userId);
+    const hasDownvoted = s.downvotes.includes(userId);
+
+    if (voteType === "upvote") {
+      if (hasUpvoted) {
+        s.upvotes = s.upvotes.filter((uid) => uid !== userId);
+      } else {
+        s.upvotes.push(userId);
+        if (hasDownvoted) {
+          s.downvotes = s.downvotes.filter((uid) => uid !== userId);
+        }
+      }
+    } else if (voteType === "downvote") {
+      if (hasDownvoted) {
+        s.downvotes = s.downvotes.filter((uid) => uid !== userId);
+      } else {
+        s.downvotes.push(userId);
+        if (hasUpvoted) {
+          s.upvotes = s.upvotes.filter((uid) => uid !== userId);
+        }
+      }
+    } else if (voteType === "removevote") {
+      s.upvotes = s.upvotes.filter((uid) => uid !== userId);
+      s.downvotes = s.downvotes.filter((uid) => uid !== userId);
+    }
+
+    persistSuggestion(id);
+
+    return {
+      suggestion: s,
+      upvoteCount: s.upvotes.length,
+      downvoteCount: s.downvotes.length,
+    };
   },
 
   getDatabaseInfo() {

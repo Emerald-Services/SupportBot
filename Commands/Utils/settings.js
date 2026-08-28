@@ -1,35 +1,18 @@
-const { Command } = require('../../Structures/Addon.js');
+const Command = require("../../Structures/Command.js");
 const Discord = require("discord.js");
-const fs = require("fs");
-const yaml = require("js-yaml");
 const db = require("../../Structures/Database.js");
 
 const supportbot = require("../../Structures/ConfigStore").supportbot;
 const cmdconfig = require("../../Structures/ConfigStore").commands;
 
 async function loadSettings() {
-  return new Promise((resolve, reject) => {
-    db.get("SELECT data FROM settings WHERE id = 1", (err, row) => {
-      if (err) return reject(err);
-      if (!row) return resolve({});
-      try {
-        resolve(JSON.parse(row.data));
-      } catch (e) {
-        resolve({});
-      }
-    });
-  });
+  return typeof db.getSettings === "function" ? db.getSettings() : {};
 }
 
 async function saveSettings(settings) {
-  const data = JSON.stringify(settings);
-  return new Promise((resolve, reject) => {
-    db.run(
-      "INSERT INTO settings (id, data) VALUES (1, ?) ON CONFLICT(id) DO UPDATE SET data = excluded.data",
-      [data],
-      (err) => (err ? reject(err) : resolve())
-    );
-  });
+  if (typeof db.saveSettings === "function") {
+    db.saveSettings(settings);
+  }
 }
 
 module.exports = new Command({

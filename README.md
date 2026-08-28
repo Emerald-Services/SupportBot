@@ -28,14 +28,10 @@
 
 | SupportBot | Node.JS | Discord.JS |  Supported |
 |------------|---------|------------|------------|
-|    26.x    |   22.x  |    14.x.   | ✅ Yes
-|    8.x     |   22.x  |    14.x.   | ❌ Yes
-|    7.7.3   |   16.x  |    13.x.   | ❌ No
-|    7.x     |   16.x  |    13.x.   | ❌ No
-|    6.x     |   14.x  |    13.x.   | ❌ No
-|    5.x     |   12.x  |    13.x.   | ❌ No
-|    4.x     |   11.x  |    13.x.   | ❌ No
-|    Older   | 10.x    |    13.x.   | ❌ No
+|    26.x    |   22.x  |    14.x    | ✅ Yes     |
+|    8.x     |   22.x  |    14.x    | ❌ No      |
+|    7.x     |   16.x  |    13.x    | ❌ No      |
+|    Older   |   10.x  |    13.x    | ❌ No      |
 
 </div>
 
@@ -74,7 +70,7 @@ Released under the [MIT](https://opensource.org/licenses/MIT) license.
 ## Third-Party
 
 - [Verified Addons](https://emeraldsrv.dev)
-- [BuiltByBit]([https://builtbybit.com/supportbot](https://builtbybit.com/resources/supportbot-advanced-ticket-bot.8940/))
+- [BuiltByBit](https://builtbybit.com/resources/supportbot-advanced-ticket-bot.8940/)
 - [Voxel](https://polymart.org/resource/supportbot-1-discord-ticket-bot.518)
 
 
@@ -86,8 +82,4 @@ Released under the [MIT](https://opensource.org/licenses/MIT) license.
 
 ## Hosting
 
-You can use our [Pterodactyl egg](https://github.com/Emerald-Services/Pterodactyl-Egg) to host it on your own panel. We currently don't offer hosting for you, altough we might add this in the future.
-If you don't know how to install pterodactyl, you could always host it on replit:
-
-[![Run on Repl.it](https://repl.it/badge/github/ItsNyoty/IKI-bot)]([https://repl.it/github/ItsNyoty/iki](https://repl.it/github/Emerald-Services/SupportBot
-)
+You can use our [Pterodactyl egg](https://github.com/Emerald-Services/Pterodactyl-Egg) to host SupportBot on your own panel.

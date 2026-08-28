@@ -74,7 +74,7 @@ module.exports = new Command({
     }
   ],
 
-  run: async ({ interaction }) => {
+  async run(interaction) {
     const subcommandGroup = interaction.options.getSubcommandGroup();
     const subcommand = interaction.options.getSubcommand();
     const user = interaction.options.getUser('user');
