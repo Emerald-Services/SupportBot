@@ -1,10 +1,23 @@
 const Event = require("../Structures/Event.js");
+const {
+  getConfiguredGuildId,
+  syncGuildHealth,
+  logGuildWarning,
+} = require("../Structures/GuildManager.js");
 
-module.exports = new Event("guildDelete", async (client) => {
-  console.log(
-    `\u001b[31m`,
-    `${client.user.username} is not in the correct server set in your config. Please join the server and restart the bot.`
-  );
-  console.log(`\u001b[31m`, `${client.user.username} will now exit.`);
-  return process.exit(1);
+module.exports = new Event("guildDelete", async (client, guild) => {
+  const configuredId = getConfiguredGuildId();
+
+  if (configuredId && guild.id === configuredId) {
+    logGuildWarning(
+      client,
+      `Left the configured server "${guild.name}" (${guild.id}). Re-invite the bot or update General.GuildId.`,
+    );
+  } else if (!configuredId) {
+    logGuildWarning(client, `Left server "${guild.name}" (${guild.id}).`);
+  } else {
+    logGuildWarning(client, `Left server "${guild.name}" (${guild.id}).`);
+  }
+
+  syncGuildHealth(client);
 });

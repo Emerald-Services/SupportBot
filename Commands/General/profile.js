@@ -20,9 +20,9 @@ const yaml = require("js-yaml");
 const db = require("../../Structures/Database.js");
 const Command = require("../../Structures/Command.js");
 
-const supportbot = yaml.load(fs.readFileSync("./Configs/supportbot.yml", "utf8"));
-const cmdconfig = yaml.load(fs.readFileSync("./Configs/commands.yml", "utf8"));
-const msgconfig = yaml.load(fs.readFileSync("./Configs/messages.yml", "utf8"));
+const supportbot = require("../../Structures/ConfigStore").supportbot;
+const cmdconfig = require("../../Structures/ConfigStore").commands;
+const msgconfig = require("../../Structures/ConfigStore").messages;
 
 const clockedInUsers = new Set();
 
@@ -177,6 +177,37 @@ function buildTicketStatsContainer(viewingUserId, ticketsClaimed, ticketsOpen, a
   return container;
 }
 
+function getStaffTicketStats(viewingUserId) {
+  const allTickets = typeof db.getAllTickets === "function" ? db.getAllTickets() : [];
+  const ticketsClaimed = allTickets.filter(
+    (t) => t.claimedBy === viewingUserId || t.claimed_by === viewingUserId,
+  );
+  const ticketsOpen = ticketsClaimed.filter(
+    (t) => (t.status || "").toLowerCase() === "open",
+  );
+
+  let totalResponseTime = 0;
+  let responseCount = 0;
+
+  ticketsClaimed.forEach((t) => {
+    const claimedAt = t.claimedAt || t.claimed_at;
+    const createdAt = t.createdAt || t.created_at;
+    if (claimedAt && createdAt) {
+      const diff = new Date(claimedAt).getTime() - new Date(createdAt).getTime();
+      if (diff > 0) {
+        totalResponseTime += diff;
+        responseCount++;
+      }
+    }
+  });
+
+  const avgMinutes = responseCount
+    ? Math.round(totalResponseTime / responseCount / 60000)
+    : 0;
+
+  return { ticketsClaimed, ticketsOpen, avgMinutes };
+}
+
 function buildOpenTicketsContainer(ticketsOpen) {
   const container = new ContainerBuilder();
 
@@ -192,7 +223,9 @@ function buildOpenTicketsContainer(ticketsOpen) {
 
   container.addTextDisplayComponents(
     new TextDisplayBuilder().setContent(
-      ticketsOpen.length ? ticketsOpen.map((t) => `<#${t.id}>`).join("\n") : "No active tickets.",
+      ticketsOpen.length
+        ? ticketsOpen.map((t) => `<#${t.ticket_id || t.id}>`).join("\n")
+        : "No active tickets.",
     ),
   );
 
@@ -352,31 +385,7 @@ module.exports = new Command({
         }
 
         if (i.customId === "viewTicketStats") {
-          let TicketData = { tickets: [] };
-
-          try {
-            TicketData = JSON.parse(fs.readFileSync("./Data/TicketData.json", "utf8"));
-          } catch (error) {
-            console.error("Error reading TicketData.json:", error);
-          }
-
-          const ticketsClaimed = TicketData.tickets.filter((t) => t.claimedBy === viewingUserId);
-          const ticketsOpen = ticketsClaimed.filter((t) => t.open);
-          const totalTickets = ticketsClaimed.length;
-
-          let totalResponseTime = 0;
-          let responseCount = 0;
-
-          ticketsClaimed.forEach((t) => {
-            if (t.claimedAt && t.createdAt) {
-              totalResponseTime += new Date(t.claimedAt) - new Date(t.createdAt);
-              responseCount++;
-            }
-          });
-
-          const avgMinutes = responseCount
-            ? Math.round(totalResponseTime / responseCount / 60000)
-            : 0;
+          const { ticketsClaimed, ticketsOpen, avgMinutes } = getStaffTicketStats(viewingUserId);
 
           const statsContainer = buildTicketStatsContainer(
             viewingUserId,
@@ -403,17 +412,7 @@ module.exports = new Command({
         }
 
         if (i.customId === "showOpenTickets") {
-          let TicketData = { tickets: [] };
-
-          try {
-            TicketData = JSON.parse(fs.readFileSync("./Data/TicketData.json", "utf8"));
-          } catch (error) {
-            console.error("Error reading TicketData.json:", error);
-          }
-
-          const ticketsOpen = TicketData.tickets.filter(
-            (t) => t.claimedBy === viewingUserId && t.open,
-          );
+          const { ticketsOpen } = getStaffTicketStats(viewingUserId);
 
           const openContainer = buildOpenTicketsContainer(ticketsOpen);
 
@@ -431,30 +430,7 @@ module.exports = new Command({
         }
 
         if (i.customId === "backToStats") {
-          let TicketData = { tickets: [] };
-
-          try {
-            TicketData = JSON.parse(fs.readFileSync("./Data/TicketData.json", "utf8"));
-          } catch (error) {
-            console.error("Error reading TicketData.json:", error);
-          }
-
-          const ticketsClaimed = TicketData.tickets.filter((t) => t.claimedBy === viewingUserId);
-          const ticketsOpen = ticketsClaimed.filter((t) => t.open);
-
-          let totalResponseTime = 0;
-          let responseCount = 0;
-
-          ticketsClaimed.forEach((t) => {
-            if (t.claimedAt && t.createdAt) {
-              totalResponseTime += new Date(t.claimedAt) - new Date(t.createdAt);
-              responseCount++;
-            }
-          });
-
-          const avgMinutes = responseCount
-            ? Math.round(totalResponseTime / responseCount / 60000)
-            : 0;
+          const { ticketsClaimed, ticketsOpen, avgMinutes } = getStaffTicketStats(viewingUserId);
 
           const statsContainer = buildTicketStatsContainer(
             viewingUserId,

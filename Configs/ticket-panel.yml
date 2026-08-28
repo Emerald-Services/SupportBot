@@ -20,11 +20,12 @@
 Panel: true
 
 Style:
-  Title: "## SupportBot Ticket Creation"
-  Description: "Click on the button to file a `Ticket` and our team will try their best to assist you in the best way we can!"
-  Image: "https://i.imgur.com/dejQvkg.png"
+  Title: "## 📬 Open Ticket"
+  Description: "Tap the button to open a support ticket, Our team will respond as
+    soon as possible."
+  Image: "https://cdn.1tzemerald.space/Emerald%20Services/SBPoster.png"
   Color: "#45b463"
-  Layout: "4"
+  Layout: "3"
 
 # Available Layout Styles
 # "1" - Style 1 - Title & Text, Button at the top -- Image at the bottom
@@ -33,8 +34,8 @@ Style:
 # "4" - Style 4 - Classic Embed (Title & Text, Image on right, Button at bottom)
 
 Button:
-  Text: "Create Ticket"
-  Emoji: "🎫"
+  Text: "Open"
+  Emoji: "🛟"
   Color: "2"
   CustomId: "createticket"
 
@@ -45,7 +46,7 @@ Button:
 # 4 - Green
 
 DepartmentMenu:
-  CustomId: "ticketdepartmentselect" 
+  CustomId: "ticketdepartmentselect"
   Placeholder: "Choose a ticket department"
   DefaultDescription: "Open a support ticket"
   DefaultEmoji: "🎫"
@@ -58,7 +59,8 @@ Settings:
   BottomDivider: false
 
 Messages:
-  NotConfigured: "Ticket Panel is not set up. Please configure it in `/Configs/ticket-panel.yml`."
+  NotConfigured: "Ticket Panel is not set up. Please configure it in
+    `/Configs/ticket-panel.yml`."
   InvalidChannel: "TicketHome channel not found. Please check your config file."
   PanelSent: "Ticket panel message has been sent!"
   PanelSentWithDepartments: "Ticket panel message with department selection has been sent!"

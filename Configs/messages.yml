@@ -21,7 +21,7 @@ Info:
   Title: "About Us"
   Description: "SupportBot is an open-sourced support system for discord. It's completely free to use with high amounts of customization to match your own brand."
   Button: "Visit Site"
-  URL: "https://docs.emeraldsrv.com"
+  URL: "https://emeraldsrv.dev"
   Colour: "#45b463"
 
 # ----------------------------
@@ -30,15 +30,15 @@ Info:
 
 Welcome:
   Enabled: true
-  LayoutStyle: "modern" 
+  LayoutStyle: "classic" 
   # Available Layout Styles
   #  "modern" - For the new Discord v2 components
   #  "classic" - Use the classic Discord look.
 
   Embed:
     Colour: "#45b463"
-    Title: "Welcome to ServerName"
-    Message: ":smile: %joined_user% has just landed!\n\n🔨 **Server Rules:** <#1202667199853232129>"
+    Title: "Welcome!"
+    Message: ":smile: %joined_user% has just landed!"
     Icon:
       Mode: "USER" # USER | BOT | CUSTOM
       CustomURL: "https://example.com/custom.png"
@@ -48,23 +48,15 @@ Welcome:
     Buttons:
       Enabled: true
       List:
-        - label: "BuiltByBit"
+        - label: "Website"
           style: "Link"
-          url: "https://your-website.com/how-to-play-java"
+          url: "https://emeraldsrv.dev"
           emoji: "⌨️"
-        - label: "GitHub"
-          style: "Link"
-          url: "https://your-website.com/how-to-play-bedrock"
-          emoji: "👾"
-        - label: "Tebex"
-          style: "Link"
-          url: "https://your-store.tebex.io/"
-          emoji: "🛒"
 
   Modern:
     Colour: "#45b463"
     Title: "**Welcome to ServerName**"
-    Body: ":smile: %joined_user% has just landed!\n\n🔨 **Server Rules:** <#1202667199853232129>"
+    Body: ":smile: %joined_user% has just landed!\n\n🔨 **Server Rules:** <#CHANNEL_ID>"
     Icon:
       Mode: "BOT" # USER | BOT | CUSTOM
       CustomURL: "https://example.com/custom-icon.png"

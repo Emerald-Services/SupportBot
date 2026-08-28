@@ -19,35 +19,16 @@ const yaml = require("js-yaml");
 
 const db = require("../../Structures/Database.js");
 
-const panelconfig = yaml.load(
-  fs.readFileSync("./Configs/ticket-panel.yml", "utf8"),
-);
-const supportbot = yaml.load(
-  fs.readFileSync("./Configs/supportbot.yml", "utf8"),
-);
-const cmdconfig = yaml.load(fs.readFileSync("./Configs/commands.yml", "utf8"));
-const msgconfig = yaml.load(fs.readFileSync("./Configs/messages.yml", "utf8"));
+const panelconfig = require("../../Structures/ConfigStore").ticketPanel;
+const supportbot = require("../../Structures/ConfigStore").supportbot;
+const cmdconfig = require("../../Structures/ConfigStore").commands;
+const msgconfig = require("../../Structures/ConfigStore").messages;
 
 const Command = require("../../Structures/Command.js");
 const TicketNumberID = require("../../Structures/TicketID.js");
 
 async function isBlacklisted(userId) {
-  let blacklistData;
-  try {
-    blacklistData = JSON.parse(
-      fs.readFileSync("./Data/BlacklistedUsers.json", "utf8"),
-    );
-  } catch (error) {
-    console.error("Error reading BlacklistedUsers.json:", error);
-    return false;
-  }
-
-  if (!blacklistData || !Array.isArray(blacklistData.blacklistedUsers)) {
-    console.error("blacklistedUsers is not defined or is not an array");
-    return false;
-  }
-
-  return blacklistData.blacklistedUsers.includes(userId);
+  return typeof db.isUserBlacklisted === "function" ? db.isUserBlacklisted(userId) : false;
 }
 
 async function getClockedInUsers(guild) {

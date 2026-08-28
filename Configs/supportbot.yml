@@ -12,7 +12,7 @@
 #
 #           SupportBot Configuration (supportbot.yml)
 
-SupportBot_Version: "v26.1.1"
+SupportBot_Version: "v26.2"
 
 # -------------------------
 #   General
@@ -20,20 +20,39 @@ SupportBot_Version: "v26.1.1"
 
 General:
   Name: "SupportBot"
-  Token: "BOT_TOKEN"
-
+  Token: "YOUR_BOT_TOKEN_HERE"
   Addons:
     Enabled: true
-    
+  GuildId: "YOUR_GUILD_ID_HERE"
+
 # -------------------------
+#  Database Configuration
+# -------------------------
+
+Database:
+  # Driver options: "mysql" (works for MariaDB & MySQL) or "sqlite"
+  Driver: "mysql"
+
+  # Connection Settings for MariaDB / MySQL (used when Driver is "mysql" or "mariadb")
+  MySQL:
+    Host: "localhost"
+    Port: 3306
+    User: "root"
+    Password: "password"
+    Database: "supportbot"
+    ConnectionLimit: 10
+
+  # Connection Settings for SQLite (used when Driver is "sqlite")
+  SQLite:
+    File: "./Data/supportbot.db"
+
 #  Activity
 # -------------------------
 
 Activity:
-  Status: "SupportBot v8"
-  Type: "Competing"
+  Status: "SupportBot"
+  Type: "Watching"
   StreamingURL: "https://www.twitch.tv/YOUR_TWITCH_NAME"
-
   # Available Types:
   # Playing
   # Watching
@@ -43,9 +62,9 @@ Activity:
 
   # You can also update the activity via Discord using: /settings
 
-# -------------------------
-#  Embeds
-# -------------------------
+  # -------------------------
+  #  Embeds
+  # -------------------------
 
 Embed:
   Colours:
@@ -55,12 +74,11 @@ Embed:
     Warn: "#fca117"
 
   Footer: "SupportBot | Developed by Emerald Development"
-
   # Use 0x<hexcode>  to change the colour of the embeds.
 
-# -------------------------
-#  Roles
-# -------------------------
+  # -------------------------
+  #  Roles
+  # -------------------------
 
 Roles:
   AutoRole:
@@ -73,20 +91,19 @@ Roles:
     Moderator: "ROLE_ID"
 
   Mod:
-    AllowSupportStaff: false
-
+    AllowSupportStaff: true
   # Allow Support Staff to use the /mod command. (More in detail customisation in commands.yml)
 
-# ----------------------------
-#  System Messages
-# ----------------------------
+  # ----------------------------
+  #  System Messages
+  # ----------------------------
 
-Welcome: 
-  Enabled: true
+Welcome:
+  Enabled: false
   Channel: "CHANNEL_ID"
 
-Leave: 
-  Enabled: true
+Leave:
+  Enabled: false
   Channel: "CHANNEL_ID"
 
 # ----------------------------
@@ -110,7 +127,7 @@ Suggestions:
   # If true this will allow the user to vote for a suggestion they created
 
   ShowUsers: true
-  
+
   Threads:
     Enabled: true
     Title: "Suggestion-releated Thread"
@@ -121,7 +138,6 @@ Suggestions:
     Downvote: "2"
     RemoveVote: "4"
     RemoveVote_Title: "Remove Vote"
-
     # Available Button Styles
     # 1 - Blurple
     # 2 - Grey
@@ -129,21 +145,21 @@ Suggestions:
     # 4 - Red
 
   Tags:
-   Created: "TAG_ID"
-   Considering: "TAG_ID"
-   Solved: "TAG_ID"
-   Denied: "TAG_ID"
+    Created: "TAG_ID"
+    Considering: "TAG_ID"
+    Solved: "TAG_ID"
+    Denied: "TAG_ID"
 
 # -------------------------
 #  Tickets
 # -------------------------
 
 VoiceTickets:
-  Name: "%username%'s VC" 
+  Name: "%username%'s VC"
   Category: "CATEGORY_ID"
 
 Ticket:
-  TicketType: "channels" 
+  TicketType: "channels"
 
   # Available TicketTypes:
   # channels - Tickets will be created as channels in the TicketChannelsCategory
@@ -154,14 +170,14 @@ Ticket:
     DMOnRemove: true # DM the user when they are removed from the ticket
     DMTranscript: true # DM the user a transcript of the ticket when it is closed
 
-  TicketHome: "1469028381638000725"
+  TicketHome: "CHANNEL_ID"
 
   # What is TicketHome?
   # - Channel where the Ticket creation panel is sent.
   # - Channel where ticket threads are made. (only if ticket threads is enabled above.)
 
   # For TicketType: channels
-  TicketChannelsCategory: "CATEGORY_ID" 
+  TicketChannelsCategory: "CATEGORY_ID"
   TicketChannelsCategory2: "CATEGORY_ID" # This will be used if the first category has reached the max channel limit.
   TicketArchiveCategory: "CATEGORY_ID"
   # ---
@@ -184,14 +200,15 @@ Ticket:
     StaffOnly: true
     # Set to false is anyone is able to close a ticket.
 
-  Invites: # Invites is for ticket threads.
+  Invites:
+    # Invites is for ticket threads.
     StaffOnly: true
 
   ClaimTickets:
     Enabled: false
-    Channel: "CHANNEL_ID" 
+    Channel: "CHANNEL_ID"
     # Channel where the ticket assignments are sent for staff to claim.
-    
+
     ClaimAcceptTime: 120000
     # How long the assigned user has to accept the ticket before it gets re-assigned to someone else.
     # 120000 = 2 Minutes
@@ -203,7 +220,6 @@ Ticket:
     ButtonTitle: "Claim Ticket"
     ButtonEmoji: "🎫"
     Button: "1"
-
     # Available Button Styles
     # 1 - Blurple
     # 2 - Grey
@@ -211,12 +227,13 @@ Ticket:
     # 4 - Red
 
   ReviewSystem:
-    Enabled: false                
+    Enabled: false
     Channel: "CHANNEL_ID"
     UseModal: true
 
-  Questions: # Default questions asked when a ticket is created, these are used if departments are disabled.
-    Enabled: false  
+  Questions:
+    # Default questions asked when a ticket is created, these are used if departments are disabled.
+    Enabled: false
     List:
       - "Please provide your account email?"
       - "What is the nature of your issue?"
@@ -232,12 +249,12 @@ Ticket:
     ThreadName: "Chat with SupportBot AI"
     WelcomeMessage: "Hi! I’m SupportBot AI. You can chat with me here about your issue."
 
-# -------------------------
-#  Ticket Departments
-# -------------------------
+  # -------------------------
+  #  Ticket Departments
+  # -------------------------
 
   DepartmentSystem:
-    Enabled: true
+    Enabled: false
     Placeholder: "Choose a ticket department"
     DefaultDepartment: "general"
 
@@ -339,14 +356,14 @@ Buttons:
     # 3 - Green
     # 4 - Red
 
-# -------------------------
-#  Select Menus
-# -------------------------
+    # -------------------------
+    #  Select Menus
+    # -------------------------
 
 SelectMenus:
   Tickets:
     PanelEmoji: "⚙️"
-    
+
     CloseEmoji: "🗑️"
     ArchiveEmoji: "♻️"
     LockEmoji: "🔐"

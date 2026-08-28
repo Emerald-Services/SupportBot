@@ -1,0 +1,2 @@
+Configs/supportbot.yml filter=supportbot-token
+Configs/api.yml filter=api-secrets

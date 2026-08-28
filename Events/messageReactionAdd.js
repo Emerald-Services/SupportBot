@@ -1,13 +1,6 @@
-const fs = require("fs");
-const yaml = require("js-yaml");
-
-const supportbot = yaml.load(
-  fs.readFileSync("./Configs/supportbot.yml", "utf8"),
-);
-const supportbotai = yaml.load(
-  fs.readFileSync("./Configs/supportbot-ai.yml", "utf8"),
-);
-const cmdconfig = yaml.load(fs.readFileSync("./Configs/commands.yml", "utf8"));
+const supportbot = require("../Structures/ConfigStore").supportbot;
+const supportbotai = require("../Structures/ConfigStore").supportbotAi;
+const cmdconfig = require("../Structures/ConfigStore").commands;
 
 const Event = require("../Structures/Event.js");
 

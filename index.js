@@ -13,24 +13,37 @@
 const fs = require("fs");
 const path = require("path");
 
-const yaml = require("js-yaml");
-const supportbot = yaml.load(
-  fs.readFileSync("./Configs/supportbot.yml", "utf8")
-);
+const configStore = require("./Structures/ConfigStore.js");
 
 const Client = require("./Structures/Client.js");
 const client = new Client({
-  intents: ['Guilds', 'GuildMembers', 'GuildMessages', 'MessageContent']
+  intents: ["Guilds", "GuildMembers", "GuildMessages", "MessageContent"],
 });
 
+const { isSetupComplete } = require("./Structures/DashboardSetup.js");
 const APIServer = require("./API/server.js");
 
-client.start(supportbot.General.Token);
+const api = new APIServer(client);
+client.apiServer = api;
 
-client.once('clientReady', () => {
-    const api = new APIServer(client);
-    api.start();
-});
+const port = api.config?.Port || 25575;
+if (api.config?.Enabled) {
+  api.start(port);
+  if (!isSetupComplete()) {
+    console.log(`\n\x1b[33m\x1b[1m[Setup Required] Go to http://localhost:${port}/setup to set up your bot and dashboard.\x1b[0m\n`);
+  }
+} else {
+  console.warn("[Dashboard] API disabled in Configs/api.yml");
+}
+
+const token = configStore.supportbot?.General?.Token;
+const isPlaceholderToken = !token || token.includes("BOT_TOKEN") || token.includes("CHANGE_ME") || token.length < 30;
+
+if (isPlaceholderToken) {
+  console.warn(`\x1b[33m[SupportBot] Bot token is not configured yet. Complete setup at http://localhost:${port}/setup\x1b[0m`);
+} else {
+  client.start(token);
+}
 
 // SupportBot - New Logging System
 
@@ -49,7 +62,16 @@ logTypes.forEach((type) => {
 function logToFile(type, data) {
   const date = new Date().toISOString().split("T")[0];
   const file = path.join(`./Logs/${type}`, `${type}-${date}.log`);
-  fs.appendFileSync(file, `[${new Date().toISOString()}] ${data}\n`);
+  const timestamp = new Date().toISOString();
+  fs.appendFileSync(file, `[${timestamp}] ${data}\n`);
+
+  if (global.apiServer) {
+    global.apiServer.broadcast("log", {
+      type,
+      timestamp,
+      message: String(data)
+    });
+  }
 }
 
 const origLog = console.log;

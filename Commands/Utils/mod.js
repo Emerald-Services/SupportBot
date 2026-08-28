@@ -1,9 +1,10 @@
 const fs = require("fs");
 const { ApplicationCommandOptionType, ApplicationCommandType, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType, MessageFlags } = require("discord.js");
 const yaml = require("js-yaml");
-const supportbot = yaml.load(fs.readFileSync("./Configs/supportbot.yml", "utf8"));
-const cmdconfig = yaml.load(fs.readFileSync("./Configs/commands.yml", "utf8"));
-const msgconfig = yaml.load(fs.readFileSync("./Configs/messages.yml", "utf8"));
+const db = require("../../Structures/Database.js");
+const supportbot = require("../../Structures/ConfigStore").supportbot;
+const cmdconfig = require("../../Structures/ConfigStore").commands;
+const msgconfig = require("../../Structures/ConfigStore").messages;
 
 const Command = require("../../Structures/Command.js");
 
@@ -18,28 +19,28 @@ function chunkArray(arr, size) {
 
 module.exports = new Command({
   name: cmdconfig.Mod.Command,
-  description: cmdconfig.Mod.Command,
+  description: cmdconfig.Mod.Description || "Moderation commands",
   type: ApplicationCommandType.ChatInput,
   options: [
     {
       name: cmdconfig.Mod.TicketBlacklist.Command,
-      description: cmdconfig.Mod.TicketBlacklist.Description,
+      description: cmdconfig.Mod.TicketBlacklist.Description || "Ticket Blacklist Commands",
       type: ApplicationCommandOptionType.SubcommandGroup,
       options: [
         {
           name: cmdconfig.Mod.TicketBlacklist.Add.Command,
-          description: msgconfig.Mod.TicketBlacklist.Add.Description || "Add a user to the ticket blacklist",
+          description: msgconfig.Mod.TicketBlacklist.Add.Description || "Add a user to the blacklist",
           type: ApplicationCommandOptionType.Subcommand,
           options: [
             {
               name: 'user',
-              description: msgconfig.Mod.TicketBlacklist.Add.UserDescription || "User to blacklist",
+              description: 'The user to blacklist',
               type: ApplicationCommandOptionType.User,
               required: true
             },
             {
-              name: 'reason', 
-              description: msgconfig.Mod.TicketBlacklist.Add.ReasonDescription || "Reason for blacklisting",
+              name: 'reason',
+              description: 'Reason for blacklisting',
               type: ApplicationCommandOptionType.String,
               required: false
             }
@@ -47,18 +48,18 @@ module.exports = new Command({
         },
         {
           name: cmdconfig.Mod.TicketBlacklist.Remove.Command,
-          description: msgconfig.Mod.TicketBlacklist.Remove.Description || "Remove a user from the ticket blacklist",
+          description: cmdconfig.Mod.TicketBlacklist.Remove.Description || "Remove a user from the blacklist",
           type: ApplicationCommandOptionType.Subcommand,
           options: [
             {
               name: 'user',
-              description: msgconfig.Mod.TicketBlacklist.Remove.UserDescription || "User to remove from blacklist",
+              description: 'The user to remove from the blacklist',
               type: ApplicationCommandOptionType.User,
               required: true
             },
             {
               name: 'reason',
-              description: msgconfig.Mod.TicketBlacklist.Remove.ReasonDescription || "Reason for removing from blacklist",
+              description: 'Reason for unblacklisting',
               type: ApplicationCommandOptionType.String,
               required: false
             }
@@ -67,60 +68,32 @@ module.exports = new Command({
         {
           name: "view",
           description: msgconfig.Mod.TicketBlacklist.View.Description || "View all blacklisted users",
-          type: ApplicationCommandOptionType.Subcommand,
+          type: ApplicationCommandOptionType.Subcommand
         }
       ]
     }
   ],
-  permissions: cmdconfig.Mod.Permission,
 
   async run(interaction) {
-    const { getRole } = interaction.client;
-
-    let SupportStaff = await getRole(supportbot.Roles.StaffMember.Staff, interaction.guild);
-    let Admin = await getRole(supportbot.Roles.StaffMember.Admin, interaction.guild);
-    let Moderator = await getRole(supportbot.Roles.StaffMember.Moderator, interaction.guild);
-
-    if (!SupportStaff || !Admin || !Moderator) {
-      const missingRolesEmbed = new EmbedBuilder()
-        .setDescription(msgconfig.Error.InvalidChannel || "Required roles are missing!")
-        .setColor(supportbot.Embed.Colours.Warn);
-      return interaction.reply({ embeds: [missingRolesEmbed] });
-    }
-
-    const NoPerms = new EmbedBuilder()
-      .setDescription(msgconfig.Error.IncorrectPerms || "You do not have the correct permissions!")
-      .setColor(supportbot.Embed.Colours.Warn);
-
-    if (!interaction.member.roles.cache.has(Admin.id) && !interaction.member.roles.cache.has(Moderator.id) && (!supportbot.Mod.AllowSupportStaff || !interaction.member.roles.cache.has(SupportStaff.id))) {
-      return interaction.reply({ embeds: [NoPerms] });
-    }
-
-    const subcommand = interaction.options.getSubcommand(false);
+    const subcommandGroup = interaction.options.getSubcommandGroup();
+    const subcommand = interaction.options.getSubcommand();
     const user = interaction.options.getUser('user');
     const reason = interaction.options.getString('reason') || "No reason provided"; 
 
     try {
-      let blacklistedUsers;
-      try {
-        blacklistedUsers = JSON.parse(fs.readFileSync("./Data/BlacklistedUsers.json", "utf8")).blacklistedUsers;
-        if (!Array.isArray(blacklistedUsers)) {
-          blacklistedUsers = [];
-        }
-      } catch (error) {
-        blacklistedUsers = [];
-      }
+      const blacklistedUsers = typeof db.getBlacklistedUsers === "function" ? db.getBlacklistedUsers() : [];
 
       if (subcommand === cmdconfig.Mod.TicketBlacklist.Add.Command) {
-        if (blacklistedUsers.includes(user.id)) {
+        if (db.isUserBlacklisted && db.isUserBlacklisted(user.id)) {
           const alreadyBlacklistedEmbed = new EmbedBuilder()
             .setDescription(msgconfig.Mod.TicketBlacklist.Add.AlreadyBlacklisted.replace("{userTag}", user.tag) || ":x: User is already blacklisted.")
             .setColor(supportbot.Embed.Colours.Warn);
           return interaction.reply({ embeds: [alreadyBlacklistedEmbed], flags: MessageFlags.Ephemeral  });
         }
 
-        blacklistedUsers.push(user.id);
-        fs.writeFileSync("./Data/BlacklistedUsers.json", JSON.stringify({ "blacklistedUsers": blacklistedUsers }, null, 4));
+        if (typeof db.addBlacklistedUser === "function") {
+          db.addBlacklistedUser(user.id, reason, interaction.user.tag);
+        }
 
         const successEmbed = new EmbedBuilder()
           .setDescription(msgconfig.Mod.TicketBlacklist.Add.Success.replace("{userTag}", user.tag) || ":white_check_mark: User has been blacklisted.")
@@ -133,7 +106,7 @@ module.exports = new Command({
             .setColor(msgconfig.TicketBlacklistLog.Colour || supportbot.Embed.Colours.Success)
             .setFooter({ text: supportbot.Embed.Footer, iconURL: interaction.user.displayAvatarURL() })
             .setDescription(`> **User:** ${user.tag} (\`${user.id}\`)\n> **Actioned by:** <@${interaction.user.id}>`)
-            .addFields({ name: "Action", value: "\`\`\`Removed from blacklist\`\`\`", inline: false })
+            .addFields({ name: "Action", value: "\`\`\`Added to blacklist\`\`\`", inline: false })
             .addFields({ name: "Reason", value: `\`\`\`${reason}\`\`\``, inline: false });
 
           blacklistChannel.send({ embeds: [blacklistLogEmbed] });
@@ -145,15 +118,16 @@ module.exports = new Command({
         });
 
       } else if (subcommand === cmdconfig.Mod.TicketBlacklist.Remove.Command) {
-        if (!blacklistedUsers.includes(user.id)) {
+        if (db.isUserBlacklisted && !db.isUserBlacklisted(user.id)) {
           const notBlacklistedEmbed = new EmbedBuilder()
             .setDescription(msgconfig.Mod.TicketBlacklist.Remove.NotBlacklisted.replace("{userTag}", user.tag) || ":x: User is not blacklisted.")
             .setColor(supportbot.Embed.Colours.Warn);
           return interaction.reply({ embeds: [notBlacklistedEmbed], flags: MessageFlags.Ephemeral  });
         }
 
-        blacklistedUsers = blacklistedUsers.filter(id => id !== user.id);
-        fs.writeFileSync("./Data/BlacklistedUsers.json", JSON.stringify({ "blacklistedUsers": blacklistedUsers }, null, 4));
+        if (typeof db.removeBlacklistedUser === "function") {
+          db.removeBlacklistedUser(user.id);
+        }
 
         const removedEmbed = new EmbedBuilder()
           .setDescription(msgconfig.Mod.TicketBlacklist.Remove.Success.replace("{userTag}", user.tag) || ":white_check_mark: User has been removed from the blacklist.")

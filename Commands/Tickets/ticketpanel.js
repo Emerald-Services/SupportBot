@@ -19,9 +19,9 @@ const {
 } = require("discord.js");
 const yaml = require("js-yaml");
 
-const panelconfig = yaml.load(fs.readFileSync("./Configs/ticket-panel.yml", "utf8"));
-const supportbot = yaml.load(fs.readFileSync("./Configs/supportbot.yml", "utf8"));
-const cmdconfig = yaml.load(fs.readFileSync("./Configs/commands.yml", "utf8"));
+const panelconfig = require("../../Structures/ConfigStore").ticketPanel;
+const supportbot = require("../../Structures/ConfigStore").supportbot;
+const cmdconfig = require("../../Structures/ConfigStore").commands;
 
 const Command = require("../../Structures/Command.js");
 const db = require("../../Structures/Database.js");
@@ -116,6 +116,7 @@ module.exports = new Command({
     }
 
     const departmentOptions = Object.entries(departments)
+      .filter(([_, dept]) => dept && dept.Enabled !== false)
       .slice(0, 25)
       .map(([key, dept]) => ({
         label: dept.Name || key,

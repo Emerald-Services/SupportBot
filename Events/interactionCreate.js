@@ -1,12 +1,8 @@
-const fs = require("fs");
 const Discord = require("discord.js");
-const yaml = require("js-yaml");
 
-const supportbot = yaml.load(
-  fs.readFileSync("./Configs/supportbot.yml", "utf8"),
-);
-const cmdconfig = yaml.load(fs.readFileSync("./Configs/commands.yml", "utf8"));
-const msgconfig = yaml.load(fs.readFileSync("./Configs/messages.yml", "utf8"));
+const supportbot = require("../Structures/ConfigStore").supportbot;
+const cmdconfig = require("../Structures/ConfigStore").commands;
+const msgconfig = require("../Structures/ConfigStore").messages;
 
 const Event = require("../Structures/Event.js");
 const db = require("../Structures/Database.js");
@@ -69,6 +65,7 @@ module.exports = new Event("interactionCreate", async (client, interaction) => {
           "\u001b[37;1m",
           `${interaction.user.username} has executed ${command.name}`,
         );
+
         await command.run(interaction);
       }
     } catch (error) {
@@ -143,6 +140,13 @@ module.exports = new Event("interactionCreate", async (client, interaction) => {
   if (interaction.isStringSelectMenu()) {
     if (interaction.customId === "ticketdepartmentselect") {
       const selectedDepartment = interaction.values[0];
+      const deptConfig = supportbot.Ticket?.DepartmentSystem?.Departments?.[selectedDepartment];
+      if (deptConfig && deptConfig.Enabled === false) {
+        return interaction.reply({
+          content: "Ticket creation for this department is currently disabled.",
+          flags: Discord.MessageFlags.Ephemeral,
+        });
+      }
 
       if (supportbot.Ticket.TicketReason) {
         const modal = new Discord.ModalBuilder()
@@ -683,7 +687,15 @@ module.exports = new Event("interactionCreate", async (client, interaction) => {
       });
     }
 
-    if (interaction.customId === "createticket") {
+    if (interaction.customId === "createticket" || interaction.customId === "openticket") {
+      const panelDisabled = panelconfig.Panel === false || supportbot.Ticket?.Enabled === false;
+      if (panelDisabled) {
+        return interaction.reply({
+          content: "Ticket creation is currently disabled.",
+          flags: Discord.MessageFlags.Ephemeral,
+        });
+      }
+
       if (supportbot.Ticket.TicketReason) {
         const modal = new Discord.ModalBuilder()
           .setCustomId("ticketReasonModal")
@@ -855,69 +867,52 @@ module.exports = new Event("interactionCreate", async (client, interaction) => {
       interaction.customId === "downvote" ||
       interaction.customId === "removevote"
     ) {
-      const suggestion = suggestions[interaction.message.id];
-      if (!suggestion)
-        return interaction.reply({
-          content: "Suggestion not found.",
-          ephemeral: true,
-        });
+      const suggestion = (typeof db.getSuggestion === "function" ? db.getSuggestion(interaction.message.id) : null) || {
+        id: interaction.message.id,
+        author_id: "",
+        text: "",
+        status: "Created",
+        upvotes: [],
+        downvotes: [],
+      };
 
       const userId = interaction.user.id;
-      const hasUpvoted = suggestion.upvotes.includes(userId);
-      const hasDownvoted = suggestion.downvotes.includes(userId);
 
-      if (interaction.customId === "upvote") {
-        if (hasUpvoted) {
-          suggestion.upvotes = suggestion.upvotes.filter((id) => id !== userId);
-        } else {
-          suggestion.upvotes.push(userId);
-          if (hasDownvoted) {
-            suggestion.downvotes = suggestion.downvotes.filter(
-              (id) => id !== userId,
-            );
-          }
-        }
-      } else if (interaction.customId === "downvote") {
-        if (hasDownvoted) {
-          suggestion.downvotes = suggestion.downvotes.filter(
-            (id) => id !== userId,
-          );
-        } else {
-          suggestion.downvotes.push(userId);
-          if (hasUpvoted) {
-            suggestion.upvotes = suggestion.upvotes.filter(
-              (id) => id !== userId,
-            );
-          }
-        }
-      } else if (interaction.customId === "removevote") {
-        suggestion.upvotes = suggestion.upvotes.filter((id) => id !== userId);
-        suggestion.downvotes = suggestion.downvotes.filter(
-          (id) => id !== userId,
-        );
+      if (supportbot.Suggestions?.OwnSuggestion === false && suggestion.author_id === userId) {
+        return interaction.reply({
+          content: "You cannot vote on your own suggestion.",
+          flags: Discord.MessageFlags.Ephemeral,
+        });
       }
 
-      fs.writeFileSync(
-        "./Data/SuggestionData.json",
-        JSON.stringify(suggestions, null, 2),
-      );
+      const voteResult = typeof db.voteSuggestion === "function"
+        ? db.voteSuggestion(interaction.message.id, userId, interaction.customId)
+        : { upvoteCount: 0, downvoteCount: 0 };
 
-      const upvoteCount = suggestion.upvotes.length;
-      const downvoteCount = suggestion.downvotes.length;
+      const oldEmbed = interaction.message.embeds?.[0];
+      if (!oldEmbed) {
+        return interaction.reply({
+          content: "Suggestion embed not found.",
+          flags: Discord.MessageFlags.Ephemeral,
+        });
+      }
 
-      const updatedEmbed = new Discord.EmbedBuilder(
-        interaction.message.embeds[0].data,
-      ).setFields([
-        { name: "Suggestion", value: suggestion.suggestion, inline: true },
-        { name: "From", value: `<@${suggestion.author}>` },
+      const suggestionText = suggestion.text || oldEmbed.fields?.find((f) => f.name === "Suggestion")?.value || "";
+      const authorText = suggestion.author_id
+        ? `<@${suggestion.author_id}>`
+        : (oldEmbed.fields?.find((f) => f.name === "From")?.value || `<@${userId}>`);
+
+      const updatedEmbed = Discord.EmbedBuilder.from(oldEmbed).setFields([
+        { name: "Suggestion", value: suggestionText, inline: true },
+        { name: "From", value: authorText },
         {
           name: `${supportbot.Suggestions.UpvoteEmoji} ${supportbot.Suggestions.UpvoteTitle}`,
-          value: `${upvoteCount}`,
+          value: `${voteResult.upvoteCount}`,
           inline: true,
         },
         {
           name: `${supportbot.Suggestions.DownvoteEmoji} ${supportbot.Suggestions.DownvoteTitle}`,
-          value: `${downvoteCount}`,
+          value: `${voteResult.downvoteCount}`,
           inline: true,
         },
       ]);

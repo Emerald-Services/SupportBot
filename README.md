@@ -1,6 +1,6 @@
 <h1 align="center">
     <br>
-    <a href="https://github.com/Emerald-Services/SupportBot"><img src="https://i.imgur.com/cuadAYv.png"></a>
+    <a href="https://github.com/Emerald-Services/SupportBot"><img src="https://cdn.1tzemerald.space/Emerald%20Services/SBThreadHeader.png"></a>
     <br>
     SupportBot
     <br>
@@ -28,18 +28,15 @@
 
 | SupportBot | Node.JS | Discord.JS |  Supported |
 |------------|---------|------------|------------|
-|    8.x     |   22.x  |    14.x.   | ✅ Yes
-|    7.7.3   |   16.x  |    13.x.   | ❌ No
-|    7.x     |   16.x  |    13.x.   | ❌ No
-|    6.x     |   14.x  |    13.x.   | ❌ No
-|    5.x     |   12.x  |    13.x.   | ❌ No
-|    4.x     |   11.x  |    13.x.   | ❌ No
-|    Older   | 10.x    |    13.x.   | ❌ No
+|    26.x    |   22.x  |    14.x    | ✅ Yes     |
+|    8.x     |   22.x  |    14.x    | ❌ No      |
+|    7.x     |   16.x  |    13.x    | ❌ No      |
+|    Older   |   10.x  |    13.x    | ❌ No      |
 
 </div>
 
 <p align="center">
-  <a href="https://emeraldsrv.com/">Website</a>
+  <a href="https://emeraldsrv.dev/">Website</a>
   •
   <a href="https://github.com/Emerald-Services/SupportBot/wiki">Wiki</a>
 <br>
@@ -60,7 +57,7 @@ SupportBot is an Open-Source discord bot built with [discord.js](https://github.
 
 ## Support
 
-<a href="https://emeraldsrv.com/discord">
+<a href="https://emeraldsrv.dev/discord">
     <img alt="Discord" src="https://img.shields.io/discord/597779408295821323?logo=discord&logoColor=white&style=for-the-badge">
 </a>
 
@@ -72,10 +69,9 @@ Released under the [MIT](https://opensource.org/licenses/MIT) license.
 
 ## Third-Party
 
-- [Official addons repository](https://github.com/Emerald-Services/Addons/)
-- [Syphers Addons](https://github.com/SypherRed/SB_Addons_Unofficial)
-- [BuiltByBit]([https://builtbybit.com/supportbot](https://builtbybit.com/resources/supportbot-advanced-ticket-bot.8940/))
-- [Polymart](https://polymart.org/resource/supportbot-1-discord-ticket-bot.518)
+- [Verified Addons](https://emeraldsrv.dev)
+- [BuiltByBit](https://builtbybit.com/resources/supportbot-advanced-ticket-bot.8940/)
+- [Voxel](https://polymart.org/resource/supportbot-1-discord-ticket-bot.518)
 
 
 ## Contributors
@@ -86,11 +82,4 @@ Released under the [MIT](https://opensource.org/licenses/MIT) license.
 
 ## Hosting
 
-You can use our [Pterodactyl egg](https://github.com/Emerald-Services/Pterodactyl-Egg) to host it on your own panel. We currently don't offer hosting for you, altough we might add this in the future.
-If you don't know how to install pterodactyl, you could always host it on replit:
-
-[![Run on Repl.it](https://repl.it/badge/github/ItsNyoty/IKI-bot)]([https://repl.it/github/ItsNyoty/iki](https://repl.it/github/Emerald-Services/SupportBot
-)
-
-
-
+You can use our [Pterodactyl egg](https://github.com/Emerald-Services/Pterodactyl-Egg) to host SupportBot on your own panel.

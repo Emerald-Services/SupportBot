@@ -1,14 +1,8 @@
-const fs = require("fs");
 const Discord = require("discord.js");
-const yaml = require("js-yaml");
 const axios = require("axios");
 
-const supportbotai = yaml.load(
-  fs.readFileSync("./Configs/supportbot-ai.yml", "utf8"),
-);
-const supportbot = yaml.load(
-  fs.readFileSync("./Configs/supportbot.yml", "utf8"),
-);
+const supportbotai = require("../Structures/ConfigStore").supportbotAi;
+const supportbot = require("../Structures/ConfigStore").supportbot;
 
 const Event = require("../Structures/Event.js");
 const AIDatabase = require("../Structures/AIDatabase.js");
@@ -398,6 +392,92 @@ function rememberUserFacts(message) {
 }
 
 module.exports = new Event("messageCreate", async (client, message) => {
+  if (message.guild && typeof db.getTicket === "function") {
+    const activeTicket = db.getTicket(message.channel.id);
+    if (activeTicket && global.apiServer) {
+      global.apiServer.broadcast("ticket_message", {
+        ticketId: message.channel.id,
+        message: {
+          id: message.id,
+          author: {
+            id: message.author.id,
+            username: message.author.username,
+            globalName: message.author.globalName || message.author.username,
+            avatar: message.author.displayAvatarURL({ extension: "png", size: 64 }),
+            bot: message.author.bot
+          },
+          content: (() => {
+            if (message.content && message.content.trim()) return message.content;
+            if (Array.isArray(message.components) && message.components.length > 0) {
+              const texts = [];
+              for (const comp of message.components) {
+                const data = typeof comp.toJSON === "function" ? comp.toJSON() : comp;
+                if (data.content) texts.push(data.content);
+                if (Array.isArray(data.components)) {
+                  for (const child of data.components) {
+                    const childData = typeof child.toJSON === "function" ? child.toJSON() : child;
+                    if (childData.content) texts.push(childData.content);
+                    if (childData.label && (childData.type === 10 || childData.type === "TEXT_DISPLAY")) {
+                      texts.push(childData.label);
+                    }
+                  }
+                }
+              }
+              if (texts.length > 0) return texts.join("\n");
+            }
+            return message.content || "";
+          })(),
+          containerColor: (() => {
+            if (Array.isArray(message.components)) {
+              for (const comp of message.components) {
+                const data = typeof comp.toJSON === "function" ? comp.toJSON() : comp;
+                if (data.accent_color) {
+                  return `#${data.accent_color.toString(16).padStart(6, "0")}`;
+                }
+              }
+            }
+            return null;
+          })(),
+          embeds: (message.embeds || []).map(e => ({
+            title: e.title || null,
+            description: e.description || null,
+            color: e.color ? `#${e.color.toString(16).padStart(6, "0")}` : "#5865F2",
+            author: e.author ? { name: e.author.name, iconURL: e.author.iconURL } : null,
+            fields: (e.fields || []).map(f => ({ name: f.name, value: f.value, inline: f.inline })),
+            footer: e.footer ? { text: e.footer.text, iconURL: e.footer.iconURL } : null,
+            thumbnail: e.thumbnail?.url ? { url: e.thumbnail.url } : null,
+            image: e.image?.url ? { url: e.image.url } : null,
+            timestamp: e.timestamp || null
+          })),
+          components: (message.components || []).map(c => {
+            const data = typeof c.toJSON === "function" ? c.toJSON() : c;
+            return {
+              type: data.type,
+              components: (data.components || []).map(sub => {
+                const subData = typeof sub.toJSON === "function" ? sub.toJSON() : sub;
+                return {
+                  type: subData.type,
+                  label: subData.label || subData.content || null,
+                  style: subData.style || null,
+                  url: subData.url || null,
+                  customId: subData.custom_id || subData.customId || null,
+                  emoji: subData.emoji ? (subData.emoji.name || subData.emoji.id) : null
+                };
+              })
+            };
+          }),
+          attachments: Array.from((message.attachments || []).values()).map(a => ({
+            id: a.id,
+            name: a.name,
+            url: a.url,
+            contentType: a.contentType
+          })),
+          createdAt: message.createdTimestamp
+        }
+      });
+    }
+  }
+
   if (message.author.bot || !message.guild) return;
 
   let shouldRespond =

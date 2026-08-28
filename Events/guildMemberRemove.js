@@ -3,8 +3,8 @@ const fs = require("fs");
 const yaml = require("js-yaml");
 const Event = require("../Structures/Event.js");
 
-const supportbot = yaml.load(fs.readFileSync("./Configs/supportbot.yml", "utf8"));
-const msgconfig   = yaml.load(fs.readFileSync("./Configs/messages.yml", "utf8"));
+const supportbot = require("../Structures/ConfigStore").supportbot;
+const msgconfig   = require("../Structures/ConfigStore").messages;
 
 module.exports = new Event("guildMemberRemove", async (client, member) => {
 

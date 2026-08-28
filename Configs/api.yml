@@ -1,8 +1,63 @@
+#      ___                            _    ___        _
+#    / __> _ _  ___  ___  ___  _ _ _| |_ | . > ___ _| |_
+#     \__ \| | || . \| . \/ . \| '_> | |  | . \/ . \ | |
+#     <___/`___||  _/|  _/\___/|_|   |_|  |___/\___/ |_|
+#                |_|  |_|
+#
+#           SupportBot created by Emerald Services
+#           Installed with MIT License
+#
+#           Discord Support: https://discord.gg/emeraldsrv
+#           Official Website & Marketplace: https://emeraldsrv.com
+#
+#           Messages Configuration (api.yml)
+
+
 # -------------------------------
 #   API Server Configuration
 # -------------------------------
 
 API:
   Enabled: true
-  Port: 3000 # PORT NUMBER FOR YOUR BOT
-  SecretKey: "PUT_RANDOM_STRING_HERE" # DO NOT SHARE THIS KEY WITH ANYONE
+  Port: 3000
+
+  SecretKey: "SECRET_KEY"
+
+  # Set to 1 when the dashboard is behind nginx, Cloudflare, Pterodactyl proxy, etc.
+  # so http/https is detected from X-Forwarded-Proto.
+
+  TrustProxy: false
+
+  EmeraldAPIKey: "EMERALDSRV_API_KEY"
+  # This is required for the one-click addon installer. Get API key from https://emeraldsrv.dev/
+
+  OAuth:
+    Enabled: true
+    ClientId: "CLIENT_ID"
+    ClientSecret: "CLIENT_SECRET"
+    # Get Client ID and Client Secret from https://discord.com/developers/applications
+
+    # Canonical callback URL (host + path). Protocol (http/https) can follow the
+    # browser when UseRequestOrigin is true (default).
+
+    RedirectUri: "http://localhost:3000/api/auth/discord/callback"
+    
+    # Optional: register extra callback URLs in Discord and list them here.
+
+    # RedirectUris:
+    #   - "https://bot.example.com/api/auth/discord/callback"
+    # UseRequestOrigin: true
+    # CookieSecure: false
+
+    OwnerUserIds:
+      - "OWNER_USER_ID"
+      
+    AllowedUserIds: []
+
+# Dashboard Features
+
+  LiveChat:
+    Mode: "webhook"
+  # "webhook" - Webhook to send messages with staff member's avatar and Discord username
+  # "bot" - Send messages as Bot account with discord username prefix.
+  # "bot_noprefix" - Send messages as Bot account without discord username prefix.
